@@ -64,6 +64,10 @@ module.exports={
     "TRANSACTION_FAILED": {
         "error": 500,
         "message": "transaction failed"
+    },
+    "TRANSACTION_NOT_CONFIRMED": {
+        "error": 501,
+        "message": "polled network but could not confirm transaction"
     }
 }
 
@@ -133,7 +137,13 @@ module.exports = {
 
     bignumbers: true,
 
-    defaultGas: "0x2fd618",
+    // Maximum number of transaction verification attempts
+    TX_POLL_MAX: 12,
+
+    // Transaction polling interval
+    TX_POLL_INTERVAL: 12000,
+
+    DEFAULT_GAS: "0x2fd618",
 
     nodes: ["http://eth1.augur.net:8545"],
 
@@ -584,18 +594,18 @@ module.exports = {
     // execute functions on contracts on the blockchain
     call: function (tx, f) {
         tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? abi.prefix_hex(tx.gas.toString(16)) : this.defaultGas;
+        tx.gas = (tx.gas) ? abi.prefix_hex(tx.gas.toString(16)) : this.DEFAULT_GAS;
         return this.broadcast(this.marshal("call", tx), f);
     },
 
     sendTx: function (tx, f) {
         tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? abi.prefix_hex(tx.gas.toString(16)) : this.defaultGas;
+        tx.gas = (tx.gas) ? abi.prefix_hex(tx.gas.toString(16)) : this.DEFAULT_GAS;
         return this.broadcast(this.marshal("sendTransaction", tx), f);
     },
     sendTransaction: function (tx, f) {
         tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? abi.prefix_hex(tx.gas.toString(16)) : this.defaultGas;
+        tx.gas = (tx.gas) ? abi.prefix_hex(tx.gas.toString(16)) : this.DEFAULT_GAS;
         return this.broadcast(this.marshal("sendTransaction", tx), f);
     },
 
@@ -849,7 +859,7 @@ module.exports = {
     },
 
     /***************************************
-     * Call-send-confirm callback sequence *
+     * Send-call-confirm callback sequence *
      ***************************************/
 
     checkBlockHash: function (tx, callreturn, itx, txhash, returns, count, onSent, onSuccess, onFailed) {
@@ -861,15 +871,15 @@ module.exports = {
             if (onSuccess && onSuccess.constructor === Function) onSuccess(tx);
         } else {
             if (count !== undefined) {
-                if (count < this.constants.TX_POLL_MAX) {
+                if (count < this.TX_POLL_MAX) {
                     if (count === 0) {
                         this.notifications[txhash] = [setTimeout(function () {
                             this.txNotify(count + 1, callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
-                        }.bind(this), this.constants.TX_POLL_INTERVAL)];
+                        }.bind(this), this.TX_POLL_INTERVAL)];
                     } else {
                         this.notifications[txhash].push(setTimeout(function () {
                             this.txNotify(count + 1, callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
-                        }.bind(this), this.constants.TX_POLL_INTERVAL));
+                        }.bind(this), this.TX_POLL_INTERVAL));
                     }
                 } else {
                     if (onFailed && onFailed.constructor === Function) {
