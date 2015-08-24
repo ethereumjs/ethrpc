@@ -1,0 +1,9 @@
+node_modules
+.gitignore
+.npmignore
+.travis.yml
+lib/solidity
+lib/utils
+test
+coverage
+overflow
