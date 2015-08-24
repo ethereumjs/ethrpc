@@ -17,7 +17,7 @@ $ npm install ethrpc
 ```
 After installing, to use it with Node, just require it:
 ```javascript
-> var ethrpc = require("ethrpc");
+var ethrpc = require("ethrpc");
 ```
 A minified, browserified file `dist/ethrpc.min.js` is included for use in the browser.  Including this file simply attaches the `ethrpc` object to `window`:
 ```html
