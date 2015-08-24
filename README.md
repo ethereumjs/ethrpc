@@ -4,7 +4,7 @@ ethrpc
 [![Build Status](https://travis-ci.org/AugurProject/ethrpc.svg)](https://travis-ci.org/AugurProject/ethrpc)
 [![Coverage Status](https://coveralls.io/repos/AugurProject/ethrpc/badge.svg?branch=master&service=github)](https://coveralls.io/github/AugurProject/ethrpc?branch=master)
 
-
+[![NPM](https://nodei.co/npm/ethrpc.png)](https://nodei.co/npm/ethrpc/)
 
 Basic JSON RPC methods for Ethereum.
 
