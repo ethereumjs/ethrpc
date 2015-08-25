@@ -418,7 +418,7 @@ module.exports = {
     },
 
     sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
-        from = from || this.web.account.address || this.broadcast(this.marshal("coinbase"));
+        from = from || this.broadcast(this.marshal("coinbase"));
         var tx, txhash;
         if (to && to.value) {
             value = to.value;
