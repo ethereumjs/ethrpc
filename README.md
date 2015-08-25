@@ -24,6 +24,77 @@ A minified, browserified file `dist/ethrpc.min.js` is included for use in the br
 <script src="dist/ethrpc.min.js" type="text/javascript"></script>
 ```
 
+### Basic RPC
+
+The `raw` method allows you to send in commands that won't be parsed/mangled by ethrpc.  (Similar to sending RPC requests with cURL.)
+
+```
+ethrpc.raw("net_peerCount");
+"0x10"
+
+ethrpc.eth("gasPrice");
+"0x015f90"
+```
+Many commonly used functions have named wrappers.  For example, `blockNumber` fetches the current block number:
+
+```javascript
+ethrpc.blockNumber();
+217153
+```
+
+### Contract upload and download
+
+`publish` broadcasts (uploads) a compiled contract to the network, and returns the contract's address:
+
+```javascript
+var address = ethrpc.publish("0x603980600b6000396044567c01000000000000000000000000000000000000000000000000000000006000350463643ceff9811415603757600a60405260206040f35b505b6000f3");
+// address:
+"0xf4549459f9ef8c8898c054a7fc37c286831c2ced"
+```
+
+`read` downloads code from a contract already on the Ethereum network:
+
+```javascript
+var evm = ethrpc.read("0x5204f18c652d1c31c6a5968cb65e011915285a50");
+// evm:
+"0x7c010000000000000000000000000000000000000000000000000000000060003504636ffa1caa81141560415760043560405260026040510260605260206060f35b50"
+```
+
+### Contract methods: call and sendTransaction
+
+The `invoke` method executes a method in a contract already on the network.  It can broadcast transactions to the network and/or capture return values by calling the contract method(s) locally.
+```javascript
+// The method called here doubles its input argument.
+ethrpc.invoke({
+   to: "0x5204f18c652d1c31c6a5968cb65e011915285a50",
+   method: "double",
+   signature: "i",
+   params: 22121, // parameter value(s)
+   send: false,
+   returns: "number"
+});
+// returns:
+44242
+```
+Transaction fields are as follows:
+
+Required:
+
+- to: `<contract address> (hexstring)`
+- method: `<function name> (string)`
+- signature: `<function signature, e.g. "iia"> (string)`
+- params: `<parameters passed to the function>`
+
+Optional:
+
+- send: `<true to sendTransaction, false to call (default)>`
+- from: `<sender's address> (hexstring; defaults to the coinbase account)`
+- returns: `<"array", "int", "BigNumber", or "string" (default)>`
+
+The `params` and `signature` fields are required if your function accepts parameters; otherwise, these fields can be excluded.  The `returns` field is used only to format the output, and does not affect the actual RPC request.
+
+`invoke` currently only works for [Serpent](https://github.com/ethereum/serpent) contracts.  The extra datatypes included by [Solidity](https://github.com/ethereum/solidity) are not (yet) supported by the [augur-abi](https://github.com/AugurProject/augur-abi) encoder.  The augur-abi encoder requires all parameters to be type `string`, `int256`, or `int256[]`.
+
 Tests
 -----
 

@@ -665,8 +665,10 @@ module.exports = {
     invoke: function (itx, f) {
         var tx, data_abi, packaged, invocation, invoked;
         if (itx) {
-            if (itx.send && itx.invoke && itx.invoke.constructor === Function) {
-                return itx.invoke(itx, f);
+            if (itx.send && itx.invocation && itx.invocation.invoke &&
+                itx.invocation.invoke.constructor === Function)
+            {
+                return itx.invocation.invoke.call(itx.invocation.context, itx, f);
             } else {
                 tx = abi.copy(itx);
                 if (tx.params !== undefined) {
@@ -987,10 +989,7 @@ module.exports = {
 
                     // if returns type is null, skip the intermediate call
                     } else {
-                        onSent({
-                            txHash: txhash,
-                            callReturn: null
-                        });
+                        onSent({ txHash: txhash, callReturn: null });
                         if (onSuccess) {
                             self.txNotify(
                                 0,
@@ -1015,8 +1014,12 @@ module.exports = {
         delete tx.returns;
         if (onSent && onSent.constructor === Function) {
             this.invoke(tx, function (txhash) {
-                txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
-                this.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
+                if (txhash.error) {
+                    if (onFailed) onFailed(txhash);
+                } else {
+                    txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
+                    this.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
+                }
             }.bind(this));
         } else {
             return this.invoke(tx);
