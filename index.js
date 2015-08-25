@@ -64,6 +64,8 @@ module.exports = {
 
     DEFAULT_GAS: "0x2fd618",
 
+    ETHER: new BigNumber(10).toPower(18),
+
     nodes: ["http://eth1.augur.net:8545"],
 
     requests: 1,
@@ -431,7 +433,7 @@ module.exports = {
         tx = {
             from: from,
             to: to,
-            value: abi.bignum(value).mul(this.constants.ETHER).toFixed()
+            value: abi.bignum(value).mul(this.ETHER).toFixed()
         };
         if (onSent) {
             this.sendTx(tx, function (txhash) {
@@ -583,7 +585,7 @@ module.exports = {
         var tx, data_abi, packaged, invocation, invoked;
         if (itx) {
             if (itx.send && itx.invoke && itx.invoke.constructor === Function) {
-                return itx.invoke.call(this, itx, f);
+                return itx.invoke(itx, f);
             } else {
                 tx = abi.copy(itx);
                 if (tx.params !== undefined) {
