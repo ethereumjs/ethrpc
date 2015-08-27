@@ -6,7 +6,7 @@
 "use strict";
 
 var assert = require("chai").assert;
-var contracts = require("augur-contracts").privatechain;
+var contracts = require("augur-contracts")['7'];
 var rpc = require("../");
 
 require('it-each')({ testPerIteration: true });
