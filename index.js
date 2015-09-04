@@ -17,42 +17,9 @@ var log = console.log;
 
 BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
 
-// asynchronous loop
-function loop(list, iterator) {
-    var n = list.length;
-    var i = -1;
-    var calls = 0;
-    var looping = false;
-    var iterate = function (quit, breaker) {
-        calls -= 1;
-        i += 1;
-        if (i === n || quit) {
-            if (breaker) {
-                return breaker();
-            } else {
-                return;
-            }
-        }
-        iterator(list[i], next);
-    };
-    var runloop = function () {
-        if (looping) return;
-        looping = true;
-        while (calls > 0) iterate();
-        looping = false;
-    };
-    var next = function (quit, breaker) {
-        calls += 1;
-        if (typeof setTimeout === "undefined") {
-            runloop();
-        } else {
-            setTimeout(function () { iterate(quit, breaker); }, 1);
-        }
-    };
-    next();
-}
-
 module.exports = {
+
+    debug: false,
 
     bignumbers: true,
 
@@ -265,6 +232,13 @@ module.exports = {
                     if (str) self.parse(str, returns, callback);
                 });
             });
+            req.on("error", function (err) {
+                if (self.debug) {
+                    log("RPC request to", rpc_url, "failed:", err.code);
+                }
+                self.nodes.splice(self.nodes.indexOf(rpc_url), 1);
+                callback();
+            });
             req.write(command);
             req.end();
         } else {
@@ -288,6 +262,15 @@ module.exports = {
     broadcast: function (command, callback) {
         var i, j, num_nodes, num_commands, returns, result, complete;
 
+        // make sure the ethereum node list isn't empty
+        if (!this.nodes || !this.nodes.length) {
+            if (callback && callback.constructor === Function) {
+                return callback(errors.ETHEREUM_NOT_FOUND);
+            } else {
+                return errors.ETHEREUM_NOT_FOUND;
+            }
+        }
+
         // parse batched commands and strip "returns" fields
         if (command.constructor === Array) {
             num_commands = command.length;
@@ -301,24 +284,35 @@ module.exports = {
 
         // asynchronous request if callback exists
         if (callback && callback.constructor === Function) {
+            var self = this;
             command = JSON.stringify(command);
-            loop(this.nodes, function (node, next) {
-                this.post(node, command, returns, function (result) {
-                    if (result !== undefined && result !== "0x") {
-                        complete = true;
-                    } else if (result !== undefined && result.error) {
-                        complete = true;
-                    }
-                    next(complete, function () { callback(result); });
-                });
-            }.bind(this));
+            num_nodes = this.nodes.length;
+            for (j = 0; j < num_nodes; ++j) {
+                (function (node) {
+                    self.post(node, command, returns, function (result) {
+                        if (result !== undefined &&
+                            result !== "0x" && !result.error)
+                        {
+                            if (!complete) callback(result);
+                            complete = true;
+                        }
+                    });
+                })(this.nodes[j]);
+            }
 
         // use synchronous http if no callback provided
         } else {
             if (!NODE_JS) command = JSON.stringify(command);
             num_nodes = this.nodes.length;
             for (j = 0; j < num_nodes; ++j) {
-                result = this.postSync(this.nodes[j], command, returns);
+                try {
+                    result = this.postSync(this.nodes[j], command, returns);
+                } catch (e) {
+                    if (this.debug) {
+                        log("RPC request to", this.nodes[j], "failed:", e);
+                    }
+                    this.nodes.splice(j--, 1);
+                }
                 if (result && result !== "0x") return result;
             }
         }
@@ -391,6 +385,10 @@ module.exports = {
         } else {
             return parseInt(this.broadcast(this.marshal("blockNumber")));
         }
+    },
+
+    coinbase: function (f) {
+        return this.broadcast(this.marshal("coinbase"), f);
     },
 
     balance: function (address, block, f) {

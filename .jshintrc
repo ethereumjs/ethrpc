@@ -18,7 +18,7 @@
     "forin": false,
     "immed": true,
     "latedef": true,
-    "loopfunc": false,
+    "loopfunc": true,
     "noarg": true,
     "regexp": true,
     "regexdash": false,
