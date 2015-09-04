@@ -1017,6 +1017,7 @@ module.exports = {
                 if (txhash.error) {
                     if (onFailed) onFailed(txhash);
                 } else {
+                    if (tx.invocation) delete tx.invocation;
                     txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
                     this.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
                 }
