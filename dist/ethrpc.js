@@ -118,7 +118,11 @@ module.exports = {
 
     ETHER: new BigNumber(10).toPower(18),
 
-    nodes: ["http://eth1.augur.net:8545"],
+    nodes: [
+        "http://eth1.augur.net:8545",
+        "http://eth3.augur.net:8545",
+        "http://eth4.augur.net:8545"
+    ],
 
     requests: 1,
 
