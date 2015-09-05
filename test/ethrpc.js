@@ -262,12 +262,234 @@ describe("postSync", function () {
 
 });
 
+describe("listening", function () {
+
+    var test = function (t) {
+        it(t.node + " -> " + t.listening, function () {
+            rpc.nodes = [t.node];
+            assert.strictEqual(rpc.listening(), t.listening);
+        });
+    };
+
+    test({
+        node: "http://eth1.augur.net",
+        listening: true
+    });
+    test({
+        node: "http://eth1.augur.net:8545",
+        listening: true
+    });
+    test({
+        node: "http://eth3.augur.net:8545",
+        listening: true
+    });
+    test({
+        node: "http://eth4.augur.net:8545",
+        listening: true
+    });
+    test({
+        node: "http://eth5.augur.net:8545",
+        listening: true
+    });
+    test({
+        node: "http://bobchain.augur.net:8545",
+        listening: false
+    });
+    test({
+        node: "http://ethnegativeone.augur.net:8545",
+        listening: false
+    });
+    test({
+        node: "",
+        listening: false
+    });
+    test({
+        node: null,
+        listening: false
+    });
+    test({
+        node: undefined,
+        listening: false
+    });
+    test({
+        node: NaN,
+        listening: false
+    });
+    // test({
+    //     node: "http://eth1.augur.net:8547",
+    //     listening: false
+    // });
+
+});
+
+describe("unlocked", function () {
+
+    var test = function (t) {
+        it(t.node + " -> " + t.unlocked, function () {
+            rpc.nodes = [t.node];
+            assert.strictEqual(rpc.unlocked(t.account), t.unlocked);
+        });
+    };
+
+    test({
+        node: "http://eth1.augur.net",
+        unlocked: true
+    });
+    test({
+        node: "http://eth1.augur.net",
+        account: COINBASE,
+        unlocked: true
+    });
+    test({
+        node: "http://eth1.augur.net:8545",
+        unlocked: true
+    });
+    test({
+        node: "http://eth1.augur.net:8545",
+        account: COINBASE,
+        unlocked: true
+    });
+    test({
+        node: "http://eth3.augur.net:8545",
+        unlocked: true
+    });
+    test({
+        node: "http://eth3.augur.net:8545",
+        account: COINBASE,
+        unlocked: true
+    });
+    test({
+        node: "http://eth4.augur.net:8545",
+        unlocked: false
+    });
+    test({
+        node: "http://eth4.augur.net:8545",
+        account: COINBASE,
+        unlocked: false
+    });
+    test({
+        node: "http://eth5.augur.net:8545",
+        unlocked: false
+    });
+    test({
+        node: "http://eth5.augur.net:8545",
+        account: COINBASE,
+        unlocked: false
+    });
+    test({
+        node: "http://bobchain.augur.net:8545",
+        unlocked: false
+    });
+    test({
+        node: "http://bobchain.augur.net:8545",
+        account: COINBASE,
+        unlocked: false
+    });
+    test({
+        node: "http://ethnegativeone.augur.net:8545",
+        unlocked: false
+    });
+    test({
+        node: "http://ethnegativeone.augur.net:8545",
+        account: COINBASE,
+        unlocked: false
+    });
+    test({
+        node: "",
+        unlocked: false
+    });
+    test({
+        node: "",
+        account: COINBASE,
+        unlocked: false
+    });
+    test({
+        node: null,
+        unlocked: false
+    });
+    test({
+        node: null,
+        account: COINBASE,
+        unlocked: false
+    });
+    test({
+        node: undefined,
+        unlocked: false
+    });
+    test({
+        node: undefined,
+        account: COINBASE,
+        unlocked: false
+    });
+    test({
+        node: NaN,
+        unlocked: false
+    });
+    test({
+        node: NaN,
+        account: COINBASE,
+        unlocked: false
+    });
+
+});
+
+describe("batch", function () {
+
+    var test = function (res) {
+        assert.isArray(res);
+        assert.strictEqual(res.length, 2);
+        assert(parseInt(res[0]) === 1 || parseInt(res[0]) === -1);
+        assert(parseInt(res[1]) === 1 || parseInt(res[1]) === -1);
+    };
+
+    var txList = [
+        {
+            to: contracts.faucets,
+            method: "cashFaucet",
+            returns: "number",
+            send: false
+        },
+        {
+            to: contracts.faucets,
+            method: "reputationFaucet",
+            signature: "i",
+            params: "0xf69b5",
+            returns: "number",
+            send: false
+        }
+    ];
+
+    it("sync: return and match separate calls", function () {
+        rpc.nodes = [
+            "http://eth1.augur.net:8545",
+            "http://eth3.augur.net:8545",
+            "http://eth4.augur.net:8545",
+            "http://eth5.augur.net:8545"
+        ];
+        test(rpc.batch(txList));
+    });
+
+    it("async: callback on whole array", function (done) {
+        rpc.nodes = [
+            "http://eth1.augur.net:8545",
+            "http://eth3.augur.net:8545",
+            "http://eth4.augur.net:8545",
+            "http://eth5.augur.net:8545"
+        ];
+        rpc.batch(txList, function (r) {
+            test(r); done();
+        });
+    });
+
+});
+
 describe("multicast", function () {
 
     rpc.nodes = [
         "http://eth1.augur.net:8545",
         "http://eth3.augur.net:8545",
-        "http://eth4.augur.net:8545"
+        "http://eth4.augur.net:8545",
+        "http://eth5.augur.net:8545"
     ];
 
     var command = {
@@ -477,54 +699,15 @@ describe("Contract methods", function () {
     };
 
     it("getMarkets(1010101) -> hash[]", function () {
-            test({
-                to: contracts.branches,
-                from: COINBASE,
-                method: "getMarkets",
-                signature: "i",
-                returns: "hash[]",
-                params: 1010101
-            }, ["0xe8", "0xe8"], function (a) {
-                a.slice(1, 2);
-            });
-        }
-    );
-
-});
-
-describe("Batch RPC", function () {
-
-    var test = function (res) {
-        assert.isArray(res);
-        assert.strictEqual(res.length, 2);
-        assert(parseInt(res[0]) === 1 || parseInt(res[0]) === -1);
-        assert(parseInt(res[1]) === 1 || parseInt(res[1]) === -1);
-    };
-
-    var txList = [
-        {
-            to: contracts.faucets,
-            method: "cashFaucet",
-            returns: "number",
-            send: false
-        },
-        {
-            to: contracts.faucets,
-            method: "reputationFaucet",
+        test({
+            to: contracts.branches,
+            from: COINBASE,
+            method: "getMarkets",
             signature: "i",
-            params: "0xf69b5",
-            returns: "number",
-            send: false
-        }
-    ];
-
-    it("sync: return and match separate calls", function () {
-        test(rpc.batch(txList));
-    });
-
-    it("async: callback on whole array", function (done) {
-        rpc.batch(txList, function (r) {
-            test(r); done();
+            returns: "hash[]",
+            params: 1010101
+        }, ["0xe8", "0xe8"], function (a) {
+            a.slice(1, 2);
         });
     });
 

@@ -121,7 +121,8 @@ module.exports = {
     nodes: [
         "http://eth1.augur.net:8545",
         "http://eth3.augur.net:8545",
-        "http://eth4.augur.net:8545"
+        "http://eth4.augur.net:8545",
+        "http://eth5.augur.net:8545"
     ],
 
     requests: 1,
@@ -323,7 +324,7 @@ module.exports = {
             });
             req.on("error", function (err) {
                 if (self.debug) {
-                    log("RPC request to", rpc_url, "failed:", err.code);
+                    log("[ethrpc] request to", rpc_url, "failed:", err.code);
                 }
                 if (rpc_url.indexOf(".augur.net") === -1) {
                     self.nodes.splice(self.nodes.indexOf(rpc_url), 1);
@@ -411,7 +412,7 @@ module.exports = {
                     result = this.postSync(this.nodes[j], command, returns);
                 } catch (e) {
                     if (this.debug) {
-                        log("RPC request to", this.nodes[j], "failed:", e);
+                        log("[ethrpc] request to", this.nodes[j], "failed:", e);
                     }
                     if (this.nodes[j].indexOf(".augur.net") === -1) {
                         this.nodes.splice(j--, 1);
@@ -661,9 +662,22 @@ module.exports = {
         return this.broadcast(this.marshal("getCode", [address, block || "latest"]), f);
     },
 
+    // Ethereum node status checks
+
     listening: function () {
         try {
-            return this.net("listening");
+            return !!this.net("listening");
+        } catch (e) {
+            return false;
+        }
+    },
+
+    unlocked: function (account) {
+        try {
+            if (this.sign(account || this.coinbase(), "1010101").error) {
+                return false;
+            }
+            return true;
         } catch (e) {
             return false;
         }
