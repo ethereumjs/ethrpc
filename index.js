@@ -24,7 +24,7 @@ module.exports = {
     bignumbers: true,
 
     // Maximum number of transaction verification attempts
-    TX_POLL_MAX: 12,
+    TX_POLL_MAX: 24,
 
     // Transaction polling interval
     TX_POLL_INTERVAL: 12000,
@@ -34,10 +34,10 @@ module.exports = {
     ETHER: new BigNumber(10).toPower(18),
 
     nodes: [
-        "http://eth1.augur.net:8545",
-        "http://eth3.augur.net:8545",
-        "http://eth4.augur.net:8545",
-        "http://eth5.augur.net:8545"
+        "http://eth3.augur.net",
+        "http://eth1.augur.net",
+        "http://eth4.augur.net",
+        "http://eth5.augur.net"
     ],
 
     requests: 1,
@@ -199,10 +199,19 @@ module.exports = {
         return returns;
     },
 
-    postSync: function (rpc_url, command, returns) {
+    exciseNode: function (err, deadNode, deadIndex) {
+        if (this.debug && (deadNode.indexOf("127.0.0.1") === -1)) {
+            log("[ethrpc] request to", deadNode, "failed:", err);
+        }
+        if (deadNode.indexOf(".augur.net") === -1) {
+            this.nodes.splice(deadIndex || this.nodes.indexOf(deadNode), 1);
+        }
+    },
+
+    postSync: function (rpcUrl, command, returns) {
         var req = null;
         if (NODE_JS) {
-            return this.parse(request('POST', rpc_url, {
+            return this.parse(request('POST', rpcUrl, {
                 json: command
             }).getBody().toString(), returns);
         } else {
@@ -211,20 +220,20 @@ module.exports = {
             } else {
                 req = new window.ActiveXObject("Microsoft.XMLHTTP");
             }
-            req.open("POST", rpc_url, false);
+            req.open("POST", rpcUrl, false);
             req.setRequestHeader("Content-type", "application/json");
             req.send(command);
             return this.parse(req.responseText, returns);
         }
     },
 
-    post: function (rpc_url, command, returns, callback) {
-        var req, self = this;
+    post: function (rpcUrl, command, returns, callback) {
+        var rpcObj, req, self = this;
         if (NODE_JS) {
-            var rpc_obj = url.parse(rpc_url);
+            rpcObj = url.parse(rpcUrl);
             req = http.request({
-                host: rpc_obj.hostname,
-                port: rpc_obj.port,
+                host: rpcObj.hostname,
+                port: rpcObj.port,
                 path: '/',
                 method: "POST",
                 headers: {"Content-type": "application/json"}
@@ -238,12 +247,7 @@ module.exports = {
                 });
             });
             req.on("error", function (err) {
-                if (self.debug) {
-                    log("[ethrpc] request to", rpc_url, "failed:", err.code);
-                }
-                if (rpc_url.indexOf(".augur.net") === -1) {
-                    self.nodes.splice(self.nodes.indexOf(rpc_url), 1);
-                }
+                self.exciseNode(err.code, rpcUrl);
                 callback();
             });
             req.write(command);
@@ -258,19 +262,15 @@ module.exports = {
                 if (req.readyState === 4) {
                     self.parse(req.responseText, returns, callback);
                 } else {
-                    if (rpc_url.indexOf(".augur.net") === -1) {
-                        self.nodes.splice(self.nodes.indexOf(rpc_url), 1);
-                    }
+                    self.exciseNode(req.readyState, rpcUrl);
                     callback();
                 }
             };
-            req.onerror = function () {
-                if (rpc_url.indexOf(".augur.net") === -1) {
-                    self.nodes.splice(self.nodes.indexOf(rpc_url), 1);
-                }
+            req.onerror = function (err) {
+                self.exciseNode(err, rpcUrl);
                 callback();
             };
-            req.open("POST", rpc_url, true);
+            req.open("POST", rpcUrl, true);
             req.setRequestHeader("Content-type", "application/json");
             req.send(command);
         }
@@ -326,12 +326,7 @@ module.exports = {
                 try {
                     result = this.postSync(this.nodes[j], command, returns);
                 } catch (e) {
-                    if (this.debug) {
-                        log("[ethrpc] request to", this.nodes[j], "failed:", e);
-                    }
-                    if (this.nodes[j].indexOf(".augur.net") === -1) {
-                        this.nodes.splice(j--, 1);
-                    }
+                    this.exciseNode(e, this.nodes[j], j--);
                 }
                 if (result && result !== "0x") return result;
             }
@@ -769,24 +764,26 @@ module.exports = {
                 response[i] = this.errorCodes(tx.method, response[i]);
             }
         } else {
-            if (errors[response]) {
-                response = {
-                    error: response,
-                    message: errors[response]
-                };
-            } else {
-                if (tx.returns && tx.returns !== "string" ||
-                    (response && response.constructor === String &&
-                    response.slice(0,2) === "0x"))
-                {
-                    var response_number = abi.bignum(response);
-                    if (response_number) {
-                        response_number = abi.bignum(response).toFixed();
-                        if (errors[tx.method] && errors[tx.method][response_number]) {
-                            response = {
-                                error: response_number,
-                                message: errors[tx.method][response_number]
-                            };
+            if (!response.error) {
+                if (errors[response]) {
+                    response = {
+                        error: response,
+                        message: errors[response]
+                    };
+                } else {
+                    if (tx.returns && tx.returns !== "string" ||
+                        (response && response.constructor === String &&
+                        response.slice(0,2) === "0x"))
+                    {
+                        var response_number = abi.bignum(response);
+                        if (response_number) {
+                            response_number = response_number.toFixed();
+                            if (errors[tx.method] && errors[tx.method][response_number]) {
+                                response = {
+                                    error: response_number,
+                                    message: errors[tx.method][response_number]
+                                };
+                            }
                         }
                     }
                 }

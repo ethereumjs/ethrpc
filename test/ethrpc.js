@@ -280,7 +280,15 @@ describe("listening", function () {
         listening: true
     });
     test({
+        node: "http://eth3.augur.net",
+        listening: true
+    });
+    test({
         node: "http://eth3.augur.net:8545",
+        listening: true
+    });
+    test({
+        node: "http://eth4.augur.net",
         listening: true
     });
     test({
@@ -288,15 +296,19 @@ describe("listening", function () {
         listening: true
     });
     test({
+        node: "http://eth5.augur.net",
+        listening: true
+    });
+    test({
         node: "http://eth5.augur.net:8545",
         listening: true
     });
     test({
-        node: "http://bobchain.augur.net:8545",
+        node: "http://www.google.com",
         listening: false
     });
     test({
-        node: "http://ethnegativeone.augur.net:8545",
+        node: "http://lol.lol.lol:8545",
         listening: false
     });
     test({
@@ -315,10 +327,6 @@ describe("listening", function () {
         node: NaN,
         listening: false
     });
-    // test({
-    //     node: "http://eth1.augur.net:8547",
-    //     listening: false
-    // });
 
 });
 
@@ -350,6 +358,15 @@ describe("unlocked", function () {
         unlocked: true
     });
     test({
+        node: "http://eth3.augur.net",
+        unlocked: true
+    });
+    test({
+        node: "http://eth3.augur.net",
+        account: COINBASE,
+        unlocked: true
+    });
+    test({
         node: "http://eth3.augur.net:8545",
         unlocked: true
     });
@@ -359,11 +376,29 @@ describe("unlocked", function () {
         unlocked: true
     });
     test({
+        node: "http://eth4.augur.net",
+        unlocked: false
+    });
+    test({
+        node: "http://eth4.augur.net",
+        account: COINBASE,
+        unlocked: false
+    });
+    test({
         node: "http://eth4.augur.net:8545",
         unlocked: false
     });
     test({
         node: "http://eth4.augur.net:8545",
+        account: COINBASE,
+        unlocked: false
+    });
+    test({
+        node: "http://eth5.augur.net",
+        unlocked: false
+    });
+    test({
+        node: "http://eth5.augur.net",
         account: COINBASE,
         unlocked: false
     });
@@ -377,20 +412,20 @@ describe("unlocked", function () {
         unlocked: false
     });
     test({
-        node: "http://bobchain.augur.net:8545",
+        node: "http://www.google.com",
         unlocked: false
     });
     test({
-        node: "http://bobchain.augur.net:8545",
+        node: "http://www.google.com",
         account: COINBASE,
         unlocked: false
     });
     test({
-        node: "http://ethnegativeone.augur.net:8545",
+        node: "http://lol.lol.lol:8545",
         unlocked: false
     });
     test({
-        node: "http://ethnegativeone.augur.net:8545",
+        node: "http://lol.lol.lol:8545",
         account: COINBASE,
         unlocked: false
     });
@@ -538,7 +573,7 @@ describe("multicast", function () {
 
 });
 
-describe("backup Ethereum nodes", function () {
+describe("Backup nodes", function () {
 
     it("[sync] graceful failover to eth1.augur.net", function () {
         this.timeout(TIMEOUT);
