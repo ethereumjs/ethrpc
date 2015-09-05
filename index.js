@@ -236,7 +236,9 @@ module.exports = {
                 if (self.debug) {
                     log("RPC request to", rpc_url, "failed:", err.code);
                 }
-                self.nodes.splice(self.nodes.indexOf(rpc_url), 1);
+                if (rpc_url.indexOf(".augur.net") === -1) {
+                    self.nodes.splice(self.nodes.indexOf(rpc_url), 1);
+                }
                 callback();
             });
             req.write(command);
@@ -250,7 +252,18 @@ module.exports = {
             req.onreadystatechange = function () {
                 if (req.readyState === 4) {
                     self.parse(req.responseText, returns, callback);
+                } else {
+                    if (rpc_url.indexOf(".augur.net") === -1) {
+                        self.nodes.splice(self.nodes.indexOf(rpc_url), 1);
+                    }
+                    callback();
                 }
+            };
+            req.onerror = function () {
+                if (rpc_url.indexOf(".augur.net") === -1) {
+                    self.nodes.splice(self.nodes.indexOf(rpc_url), 1);
+                }
+                callback();
             };
             req.open("POST", rpc_url, true);
             req.setRequestHeader("Content-type", "application/json");
@@ -311,7 +324,9 @@ module.exports = {
                     if (this.debug) {
                         log("RPC request to", this.nodes[j], "failed:", e);
                     }
-                    this.nodes.splice(j--, 1);
+                    if (this.nodes[j].indexOf(".augur.net") === -1) {
+                        this.nodes.splice(j--, 1);
+                    }
                 }
                 if (result && result !== "0x") return result;
             }
