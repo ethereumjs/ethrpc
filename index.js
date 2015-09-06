@@ -791,12 +791,12 @@ module.exports = {
     },
 
     errorCodes: function (tx, response) {
-        if (response && response.constructor === Array) {
-            for (var i = 0, len = response.length; i < len; ++i) {
-                response[i] = this.errorCodes(tx.method, response[i]);
-            }
-        } else {
-            if (!response.error) {
+        if (response) {
+            if (response.constructor === Array) {
+                for (var i = 0, len = response.length; i < len; ++i) {
+                    response[i] = this.errorCodes(tx.method, response[i]);
+                }
+            } else if (!response.error) {
                 if (errors[response]) {
                     response = {
                         error: response,
