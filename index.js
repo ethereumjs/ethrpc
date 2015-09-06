@@ -809,7 +809,6 @@ module.exports = {
                     {
                         var responseNumber = abi.bignum(response);
                         if (responseNumber) {
-                            console.log("response:", response);
                             responseNumber = responseNumber.toFixed();
                             if (errors[tx.method] && errors[tx.method][responseNumber]) {
                                 response = {

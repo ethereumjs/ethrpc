@@ -696,6 +696,11 @@ module.exports = {
 
     unlocked: function (account) {
         try {
+            if (!this.nodes || !this.nodes.length ||
+                (this.nodes.length === 1 && !this.nodes[0].length))
+            {
+                throw new Error();
+            }
             if (this.sign(account || this.coinbase(), "1010101").error) {
                 return false;
             }
@@ -889,7 +894,6 @@ module.exports = {
                     {
                         var responseNumber = abi.bignum(response);
                         if (responseNumber) {
-                            console.log("response:", response);
                             responseNumber = responseNumber.toFixed();
                             if (errors[tx.method] && errors[tx.method][responseNumber]) {
                                 response = {
