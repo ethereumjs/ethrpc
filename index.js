@@ -9,6 +9,7 @@ var NODE_JS = (typeof module !== "undefined") && process && !process.browser;
 
 var http = require("http");
 var url = require("url");
+var async = require("async");
 var BigNumber = require("bignumber.js");
 var request = (NODE_JS) ? require("sync-request") : null;
 var abi = require("augur-abi");
@@ -290,7 +291,7 @@ module.exports = {
 
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
-        var i, j, num_nodes, num_commands, returns, result, complete;
+        var i, j, self, loop, nodes, num_nodes, num_commands, returns, result;
 
         // make sure the ethereum node list isn't empty
         if (!this.nodes || !this.nodes.length) {
@@ -314,21 +315,20 @@ module.exports = {
 
         // asynchronous request if callback exists
         if (callback && callback.constructor === Function) {
-            var self = this;
-            command = JSON.stringify(command);
-            num_nodes = this.nodes.length;
-            for (j = 0; j < num_nodes; ++j) {
-                (function (node) {
-                    self.post(node, command, returns, function (result) {
-                        if (result !== undefined &&
-                            result !== "0x" && !result.error)
-                        {
-                            if (!complete) callback(result);
-                            complete = true;
-                        }
-                    });
-                })(this.nodes[j]);
-            }
+            self = this;
+            loop = (command.method === "eth_call") ? async.each : async.eachSeries;
+            nodes = this.nodes.slice();
+            loop(nodes, function (node, nextNode) {
+                self.post(node, JSON.stringify(command), returns, function (res) {
+                    if (node === nodes[nodes.length - 1]) {
+                        return nextNode(res);
+                    }
+                    if (res !== undefined && res !== null && !res.error) {
+                        return nextNode(res);
+                    }
+                    nextNode();
+                });
+            }, callback);
 
         // use synchronous http if no callback provided
         } else {
