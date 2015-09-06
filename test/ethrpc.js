@@ -265,9 +265,14 @@ describe("postSync", function () {
 describe("listening", function () {
 
     var test = function (t) {
-        it(t.node + " -> " + t.listening, function () {
+        it(t.node + " -> " + t.listening, function (done) {
+            this.timeout(TIMEOUT);
             rpc.nodes = [t.node];
-            assert.strictEqual(rpc.listening(), t.listening);
+            // assert.strictEqual(rpc.listening(), t.listening);
+            rpc.listening(function (listening) {
+                assert.strictEqual(listening, t.listening);
+                done();
+            });
         });
     };
 
@@ -302,14 +307,6 @@ describe("listening", function () {
     test({
         node: "http://eth5.augur.net:8545",
         listening: true
-    });
-    test({
-        node: "http://www.google.com",
-        listening: false
-    });
-    test({
-        node: "http://lol.lol.lol:8545",
-        listening: false
     });
     test({
         node: "",
@@ -408,33 +405,6 @@ describe("unlocked", function () {
     });
     test({
         node: "http://eth5.augur.net:8545",
-        account: COINBASE,
-        unlocked: false
-    });
-    test({
-        node: "http://www.google.com",
-        unlocked: false
-    });
-    test({
-        node: "http://www.google.com",
-        account: COINBASE,
-        unlocked: false
-    });
-    test({
-        node: "http://lol.lol.lol:8545",
-        unlocked: false
-    });
-    test({
-        node: "http://lol.lol.lol:8545",
-        account: COINBASE,
-        unlocked: false
-    });
-    test({
-        node: "",
-        unlocked: false
-    });
-    test({
-        node: "",
         account: COINBASE,
         unlocked: false
     });

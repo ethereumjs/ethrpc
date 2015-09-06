@@ -200,11 +200,13 @@ module.exports = {
     },
 
     exciseNode: function (err, deadNode, deadIndex) {
-        if (this.debug && (deadNode.indexOf("127.0.0.1") === -1)) {
-            log("[ethrpc] request to", deadNode, "failed:", err);
-        }
-        if (deadNode.indexOf(".augur.net") === -1) {
-            this.nodes.splice(deadIndex || this.nodes.indexOf(deadNode), 1);
+        if (deadNode) {
+            if (this.debug && (deadNode.indexOf("127.0.0.1") === -1)) {
+                log("[ethrpc] request to", deadNode, "failed:", err);
+            }
+            if (deadNode.indexOf(".augur.net") === -1 && this.nodes.length > 1) {
+                this.nodes.splice(deadIndex || this.nodes.indexOf(deadNode), 1);
+            }
         }
     },
 
@@ -246,6 +248,12 @@ module.exports = {
                     if (str) self.parse(str, returns, callback);
                 });
             });
+            req.on("socket", function (socket) {
+                socket.setTimeout(self.TX_POLL_INTERVAL);
+                socket.on("timeout", function () {
+                    req.abort();
+                });
+            });
             req.on("error", function (err) {
                 self.exciseNode(err.code, rpcUrl);
                 callback();
@@ -267,6 +275,10 @@ module.exports = {
                 }
             };
             req.onerror = function (err) {
+                self.exciseNode(err, rpcUrl);
+                callback();
+            };
+            req.ontimeout = function (err) {
                 self.exciseNode(err, rpcUrl);
                 callback();
             };
@@ -574,16 +586,36 @@ module.exports = {
 
     // Ethereum node status checks
 
-    listening: function () {
+    listening: function (f) {
         try {
-            return !!this.net("listening");
+            if (!this.nodes || !this.nodes.length ||
+                (this.nodes.length === 1 && !this.nodes[0].length))
+            {
+                throw new Error();
+            }
+            if (f && f.constructor === Function) {
+                this.net("listening", [], function (res) {
+                    f(!!res);
+                });
+            } else {
+                return !!this.net("listening");
+            }
         } catch (e) {
-            return false;
+            if (f && f.constructor === Function) {
+                f(false);
+            } else {
+                return false;
+            }
         }
     },
 
     unlocked: function (account) {
         try {
+            if (!this.nodes || !this.nodes.length ||
+                (this.nodes.length === 1 && !this.nodes[0].length))
+            {
+                throw new Error();
+            }
             if (this.sign(account || this.coinbase(), "1010101").error) {
                 return false;
             }
@@ -775,13 +807,14 @@ module.exports = {
                         (response && response.constructor === String &&
                         response.slice(0,2) === "0x"))
                     {
-                        var response_number = abi.bignum(response);
-                        if (response_number) {
-                            response_number = response_number.toFixed();
-                            if (errors[tx.method] && errors[tx.method][response_number]) {
+                        var responseNumber = abi.bignum(response);
+                        if (responseNumber) {
+                            console.log("response:", response);
+                            responseNumber = responseNumber.toFixed();
+                            if (errors[tx.method] && errors[tx.method][responseNumber]) {
                                 response = {
-                                    error: response_number,
-                                    message: errors[tx.method][response_number]
+                                    error: responseNumber,
+                                    message: errors[tx.method][responseNumber]
                                 };
                             }
                         }
