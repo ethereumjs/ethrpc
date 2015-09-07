@@ -796,6 +796,8 @@ module.exports = {
                 for (var i = 0, len = response.length; i < len; ++i) {
                     response[i] = this.errorCodes(tx.method, response[i]);
                 }
+            } else if (response.name && response.message && response.stack) {
+                response.error = response.name;
             } else if (!response.error) {
                 if (errors[response]) {
                     response = {
@@ -828,16 +830,14 @@ module.exports = {
         var tx = abi.copy(itx);
         if (callback) {
             this.invoke(tx, function (res) {
-                callback(this.encodeResult(
-                    this.errorCodes(tx, res),
-                    itx.returns
-                ));
+                res = this.errorCodes(tx, res);
+                if (res.error) return callback(res);
+                callback(this.encodeResult(res, itx.returns));
             }.bind(this));
         } else {
-            return this.encodeResult(
-                this.errorCodes(tx, this.invoke(tx)),
-                itx.returns
-            );
+            var res = this.errorCodes(tx, this.invoke(tx));
+            if (res.error) return res;
+            return this.encodeResult(res, itx.returns);
         }
     },
 
