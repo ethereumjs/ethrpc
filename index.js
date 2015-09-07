@@ -831,13 +831,19 @@ module.exports = {
         if (callback) {
             this.invoke(tx, function (res) {
                 res = this.errorCodes(tx, res);
-                if (res.error) return callback(res);
-                callback(this.encodeResult(res, itx.returns));
+                if (res) {
+                    if (res.error) return callback(res);
+                    return callback(this.encodeResult(res, itx.returns));
+                }
+                callback(errors.NO_RESPONSE);
             }.bind(this));
         } else {
             var res = this.errorCodes(tx, this.invoke(tx));
-            if (res.error) return res;
-            return this.encodeResult(res, itx.returns);
+            if (res) {
+                if (res.error) return res;
+                return this.encodeResult(res, itx.returns);
+            }
+            return errors.NO_RESPONSE;
         }
     },
 

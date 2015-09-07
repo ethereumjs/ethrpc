@@ -60,6 +60,10 @@
         "-3": "not enough money",
         "-4": "bad nonce/hash"
     },
+    "NO_RESPONSE": {
+        "error": 408,
+        "message": "no response"
+    },
     "TRANSACTION_FAILED": {
         "error": 500,
         "message": "transaction failed"
