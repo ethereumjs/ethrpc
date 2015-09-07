@@ -107,6 +107,13 @@ var log = console.log;
 
 BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
 
+var NODES = [
+    "http://eth3.augur.net",
+    "http://eth1.augur.net",
+    "http://eth4.augur.net",
+    "http://eth5.augur.net"
+];
+
 module.exports = {
 
     debug: false,
@@ -123,12 +130,7 @@ module.exports = {
 
     ETHER: new BigNumber(10).toPower(18),
 
-    nodes: [
-        "http://eth3.augur.net",
-        "http://eth1.augur.net",
-        "http://eth4.augur.net",
-        "http://eth5.augur.net"
-    ],
+    nodes: NODES,
 
     requests: 1,
 
@@ -390,6 +392,7 @@ module.exports = {
                 return errors.ETHEREUM_NOT_FOUND;
             }
         }
+        nodes = this.nodes.slice();
 
         // parse batched commands and strip "returns" fields
         if (command.constructor === Array) {
@@ -406,31 +409,31 @@ module.exports = {
         if (callback && callback.constructor === Function) {
             self = this;
             loop = (command.method === "eth_call") ? async.each : async.eachSeries;
-            nodes = this.nodes.slice();
             loop(nodes, function (node, nextNode) {
                 self.post(node, JSON.stringify(command), returns, function (res) {
                     if (node === nodes[nodes.length - 1]) {
-                        return nextNode(res);
+                        nextNode(res);
+                    } else if (res !== undefined && res !== null && !res.error) {
+                        nextNode(res);
+                    } else {
+                        nextNode();
                     }
-                    if (res !== undefined && res !== null && !res.error) {
-                        return nextNode(res);
-                    }
-                    nextNode();
                 });
             }, callback);
 
         // use synchronous http if no callback provided
         } else {
             if (!NODE_JS) command = JSON.stringify(command);
-            num_nodes = this.nodes.length;
+            num_nodes = nodes.length;
             for (j = 0; j < num_nodes; ++j) {
                 try {
-                    result = this.postSync(this.nodes[j], command, returns);
+                    result = this.postSync(nodes[j], command, returns);
                 } catch (e) {
-                    this.exciseNode(e, this.nodes[j], j--);
+                    this.exciseNode(e, nodes[j], j);
                 }
-                if (result && result !== "0x") return result;
+                if (result) return result;
             }
+            return null;
         }
     },
 
@@ -454,6 +457,11 @@ module.exports = {
             payload.params = [];
         }
         return payload;
+    },
+
+    // reset to default Ethereum nodes
+    reset: function () {
+        this.nodes = NODES;
     },
 
     /******************************
@@ -629,23 +637,22 @@ module.exports = {
     // execute functions on contracts on the blockchain
     call: function (tx, f) {
         tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? abi.prefix_hex(tx.gas.toString(16)) : this.DEFAULT_GAS;
+        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
         return this.broadcast(this.marshal("call", tx), f);
     },
 
     sendTx: function (tx, f) {
         tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? abi.prefix_hex(tx.gas.toString(16)) : this.DEFAULT_GAS;
+        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
         return this.broadcast(this.marshal("sendTransaction", tx), f);
     },
     sendTransaction: function (tx, f) {
         tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? abi.prefix_hex(tx.gas.toString(16)) : this.DEFAULT_GAS;
+        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
         return this.broadcast(this.marshal("sendTransaction", tx), f);
     },
 
-    // IN: RLP(tx.signed(privateKey))
-    // OUT: txhash
+    // sendRawTx(RLP(tx.signed(privateKey))) -> txhash
     sendRawTx: function (rawTx, f) {
         return this.broadcast(this.marshal("sendRawTransaction", rawTx), f);
     },
@@ -754,9 +761,11 @@ module.exports = {
                 data_abi = abi.encode(tx);
                 if (data_abi) {
                     packaged = {
-                        from: tx.from || this.eth("coinbase"),
+                        from: tx.from || this.coinbase(),
                         to: tx.to,
-                        data: data_abi
+                        data: data_abi,
+                        gas: tx.gas || this.DEFAULT_GAS,
+                        gasPrice: tx.gasPrice || this.gasPrice()
                     };
                     if (tx.value) packaged.value = tx.value;
                     if (tx.returns) packaged.returns = tx.returns;

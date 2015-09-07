@@ -29,10 +29,9 @@ describe("marshal", function () {
 
     var test = function (t) {
         it(t.prefix + t.command + " -> " + JSON.stringify(t.expected), function () {
-            assert.deepEqual(
-                rpc.marshal(t.command, t.params || [], t.prefix),
-                t.expected
-            );
+            var actual = rpc.marshal(t.command, t.params || [], t.prefix);
+            actual.id = t.expected.id;
+            assert.deepEqual(actual, t.expected);
         });
     };
 
@@ -268,7 +267,7 @@ describe("listening", function () {
         it(t.node + " -> " + t.listening, function (done) {
             this.timeout(TIMEOUT);
             rpc.nodes = [t.node];
-            // assert.strictEqual(rpc.listening(), t.listening);
+            assert.strictEqual(rpc.listening(), t.listening);
             rpc.listening(function (listening) {
                 assert.strictEqual(listening, t.listening);
                 done();
@@ -543,63 +542,29 @@ describe("multicast", function () {
 
 });
 
-describe("Backup nodes", function () {
+describe("reset", function () {
 
-    it("[sync] graceful failover to eth1.augur.net", function () {
-        this.timeout(TIMEOUT);
-        rpc.nodes = ["http://lol.lol.lol", "http://eth1.augur.net"];
-        assert.strictEqual(rpc.nodes.length, 2);
-        assert.strictEqual(rpc.version(), "7");
+    var default_nodes = [
+        "http://eth3.augur.net",
+        "http://eth1.augur.net",
+        "http://eth4.augur.net",
+        "http://eth5.augur.net"
+    ];
+
+    it("revert to default node list", function () {
+        rpc.nodes = ["http://eth0.augur.net"];
+        assert.isArray(rpc.nodes);
         assert.strictEqual(rpc.nodes.length, 1);
-        assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
-    });
-
-    it("[sync] graceful failover to eth[1,3,4].augur.net", function () {
-        this.timeout(TIMEOUT);
-        rpc.nodes = [
-            "http://lol.lol.lol",
-            "http://eth1.augur.net",
-            "http://eth3.augur.net",
-            "http://eth4.augur.net"
-        ];
+        assert.strictEqual(rpc.nodes[0], "http://eth0.augur.net");
+        rpc.reset();
+        assert.isArray(rpc.nodes);
         assert.strictEqual(rpc.nodes.length, 4);
-        assert.strictEqual(rpc.version(), "7");
-        assert.strictEqual(rpc.nodes.length, 3);
-        assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
-        assert.strictEqual(rpc.nodes[1], "http://eth3.augur.net");
-        assert.strictEqual(rpc.nodes[2], "http://eth4.augur.net");
-    });
-
-    it("[async] graceful failover to eth1.augur.net", function (done) {
-        this.timeout(TIMEOUT);
-        rpc.nodes = ["http://lol.lol.lol", "http://eth1.augur.net"];
-        assert.strictEqual(rpc.nodes.length, 2);
-        rpc.version(function (version) {
-            assert.strictEqual(version, "7");
-            assert.strictEqual(rpc.nodes.length, 1);
-            assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
-            done();
-        });
-    });
-
-    it("[async] graceful failover to eth[1,3,4].augur.net", function (done) {
-        this.timeout(TIMEOUT);
-        rpc.nodes = [
-            "http://lol.lol.lol",
-            "http://eth1.augur.net",
-            "http://eth3.augur.net",
-            "http://eth4.augur.net"
-        ];
+        assert.deepEqual(rpc.nodes, default_nodes);
+        rpc.reset();
+        assert.isArray(rpc.nodes);
         assert.strictEqual(rpc.nodes.length, 4);
-        rpc.version(function (version) {
-            assert.strictEqual(version, "7");
-            assert.strictEqual(rpc.nodes.length, 3);
-            assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
-            assert.strictEqual(rpc.nodes[1], "http://eth3.augur.net");
-            assert.strictEqual(rpc.nodes[2], "http://eth4.augur.net");
-            done();
-        });
-    });
+        assert.deepEqual(rpc.nodes, default_nodes);
+    });  
 
 });
 
@@ -660,25 +625,6 @@ describe("Ethereum bindings", function () {
 
 describe("Contract methods", function () {
 
-    var cashFaucet = {
-        to: contracts.faucets,
-        from: COINBASE,
-        method: "cashFaucet",
-        send: false
-    };
-
-    it("cashFaucet -> raw", function () {
-        assert.include([
-            "0x01",
-            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-        ], rpc.invoke(cashFaucet));
-    });
-
-    it("cashFaucet -> number", function () {
-        cashFaucet.returns = "number";
-        assert.include(["1", "-1"], rpc.invoke(cashFaucet));
-    });
-
     var test = function (tx, expected, apply) {
         tx.send = false;
         if (tx && expected) {
@@ -703,6 +649,96 @@ describe("Contract methods", function () {
         }
     };
 
+    var coinbase = rpc.coinbase();
+    var encodedParams = "0x7a66d7ca"+
+        "00000000000000000000000000000000000000000000000000000000000f69b5";
+    var returns = "number";
+
+    var cashFaucet = {
+        to: contracts.faucets,
+        from: COINBASE,
+        method: "cashFaucet",
+        send: false
+    };
+
+    it("[sync] invoke == call == broadcast", function () {
+        this.timeout(TIMEOUT);
+        var invokeResult = rpc.invoke({
+            to: contracts.branches,
+            from: coinbase,
+            method: "getVotePeriod",
+            signature: "i",
+            returns: returns,
+            params: "0x0f69b5"
+        });
+        var callResult = rpc.call({
+            from: coinbase,
+            to: contracts.branches,
+            data: encodedParams,
+            returns: returns
+        });
+        var broadcastResult = rpc.broadcast({
+            id: ++requests,
+            jsonrpc: "2.0",
+            method: "eth_call",
+            params: [{
+                from: coinbase,
+                to: contracts.branches,
+                data: encodedParams,
+                returns: returns
+            }]
+        });
+        assert.strictEqual(invokeResult, callResult);
+        assert.strictEqual(invokeResult, broadcastResult);
+    });
+
+    it("[async] invoke == call == broadcast", function (done) {
+        this.timeout(TIMEOUT);
+        rpc.invoke({
+            to: contracts.branches,
+            from: coinbase,
+            method: "getVotePeriod",
+            signature: "i",
+            returns: returns,
+            params: "0x0f69b5"
+        }, function (invokeResult) {
+            rpc.call({
+                from: coinbase,
+                to: contracts.branches,
+                data: encodedParams,
+                returns: returns
+            }, function (callResult) {
+                rpc.broadcast({
+                    id: ++requests,
+                    jsonrpc: "2.0",
+                    method: "eth_call",
+                    params: [{
+                        from: coinbase,
+                        to: contracts.branches,
+                        data: encodedParams,
+                        returns: returns
+                    }]
+                }, function (broadcastResult) {
+                    assert.strictEqual(invokeResult, callResult);
+                    assert.strictEqual(invokeResult, broadcastResult);
+                    done();
+                }); // broadcast
+            }); // call
+        }); // invoke
+    });
+
+    it("cashFaucet -> raw", function () {
+        assert.include([
+            "0x01",
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ], rpc.invoke(cashFaucet));
+    });
+
+    it("cashFaucet -> number", function () {
+        cashFaucet.returns = "number";
+        assert.include(["1", "-1"], rpc.invoke(cashFaucet));
+    });
+
     it("getMarkets(1010101) -> hash[]", function () {
         test({
             to: contracts.branches,
@@ -713,6 +749,86 @@ describe("Contract methods", function () {
             params: 1010101
         }, ["0xe8", "0xe8"], function (a) {
             a.slice(1, 2);
+        });
+    });
+
+});
+
+describe("Backup nodes", function () {
+
+    it("[sync] graceful failover to eth1.augur.net", function () {
+        this.timeout(TIMEOUT);
+        rpc.nodes = ["http://lol.lol.lol", "http://eth1.augur.net"];
+        assert.strictEqual(rpc.nodes.length, 2);
+        assert.strictEqual(rpc.version(), "7");
+        assert.strictEqual(rpc.nodes.length, 1);
+        assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
+    });
+
+    it("[sync] graceful failover to eth[1,3,4].augur.net", function () {
+        this.timeout(TIMEOUT);
+        rpc.nodes = [
+            "http://lol.lol.lol",
+            "http://eth1.augur.net",
+            "http://eth3.augur.net",
+            "http://eth4.augur.net"
+        ];
+        assert.strictEqual(rpc.nodes.length, 4);
+        assert.strictEqual(rpc.version(), "7");
+        assert.strictEqual(rpc.nodes.length, 3);
+        assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
+        assert.strictEqual(rpc.nodes[1], "http://eth3.augur.net");
+        assert.strictEqual(rpc.nodes[2], "http://eth4.augur.net");
+    });
+
+    it("[async] graceful failover to eth1.augur.net", function (done) {
+        this.timeout(TIMEOUT);
+        rpc.nodes = ["http://lol.lol.lol", "http://eth1.augur.net"];
+        assert.strictEqual(rpc.nodes.length, 2);
+        rpc.version(function (version) {
+            assert.strictEqual(version, "7");
+            assert.strictEqual(rpc.nodes.length, 1);
+            assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
+            done();
+        });
+    });
+
+    it("[async] graceful failover to eth[1,3,4].augur.net", function (done) {
+        this.timeout(TIMEOUT);
+        rpc.nodes = [
+            "http://lol.lol.lol",
+            "http://eth1.augur.net",
+            "http://eth3.augur.net",
+            "http://eth4.augur.net"
+        ];
+        assert.strictEqual(rpc.nodes.length, 4);
+        rpc.version(function (version) {
+            assert.strictEqual(version, "7");
+            assert.strictEqual(rpc.nodes.length, 3);
+            assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
+            assert.strictEqual(rpc.nodes[1], "http://eth3.augur.net");
+            assert.strictEqual(rpc.nodes[2], "http://eth4.augur.net");
+            done();
+        });
+    });
+
+    it("[sync] all nodes unresponsive", function () {
+        rpc.nodes = ["http://lol.lol.lol", "http://not.a.node"];
+        assert.strictEqual(rpc.nodes.length, 2);
+        assert.isNull(rpc.version());
+        assert.strictEqual(rpc.nodes.length, 1);
+        assert.strictEqual(rpc.nodes[0], "http://not.a.node");
+    });
+
+    it("[async] all nodes unresponsive", function (done) {
+        this.timeout(TIMEOUT);
+        rpc.nodes = ["http://lol.lol.lol", "http://not.a.node"];
+        assert.strictEqual(rpc.nodes.length, 2);
+        rpc.version(function (version) {
+            assert.strictEqual(rpc.nodes.length, 1);
+            assert.strictEqual(rpc.nodes[0], "http://not.a.node");
+            assert.isNull(version);
+            done();
         });
     });
 
