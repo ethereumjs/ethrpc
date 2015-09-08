@@ -584,6 +584,18 @@ module.exports = {
         return this.broadcast(this.marshal("clientVersion", [], "web3_"), f);
     },
 
+    compileSerpent: function (code, f) {
+        return this.broadcast(this.marshal("compileSerpent", code), f);
+    },
+
+    compileSolidity: function (code, f) {
+        return this.broadcast(this.marshal("compileSolidity", code), f);
+    },
+
+    compileLLL: function (code, f) {
+        return this.broadcast(this.marshal("compileLLL", code), f);
+    },
+
     // publish a new contract to the blockchain (from the coinbase account)
     publish: function (compiled, f) {
         return this.sendTx({ from: this.coinbase(), data: compiled }, f);
