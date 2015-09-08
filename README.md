@@ -5,7 +5,7 @@ ethrpc
 [![Coverage Status](https://coveralls.io/repos/AugurProject/ethrpc/badge.svg?branch=master&service=github)](https://coveralls.io/github/AugurProject/ethrpc?branch=master)
 [![npm version](https://badge.fury.io/js/ethrpc.svg)](http://badge.fury.io/js/ethrpc)
 
-JSON RPC for Ethereum.
+JavaScript JSON RPC bindings for Ethereum.
 
 Usage
 -----
@@ -16,9 +16,9 @@ $ npm install ethrpc
 ```
 After installing, to use it with Node, just require it:
 ```javascript
-var ethrpc = require("ethrpc");
+var rpc = require("ethrpc");
 ```
-A minified, browserified file `dist/ethrpc.min.js` is included for use in the browser.  Including this file simply attaches the `ethrpc` object to `window`:
+A minified, browserified file `dist/ethrpc.min.js` is included for use in the browser.  Including this file simply attaches an `ethrpc` object to `window`:
 ```html
 <script src="dist/ethrpc.min.js" type="text/javascript"></script>
 ```
@@ -28,16 +28,16 @@ A minified, browserified file `dist/ethrpc.min.js` is included for use in the br
 The `raw` method allows you to send in commands that won't be parsed/mangled by ethrpc.  (Similar to sending RPC requests with cURL.)
 
 ```
-ethrpc.raw("net_peerCount");
+rpc.raw("net_peerCount");
 "0x10"
 
-ethrpc.eth("gasPrice");
+rpc.eth("gasPrice");
 "0x015f90"
 ```
 Many commonly used functions have named wrappers.  For example, `blockNumber` fetches the current block number:
 
 ```javascript
-ethrpc.blockNumber();
+rpc.blockNumber();
 217153
 ```
 
@@ -46,7 +46,7 @@ ethrpc.blockNumber();
 `publish` broadcasts (uploads) a compiled contract to the network, and returns the contract's address:
 
 ```javascript
-var address = ethrpc.publish("0x603980600b6000396044567c01000000000000000000000000000000000000000000000000000000006000350463643ceff9811415603757600a60405260206040f35b505b6000f3");
+var address = rpc.publish("0x603980600b6000396044567c01000000000000000000000000000000000000000000000000000000006000350463643ceff9811415603757600a60405260206040f35b505b6000f3");
 // address:
 "0xf4549459f9ef8c8898c054a7fc37c286831c2ced"
 ```
@@ -54,7 +54,7 @@ var address = ethrpc.publish("0x603980600b6000396044567c010000000000000000000000
 `read` downloads code from a contract already on the Ethereum network:
 
 ```javascript
-var evm = ethrpc.read("0x5204f18c652d1c31c6a5968cb65e011915285a50");
+var evm = rpc.read("0x5204f18c652d1c31c6a5968cb65e011915285a50");
 // evm:
 "0x7c010000000000000000000000000000000000000000000000000000000060003504636ffa1caa81141560415760043560405260026040510260605260206060f35b50"
 ```
@@ -64,7 +64,7 @@ var evm = ethrpc.read("0x5204f18c652d1c31c6a5968cb65e011915285a50");
 The `invoke` method executes a method in a contract already on the network.  It can broadcast transactions to the network and/or capture return values by calling the contract method(s) locally.
 ```javascript
 // The method called here doubles its input argument.
-ethrpc.invoke({
+rpc.invoke({
    to: "0x5204f18c652d1c31c6a5968cb65e011915285a50",
    method: "double",
    signature: "i",

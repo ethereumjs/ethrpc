@@ -206,12 +206,16 @@ module.exports = {
     },
 
     exciseNode: function (err, deadNode, deadIndex) {
-        if (deadNode) {
-            if (this.debug && (deadNode.indexOf("127.0.0.1") === -1)) {
+        if (deadNode || deadIndex) {
+            if (this.debug) {
                 log("[ethrpc] request to", deadNode, "failed:", err);
             }
-            if (deadNode.indexOf(".augur.net") === -1 && this.nodes.length > 1) {
-                this.nodes.splice(deadIndex || this.nodes.indexOf(deadNode), 1);
+            if (deadIndex === null || deadIndex === undefined) {
+                deadIndex = this.nodes.indexOf(deadNode);
+            }
+            if (deadIndex > -1) {
+                this.nodes.splice(deadIndex, 1);
+                if (!this.nodes.length) this.reset();
             }
         }
     },
@@ -246,9 +250,15 @@ module.exports = {
             }, function (err, response, body) {
                 if (err) {
                     self.exciseNode(err.code, rpcUrl);
-                    callback(errors.NO_RESPONSE);
+                    err.error = errors.NO_RESPONSE.error;
+                    err.message = errors.NO_RESPONSE.message;
+                    callback(err);
                 } else if (response.statusCode === 200) {
                     self.parse(body, returns, callback);
+                } else {
+                    var ret = errors.NO_RESPONSE;
+                    if (body) ret.body = body;
+                    callback(ret);
                 }
             });
         } else {
@@ -260,16 +270,9 @@ module.exports = {
             req.onreadystatechange = function () {
                 if (req.readyState === 4) {
                     self.parse(req.responseText, returns, callback);
-                } else {
-                    self.exciseNode(req.readyState, rpcUrl);
-                    callback();
                 }
             };
-            req.onerror = function (err) {
-                self.exciseNode(err, rpcUrl);
-                callback();
-            };
-            req.ontimeout = function (err) {
+            req.onerror = req.ontimeout = function (err) {
                 self.exciseNode(err, rpcUrl);
                 callback();
             };
@@ -281,7 +284,7 @@ module.exports = {
 
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
-        var i, j, self, loop, nodes, num_nodes, num_commands, returns, result;
+        var self, nodes, num_commands, returns, result, completed;
 
         // make sure the ethereum node list isn't empty
         if (!this.nodes || !this.nodes.length) {
@@ -297,7 +300,7 @@ module.exports = {
         if (command.constructor === Array) {
             num_commands = command.length;
             returns = new Array(num_commands);
-            for (i = 0; i < num_commands; ++i) {
+            for (var i = 0; i < num_commands; ++i) {
                 returns[i] = this.stripReturns(command[i]);
             }
         } else {
@@ -307,25 +310,35 @@ module.exports = {
         // asynchronous request if callback exists
         if (callback && callback.constructor === Function) {
             self = this;
-            loop = (command.method === "eth_call") ? async.each : async.eachSeries;
-            loop(nodes, function (node, nextNode) {
-                self.post(node, command, returns, function (res) {
-                    var response;
-                    if (self.debug) log(node + ":", res);
-                    if (node === nodes[nodes.length - 1] ||
-                        (res !== undefined && !res.error))
-                    {
-                        response = res;
+            async.eachSeries(nodes, function (node, nextNode) {
+                if (!completed) {
+                    if (self.debug) {
+                        log("nodes:", JSON.stringify(nodes));
+                        log("post", command.method, "to:", node);
                     }
-                    nextNode(response);
-                });
+                    self.post(node, command, returns, function (res) {
+                        if (self.debug) {
+                            if (res && res.constructor === BigNumber) {
+                                log(node, "response:", res.toFixed());
+                            } else {
+                                log(node, "response:", res);
+                            }
+                        }
+                        if (node === nodes[nodes.length - 1] ||
+                            (res !== undefined && !res.error && res !== "0x"))
+                        {
+                            completed = true;
+                            return nextNode(res);
+                        }
+                        nextNode();
+                    });
+                }
             }, callback);
 
         // use synchronous http if no callback provided
         } else {
             if (!NODE_JS) command = JSON.stringify(command);
-            num_nodes = nodes.length;
-            for (j = 0; j < num_nodes; ++j) {
+            for (var j = 0, len = nodes.length; j < len; ++j) {
                 try {
                     result = this.postSync(nodes[j], command, returns);
                 } catch (e) {

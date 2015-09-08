@@ -18,13 +18,19 @@ longjohn.empty_frame = "";
 
 rpc.bignumbers = false;
 
-var TIMEOUT = 60000;
+var TIMEOUT = 120000;
 var COINBASE = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
 var SHA3_INPUT = "boom!";
 var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
 var PROTOCOL_VERSION = "61";
 
 var requests = 0;
+var DEFAULT_NODES = [
+    "http://eth3.augur.net",
+    "http://eth1.augur.net",
+    "http://eth4.augur.net",
+    "http://eth5.augur.net"
+];
 
 describe("marshal", function () {
 
@@ -527,13 +533,6 @@ describe("multicast", function () {
 
 describe("reset", function () {
 
-    var default_nodes = [
-        "http://eth3.augur.net",
-        "http://eth1.augur.net",
-        "http://eth4.augur.net",
-        "http://eth5.augur.net"
-    ];
-
     it("revert to default node list", function () {
         rpc.nodes = ["http://eth0.augur.net"];
         assert.isArray(rpc.nodes);
@@ -542,11 +541,11 @@ describe("reset", function () {
         rpc.reset();
         assert.isArray(rpc.nodes);
         assert.strictEqual(rpc.nodes.length, 4);
-        assert.deepEqual(rpc.nodes, default_nodes);
+        assert.deepEqual(rpc.nodes, DEFAULT_NODES);
         rpc.reset();
         assert.isArray(rpc.nodes);
         assert.strictEqual(rpc.nodes.length, 4);
-        assert.deepEqual(rpc.nodes, default_nodes);
+        assert.deepEqual(rpc.nodes, DEFAULT_NODES);
     });  
 
 });
@@ -737,6 +736,85 @@ describe("Contract methods", function () {
 
 });
 
+describe("exciseNode", function () {
+
+    it("remove node 2", function () {
+        var nodes = DEFAULT_NODES.slice();
+        rpc.reset();
+        assert.strictEqual(rpc.nodes.length, 4);
+        assert.deepEqual(rpc.nodes, nodes);
+        rpc.exciseNode(null, nodes[2]);
+        nodes.splice(2, 1);
+        assert.strictEqual(rpc.nodes.length, 3);
+        assert.deepEqual(rpc.nodes, nodes);
+    });
+
+    it("remove node 1 by index", function () {
+        var nodes = DEFAULT_NODES.slice();
+        rpc.reset();
+        assert.strictEqual(rpc.nodes.length, 4);
+        assert.deepEqual(rpc.nodes, nodes);
+        rpc.exciseNode(null, null, 1);
+        nodes.splice(1, 1);
+        assert.strictEqual(rpc.nodes.length, 3);
+        assert.deepEqual(rpc.nodes, nodes);
+    });
+
+    it("remove nodes 1 and 3", function () {
+        var nodes = DEFAULT_NODES.slice();
+        rpc.reset();
+        assert.strictEqual(rpc.nodes.length, 4);
+        assert.deepEqual(rpc.nodes, nodes);
+        rpc.exciseNode(null, nodes[1]);
+        rpc.exciseNode(null, nodes[3]);
+        nodes.splice(3, 1);
+        nodes.splice(1, 1);
+        assert.strictEqual(rpc.nodes.length, 2);
+        assert.deepEqual(rpc.nodes, nodes);
+    });
+
+    it("remove nodes 1 and 3 by index", function () {
+        var nodes = DEFAULT_NODES.slice();
+        rpc.reset();
+        assert.strictEqual(rpc.nodes.length, 4);
+        assert.deepEqual(rpc.nodes, nodes);
+        rpc.exciseNode(null, null, 3);
+        rpc.exciseNode(null, null, 1);
+        nodes.splice(3, 1);
+        nodes.splice(1, 1);
+        assert.strictEqual(rpc.nodes.length, 2);
+        assert.deepEqual(rpc.nodes, nodes);
+    });
+
+    it("remove nodes 1, 2 and 3", function () {
+        var nodes = DEFAULT_NODES.slice();
+        rpc.reset();
+        assert.strictEqual(rpc.nodes.length, 4);
+        assert.deepEqual(rpc.nodes, nodes);
+        rpc.exciseNode(null, nodes[1]);
+        rpc.exciseNode(null, nodes[2]);
+        rpc.exciseNode(null, nodes[3]);
+        nodes.splice(3, 1);
+        nodes.splice(2, 1);
+        nodes.splice(1, 1);
+        assert.strictEqual(rpc.nodes.length, 1);
+        assert.deepEqual(rpc.nodes, nodes);
+    });
+
+    it("reset if all nodes removed", function () {
+        rpc.reset();
+        assert.strictEqual(rpc.nodes.length, 4);
+        assert.deepEqual(rpc.nodes, DEFAULT_NODES);
+        rpc.exciseNode(null, DEFAULT_NODES[0]);
+        rpc.exciseNode(null, DEFAULT_NODES[1]);
+        rpc.exciseNode(null, DEFAULT_NODES[2]);
+        rpc.exciseNode(null, DEFAULT_NODES[3]);
+        assert.strictEqual(rpc.nodes.length, 4);
+        assert.deepEqual(rpc.nodes, DEFAULT_NODES);
+    });
+
+});
+
 describe("Backup nodes", function () {
 
     it("[sync] graceful failover to eth1.augur.net", function () {
@@ -809,8 +887,8 @@ describe("Backup nodes", function () {
         assert.strictEqual(rpc.nodes.length, 2);
         rpc.version(function (version) {
             assert.strictEqual(version.error, errors.NO_RESPONSE.error);
-            assert.strictEqual(rpc.nodes.length, 1);
-            assert.strictEqual(rpc.nodes[0], "http://not.a.node");
+            assert.strictEqual(rpc.nodes.length, 4);
+            assert.deepEqual(rpc.nodes, DEFAULT_NODES);
             done();
         });
     });
