@@ -603,6 +603,16 @@ describe("Ethereum bindings", function () {
         assert(parseInt(rpc.peerCount()) >= 0);
     });
 
+    it("hashrate", function () {
+        this.timeout(TIMEOUT);
+        assert(parseInt(rpc.hashrate()) >= 0);
+    });
+
+    it("mining", function () {
+        this.timeout(TIMEOUT);
+        assert.isTrue(rpc.mining());
+    });
+
     it("clientVersion", function () {
         this.timeout(TIMEOUT);
         var clientVersion = rpc.clientVersion();
