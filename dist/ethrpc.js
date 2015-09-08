@@ -673,6 +673,10 @@ module.exports = {
         return this.broadcast(this.marshal("getTransactionReceipt", txhash), f);
     },
 
+    clientVersion: function (f) {
+        return this.broadcast(this.marshal("clientVersion", [], "web3_"), f);
+    },
+
     // publish a new contract to the blockchain (from the coinbase account)
     publish: function (compiled, f) {
         return this.sendTx({ from: this.coinbase(), data: compiled }, f);

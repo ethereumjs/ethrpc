@@ -603,6 +603,13 @@ describe("Ethereum bindings", function () {
         assert(parseInt(rpc.peerCount()) >= 0);
     });
 
+    it("clientVersion", function () {
+        this.timeout(TIMEOUT);
+        var clientVersion = rpc.clientVersion();
+        assert.isString(clientVersion);
+        assert.strictEqual(clientVersion.split('/')[0], "Geth");
+    });
+
 });
 
 describe("Contract methods", function () {
