@@ -64,6 +64,10 @@
         "error": 408,
         "message": "no response"
     },
+    "INVALID_JSON": {
+        "error": 409,
+        "message": "could not parse response from Ethereum node"
+    },
     "TRANSACTION_FAILED": {
         "error": 500,
         "message": "transaction failed"

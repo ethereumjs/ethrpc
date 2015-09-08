@@ -8,6 +8,7 @@
 var assert = require("chai").assert;
 var longjohn = require("longjohn");
 var contracts = require("augur-contracts")['7'];
+var errors = require("../errors");
 var rpc = require("../");
 
 require('it-each')({ testPerIteration: true });
@@ -147,7 +148,7 @@ describe("broadcast", function () {
 describe("post", function () {
 
     var test = function (t) {
-        it(t.command + " -> " + t.expected, function (done) {
+        it(JSON.stringify(t.command) + " -> " + t.expected, function (done) {
             this.timeout(TIMEOUT);
             rpc.post(t.node, t.command, t.returns, function (res) {
                 if (res.error) {
@@ -161,43 +162,43 @@ describe("post", function () {
     };
 
     test({
-        node: "http://eth1.augur.net:8545",
-        command: JSON.stringify({
+        node: "http://eth1.augur.net",
+        command: {
             id: ++requests,
             jsonrpc: "2.0",
             method: "eth_coinbase",
             params: []
-        }),
+        },
         expected: COINBASE
     });
     test({
-        node: "http://eth1.augur.net:8545",
-        command: JSON.stringify({
+        node: "http://eth1.augur.net",
+        command: {
             id: ++requests,
             jsonrpc: "2.0",
             method: "web3_sha3",
             params: [SHA3_INPUT]
-        }),
+        },
         expected: SHA3_DIGEST
     });
     test({
-        node: "http://eth1.augur.net:8545",
-        command: JSON.stringify({
+        node: "http://eth1.augur.net",
+        command: {
             id: ++requests,
             jsonrpc: "2.0",
             method: "net_listening",
             params: []
-        }),
+        },
         expected: true
     });
     test({
-        node: "http://eth1.augur.net:8545",
-        command: JSON.stringify({
+        node: "http://eth1.augur.net",
+        command: {
             id: ++requests,
             jsonrpc: "2.0",
             method: "eth_protocolVersion",
             params: []
-        }),
+        },
         expected: PROTOCOL_VERSION
     });
 
@@ -219,7 +220,7 @@ describe("postSync", function () {
     };
 
     test({
-        node: "http://eth1.augur.net:8545",
+        node: "http://eth1.augur.net",
         command: {
             id: ++requests,
             jsonrpc: "2.0",
@@ -229,7 +230,7 @@ describe("postSync", function () {
         expected: COINBASE
     });
     test({
-        node: "http://eth1.augur.net:8545",
+        node: "http://eth1.augur.net",
         command: {
             id: ++requests,
             jsonrpc: "2.0",
@@ -239,7 +240,7 @@ describe("postSync", function () {
         expected: SHA3_DIGEST
     });
     test({
-        node: "http://eth1.augur.net:8545",
+        node: "http://eth1.augur.net",
         command: {
             id: ++requests,
             jsonrpc: "2.0",
@@ -249,7 +250,7 @@ describe("postSync", function () {
         expected: true
     });
     test({
-        node: "http://eth1.augur.net:8545",
+        node: "http://eth1.augur.net",
         command: {
             id: ++requests,
             jsonrpc: "2.0",
@@ -446,40 +447,27 @@ describe("batch", function () {
         assert(parseInt(res[1]) === 1 || parseInt(res[1]) === -1);
     };
 
-    var txList = [
-        {
-            to: contracts.faucets,
-            method: "cashFaucet",
-            returns: "number",
-            send: false
-        },
-        {
-            to: contracts.faucets,
-            method: "reputationFaucet",
-            signature: "i",
-            params: "0xf69b5",
-            returns: "number",
-            send: false
-        }
-    ];
+    var txList = [{
+        to: contracts.faucets,
+        method: "cashFaucet",
+        returns: "number",
+        send: false
+    }, {
+        to: contracts.faucets,
+        method: "reputationFaucet",
+        signature: "i",
+        params: "0xf69b5",
+        returns: "number",
+        send: false
+    }];
 
     it("sync: return and match separate calls", function () {
-        rpc.nodes = [
-            "http://eth1.augur.net:8545",
-            "http://eth3.augur.net:8545",
-            "http://eth4.augur.net:8545",
-            "http://eth5.augur.net:8545"
-        ];
+        rpc.reset();
         test(rpc.batch(txList));
     });
 
     it("async: callback on whole array", function (done) {
-        rpc.nodes = [
-            "http://eth1.augur.net:8545",
-            "http://eth3.augur.net:8545",
-            "http://eth4.augur.net:8545",
-            "http://eth5.augur.net:8545"
-        ];
+        rpc.reset();
         rpc.batch(txList, function (r) {
             test(r); done();
         });
@@ -489,19 +477,14 @@ describe("batch", function () {
 
 describe("multicast", function () {
 
-    rpc.nodes = [
-        "http://eth1.augur.net:8545",
-        "http://eth3.augur.net:8545",
-        "http://eth4.augur.net:8545",
-        "http://eth5.augur.net:8545"
-    ];
-
     var command = {
         id: ++requests,
         jsonrpc: "2.0",
         method: "eth_protocolVersion",
         params: []
     };
+
+    rpc.reset();
 
     it.each(
         rpc.nodes,
@@ -520,7 +503,7 @@ describe("multicast", function () {
         ["element"],
         function (element, next) {
             this.timeout(TIMEOUT);
-            rpc.post(element, JSON.stringify(command), null, function (response) {
+            rpc.post(element, command, null, function (response) {
                 assert.strictEqual(response, PROTOCOL_VERSION);
                 next();
             });
@@ -815,7 +798,7 @@ describe("Backup nodes", function () {
     it("[sync] all nodes unresponsive", function () {
         rpc.nodes = ["http://lol.lol.lol", "http://not.a.node"];
         assert.strictEqual(rpc.nodes.length, 2);
-        assert.isNull(rpc.version());
+        assert.strictEqual(rpc.version().error, errors.NO_RESPONSE.error);
         assert.strictEqual(rpc.nodes.length, 1);
         assert.strictEqual(rpc.nodes[0], "http://not.a.node");
     });
@@ -825,9 +808,9 @@ describe("Backup nodes", function () {
         rpc.nodes = ["http://lol.lol.lol", "http://not.a.node"];
         assert.strictEqual(rpc.nodes.length, 2);
         rpc.version(function (version) {
+            assert.strictEqual(version.error, errors.NO_RESPONSE.error);
             assert.strictEqual(rpc.nodes.length, 1);
             assert.strictEqual(rpc.nodes[0], "http://not.a.node");
-            assert.isNull(version);
             done();
         });
     });

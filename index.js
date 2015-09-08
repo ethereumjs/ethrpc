@@ -7,11 +7,10 @@
 
 var NODE_JS = (typeof module !== "undefined") && process && !process.browser;
 
-var http = require("http");
-var url = require("url");
 var async = require("async");
 var BigNumber = require("bignumber.js");
-var request = (NODE_JS) ? require("sync-request") : null;
+var request = require("request");
+var syncRequest = (NODE_JS) ? require("sync-request") : null;
 var abi = require("augur-abi");
 var errors = require("./errors");
 var log = console.log;
@@ -41,7 +40,7 @@ module.exports = {
 
     ETHER: new BigNumber(10).toPower(18),
 
-    nodes: NODES,
+    nodes: NODES.slice(),
 
     requests: 1,
 
@@ -121,8 +120,10 @@ module.exports = {
     parse: function (response, returns, callback) {
         var results, len;
         try {
-            if (response !== undefined) {
+            if (response && typeof response === "string") {
                 response = JSON.parse(response);
+            }
+            if (response && typeof response === "object" && response !== null) {
                 if (response.error) {
                     response = {
                         error: response.error.code,
@@ -183,11 +184,13 @@ module.exports = {
                 }
             }
         } catch (e) {
-            if (callback) {
-                callback(e);
-            } else {
-                return e;
+            var results = e;
+            if (e && e.name === "SyntaxError") {
+                results = errors.INVALID_JSON;
+                results.response = response;
             }
+            if (callback) return callback(results);
+            return results;
         }
     },
 
@@ -216,9 +219,9 @@ module.exports = {
     postSync: function (rpcUrl, command, returns) {
         var req = null;
         if (NODE_JS) {
-            return this.parse(request('POST', rpcUrl, {
-                json: command
-            }).getBody().toString(), returns);
+            req = syncRequest('POST', rpcUrl, { json: command });
+            var response = req.getBody().toString();
+            return this.parse(response, returns);
         } else {
             if (window.XMLHttpRequest) {
                 req = new window.XMLHttpRequest();
@@ -233,36 +236,21 @@ module.exports = {
     },
 
     post: function (rpcUrl, command, returns, callback) {
-        var rpcObj, req, self = this;
+        var req, self = this;
         if (NODE_JS) {
-            rpcObj = url.parse(rpcUrl);
-            req = http.request({
-                host: rpcObj.hostname,
-                port: rpcObj.port,
-                path: '/',
-                method: "POST",
-                headers: {"Content-type": "application/json"}
-            }, function (response) {
-                var str = '';
-                response.on('data', function (chunk) {
-                    str += chunk;
-                });
-                response.on('end', function () {
-                    if (str) self.parse(str, returns, callback);
-                });
+            request({
+                url: rpcUrl,
+                method: 'POST',
+                json: command,
+                timeout: this.TX_POLL_INTERVAL
+            }, function (err, response, body) {
+                if (err) {
+                    self.exciseNode(err.code, rpcUrl);
+                    callback(errors.NO_RESPONSE);
+                } else if (response.statusCode === 200) {
+                    self.parse(body, returns, callback);
+                }
             });
-            req.on("socket", function (socket) {
-                socket.setTimeout(self.TX_POLL_INTERVAL);
-                socket.on("timeout", function () {
-                    req.abort();
-                });
-            });
-            req.on("error", function (err) {
-                self.exciseNode(err.code, rpcUrl);
-                callback();
-            });
-            req.write(command);
-            req.end();
         } else {
             if (window.XMLHttpRequest) {
                 req = new window.XMLHttpRequest();
@@ -287,7 +275,7 @@ module.exports = {
             };
             req.open("POST", rpcUrl, true);
             req.setRequestHeader("Content-type", "application/json");
-            req.send(command);
+            req.send(JSON.stringify(command));
         }
     },
 
@@ -321,14 +309,15 @@ module.exports = {
             self = this;
             loop = (command.method === "eth_call") ? async.each : async.eachSeries;
             loop(nodes, function (node, nextNode) {
-                self.post(node, JSON.stringify(command), returns, function (res) {
-                    if (node === nodes[nodes.length - 1]) {
-                        nextNode(res);
-                    } else if (res !== undefined && res !== null && !res.error) {
-                        nextNode(res);
-                    } else {
-                        nextNode();
+                self.post(node, command, returns, function (res) {
+                    var response;
+                    if (self.debug) log(node + ":", res);
+                    if (node === nodes[nodes.length - 1] ||
+                        (res !== undefined && !res.error))
+                    {
+                        response = res;
                     }
+                    nextNode(response);
                 });
             }, callback);
 
@@ -344,7 +333,7 @@ module.exports = {
                 }
                 if (result) return result;
             }
-            return null;
+            return errors.NO_RESPONSE;
         }
     },
 
@@ -372,7 +361,7 @@ module.exports = {
 
     // reset to default Ethereum nodes
     reset: function () {
-        this.nodes = NODES;
+        this.nodes = NODES.slice();
     },
 
     /******************************
@@ -429,26 +418,26 @@ module.exports = {
     balance: function (address, block, f) {
         return this.broadcast(
             this.marshal("getBalance", [
-                address || this.eth("coinbase"), block || "latest"
+                address || this.coinbase(), block || "latest"
             ]), f
         );
     },
     getBalance: function (address, block, f) {
         return this.broadcast(
             this.marshal("getBalance", [
-                address || this.eth("coinbase"), block || "latest"
+                address || this.coinbase(), block || "latest"
             ]), f
         );
     },
 
     txCount: function (address, f) {
         return this.broadcast(
-            this.marshal("getTransactionCount", address || this.eth("coinbase")), f
+            this.marshal("getTransactionCount", address || this.coinbase()), f
         );
     },
     getTransactionCount: function (address, f) {
         return this.broadcast(
-            this.marshal("getTransactionCount", address || this.eth("coinbase")), f
+            this.marshal("getTransactionCount", address || this.coinbase()), f
         );
     },
 
@@ -580,7 +569,7 @@ module.exports = {
 
     // publish a new contract to the blockchain (from the coinbase account)
     publish: function (compiled, f) {
-        return this.sendTx({ from: this.eth("coinbase"), data: compiled }, f);
+        return this.sendTx({ from: this.coinbase(), data: compiled }, f);
     },
 
     // Read the code in a contract on the blockchain
@@ -728,9 +717,11 @@ module.exports = {
                         delete tx.callback;
                     }
                     packaged = {
-                        from: tx.from || this.eth("coinbase"),
+                        from: tx.from || this.coinbase(),
                         to: tx.to,
-                        data: data_abi
+                        data: data_abi,
+                        gas: tx.gas || this.DEFAULT_GAS,
+                        gasPrice: tx.gasPrice || this.gasPrice()
                     };
                     if (tx.value) packaged.value = tx.value;
                     if (tx.returns) packaged.returns = tx.returns;
@@ -911,7 +902,7 @@ module.exports = {
                 this.getTx(txhash, function (sent) {
                     if (returns !== "null") {
                         self.call({
-                            from: sent.from || self.eth("coinbase"),
+                            from: sent.from || self.coinbase(),
                             to: sent.to || tx.to,
                             value: sent.value || tx.value,
                             data: sent.input
