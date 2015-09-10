@@ -333,6 +333,55 @@ describe("listening", function () {
 
 });
 
+describe("version (network ID)", function () {
+
+    var test = function (t) {
+        it(t.node + " -> " + t.version, function (done) {
+            this.timeout(TIMEOUT);
+            rpc.nodes = [t.node];
+            assert.strictEqual(rpc.version(), t.version);
+            rpc.version(function (version) {
+                assert.strictEqual(version, t.version);
+                done();
+            });
+        });
+    };
+
+    test({
+        node: "http://eth1.augur.net",
+        version: "7"
+    });
+    test({
+        node: "http://eth1.augur.net:8545",
+        version: "7"
+    });
+    test({
+        node: "http://eth3.augur.net",
+        version: "7"
+    });
+    test({
+        node: "http://eth3.augur.net:8545",
+        version: "7"
+    });
+    test({
+        node: "http://eth4.augur.net",
+        version: "7"
+    });
+    test({
+        node: "http://eth4.augur.net:8545",
+        version: "7"
+    });
+    test({
+        node: "http://eth5.augur.net",
+        version: "7"
+    });
+    test({
+        node: "http://eth5.augur.net:8545",
+        version: "7"
+    });
+
+});
+
 describe("unlocked", function () {
 
     var test = function (t) {
@@ -620,6 +669,143 @@ describe("Ethereum bindings", function () {
         assert.strictEqual(clientVersion.split('/')[0], "Geth");
     });
 
+});
+
+describe("getBlock", function () {
+
+    var asserts = function (t, block) {
+        assert.property(block, "number");
+        assert.property(block, "parentHash");
+        assert.property(block, "hash");
+        assert.property(block, "nonce");
+        assert.property(block, "sha3Uncles");
+        assert.property(block, "logsBloom");
+        assert.property(block, "transactionsRoot");
+        assert.property(block, "stateRoot");
+        assert.property(block, "miner");
+        assert.property(block, "difficulty");
+        assert.property(block, "totalDifficulty");
+        assert.property(block, "size");
+        assert.property(block, "extraData");
+        assert.property(block, "gasLimit");
+        assert.property(block, "gasUsed");
+        assert.property(block, "timestamp");
+        assert.property(block, "transactions");
+        assert.property(block, "uncles");
+        assert.isAbove(parseInt(block.number), 0);
+        assert.isAbove(parseInt(block.hash), 0);
+        assert.isAbove(parseInt(block.parentHash), 0);
+        assert.isAbove(parseInt(block.nonce), 0);
+        assert.isAbove(parseInt(block.sha3Uncles), 0);
+        assert.isAbove(parseInt(block.transactionsRoot), 0);
+        assert.isAbove(parseInt(block.stateRoot), 0);
+        assert.isAbove(parseInt(block.miner), 0);
+        assert.isAbove(parseInt(block.difficulty), 0);
+        assert.isAbove(parseInt(block.totalDifficulty), 0);
+        assert.isAbove(parseInt(block.gasLimit), 0);
+        assert.isAbove(parseInt(block.timestamp), 0);
+        assert.isAbove(parseInt(block.number), 0);
+        assert.isArray(block.transactions);
+        assert.isArray(block.uncles);
+        assert.strictEqual(parseInt(block.number), parseInt(t.blockNumber));
+        assert.strictEqual(block.hash, t.blockHash);
+    };
+
+    var test = function (t) {
+        it("[sync]  " + t.blockNumber + " -> " + t.blockHash, function () {
+            this.timeout(TIMEOUT);
+            asserts(t, rpc.getBlock(t.blockNumber));
+        });
+        it("[async] " + t.blockNumber + " -> " + t.blockHash, function (done) {
+            this.timeout(TIMEOUT);
+            rpc.getBlock(t.blockNumber, true, function (block) {
+                asserts(t, block);
+                done();
+            });
+        });
+    };
+
+    // expected block hashes for network 7
+    test({
+        blockNumber: "0x1",
+        blockHash: "0x74aa258b2f71168b97d7d0c72ec8ff501ec15e4e2adc8c663a0f7b01a1025d88"
+    });
+    test({
+        blockNumber: "0x1b4",
+        blockHash: "0x721a93982fbbe858aa190476be937ea2052408d7f8ff6fb415cc969aaacaa045"
+    });
+    test({
+        blockNumber: "0x24f2",
+        blockHash: "0x9272764416f772a63b945e1c1c6ca449f8d07dc4378f6b589244b1f48fef86bf"
+    });
+});
+
+describe("getBlockByHash", function () {
+
+    var asserts = function (t, block) {
+        assert.property(block, "number");
+        assert.property(block, "parentHash");
+        assert.property(block, "hash");
+        assert.property(block, "nonce");
+        assert.property(block, "sha3Uncles");
+        assert.property(block, "logsBloom");
+        assert.property(block, "transactionsRoot");
+        assert.property(block, "stateRoot");
+        assert.property(block, "miner");
+        assert.property(block, "difficulty");
+        assert.property(block, "totalDifficulty");
+        assert.property(block, "size");
+        assert.property(block, "extraData");
+        assert.property(block, "gasLimit");
+        assert.property(block, "gasUsed");
+        assert.property(block, "timestamp");
+        assert.property(block, "transactions");
+        assert.property(block, "uncles");
+        assert.isAbove(parseInt(block.number), 0);
+        assert.isAbove(parseInt(block.hash), 0);
+        assert.isAbove(parseInt(block.parentHash), 0);
+        assert.isAbove(parseInt(block.nonce), 0);
+        assert.isAbove(parseInt(block.sha3Uncles), 0);
+        assert.isAbove(parseInt(block.transactionsRoot), 0);
+        assert.isAbove(parseInt(block.stateRoot), 0);
+        assert.isAbove(parseInt(block.miner), 0);
+        assert.isAbove(parseInt(block.difficulty), 0);
+        assert.isAbove(parseInt(block.totalDifficulty), 0);
+        assert.isAbove(parseInt(block.gasLimit), 0);
+        assert.isAbove(parseInt(block.timestamp), 0);
+        assert.isAbove(parseInt(block.number), 0);
+        assert.isArray(block.transactions);
+        assert.isArray(block.uncles);
+        assert.strictEqual(parseInt(block.number), parseInt(t.blockNumber));
+        assert.strictEqual(block.hash, t.blockHash);
+    };
+
+    var test = function (t) {
+        it("[sync]  " + t.blockHash + " -> " + t.blockNumber, function () {
+            this.timeout(TIMEOUT);
+            asserts(t, rpc.getBlockByHash(t.blockHash));
+        });
+        it("[async] " + t.blockHash + " -> " + t.blockNumber, function (done) {
+            this.timeout(TIMEOUT);
+            rpc.getBlockByHash(t.blockHash, true, function (block) {
+                asserts(t, block);
+                done();
+            });
+        });
+    };
+
+    test({
+        blockHash: "0x74aa258b2f71168b97d7d0c72ec8ff501ec15e4e2adc8c663a0f7b01a1025d88",
+        blockNumber: "0x1"
+    });
+    test({
+        blockHash: "0x721a93982fbbe858aa190476be937ea2052408d7f8ff6fb415cc969aaacaa045",
+        blockNumber: "0x1b4"
+    });
+    test({
+        blockHash: "0x9272764416f772a63b945e1c1c6ca449f8d07dc4378f6b589244b1f48fef86bf",
+        blockNumber: "0x24f2"
+    });
 });
 
 describe("Contract methods", function () {

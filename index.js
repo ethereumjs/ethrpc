@@ -234,7 +234,7 @@ module.exports = {
             }
             req.open("POST", rpcUrl, false);
             req.setRequestHeader("Content-type", "application/json");
-            req.send(command);
+            req.send(JSON.stringify(command));
             return this.parse(req.responseText, returns);
         }
     },
@@ -337,7 +337,6 @@ module.exports = {
 
         // use synchronous http if no callback provided
         } else {
-            if (!NODE_JS) command = JSON.stringify(command);
             for (var j = 0, len = nodes.length; j < len; ++j) {
                 try {
                     result = this.postSync(nodes[j], command, returns);
@@ -524,14 +523,14 @@ module.exports = {
     },
 
     getBlockByHash: function (hash, full, f) {
-        return this.broadcast(this.marshal("getBlockByHash", [hash, full || false]), f);
+        return this.broadcast(this.marshal("getBlockByHash", [hash, full || true]), f);
     },
 
     getBlock: function (number, full, f) {
-        return this.broadcast(this.marshal("getBlockByNumber", [number, full || false]), f);
+        return this.broadcast(this.marshal("getBlockByNumber", [number, full || true]), f);
     },
     getBlockByNumber: function (number, full, f) {
-        return this.broadcast(this.marshal("getBlockByNumber", [number, full || false]), f);
+        return this.broadcast(this.marshal("getBlockByNumber", [number, full || true]), f);
     },
 
     version: function (f) {
