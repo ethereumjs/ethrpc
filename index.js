@@ -13,7 +13,6 @@ var request = require("request");
 var syncRequest = (NODE_JS) ? require("sync-request") : null;
 var abi = require("augur-abi");
 var errors = require("./errors");
-var log = console.log;
 
 BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
 
@@ -209,7 +208,7 @@ module.exports = {
     exciseNode: function (err, deadNode, deadIndex) {
         if (deadNode || deadIndex) {
             if (this.debug) {
-                log("[ethrpc] request to", deadNode, "failed:", err);
+                console.log("[ethrpc] request to", deadNode, "failed:", err);
             }
             if (deadIndex === null || deadIndex === undefined) {
                 deadIndex = this.nodes.indexOf(deadNode);
@@ -314,15 +313,15 @@ module.exports = {
             async.eachSeries(nodes, function (node, nextNode) {
                 if (!completed) {
                     if (self.debug) {
-                        log("nodes:", JSON.stringify(nodes));
-                        log("post", command.method, "to:", node);
+                        console.log("nodes:", JSON.stringify(nodes));
+                        console.log("post", command.method, "to:", node);
                     }
                     self.post(node, command, returns, function (res) {
                         if (self.debug) {
                             if (res && res.constructor === BigNumber) {
-                                log(node, "response:", res.toFixed());
+                                console.log(node, "response:", res.toFixed());
                             } else {
-                                log(node, "response:", res);
+                                console.log(node, "response:", res);
                             }
                         }
                         if (node === nodes[nodes.length - 1] ||
@@ -757,7 +756,7 @@ module.exports = {
                     invocation = (tx.send) ? "sendTransaction" : "call";
                     rpclist[i] = this.marshal(invocation, packaged);
                 } else {
-                    log("unable to package commands for batch RPC");
+                    console.log("unable to package commands for batch RPC");
                     return rpclist;
                 }
             }
@@ -785,7 +784,7 @@ module.exports = {
                 return this.broadcast(rpclist, f);
             }
         } else {
-            log("expected array for batch RPC, invoking instead");
+            console.log("expected array for batch RPC, invoking instead");
             return this.invoke(txlist, f);
         }
     },
