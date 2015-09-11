@@ -155,7 +155,7 @@ module.exports = {
                     results = new Array(len);
                     for (var i = 0; i < len; ++i) {
                         results[i] = response[i].result;
-                        if (response.error) {
+                        if (response.error || (response[i] && response[i].error)) {
                             console.error(
                                 "[" + response.error.code + "]",
                                 response.error.message
@@ -174,6 +174,7 @@ module.exports = {
                     } else {
                         return results;
                     }
+
                 // no result or error field
                 } else {
                     if (callback) {
