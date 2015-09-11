@@ -176,11 +176,9 @@ module.exports = {
 
                 // no result or error field
                 } else {
-                    if (callback) {
-                        callback(response);
-                    } else {
-                        return response;
-                    }
+                    var err = errors.NO_RESPONSE;
+                    err.response = response;
+                    return console.error(err);
                 }
             }
         } catch (e) {
@@ -189,8 +187,7 @@ module.exports = {
                 results = errors.INVALID_JSON;
                 results.response = response;
             }
-            if (callback) return callback(results);
-            return results;
+            return console.error(results);
         }
     },
 
