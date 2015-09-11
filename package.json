@@ -20,12 +20,12 @@
   "homepage": "https://github.com/AugurProject/ethrpc#readme",
   "dependencies": {
     "async": "^1.4.2",
-    "augur-abi": "^0.1.3",
+    "augur-abi": "AugurProject/augur-abi",
     "bignumber.js": "^2.0.7",
     "request": "^2.61.0"
   },
   "devDependencies": {
-    "augur-contracts": "^0.1.1",
+    "augur-contracts": "AugurProject/augur-contracts",
     "browserify": "^11.0.1",
     "chai": "^3.2.0",
     "coveralls": "^2.11.4",

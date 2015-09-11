@@ -187,6 +187,7 @@ module.exports = {
                 results = errors.INVALID_JSON;
                 results.response = response;
             }
+            console.log(e.stack);
             return console.error(results);
         }
     },
