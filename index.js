@@ -323,7 +323,8 @@ module.exports = {
                             }
                         }
                         if (node === nodes[nodes.length - 1] ||
-                            (res !== undefined && !res.error && res !== "0x"))
+                            (res !== undefined && res !== null &&
+                            !res.error && res !== "0x"))
                         {
                             completed = true;
                             return nextNode(res);
