@@ -24,12 +24,9 @@ var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d8
 var PROTOCOL_VERSION = "61";
 
 var requests = 0;
-var HOSTED_NODES = [
-    "http://eth3.augur.net",
-    "http://eth1.augur.net",
-    "http://eth4.augur.net",
-    "http://eth5.augur.net"
-];
+var HOSTED_NODES = rpc.nodes.hosted.slice();
+
+rpc.rotation = false;
 
 describe("marshal", function () {
 
@@ -596,12 +593,12 @@ describe("reset", function () {
         rpc.reset();
         assert.isNull(rpc.nodes.local);
         assert.isArray(rpc.nodes.hosted);
-        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
         assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
         rpc.reset();
         assert.isNull(rpc.nodes.local);
         assert.isArray(rpc.nodes.hosted);
-        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
         assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
     });  
 
@@ -952,31 +949,31 @@ describe("exciseNode", function () {
     it("remove node 2", function () {
         var nodes = HOSTED_NODES.slice();
         rpc.reset();
-        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
         assert.deepEqual(rpc.nodes.hosted, nodes);
         rpc.exciseNode(null, nodes[2]);
         nodes.splice(2, 1);
-        assert.strictEqual(rpc.nodes.hosted.length, 3);
+        assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length - 1);
         assert.deepEqual(rpc.nodes.hosted, nodes);
     });
 
     it("remove nodes 1 and 3", function () {
         var nodes = HOSTED_NODES.slice();
         rpc.reset();
-        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
         assert.deepEqual(rpc.nodes.hosted, nodes);
         rpc.exciseNode(null, nodes[1]);
         rpc.exciseNode(null, nodes[3]);
         nodes.splice(3, 1);
         nodes.splice(1, 1);
-        assert.strictEqual(rpc.nodes.hosted.length, 2);
+        assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length - 2);
         assert.deepEqual(rpc.nodes.hosted, nodes);
     });
 
     it("remove nodes 1, 2 and 3", function () {
         var nodes = HOSTED_NODES.slice();
         rpc.reset();
-        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
         assert.deepEqual(rpc.nodes.hosted, nodes);
         rpc.exciseNode(null, nodes[1]);
         rpc.exciseNode(null, nodes[2]);
@@ -984,13 +981,13 @@ describe("exciseNode", function () {
         nodes.splice(3, 1);
         nodes.splice(2, 1);
         nodes.splice(1, 1);
-        assert.strictEqual(rpc.nodes.hosted.length, 1);
+        assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length - 3);
         assert.deepEqual(rpc.nodes.hosted, nodes);
     });
 
     it("throw error 411 if all hosted nodes removed", function () {
         rpc.reset();
-        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
         assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
         rpc.exciseNode(null, HOSTED_NODES[0]);
         rpc.exciseNode(null, HOSTED_NODES[1]);
@@ -1013,6 +1010,18 @@ describe("Backup nodes", function () {
         assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
     });
 
+    it("[async] graceful failover to eth1.augur.net", function (done) {
+        this.timeout(TIMEOUT);
+        rpc.nodes.hosted = ["http://lol.lol.lol", "http://eth1.augur.net"];
+        assert.strictEqual(rpc.nodes.hosted.length, 2);
+        rpc.version(function (version) {
+            assert.strictEqual(version, "7");
+            assert.strictEqual(rpc.nodes.hosted.length, 1);
+            assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
+            done();
+        });
+    });
+
     it("[sync] graceful failover to eth[1,3,4].augur.net", function () {
         this.timeout(TIMEOUT);
         rpc.nodes.hosted = [
@@ -1027,18 +1036,6 @@ describe("Backup nodes", function () {
         assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
         assert.strictEqual(rpc.nodes.hosted[1], "http://eth3.augur.net");
         assert.strictEqual(rpc.nodes.hosted[2], "http://eth4.augur.net");
-    });
-
-    it("[async] graceful failover to eth1.augur.net", function (done) {
-        this.timeout(TIMEOUT);
-        rpc.nodes.hosted = ["http://lol.lol.lol", "http://eth1.augur.net"];
-        assert.strictEqual(rpc.nodes.hosted.length, 2);
-        rpc.version(function (version) {
-            assert.strictEqual(version, "7");
-            assert.strictEqual(rpc.nodes.hosted.length, 1);
-            assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
-            done();
-        });
     });
 
     it("[async] graceful failover to eth[1,3,4].augur.net", function (done) {

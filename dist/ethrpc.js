@@ -3783,6 +3783,8 @@ function RPCError(err) {
 
 RPCError.prototype = new Error();
 
+function rotate(a) { a.unshift(a.pop()); }
+
 var HOSTED_NODES = [
     "http://eth3.augur.net",
     "http://eth1.augur.net",
@@ -3795,6 +3797,8 @@ module.exports = {
     debug: false,
 
     bignumbers: true,
+
+    rotation: true,
 
     RPCError: RPCError,
 
@@ -4064,6 +4068,9 @@ module.exports = {
             } else {
                 throw new RPCError(errors.ETHEREUM_NOT_FOUND);
             }
+        }
+        if (this.rotation && this.nodes.hosted.length > 1) {
+            rotate(this.nodes.hosted);
         }
         nodes = (this.nodes.local) ? [this.nodes.local] : this.nodes.hosted.slice();
 
