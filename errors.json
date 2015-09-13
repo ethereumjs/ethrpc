@@ -64,9 +64,17 @@
         "error": 408,
         "message": "no response"
     },
-    "INVALID_JSON": {
+    "INVALID_RESPONSE": {
         "error": 409,
         "message": "could not parse response from Ethereum node"
+    },
+    "LOCAL_NODE_FAILURE": {
+        "error": 410,
+        "message": "RPC request to local Ethereum node failed"
+    },
+    "HOSTED_NODE_FAILURE": {
+        "error": 411,
+        "message": "RPC request to hosted nodes failed"
     },
     "TRANSACTION_FAILED": {
         "error": 500,

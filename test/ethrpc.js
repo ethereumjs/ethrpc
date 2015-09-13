@@ -8,7 +8,6 @@
 var assert = require("chai").assert;
 var longjohn = require("longjohn");
 var contracts = require("augur-contracts")['7'];
-var errors = require("../errors");
 var rpc = require("../");
 
 require('it-each')({ testPerIteration: true });
@@ -25,7 +24,7 @@ var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d8
 var PROTOCOL_VERSION = "61";
 
 var requests = 0;
-var DEFAULT_NODES = [
+var HOSTED_NODES = [
     "http://eth3.augur.net",
     "http://eth1.augur.net",
     "http://eth4.augur.net",
@@ -273,7 +272,8 @@ describe("listening", function () {
     var test = function (t) {
         it(t.node + " -> " + t.listening, function (done) {
             this.timeout(TIMEOUT);
-            rpc.nodes = [t.node];
+            rpc.reset();
+            rpc.nodes.hosted = [t.node];
             assert.strictEqual(rpc.listening(), t.listening);
             rpc.listening(function (listening) {
                 assert.strictEqual(listening, t.listening);
@@ -338,7 +338,8 @@ describe("version (network ID)", function () {
     var test = function (t) {
         it(t.node + " -> " + t.version, function (done) {
             this.timeout(TIMEOUT);
-            rpc.nodes = [t.node];
+            rpc.reset();
+            rpc.nodes.hosted = [t.node];
             assert.strictEqual(rpc.version(), t.version);
             rpc.version(function (version) {
                 assert.strictEqual(version, t.version);
@@ -386,7 +387,9 @@ describe("unlocked", function () {
 
     var test = function (t) {
         it(t.node + " -> " + t.unlocked, function () {
-            rpc.nodes = [t.node];
+            this.timeout(TIMEOUT);
+            rpc.reset();
+            rpc.nodes.hosted = [t.node];
             assert.strictEqual(rpc.unlocked(t.account), t.unlocked);
         });
     };
@@ -542,7 +545,7 @@ describe("multicast", function () {
     rpc.reset();
 
     it.each(
-        rpc.nodes,
+        rpc.nodes.hosted,
         "[sync] post " + command.method + " RPC to %s",
         ["element"],
         function (element, next) {
@@ -553,7 +556,7 @@ describe("multicast", function () {
     );
 
     it.each(
-        rpc.nodes,
+        rpc.nodes.hosted,
         "[async] post " + command.method + " RPC to %s",
         ["element"],
         function (element, next) {
@@ -583,18 +586,23 @@ describe("multicast", function () {
 describe("reset", function () {
 
     it("revert to default node list", function () {
-        rpc.nodes = ["http://eth0.augur.net"];
-        assert.isArray(rpc.nodes);
-        assert.strictEqual(rpc.nodes.length, 1);
-        assert.strictEqual(rpc.nodes[0], "http://eth0.augur.net");
+        rpc.nodes.hosted = ["http://eth0.augur.net"];
+        assert.isArray(rpc.nodes.hosted);
+        assert.strictEqual(rpc.nodes.hosted.length, 1);
+        assert.strictEqual(rpc.nodes.hosted[0], "http://eth0.augur.net");
+        assert.isNull(rpc.nodes.local);
+        rpc.nodes.local = "http://127.0.0.1:8545";
+        assert.strictEqual(rpc.nodes.local, "http://127.0.0.1:8545");
         rpc.reset();
-        assert.isArray(rpc.nodes);
-        assert.strictEqual(rpc.nodes.length, 4);
-        assert.deepEqual(rpc.nodes, DEFAULT_NODES);
+        assert.isNull(rpc.nodes.local);
+        assert.isArray(rpc.nodes.hosted);
+        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
         rpc.reset();
-        assert.isArray(rpc.nodes);
-        assert.strictEqual(rpc.nodes.length, 4);
-        assert.deepEqual(rpc.nodes, DEFAULT_NODES);
+        assert.isNull(rpc.nodes.local);
+        assert.isArray(rpc.nodes.hosted);
+        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
     });  
 
 });
@@ -942,78 +950,54 @@ describe("Contract methods", function () {
 describe("exciseNode", function () {
 
     it("remove node 2", function () {
-        var nodes = DEFAULT_NODES.slice();
+        var nodes = HOSTED_NODES.slice();
         rpc.reset();
-        assert.strictEqual(rpc.nodes.length, 4);
-        assert.deepEqual(rpc.nodes, nodes);
+        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.deepEqual(rpc.nodes.hosted, nodes);
         rpc.exciseNode(null, nodes[2]);
         nodes.splice(2, 1);
-        assert.strictEqual(rpc.nodes.length, 3);
-        assert.deepEqual(rpc.nodes, nodes);
-    });
-
-    it("remove node 1 by index", function () {
-        var nodes = DEFAULT_NODES.slice();
-        rpc.reset();
-        assert.strictEqual(rpc.nodes.length, 4);
-        assert.deepEqual(rpc.nodes, nodes);
-        rpc.exciseNode(null, null, 1);
-        nodes.splice(1, 1);
-        assert.strictEqual(rpc.nodes.length, 3);
-        assert.deepEqual(rpc.nodes, nodes);
+        assert.strictEqual(rpc.nodes.hosted.length, 3);
+        assert.deepEqual(rpc.nodes.hosted, nodes);
     });
 
     it("remove nodes 1 and 3", function () {
-        var nodes = DEFAULT_NODES.slice();
+        var nodes = HOSTED_NODES.slice();
         rpc.reset();
-        assert.strictEqual(rpc.nodes.length, 4);
-        assert.deepEqual(rpc.nodes, nodes);
+        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.deepEqual(rpc.nodes.hosted, nodes);
         rpc.exciseNode(null, nodes[1]);
         rpc.exciseNode(null, nodes[3]);
         nodes.splice(3, 1);
         nodes.splice(1, 1);
-        assert.strictEqual(rpc.nodes.length, 2);
-        assert.deepEqual(rpc.nodes, nodes);
-    });
-
-    it("remove nodes 1 and 3 by index", function () {
-        var nodes = DEFAULT_NODES.slice();
-        rpc.reset();
-        assert.strictEqual(rpc.nodes.length, 4);
-        assert.deepEqual(rpc.nodes, nodes);
-        rpc.exciseNode(null, null, 3);
-        rpc.exciseNode(null, null, 1);
-        nodes.splice(3, 1);
-        nodes.splice(1, 1);
-        assert.strictEqual(rpc.nodes.length, 2);
-        assert.deepEqual(rpc.nodes, nodes);
+        assert.strictEqual(rpc.nodes.hosted.length, 2);
+        assert.deepEqual(rpc.nodes.hosted, nodes);
     });
 
     it("remove nodes 1, 2 and 3", function () {
-        var nodes = DEFAULT_NODES.slice();
+        var nodes = HOSTED_NODES.slice();
         rpc.reset();
-        assert.strictEqual(rpc.nodes.length, 4);
-        assert.deepEqual(rpc.nodes, nodes);
+        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.deepEqual(rpc.nodes.hosted, nodes);
         rpc.exciseNode(null, nodes[1]);
         rpc.exciseNode(null, nodes[2]);
         rpc.exciseNode(null, nodes[3]);
         nodes.splice(3, 1);
         nodes.splice(2, 1);
         nodes.splice(1, 1);
-        assert.strictEqual(rpc.nodes.length, 1);
-        assert.deepEqual(rpc.nodes, nodes);
+        assert.strictEqual(rpc.nodes.hosted.length, 1);
+        assert.deepEqual(rpc.nodes.hosted, nodes);
     });
 
-    it("reset if all nodes removed", function () {
+    it("throw error 411 if all hosted nodes removed", function () {
         rpc.reset();
-        assert.strictEqual(rpc.nodes.length, 4);
-        assert.deepEqual(rpc.nodes, DEFAULT_NODES);
-        rpc.exciseNode(null, DEFAULT_NODES[0]);
-        rpc.exciseNode(null, DEFAULT_NODES[1]);
-        rpc.exciseNode(null, DEFAULT_NODES[2]);
-        rpc.exciseNode(null, DEFAULT_NODES[3]);
-        assert.strictEqual(rpc.nodes.length, 4);
-        assert.deepEqual(rpc.nodes, DEFAULT_NODES);
+        assert.strictEqual(rpc.nodes.hosted.length, 4);
+        assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
+        rpc.exciseNode(null, HOSTED_NODES[0]);
+        rpc.exciseNode(null, HOSTED_NODES[1]);
+        rpc.exciseNode(null, HOSTED_NODES[2]);
+        assert.throws(function () {
+            rpc.exciseNode(null, HOSTED_NODES[3]);
+        }, Error, /411/);
     });
 
 });
@@ -1022,78 +1006,153 @@ describe("Backup nodes", function () {
 
     it("[sync] graceful failover to eth1.augur.net", function () {
         this.timeout(TIMEOUT);
-        rpc.nodes = ["http://lol.lol.lol", "http://eth1.augur.net"];
-        assert.strictEqual(rpc.nodes.length, 2);
+        rpc.nodes.hosted = ["http://lol.lol.lol", "http://eth1.augur.net"];
+        assert.strictEqual(rpc.nodes.hosted.length, 2);
         assert.strictEqual(rpc.version(), "7");
-        assert.strictEqual(rpc.nodes.length, 1);
-        assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
+        assert.strictEqual(rpc.nodes.hosted.length, 1);
+        assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
     });
 
     it("[sync] graceful failover to eth[1,3,4].augur.net", function () {
         this.timeout(TIMEOUT);
-        rpc.nodes = [
+        rpc.nodes.hosted = [
             "http://lol.lol.lol",
             "http://eth1.augur.net",
             "http://eth3.augur.net",
             "http://eth4.augur.net"
         ];
-        assert.strictEqual(rpc.nodes.length, 4);
+        assert.strictEqual(rpc.nodes.hosted.length, 4);
         assert.strictEqual(rpc.version(), "7");
-        assert.strictEqual(rpc.nodes.length, 3);
-        assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
-        assert.strictEqual(rpc.nodes[1], "http://eth3.augur.net");
-        assert.strictEqual(rpc.nodes[2], "http://eth4.augur.net");
+        assert.strictEqual(rpc.nodes.hosted.length, 3);
+        assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
+        assert.strictEqual(rpc.nodes.hosted[1], "http://eth3.augur.net");
+        assert.strictEqual(rpc.nodes.hosted[2], "http://eth4.augur.net");
     });
 
     it("[async] graceful failover to eth1.augur.net", function (done) {
         this.timeout(TIMEOUT);
-        rpc.nodes = ["http://lol.lol.lol", "http://eth1.augur.net"];
-        assert.strictEqual(rpc.nodes.length, 2);
+        rpc.nodes.hosted = ["http://lol.lol.lol", "http://eth1.augur.net"];
+        assert.strictEqual(rpc.nodes.hosted.length, 2);
         rpc.version(function (version) {
             assert.strictEqual(version, "7");
-            assert.strictEqual(rpc.nodes.length, 1);
-            assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
+            assert.strictEqual(rpc.nodes.hosted.length, 1);
+            assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
             done();
         });
     });
 
     it("[async] graceful failover to eth[1,3,4].augur.net", function (done) {
         this.timeout(TIMEOUT);
-        rpc.nodes = [
+        rpc.nodes.hosted = [
             "http://lol.lol.lol",
             "http://eth1.augur.net",
             "http://eth3.augur.net",
             "http://eth4.augur.net"
         ];
-        assert.strictEqual(rpc.nodes.length, 4);
+        assert.strictEqual(rpc.nodes.hosted.length, 4);
         rpc.version(function (version) {
             assert.strictEqual(version, "7");
-            assert.strictEqual(rpc.nodes.length, 3);
-            assert.strictEqual(rpc.nodes[0], "http://eth1.augur.net");
-            assert.strictEqual(rpc.nodes[1], "http://eth3.augur.net");
-            assert.strictEqual(rpc.nodes[2], "http://eth4.augur.net");
+            assert.strictEqual(rpc.nodes.hosted.length, 3);
+            assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
+            assert.strictEqual(rpc.nodes.hosted[1], "http://eth3.augur.net");
+            assert.strictEqual(rpc.nodes.hosted[2], "http://eth4.augur.net");
             done();
         });
     });
 
-    it("[sync] all nodes unresponsive", function () {
-        rpc.nodes = ["http://lol.lol.lol", "http://not.a.node"];
-        assert.strictEqual(rpc.nodes.length, 2);
-        assert.strictEqual(rpc.version().error, errors.NO_RESPONSE.error);
-        assert.strictEqual(rpc.nodes.length, 1);
-        assert.strictEqual(rpc.nodes[0], "http://not.a.node");
+    it("[sync] hosted node failure", function () {
+        rpc.nodes.hosted = ["http://lol.lol.lol", "http://not.a.node"];
+        assert.strictEqual(rpc.nodes.hosted.length, 2);
+        assert.throws(function () {
+            rpc.broadcast({
+                id: ++requests,
+                jsonrpc: "2.0",
+                method: "eth_coinbase",
+                params: []
+            });
+        }, Error, /411/);
     });
 
-    it("[async] all nodes unresponsive", function (done) {
+    it("[async] hosted node failure", function (done) {
         this.timeout(TIMEOUT);
-        rpc.nodes = ["http://lol.lol.lol", "http://not.a.node"];
-        assert.strictEqual(rpc.nodes.length, 2);
-        rpc.version(function (version) {
-            assert.strictEqual(version.error, errors.NO_RESPONSE.error);
-            assert.strictEqual(rpc.nodes.length, 4);
-            assert.deepEqual(rpc.nodes, DEFAULT_NODES);
+        rpc.nodes.hosted = ["http://lol.lol.lol", "http://not.a.node"];
+        assert.strictEqual(rpc.nodes.hosted.length, 2);
+        rpc.broadcast({
+            id: ++requests,
+            jsonrpc: "2.0",
+            method: "eth_coinbase",
+            params: []
+        }, function (err) {
+            assert.isNotNull(err);
+            assert.property(err, "error");
+            assert.property(err, "message");
+            assert.strictEqual(err.error, 411);
             done();
         });
+    });
+
+});
+
+describe("useHostedNode", function () {
+
+    it("switch to hosted node(s)", function () {
+        rpc.reset();
+        assert.isNull(rpc.nodes.local);
+        rpc.setLocalNode("http://127.0.0.1:8545");
+        assert.strictEqual(rpc.nodes.local, "http://127.0.0.1:8545");
+        rpc.useHostedNode();
+        assert.isNull(rpc.nodes.local);
+    });
+
+});
+
+describe("setLocalNode", function () {
+
+    var test = function (command) {
+
+        it("[sync] local node failure", function () {
+            this.timeout(TIMEOUT);
+            rpc.reset();
+            rpc.setLocalNode("http://127.0.0.0");
+            assert.strictEqual(rpc.nodes.local, "http://127.0.0.0");
+            assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
+            assert.throws(function () { rpc.broadcast(command); }, Error, /410/);
+        });
+
+        it("[async] local node failure", function (done) {
+            this.timeout(TIMEOUT);
+            rpc.reset();
+            rpc.setLocalNode("http://127.0.0.0");
+            assert.strictEqual(rpc.nodes.local, "http://127.0.0.0");
+            assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
+            rpc.broadcast(command, function (err) {
+                assert.isNotNull(err);
+                assert.property(err, "error");
+                assert.property(err, "message");
+                assert.strictEqual(err.error, 410);
+                done();
+            });
+        });
+
+    };
+
+    test({
+        id: ++requests,
+        jsonrpc: "2.0",
+        method: "eth_coinbase",
+        params: []
+    });
+    test({
+        id: ++requests,
+        jsonrpc: "2.0",
+        method: "net_version",
+        params: []
+    });
+    test({
+        id: ++requests,
+        jsonrpc: "2.0",
+        method: "eth_gasPrice",
+        params: []
     });
 
 });
