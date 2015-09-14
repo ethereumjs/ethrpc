@@ -4069,7 +4069,7 @@ module.exports = {
                 throw new RPCError(errors.ETHEREUM_NOT_FOUND);
             }
         }
-        if (this.rotation && this.nodes.hosted.length > 1) {
+        if (this.rotation && !this.nodes.local && this.nodes.hosted.length > 1) {
             rotate(this.nodes.hosted);
         }
         nodes = (this.nodes.local) ? [this.nodes.local] : this.nodes.hosted.slice();
