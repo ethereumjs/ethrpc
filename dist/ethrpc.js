@@ -3809,7 +3809,7 @@ var errors = require("./errors");
 BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
 
 function RPCError(err) {
-    this.message = err.error || err.name + ": " + err.message;
+    this.message = (err.error || err.name) + ": " + err.message;
 }
 
 RPCError.prototype = new Error();
