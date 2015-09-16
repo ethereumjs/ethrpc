@@ -271,7 +271,9 @@ module.exports = {
             }, function (err, response, body) {
                 if (err) {
                     if (self.nodes.local) {
-                        return callback(errors.LOCAL_NODE_FAILURE);
+                        var e = errors.LOCAL_NODE_FAILURE;
+                        e.detail = err;
+                        return callback(e);
                     }
                     self.exciseNode(err.code, rpcUrl, callback);
                 } else if (response.statusCode === 200) {
