@@ -10,6 +10,7 @@ var NODE_JS = (typeof module !== "undefined") && process && !process.browser;
 var async = require("async");
 var BigNumber = require("bignumber.js");
 var request = require("request");
+var contracts = require("augur-contracts");
 var syncRequest = (NODE_JS) ? require("sync-request") : null;
 var abi = require("augur-abi");
 var errors = require("./errors");
@@ -24,6 +25,14 @@ RPCError.prototype = new Error();
 
 function rotate(a) { a.unshift(a.pop()); }
 
+function has_value(o, v) {
+    for (var p in o) {
+        if (o.hasOwnProperty(p)) {
+            if (o[p] === v) return p;
+        }
+    }
+}
+
 var HOSTED_NODES = [
     "http://eth3.augur.net",
     "http://eth1.augur.net",
@@ -33,7 +42,7 @@ var HOSTED_NODES = [
 
 module.exports = {
 
-    debug: false,
+    debug: { broadcast: false, fallback: false },
 
     bignumbers: true,
 
@@ -223,7 +232,7 @@ module.exports = {
 
     exciseNode: function (err, deadNode, callback) {
         if (deadNode && !this.nodes.local) {
-            if (this.debug) {
+            if (this.debug.fallback) {
                 console.log("[ethrpc] request to", deadNode, "failed:", err);
             }
             var deadIndex = this.nodes.hosted.indexOf(deadNode);
@@ -301,9 +310,36 @@ module.exports = {
         }
     },
 
+    contracts: function (network) {
+        return contracts[network || this.version()];
+    },
+
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
         var self, nodes, num_commands, returns, result, completed;
+
+        if (this.debug.broadcast) {
+            if (command.method === "eth_call" || command.method === "eth_sendTransaction") {
+                if (command.params && (!command.params.length || !command.params[0].from)) {
+                    console.log(
+                        "**************************\n"+
+                        "* OH GOD WHAT DID YOU DO *\n"+
+                        "**************************"
+                    );
+                    var network = this.version();
+                    var contracts = this.contracts(network);
+                    var contract = has_value(contracts, command.params[0].to);
+                    console.log(
+                        "network:", network, "\n"+
+                        "contract:", contract, "[" + command.params[0].to + "]\n"+
+                        "method:", command.method, "\n"+
+                        "params:", JSON.stringify(command.params, null, 2), "\n"+
+                        "tx:", JSON.stringify(command.debug, null, 2)
+                    );
+                    if (command.debug) delete command.debug;
+                }
+            }
+        }
 
         // make sure the ethereum node list isn't empty
         if (!this.nodes.local && !this.nodes.hosted.length) {
@@ -330,12 +366,12 @@ module.exports = {
             self = this;
             async.eachSeries(nodes, function (node, nextNode) {
                 if (!completed) {
-                    if (self.debug) {
+                    if (self.debug.fallback && self.debug.broadcast) {
                         console.log("nodes:", JSON.stringify(nodes));
                         console.log("post", command.method, "to:", node);
                     }
                     self.post(node, command, returns, function (res) {
-                        if (self.debug) {
+                        if (self.debug.fallback && self.debug.broadcast) {
                             if (res && res.constructor === BigNumber) {
                                 console.log(node, "response:", res.toFixed());
                             } else {
@@ -383,6 +419,10 @@ module.exports = {
             payload.method = (prefix || "eth_") + command.toString();
         }
         if (params !== undefined && params !== null) {
+            if (this.debug.broadcast && params.debug) {
+                payload.debug = abi.copy(params.debug);
+                delete params.debug;
+            }
             if (params.constructor === Array) {
                 payload.params = params;
             } else {
@@ -743,6 +783,10 @@ module.exports = {
                         };
                         if (tx.value) packaged.value = tx.value;
                         if (tx.returns) packaged.returns = tx.returns;
+                        if (this.debug.broadcast) {
+                            packaged.debug = abi.copy(tx);
+                            packaged.debug.batch = false;
+                        }
                         invocation = (tx.send) ? this.sendTx : this.call;
                         invoked = true;
                         return invocation.call(this, packaged, f);
@@ -802,6 +846,10 @@ module.exports = {
                     };
                     if (tx.value) packaged.value = tx.value;
                     if (tx.returns) packaged.returns = tx.returns;
+                    if (this.debug.broadcast) {
+                        packaged.debug = abi.copy(tx);
+                        packaged.debug.batch = true;
+                    }
                     invocation = (tx.send) ? "sendTransaction" : "call";
                     rpclist[i] = this.marshal(invocation, packaged);
                 } else {
