@@ -47,6 +47,8 @@ module.exports = {
     // Transaction polling interval
     TX_POLL_INTERVAL: 12000,
 
+    POST_TIMEOUT: 180000,
+
     DEFAULT_GAS: "0x2fd618",
 
     ETHER: new BigNumber(10).toPower(18),
@@ -203,6 +205,7 @@ module.exports = {
                 err.response = response;
             }
             console.error(err);
+            console.log(err.stack);
             // throw new RPCError(err);
         }
     },
@@ -264,7 +267,7 @@ module.exports = {
                 url: rpcUrl,
                 method: 'POST',
                 json: command,
-                timeout: this.TX_POLL_INTERVAL
+                timeout: this.POST_TIMEOUT
             }, function (err, response, body) {
                 if (err) {
                     if (self.nodes.local) {

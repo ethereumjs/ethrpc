@@ -128,6 +128,19 @@ module.exports = {
         return false;
     },
 
+    format_address: function (addr) {
+        if (addr && addr.constructor === String) {
+            addr = this.strip_0x(addr);
+            while (addr.length > 40 && addr.slice(0, 1) === "0") {
+                addr = addr.slice(1);
+            }
+            while (addr.length < 40) {
+                addr = "0" + addr;
+            }
+            return this.prefix_hex(addr);
+        }
+    },
+
     strip_0x: function (str) {
         var h = str;
         if (h === "-0x0" || h === "0x0") {
@@ -165,10 +178,11 @@ module.exports = {
 
     bignum: function (n, encoding, nowrap) {
         var bn, len;
-        if (n !== null && n !== undefined && n !== "0x" &&
-            !n.error && !n.message)
-        {
+        if (n !== null && n !== undefined && n !== "0x" && !n.error && !n.message) {
             switch (n.constructor) {
+                case BigNumber:
+                    bn = n;
+                    break;
                 case Number:
                     if (Math.floor(Math.log(n) / Math.log(10) + 1) <= 15) {
                         bn = new BigNumber(n);
@@ -178,9 +192,12 @@ module.exports = {
                             bn = new BigNumber(n);
                         } catch (exc) {
                             if (this.is_hex(n)) {
-                                bn = new BigNumber(this.prefix_hex(n));
+                                bn = new BigNumber(n, 16);
                             } else {
-                                return console.error(exc);
+                                console.log("Couldn't convert Number", n.toString(), "to BigNumber");
+                                console.error(exc);
+                                console.log(exc.stack);
+                                return n;
                             }
                         }
                     }
@@ -190,24 +207,37 @@ module.exports = {
                         bn = new BigNumber(n);
                     } catch (exc) {
                         if (this.is_hex(n)) {
-                            bn = new BigNumber(this.prefix_hex(n));
+                            bn = new BigNumber(n, 16);
                         } else {
-                            return console.error(exc);
+                            console.log("Couldn't convert String", n.toString(), "to BigNumber");
+                            console.error(exc);
+                            console.log(exc.stack);
+                            return n;
                         }
                     }
-                    break;
-                case BigNumber:
-                    bn = n;
                     break;
                 case Array:
                     len = n.length;
                     bn = new Array(len);
                     for (var i = 0; i < len; ++i) {
-                        bn[i] = this.bignum(n[i], encoding);
+                        bn[i] = this.bignum(n[i], encoding, nowrap);
                     }
                     break;
                 default:
-                    return console.error("Couldn't convert", n, "to BigNumber");
+                    try {
+                        bn = new BigNumber(n);
+                    } catch (ex) {
+                        try {
+                            bn = new BigNumber(n, 16);
+                        } catch (exc) {
+                            console.log("Couldn't convert", n.toString(), "to BigNumber");
+                            console.error(ex);
+                            console.error(exc);
+                            console.log(ex.stack);
+                            console.log(exc.stack);
+                            return n;
+                        }
+                    }
             }
             if (bn !== undefined && bn !== null && bn.constructor === BigNumber) {
                 if (!nowrap && bn.gte(this.constants.BYTES_32)) {
@@ -3808,6 +3838,8 @@ module.exports = {
     // Transaction polling interval
     TX_POLL_INTERVAL: 12000,
 
+    POST_TIMEOUT: 180000,
+
     DEFAULT_GAS: "0x2fd618",
 
     ETHER: new BigNumber(10).toPower(18),
@@ -3964,6 +3996,7 @@ module.exports = {
                 err.response = response;
             }
             console.error(err);
+            console.log(err.stack);
             // throw new RPCError(err);
         }
     },
@@ -4025,9 +4058,10 @@ module.exports = {
                 url: rpcUrl,
                 method: 'POST',
                 json: command,
-                timeout: this.TX_POLL_INTERVAL
+                timeout: this.POST_TIMEOUT
             }, function (err, response, body) {
                 if (err) {
+                    console.log(err, rpcUrl, command, body);
                     if (self.nodes.local) {
                         return callback(errors.LOCAL_NODE_FAILURE);
                     }
