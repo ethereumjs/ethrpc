@@ -393,15 +393,12 @@ describe("unlocked", function () {
 
     test({
         node: "http://eth1.augur.net",
-        unlocked: true
-    });
-    test({
-        node: "http://eth1.augur.net",
         account: COINBASE,
         unlocked: true
     });
     test({
         node: "http://eth1.augur.net:8545",
+        account: COINBASE,
         unlocked: true
     });
     test({
@@ -411,6 +408,7 @@ describe("unlocked", function () {
     });
     test({
         node: "http://eth3.augur.net",
+        account: COINBASE,
         unlocked: true
     });
     test({
@@ -420,6 +418,7 @@ describe("unlocked", function () {
     });
     test({
         node: "http://eth3.augur.net:8545",
+        account: COINBASE,
         unlocked: true
     });
     test({
@@ -429,15 +428,12 @@ describe("unlocked", function () {
     });
     test({
         node: "http://eth4.augur.net",
-        unlocked: false
-    });
-    test({
-        node: "http://eth4.augur.net",
         account: COINBASE,
         unlocked: false
     });
     test({
         node: "http://eth4.augur.net:8545",
+        account: COINBASE,
         unlocked: false
     });
     test({
@@ -447,15 +443,7 @@ describe("unlocked", function () {
     });
     test({
         node: "http://eth5.augur.net",
-        unlocked: false
-    });
-    test({
-        node: "http://eth5.augur.net",
         account: COINBASE,
-        unlocked: false
-    });
-    test({
-        node: "http://eth5.augur.net:8545",
         unlocked: false
     });
     test({
@@ -465,24 +453,12 @@ describe("unlocked", function () {
     });
     test({
         node: null,
-        unlocked: false
-    });
-    test({
-        node: null,
         account: COINBASE,
         unlocked: false
     });
     test({
         node: undefined,
-        unlocked: false
-    });
-    test({
-        node: undefined,
         account: COINBASE,
-        unlocked: false
-    });
-    test({
-        node: NaN,
         unlocked: false
     });
     test({
@@ -645,11 +621,11 @@ describe("Ethereum bindings", function () {
     });
 
     it("balance", function () {
-        assert(parseInt(rpc.balance()) >= 0);
+        assert(parseInt(rpc.balance(COINBASE)) >= 0);
     });
 
     it("txCount", function () {
-        assert(parseInt(rpc.txCount()) >= 0);
+        assert(parseInt(rpc.txCount(COINBASE)) >= 0);
     });
 
     it("peerCount", function () {

@@ -4098,11 +4098,7 @@ module.exports = {
 
         // make sure the ethereum node list isn't empty
         if (!this.nodes.local && !this.nodes.hosted.length) {
-            if (callback && callback.constructor === Function) {
-                return callback(errors.ETHEREUM_NOT_FOUND);
-            } else {
-                throw new RPCError(errors.ETHEREUM_NOT_FOUND);
-            }
+            throw new RPCError(errors.ETHEREUM_NOT_FOUND);
         }
         if (this.rotation && !this.nodes.local && this.nodes.hosted.length > 1) {
             rotate(this.nodes.hosted);
@@ -4258,32 +4254,23 @@ module.exports = {
 
     balance: function (address, block, f) {
         return this.broadcast(
-            this.marshal("getBalance", [
-                address || this.coinbase(), block || "latest"
-            ]), f
+            this.marshal("getBalance", [ address, block || "latest" ]), f
         );
     },
     getBalance: function (address, block, f) {
         return this.broadcast(
-            this.marshal("getBalance", [
-                address || this.coinbase(), block || "latest"
-            ]), f
+            this.marshal("getBalance", [ address, block || "latest" ]), f
         );
     },
 
     txCount: function (address, f) {
-        return this.broadcast(
-            this.marshal("getTransactionCount", address || this.coinbase()), f
-        );
+        return this.broadcast(this.marshal("getTransactionCount", address), f);
     },
     getTransactionCount: function (address, f) {
-        return this.broadcast(
-            this.marshal("getTransactionCount", address || this.coinbase()), f
-        );
+        return this.broadcast(this.marshal("getTransactionCount", address), f);
     },
 
     sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
-        from = from || this.coinbase();
         var tx, txhash;
         if (to && to.value) {
             value = to.value;
@@ -4301,16 +4288,20 @@ module.exports = {
         if (onSent) {
             this.sendTx(tx, function (txhash) {
                 if (txhash) {
+                    if (txhash.error && onFailed) return onFailed(txhash);
                     onSent(txhash);
-                    if (onSuccess)
+                    if (onSuccess) {
                         this.txNotify(0, value, tx, txhash, null, onSent, onSuccess, onFailed);
+                    }
                 }
             }.bind(this));
         } else {
             txhash = this.sendTx(tx);
             if (txhash) {
-                if (onSuccess)
+                if (txhash.error && onFailed) return onFailed(txhash);
+                if (onSuccess) {
                     this.txNotify(0, value, tx, txhash, null, onSent, onSuccess, onFailed);
+                }
                 return txhash;
             }
         }
@@ -4460,23 +4451,36 @@ module.exports = {
             }
         } catch (e) {
             if (f && f.constructor === Function) {
-                f(false);
-            } else {
-                return false;
+                return f(false);
             }
+            return false;
         }
     },
 
-    unlocked: function (account) {
+    unlocked: function (account, f) {
         if (!this.nodes.hosted.length && !this.nodes.local) {
             throw new RPCError(errors.ETHEREUM_NOT_FOUND);
         }
         try {
-            if (this.sign(account || this.coinbase(), "1010101").error) {
-                return false;
+            if (f && f.constructor === Function) {
+                this.sign(account, "1010101", function (res) {
+                    if (res) {
+                        if (res.error) return f(false);
+                        return f(true);
+                    }
+                    f(false);
+                });
             }
-            return true;
+            var res = this.sign(account, "1010101");
+            if (res) {
+                if (res.error) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
         } catch (e) {
+            if (f && f.constructor === Function) return f(false);
             return false;
         }
     },
@@ -4522,11 +4526,11 @@ module.exports = {
                     data_abi = abi.encode(tx);
                     if (data_abi) {
                         packaged = {
-                            from: tx.from || this.coinbase(),
+                            from: tx.from,
                             to: tx.to,
                             data: data_abi,
                             gas: tx.gas || this.DEFAULT_GAS,
-                            gasPrice: tx.gasPrice || this.gasPrice()
+                            gasPrice: tx.gasPrice
                         };
                         if (tx.value) packaged.value = tx.value;
                         if (tx.returns) packaged.returns = tx.returns;
@@ -4540,11 +4544,11 @@ module.exports = {
         // stopgap: console.error
         } catch (exc) {
             if (f) return f(errors.TRANSACTION_FAILED);
-            console.error(errors.TRANSACTION_FAILED);
+            return errors.TRANSACTION_FAILED;
         }
         if (!invoked) {
             if (f) return f(errors.TRANSACTION_FAILED);
-            console.error(errors.TRANSACTION_FAILED);
+            return errors.TRANSACTION_FAILED;
         }
     },
 
@@ -4581,11 +4585,11 @@ module.exports = {
                         delete tx.callback;
                     }
                     packaged = {
-                        from: tx.from || this.coinbase(),
+                        from: tx.from,
                         to: tx.to,
                         data: data_abi,
                         gas: tx.gas || this.DEFAULT_GAS,
-                        gasPrice: tx.gasPrice || this.gasPrice()
+                        gasPrice: tx.gasPrice
                     };
                     if (tx.value) packaged.value = tx.value;
                     if (tx.returns) packaged.returns = tx.returns;
@@ -4766,7 +4770,7 @@ module.exports = {
                 this.getTx(txhash, function (sent) {
                     if (returns !== "null") {
                         self.call({
-                            from: sent.from || self.coinbase(),
+                            from: sent.from,
                             to: sent.to || tx.to,
                             value: sent.value || tx.value,
                             data: sent.input
