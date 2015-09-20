@@ -1,5 +1,5 @@
 /**
- * Basic JSON RPC methods for Ethereum
+ * JSON RPC methods for Ethereum
  * @author Jack Peterson (jack@tinybike.net)
  */
 
@@ -10,8 +10,8 @@ var NODE_JS = (typeof module !== "undefined") && process && !process.browser;
 var async = require("async");
 var BigNumber = require("bignumber.js");
 var request = require("request");
-var contracts = require("augur-contracts");
 var syncRequest = (NODE_JS) ? require("sync-request") : null;
+var contracts = require("augur-contracts");
 var abi = require("augur-abi");
 var errors = require("./errors");
 
@@ -45,14 +45,10 @@ module.exports = {
 
     debug: { broadcast: false, fallback: false },
 
-    bignumbers: true,
-
     rotation: true,
 
-    RPCError: RPCError,
-
     // Maximum number of transaction verification attempts
-    TX_POLL_MAX: 24,
+    TX_POLL_MAX: 64,
 
     // Transaction polling interval
     TX_POLL_INTERVAL: 12000,
@@ -94,18 +90,10 @@ module.exports = {
                 }
             }
             for (i = 0; i < array.length; ++i) {
-                if (returns === "hash[]" && this.bignumbers) {
-                    array[i] = abi.bignum(array[i]);
-                } else {
-                    if (returns === "number[]") {
-                        array[i] = abi.bignum(array[i]).toFixed();
-                    } else if (returns === "unfix[]") {
-                        if (this.bignumbers) {
-                            array[i] = abi.unfix(array[i]);
-                        } else {
-                            array[i] = abi.unfix(array[i], "string");
-                        }
-                    }
+                if (returns === "number[]") {
+                    array[i] = abi.string(array[i]);
+                } else if (returns === "unfix[]") {
+                    array[i] = abi.unfix(array[i], "string");
                 }
             }
             return array;
@@ -121,23 +109,12 @@ module.exports = {
                 result = this.unmarshal(result, returns);
             } else if (returns === "string") {
                 result = abi.decode_hex(result, true);
-            } else {
-                if (this.bignumbers) {
-                    if (returns === "unfix") {
-                        result = abi.unfix(result);
-                    }
-                    if (result.constructor !== BigNumber) {
-                        result = abi.bignum(result);
-                    }
-                } else {
-                    if (returns === "number") {
-                        result = abi.bignum(result).toFixed();
-                    } else if (returns === "bignumber") {
-                        result = abi.bignum(result);
-                    } else if (returns === "unfix") {
-                        result = abi.unfix(result, "string");
-                    }
-                }
+            } else if (returns === "number") {
+                result = abi.string(result);
+            } else if (returns === "bignumber") {
+                result = abi.bignum(result);
+            } else if (returns === "unfix") {
+                result = abi.unfix(result, "string");
             }
         }
         return result;
@@ -374,7 +351,7 @@ module.exports = {
                     self.post(node, command, returns, function (res) {
                         if (self.debug.fallback && self.debug.broadcast) {
                             if (res && res.constructor === BigNumber) {
-                                console.log(node, "response:", res.toFixed());
+                                console.log(node, "response:", abi.string(res));
                             } else {
                                 console.log(node, "response:", res);
                             }
@@ -764,11 +741,11 @@ module.exports = {
                             for (var i = 0, len = tx.params.length; i < len; ++i) {
                                 if (tx.params[i] !== undefined &&
                                     tx.params[i].constructor === BigNumber) {
-                                    tx.params[i] = tx.params[i].toFixed();
+                                    tx.params[i] = abi.hex(tx.params[i]);
                                 }
                             }
                         } else if (tx.params.constructor === BigNumber) {
-                            tx.params = tx.params.toFixed();
+                            tx.params = abi.hex(tx.params);
                         }
                     }
                     if (tx.to) tx.to = abi.prefix_hex(tx.to);
@@ -794,8 +771,6 @@ module.exports = {
                     }
                 }
             }
-
-        // stopgap: console.error
         } catch (exc) {
             if (f) return f(errors.TRANSACTION_FAILED);
             return errors.TRANSACTION_FAILED;
@@ -823,11 +798,11 @@ module.exports = {
                             if (tx.params[j] !== undefined &&
                                 tx.params[j] !== null &&
                                 tx.params[j].constructor === BigNumber) {
-                                tx.params[j] = tx.params[j].toFixed();
+                                tx.params[j] = abi.hex(tx.params[j]);
                             }
                         }
                     } else if (tx.params.constructor === BigNumber) {
-                        tx.params = tx.params.toFixed();
+                        tx.params = abi.hex(tx.params);
                     }
                 }
                 if (tx.from) tx.from = abi.prefix_hex(tx.from);
@@ -899,17 +874,12 @@ module.exports = {
             if (returns === "null") {
                 result = null;
             } else if (returns === "address" || returns === "address[]") {
-                result = abi.prefix_hex(abi.remove_leading_zeros(result));
+                result = abi.format_address(result);
             } else {
-                if (this.bignumbers && returns !== "string") {
-                    result = abi.bignum(result);
-                }
-                if (!this.bignumbers) {
-                    if (!returns || returns === "hash[]" || returns === "hash") {
-                        result = abi.bignum(result, "hex");
-                    } else if (returns === "number") {
-                        result = abi.bignum(result, "string");
-                    }
+                if (!returns || returns === "hash[]" || returns === "hash") {
+                    result = abi.hex(result);
+                } else if (returns === "number") {
+                    result = abi.string(result);
                 }
             }
         }
@@ -937,7 +907,7 @@ module.exports = {
                     {
                         var responseNumber = abi.bignum(response);
                         if (responseNumber) {
-                            responseNumber = responseNumber.toFixed();
+                            responseNumber = abi.string(responseNumber);
                             if (errors[tx.method] && errors[tx.method][responseNumber]) {
                                 response = {
                                     error: responseNumber,
@@ -978,7 +948,7 @@ module.exports = {
      ***************************************/
 
     checkBlockHash: function (tx, callreturn, itx, txhash, returns, count, onSent, onSuccess, onFailed) {
-        if (tx && tx.blockHash && abi.bignum(tx.blockHash).toNumber() !== 0) {
+        if (tx && tx.blockHash && abi.number(tx.blockHash) !== 0) {
             this.clearNotifications(txhash);
             tx.callReturn = this.encodeResult(callreturn, returns);
             tx.txHash = tx.hash;
