@@ -496,6 +496,11 @@ module.exports = {
     getTransactionCount: function (address, f) {
         return this.broadcast(this.marshal("getTransactionCount", address), f);
     },
+    pendingTxCount: function (address, f) {
+        return this.broadcast(
+            this.marshal("getTransactionCount", [ address, "pending" ]), f
+        );
+    },
 
     sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
         var tx, txhash;
