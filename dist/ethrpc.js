@@ -3800,11 +3800,13 @@ global.ethrpc = ethrpc;
 "use strict";
 
 var NODE_JS = (typeof module !== "undefined") && process && !process.browser;
-
+var request, syncRequest;
+if (NODE_JS) {
+    request = require("request");
+    syncRequest = require("sync-request");
+}
 var async = require("async");
 var BigNumber = require("bignumber.js");
-var request = require("request");
-var syncRequest = (NODE_JS) ? require("sync-request") : null;
 var contracts = require("augur-contracts");
 var abi = require("augur-abi");
 var errors = require("./errors");
@@ -3818,16 +3820,6 @@ function RPCError(err) {
 
 RPCError.prototype = new Error();
 
-function rotate(a) { a.unshift(a.pop()); }
-
-function has_value(o, v) {
-    for (var p in o) {
-        if (o.hasOwnProperty(p)) {
-            if (o[p] === v) return p;
-        }
-    }
-}
-
 var HOSTED_NODES = [
     "http://eth1.augur.net",
     "http://eth3.augur.net",
@@ -3837,9 +3829,18 @@ var HOSTED_NODES = [
 
 module.exports = {
 
-    debug: { broadcast: false, fallback: false, logs: false },
+    debug: {
+        broadcast: false,
+        fallback: false,
+        latency: true,
+        logs: false
+    },
 
-    rotation: true,
+    // remove unresponsive nodes
+    excision: true,
+
+    // network load balancer
+    balancer: true,
 
     // Maximum number of transaction verification attempts
     TX_POLL_MAX: 64,
@@ -3853,10 +3854,26 @@ module.exports = {
 
     ETHER: new BigNumber(10).toPower(18),
 
+    Error: RPCError,
+
     nodes: {
         hosted: HOSTED_NODES.slice(),
         local: null
     },
+
+    // Mean network latency for each node
+    latency: {},
+
+    // Number of latency samples taken for each node
+    samples: {},
+
+    // Unweighted mean network latency across all nodes
+    // (use debug.latency=true to see this)
+    netLatency: null,
+
+    // Total number of samples taken across all nodes
+    // (use debug.latency=true to see this)
+    netSamples: 0,
 
     requests: 1,
 
@@ -3926,11 +3943,8 @@ module.exports = {
                         error: response.error.code,
                         message: response.error.message
                     };
-                    if (callback) {
-                        callback(response);
-                    } else {
-                        return response;
-                    }
+                    if (!callback) return response;
+                    callback(response);
                 } else if (response.result !== undefined) {
                     if (returns) {
                         response.result = this.applyReturns(returns, response.result);
@@ -3942,11 +3956,8 @@ module.exports = {
                             response.result = abi.prefix_hex(response.result);
                         }
                     }
-                    if (callback) {
-                        callback(response.result);
-                    } else {
-                        return response.result;
-                    }
+                    if (!callback) return response.result;
+                    callback(response.result);
                 } else if (response.constructor === Array && response.length) {
                     len = response.length;
                     results = new Array(len);
@@ -3954,7 +3965,8 @@ module.exports = {
                         results[i] = response[i].result;
                         if (response.error || (response[i] && response[i].error)) {
                             if (this.debug.broadcast) {
-                                throw new RPCError(response.error);
+                                if (callback) return callback(response.error);
+                                throw new this.Error(response.error);
                             }
                         } else if (response[i].result !== undefined) {
                             if (returns[i]) {
@@ -3970,22 +3982,20 @@ module.exports = {
 
                 // no result or error field
                 } else {
-                    if (this.debug.broadcast) {
-                        var err = errors.NO_RESPONSE;
-                        err.response = response;
-                        throw new RPCError(err);
-                    }
+                    var err = errors.NO_RESPONSE;
+                    err.bubble = response;
+                    if (callback) return callback(err);
+                    throw new this.Error(err);
                 }
             }
         } catch (e) {
-            if (this.debug.broadcast) {
-                var err = e;
-                if (e && e.name === "SyntaxError") {
-                    err = errors.INVALID_RESPONSE;
-                    err.response = response;
-                }
-                throw new RPCError(err);
+            var err = e;
+            if (e && e.name === "SyntaxError") {
+                err = errors.INVALID_RESPONSE;
+                err.bubble = response;
             }
+            if (callback) return callback(err);
+            throw new this.Error(err);
         }
     },
 
@@ -4002,18 +4012,17 @@ module.exports = {
 
     exciseNode: function (err, deadNode, callback) {
         if (deadNode && !this.nodes.local) {
-            if (this.debug.fallback) {
+            if (this.debug.logs) {
                 console.log("[ethrpc] request to", deadNode, "failed:", err);
             }
             var deadIndex = this.nodes.hosted.indexOf(deadNode);
             if (deadIndex > -1) {
                 this.nodes.hosted.splice(deadIndex, 1);
-                if (!this.nodes.hosted.length && this.debug.fallback) {
+                if (!this.nodes.hosted.length) {
                     if (callback) {
                         return callback(errors.HOSTED_NODE_FAILURE);
-                    } else {
-                        throw new RPCError(errors.HOSTED_NODE_FAILURE);
                     }
+                    throw new this.Error(errors.HOSTED_NODE_FAILURE);
                 }
             }
             if (callback) callback();
@@ -4050,12 +4059,10 @@ module.exports = {
             }, function (err, response, body) {
                 if (err) {
                     if (self.nodes.local) {
-                        if (self.debug.broadcast) {
-                            var e = errors.LOCAL_NODE_FAILURE;
-                            e.detail = err;
-                            return callback(e);
-                        }
-                    } else {
+                        var e = errors.LOCAL_NODE_FAILURE;
+                        e.bubble = err;
+                        return callback(e);
+                    } else if (self.excision) {
                         self.exciseNode(err.code, rpcUrl, callback);
                     }
                 } else if (response.statusCode === 200) {
@@ -4074,12 +4081,98 @@ module.exports = {
                 }
             };
             req.onerror = req.ontimeout = function (err) {
-                self.exciseNode(err, rpcUrl);
+                if (self.excision) self.exciseNode(err, rpcUrl);
                 callback();
             };
             req.open("POST", rpcUrl, true);
             req.setRequestHeader("Content-type", "application/json");
             req.send(JSON.stringify(command));
+        }
+    },
+
+    // random primary node selection, weighted by (normalized)
+    // inverse mean network latency
+    selectPrimaryNode: function (nodes) {
+        var select, rand, numNodes, total, weights, cdf, high, low;
+        rand = Math.random();
+        numNodes = nodes.length;
+        weights = new Array(numNodes);
+        for (var k = 0; k < numNodes; ++k) {
+            weights[k] = 1 / this.latency[nodes[k]];
+        }
+        cdf = new Array(numNodes);
+        total = 0;
+        for (k = 0; k < numNodes; ++k) {
+            total += weights[k];
+            cdf[k] = total;
+        }
+        for (k = 0; k < numNodes; ++k) {
+            cdf[k] /= total;
+        }
+        high = numNodes - 1;
+        low = 0;
+        while (low < high) {
+            select = Math.ceil((high + low) / 2);
+            if (cdf[select] < rand) {
+                low = select + 1;
+            } else if (cdf[select] > rand) {
+                high = select - 1;
+            } else {
+                return nodes[select];
+            }
+        }
+        if (low != high) {
+            select = (cdf[low] >= rand) ? low : select;
+        } else {
+            select = (cdf[low] >= rand) ? low : low + 1;
+        }
+        return [nodes[select]].concat(nodes);
+    },
+
+    selectNodes: function () {
+        if (this.nodes.local) return [this.nodes.local];
+        if (!this.balancer || this.nodes.hosted.length === 1) {
+            return this.nodes.hosted.slice();
+        }
+
+        // rotate nodes until we have enough samples to weight them
+        if (!this.samples[HOSTED_NODES[0]] || this.samples[HOSTED_NODES[0]] < 5) {
+            this.nodes.hosted.unshift(this.nodes.hosted.pop());
+            return this.nodes.hosted.slice();
+
+        // if we have sufficient data, select a primary node
+        } else {
+            return this.selectPrimaryNode(this.nodes.hosted);
+        }
+    },
+
+    // update the active node's mean network latency
+    updateMeanLatency: function (node, latency) {
+        if (!this.samples[node]) {
+            this.samples[node] = 1;
+            this.latency[node] = latency;
+        } else {
+            ++this.samples[node];
+            this.latency[node] = (
+                (this.samples[node] - 1)*this.latency[node] + latency
+            ) / this.samples[node];
+        }
+        if (this.debug.latency) {
+            if (this.netLatency === null) {
+                this.netSamples = 1;
+                this.netLatency = latency;
+            } else {
+                ++this.netSamples;
+                this.netLatency = (
+                    (this.netSamples - 1)*this.netLatency + latency
+                ) / this.netSamples;
+                if (this.debug.logs) {
+                    console.log(
+                        "[" + this.netSamples.toString() + "] mean network latency:",
+                        this.netLatency
+                    );
+                }
+            }
         }
     },
 
@@ -4089,9 +4182,9 @@ module.exports = {
 
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
-        var self, nodes, num_commands, returns, result, completed;
+        var self, start, nodes, numCommands, returns, result, completed;
 
-        if (this.debug.broadcast) {
+        if (this.debug.logs) {
             if (command.method === "eth_call" || command.method === "eth_sendTransaction") {
                 if (command.params && (!command.params.length || !command.params[0].from)) {
                     console.log(
@@ -4101,7 +4194,14 @@ module.exports = {
                     );
                     var network = this.version();
                     var contracts = this.contracts(network);
-                    var contract = has_value(contracts, command.params[0].to);
+                    var contract;
+                    for (var address in contracts) {
+                        if (!contracts.hasOwnProperty(address)) continue;
+                        if (contracts[address] === command.params[0].to) {
+                            contract = address;
+                            break;
+                        }
+                    }
                     console.log(
                         "network:", network, "\n"+
                         "contract:", contract, "[" + command.params[0].to + "]\n"+
@@ -4116,25 +4216,25 @@ module.exports = {
             }
         }
 
-        // make sure the ethereum node list isn't empty
-        if (!this.nodes.local && !this.nodes.hosted.length) {
-            throw new RPCError(errors.ETHEREUM_NOT_FOUND);
-        }
-        if (this.rotation && !this.nodes.local && this.nodes.hosted.length > 1) {
-            rotate(this.nodes.hosted);
-        }
-        nodes = (this.nodes.local) ? [this.nodes.local] : this.nodes.hosted.slice();
-
         // parse batched commands and strip "returns" fields
         if (command.constructor === Array) {
-            num_commands = command.length;
-            returns = new Array(num_commands);
-            for (var i = 0; i < num_commands; ++i) {
+            numCommands = command.length;
+            returns = new Array(numCommands);
+            for (var i = 0; i < numCommands; ++i) {
                 returns[i] = this.stripReturns(command[i]);
             }
         } else {
             returns = this.stripReturns(command);
         }
+
+        // make sure the ethereum node list isn't empty
+        if (!this.nodes.local && !this.nodes.hosted.length) {
+            if (callback) return callback(errors.ETHEREUM_NOT_FOUND);
+            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
+        }
+
+        // select local / hosted node(s) to receive RPC
+        nodes = this.selectNodes();
 
         // asynchronous request if callback exists
         if (callback && callback.constructor === Function) {
@@ -4145,6 +4245,7 @@ module.exports = {
                         console.log("nodes:", JSON.stringify(nodes));
                         console.log("post", command.method, "to:", node);
                     }
+                    var start = new Date().getTime();
                     self.post(node, command, returns, function (res) {
                         if (self.debug.logs) {
                             if (res && res.constructor === BigNumber) {
@@ -4158,6 +4259,7 @@ module.exports = {
                             !res.error && res !== "0x"))
                         {
                             completed = true;
+                            self.updateMeanLatency(node, new Date().getTime() - start);
                             return nextNode(res);
                         }
                         nextNode();
@@ -4169,19 +4271,19 @@ module.exports = {
         } else {
             for (var j = 0, len = nodes.length; j < len; ++j) {
                 try {
+                    start = new Date().getTime();
                     result = this.postSync(nodes[j], command, returns);
+                    this.updateMeanLatency(nodes[j], new Date().getTime() - start);
                 } catch (e) {
                     if (this.nodes.local) {
-                        if (this.debug.broadcast) {
-                            throw new RPCError(errors.LOCAL_NODE_FAILURE);
-                        }
-                    } else {
+                        throw new this.Error(errors.LOCAL_NODE_FAILURE);
+                    } else if (this.excision) {
                         this.exciseNode(e, nodes[j]);
                     }
                 }
                 if (result) return result;
             }
-            throw new RPCError(errors.NO_RESPONSE);
+            throw new this.Error(errors.NO_RESPONSE);
         }
     },
 
@@ -4220,11 +4322,15 @@ module.exports = {
     },
 
     // reset to default Ethereum nodes
-    reset: function () {
+    reset: function (deleteData) {
         this.nodes = {
             hosted: HOSTED_NODES.slice(),
             local: null
         };
+        if (deleteData) {
+            this.latency = {};
+            this.samples = {};
+        }
     },
 
     /******************************
@@ -4465,7 +4571,7 @@ module.exports = {
         var response, self = this;
         try {
             if (!this.nodes.hosted.length && !this.nodes.local) {
-                throw new RPCError(errors.ETHEREUM_NOT_FOUND);
+                throw new this.Error(errors.ETHEREUM_NOT_FOUND);
             }
             if (f && f.constructor === Function) {
                 var timeout = setTimeout(function () {
@@ -4490,7 +4596,7 @@ module.exports = {
 
     unlocked: function (account, f) {
         if (!this.nodes.hosted.length && !this.nodes.local) {
-            throw new RPCError(errors.ETHEREUM_NOT_FOUND);
+            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
         }
         try {
             if (f && f.constructor === Function) {
@@ -4589,12 +4695,12 @@ module.exports = {
      * Batched RPC commands
      */
     batch: function (txlist, f) {
-        var num_commands, rpclist, callbacks, tx, data_abi, packaged, invocation;
+        var numCommands, rpclist, callbacks, tx, data_abi, packaged, invocation;
         if (txlist.constructor === Array) {
-            num_commands = txlist.length;
-            rpclist = new Array(num_commands);
-            callbacks = new Array(num_commands);
-            for (var i = 0; i < num_commands; ++i) {
+            numCommands = txlist.length;
+            rpclist = new Array(numCommands);
+            callbacks = new Array(numCommands);
+            for (var i = 0; i < numCommands; ++i) {
                 tx = abi.copy(txlist[i]);
                 if (tx.params !== undefined) {
                     if (tx.params.constructor === Array) {
@@ -4644,7 +4750,7 @@ module.exports = {
                     this.broadcast(rpclist, function (res) {
                         if (res) {
                             if (res.constructor === Array && res.length) {
-                                for (j = 0; j < num_commands; ++j) {
+                                for (j = 0; j < numCommands; ++j) {
                                     if (res[j] && callbacks[j]) {
                                         callbacks[j](res[j]);
                                     }
@@ -4743,7 +4849,7 @@ module.exports = {
                 if (res.error) return res;
                 return this.encodeResult(res, itx.returns);
             }
-            throw new RPCError(errors.NO_RESPONSE);
+            throw new this.Error(errors.NO_RESPONSE);
         }
     },
 

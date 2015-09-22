@@ -1,6 +1,6 @@
 {
   "name": "ethrpc",
-  "version": "0.2.21",
+  "version": "0.3.0",
   "description": "Ethereum JSON RPC",
   "main": "index.js",
   "scripts": {
@@ -35,7 +35,6 @@
     "istanbul": "^0.3.18",
     "it-each": "^0.3.1",
     "jshint": "^2.8.0",
-    "longjohn": "^0.2.8",
     "mocha": "^2.2.5",
     "uglify-js": "^2.4.24"
   },

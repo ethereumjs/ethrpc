@@ -6,27 +6,24 @@
 "use strict";
 
 var assert = require("chai").assert;
-var longjohn = require("longjohn");
+var async = require("async");
 var contracts = require("augur-contracts")['7'];
 var rpc = require("../");
 
 require('it-each')({ testPerIteration: true });
 
-longjohn.async_trace_limit = 25;
-longjohn.empty_frame = "";
-
-rpc.bignumbers = false;
-
 var TIMEOUT = 120000;
+var SAMPLES = 25;
 var COINBASE = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
 var SHA3_INPUT = "boom!";
 var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
 var PROTOCOL_VERSION = "61";
 
 var requests = 0;
+rpc.reset();
 var HOSTED_NODES = rpc.nodes.hosted.slice();
 
-rpc.rotation = false;
+rpc.balancer = false;
 
 describe("marshal", function () {
 
@@ -1126,6 +1123,92 @@ describe("setLocalNode", function () {
         jsonrpc: "2.0",
         method: "eth_gasPrice",
         params: []
+    });
+
+});
+
+describe("Load balancer", function () {
+
+    it("network latency snapshot", function (done) {
+        this.timeout(TIMEOUT);
+        rpc.balancer = true;
+        rpc.reset(true);
+        async.each([
+            "http://eth1.augur.net",
+            "http://eth3.augur.net",
+            "http://eth4.augur.net",
+            "http://eth5.augur.net"
+        ], function (node, nextNode) {
+            rpc.nodes.hosted = [node];
+            rpc.version(function (version) {
+                assert.strictEqual(version, "7");
+                assert.property(rpc.latency, node);
+                assert.property(rpc.samples, node);
+                assert.isAbove(rpc.latency[node], 0);
+                assert.strictEqual(rpc.samples[node], 1);
+                nextNode();
+            });
+        }, function (err) {
+            assert.isNull(err);
+            assert.strictEqual(Object.keys(rpc.latency).length, 4);
+            assert.strictEqual(Object.keys(rpc.samples).length, 4);
+            done();
+        });
+    });
+
+    it("single-node mean latency: " + SAMPLES + " samples", function (done) {
+        this.timeout(TIMEOUT*4);
+        rpc.balancer = false;
+        rpc.excision = false;
+        rpc.reset(true);
+        var node = rpc.nodes.hosted[0];
+        var count = 0;
+        async.whilst(function () {
+            return count < SAMPLES;
+        }, function (callback) {
+            rpc.version(function (version) {
+                assert.strictEqual(version, "7");
+                assert.property(rpc.latency, node);
+                assert.property(rpc.samples, node);
+                assert.isAbove(rpc.latency[node], 0);
+                assert.strictEqual(rpc.samples[node], ++count);
+                callback();
+            });
+        }, function (err) {
+            assert.isNull(err);
+            assert.strictEqual(rpc.samples[node], SAMPLES);
+            assert.strictEqual(Object.keys(rpc.latency).length, 1);
+            assert.strictEqual(Object.keys(rpc.samples).length, 1);
+            done();
+        });
+    });
+
+    it("mean latency profile: " + SAMPLES*10 + " samples", function (done) {
+        this.timeout(TIMEOUT*10);
+        rpc.balancer = true;
+        rpc.excision = false;
+        rpc.reset(true);
+        var count = 0;
+        async.whilst(function () {
+            return ++count < SAMPLES*10;
+        }, function (callback) {
+            rpc.version(function (version) {
+                assert.strictEqual(version, "7");
+                callback();
+            });
+        }, function (err) {
+            assert.isNull(err);
+            assert.strictEqual(Object.keys(rpc.latency).length, 4);
+            assert.strictEqual(Object.keys(rpc.samples).length, 4);
+            var total = 0;
+            for (var node in rpc.samples) {
+                if (!rpc.samples.hasOwnProperty(node)) continue;
+                total += rpc.samples[node];
+                assert.isAbove(rpc.latency[node], 0);
+            }
+            assert.strictEqual(total, count - 1);
+            done();
+        });
     });
 
 });
