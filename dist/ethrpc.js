@@ -3837,7 +3837,7 @@ var HOSTED_NODES = [
 
 module.exports = {
 
-    debug: { broadcast: false, fallback: false },
+    debug: { broadcast: false, fallback: false, logs: false },
 
     rotation: true,
 
@@ -3954,10 +3954,7 @@ module.exports = {
                         results[i] = response[i].result;
                         if (response.error || (response[i] && response[i].error)) {
                             if (this.debug.broadcast) {
-                                console.error(
-                                    "[" + response.error.code + "]",
-                                    response.error.message
-                                );
+                                throw new RPCError(response.error);
                             }
                         } else if (response[i].result !== undefined) {
                             if (returns[i]) {
@@ -3976,7 +3973,7 @@ module.exports = {
                     if (this.debug.broadcast) {
                         var err = errors.NO_RESPONSE;
                         err.response = response;
-                        console.error(err);
+                        throw new RPCError(err);
                     }
                 }
             }
@@ -3987,7 +3984,6 @@ module.exports = {
                     err = errors.INVALID_RESPONSE;
                     err.response = response;
                 }
-                // console.log(err.stack);
                 throw new RPCError(err);
             }
         }
@@ -4110,10 +4106,12 @@ module.exports = {
                         "network:", network, "\n"+
                         "contract:", contract, "[" + command.params[0].to + "]\n"+
                         "method:", command.method, "\n"+
-                        "params:", JSON.stringify(command.params, null, 2), "\n"+
-                        "tx:", JSON.stringify(command.debug, null, 2)
+                        "params:", JSON.stringify(command.params, null, 2)
                     );
-                    if (command.debug) delete command.debug;
+                    if (command.debug) {
+                        console.log("tx:", JSON.stringify(command.debug, null, 2));
+                        delete command.debug;
+                    }
                 }
             }
         }
@@ -4143,12 +4141,12 @@ module.exports = {
             self = this;
             async.eachSeries(nodes, function (node, nextNode) {
                 if (!completed) {
-                    if (self.debug.fallback && self.debug.broadcast) {
+                    if (self.debug.logs) {
                         console.log("nodes:", JSON.stringify(nodes));
                         console.log("post", command.method, "to:", node);
                     }
                     self.post(node, command, returns, function (res) {
-                        if (self.debug.fallback && self.debug.broadcast) {
+                        if (self.debug.logs) {
                             if (res && res.constructor === BigNumber) {
                                 console.log(node, "response:", abi.string(res));
                             } else {
@@ -4174,7 +4172,7 @@ module.exports = {
                     result = this.postSync(nodes[j], command, returns);
                 } catch (e) {
                     if (this.nodes.local) {
-                        if (self.debug.broadcast) {
+                        if (this.debug.broadcast) {
                             throw new RPCError(errors.LOCAL_NODE_FAILURE);
                         }
                     } else {

@@ -1,6 +1,6 @@
 {
   "name": "ethrpc",
-  "version": "0.2.20",
+  "version": "0.2.21",
   "description": "Ethereum JSON RPC",
   "main": "index.js",
   "scripts": {
