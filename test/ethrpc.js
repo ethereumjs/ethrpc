@@ -426,27 +426,27 @@ describe("unlocked", function () {
     test({
         node: "http://eth4.augur.net",
         account: COINBASE,
-        unlocked: false
+        unlocked: true
     });
     test({
         node: "http://eth4.augur.net:8545",
         account: COINBASE,
-        unlocked: false
+        unlocked: true
     });
     test({
         node: "http://eth4.augur.net:8545",
         account: COINBASE,
-        unlocked: false
+        unlocked: true
     });
     test({
         node: "http://eth5.augur.net",
         account: COINBASE,
-        unlocked: false
+        unlocked: true
     });
     test({
         node: "http://eth5.augur.net:8545",
         account: COINBASE,
-        unlocked: false
+        unlocked: true
     });
     test({
         node: null,
