@@ -197,9 +197,7 @@ module.exports = {
                             if (this.is_hex(n)) {
                                 bn = new BigNumber(n, 16);
                             } else {
-                                console.log("Couldn't convert Number", n.toString(), "to BigNumber");
-                                console.error(exc);
-                                console.log(exc.stack);
+                                // console.log("Couldn't convert Number", n.toString(), "to BigNumber");
                                 return n;
                             }
                         }
@@ -212,9 +210,7 @@ module.exports = {
                         if (this.is_hex(n)) {
                             bn = new BigNumber(n, 16);
                         } else {
-                            console.log("Couldn't convert String", n.toString(), "to BigNumber");
-                            console.error(exc);
-                            console.log(exc.stack);
+                            // console.log("Couldn't convert String", n.toString(), "to BigNumber");
                             return n;
                         }
                     }
@@ -233,11 +229,7 @@ module.exports = {
                         try {
                             bn = new BigNumber(n, 16);
                         } catch (exc) {
-                            console.log("Couldn't convert", n.toString(), "to BigNumber");
-                            console.error(ex);
-                            console.error(exc);
-                            console.log(ex.stack);
-                            console.log(exc.stack);
+                            // console.log("Couldn't convert", n.toString(), "to BigNumber");
                             return n;
                         }
                     }
@@ -3837,8 +3829,8 @@ function has_value(o, v) {
 }
 
 var HOSTED_NODES = [
-    "http://eth3.augur.net",
     "http://eth1.augur.net",
+    "http://eth3.augur.net",
     "http://eth4.augur.net",
     "http://eth5.augur.net"
 ];
@@ -3872,7 +3864,7 @@ module.exports = {
 
     unmarshal: function (string, returns, stride, init) {
         var elements, array, position;
-        if (string.length >= 66) {
+        if (string && string.length >= 66) {
             stride = stride || 64;
             elements = Math.ceil((string.length - 2) / stride);
             array = new Array(elements);
@@ -3961,10 +3953,12 @@ module.exports = {
                     for (var i = 0; i < len; ++i) {
                         results[i] = response[i].result;
                         if (response.error || (response[i] && response[i].error)) {
-                            console.error(
-                                "[" + response.error.code + "]",
-                                response.error.message
-                            );
+                            if (this.debug.broadcast) {
+                                console.error(
+                                    "[" + response.error.code + "]",
+                                    response.error.message
+                                );
+                            }
                         } else if (response[i].result !== undefined) {
                             if (returns[i]) {
                                 results[i] = this.applyReturns(returns[i], response[i].result);
@@ -3974,28 +3968,28 @@ module.exports = {
                             }
                         }
                     }
-                    if (callback) {
-                        callback(results);
-                    } else {
-                        return results;
-                    }
+                    if (!callback) return results;
+                    callback(results);
 
                 // no result or error field
                 } else {
-                    var err = errors.NO_RESPONSE;
-                    err.response = response;
-                    return console.error(err);
+                    if (this.debug.broadcast) {
+                        var err = errors.NO_RESPONSE;
+                        err.response = response;
+                        console.error(err);
+                    }
                 }
             }
         } catch (e) {
-            var err = e;
-            if (e && e.name === "SyntaxError") {
-                err = errors.INVALID_RESPONSE;
-                err.response = response;
+            if (this.debug.broadcast) {
+                var err = e;
+                if (e && e.name === "SyntaxError") {
+                    err = errors.INVALID_RESPONSE;
+                    err.response = response;
+                }
+                // console.log(err.stack);
+                throw new RPCError(err);
             }
-            console.error(err);
-            console.log(err.stack);
-            // throw new RPCError(err);
         }
     },
 
@@ -4018,9 +4012,9 @@ module.exports = {
             var deadIndex = this.nodes.hosted.indexOf(deadNode);
             if (deadIndex > -1) {
                 this.nodes.hosted.splice(deadIndex, 1);
-                if (!this.nodes.hosted.length) {
+                if (!this.nodes.hosted.length && this.debug.fallback) {
                     if (callback) {
-                        callback(errors.HOSTED_NODE_FAILURE);
+                        return callback(errors.HOSTED_NODE_FAILURE);
                     } else {
                         throw new RPCError(errors.HOSTED_NODE_FAILURE);
                     }
@@ -4060,11 +4054,14 @@ module.exports = {
             }, function (err, response, body) {
                 if (err) {
                     if (self.nodes.local) {
-                        var e = errors.LOCAL_NODE_FAILURE;
-                        e.detail = err;
-                        return callback(e);
+                        if (self.debug.broadcast) {
+                            var e = errors.LOCAL_NODE_FAILURE;
+                            e.detail = err;
+                            return callback(e);
+                        }
+                    } else {
+                        self.exciseNode(err.code, rpcUrl, callback);
                     }
-                    self.exciseNode(err.code, rpcUrl, callback);
                 } else if (response.statusCode === 200) {
                     self.parse(body, returns, callback);
                 }
@@ -4177,7 +4174,9 @@ module.exports = {
                     result = this.postSync(nodes[j], command, returns);
                 } catch (e) {
                     if (this.nodes.local) {
-                        throw new RPCError(errors.LOCAL_NODE_FAILURE);
+                        if (self.debug.broadcast) {
+                            throw new RPCError(errors.LOCAL_NODE_FAILURE);
+                        }
                     } else {
                         this.exciseNode(e, nodes[j]);
                     }
