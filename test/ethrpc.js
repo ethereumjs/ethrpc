@@ -8,7 +8,9 @@
 var assert = require("chai").assert;
 var async = require("async");
 var contracts = require("augur-contracts")['7'];
+var abi = require("augur-abi");
 var rpc = require("../");
+var errors = require("../errors");
 
 require('it-each')({ testPerIteration: true });
 
@@ -786,7 +788,46 @@ describe("getBlockByHash", function () {
     });
 });
 
-describe("Contract methods", function () {
+describe("sendEther", function () {
+
+    var etherValue = "1";
+    var recipient = "0x639b41c4d3d399894f2a57894278e1653e7cd24c";
+
+    it("send " + etherValue + " ether to " + recipient, function (done) {
+        this.timeout(TIMEOUT*4);
+        var start_balance = abi.bignum(rpc.balance(recipient));
+        start_balance = start_balance.dividedBy(rpc.ETHER);
+        rpc.reset();
+        rpc.sendEther({
+            to: recipient,
+            value: etherValue,
+            from: COINBASE,
+            onSent: function (res) {
+                assert.isNotNull(res);
+                assert.property(res, "txHash");
+                assert.property(res, "callReturn");
+                assert.isNotNull(res.txHash);
+                assert.strictEqual(res.txHash.length, 66);
+                assert.isNull(res.callReturn);
+            },
+            onSuccess: function (res) {
+                assert.strictEqual(res.from, COINBASE);
+                assert.strictEqual(res.to, recipient);
+                assert.strictEqual(abi.string(res.value), etherValue);
+                var final_balance = rpc.balance(recipient);
+                final_balance = abi.bignum(final_balance).dividedBy(rpc.ETHER);
+                assert.strictEqual(final_balance.sub(start_balance).toNumber(), etherValue);
+                done();
+            },
+            onFailed: function (err) {
+                done(err);
+            }
+        });
+    });
+
+});
+
+describe("invoke", function () {
 
     var test = function (tx, expected, apply) {
         tx.send = false;
@@ -1209,6 +1250,316 @@ describe("Load balancer", function () {
             assert.strictEqual(total, count - 1);
             done();
         });
+    });
+
+});
+
+var callbacks = {
+    onSent: function (res) {
+        assert.property(res, "txHash");
+        assert.property(res, "callReturn");
+        assert.strictEqual(res.txHash.length, 66);
+    },
+    onSuccess: function (res) {
+        assert.property(res, "txHash");
+        assert.property(res, "callReturn");
+        assert.property(res, "blockHash");
+        assert.property(res, "blockNumber");
+        assert.property(res, "nonce");
+        assert.property(res, "transactionIndex");
+        assert.property(res, "gas");
+        assert.property(res, "gasPrice");
+        assert.property(res, "input");
+        assert.strictEqual(res.txHash.length, 66);
+        assert.strictEqual(res.callReturn, "1");
+        assert.isAbove(parseInt(res.blockNumber), 0);
+        assert.isAbove(parseInt(res.nonce), 0);
+        assert.strictEqual(res.from, COINBASE);
+        assert.strictEqual(res.to, contracts.faucets);
+        assert.strictEqual(abi.number(res.value), 0);
+    }
+};
+
+describe("errorCodes", function () {
+
+    var test = function (t) {
+        it(t.itx.method, function () {
+            var actual = rpc.errorCodes(t.itx, t.response);
+            assert.strictEqual(actual, t.expected);
+        });
+    };
+
+    test({
+        itx: {
+            to: contracts.faucets,
+            from: COINBASE,
+            method: "reputationFaucet",
+            signature: "i",
+            params: "0xf69b5",
+            returns: "number"
+        },
+        response: "1",
+        expected: "1"
+    });
+
+
+});
+
+describe("encodeResult", function () {
+
+    var test = function (t) {
+        it(t.result + "," + t.returns + " -> " + t.expected, function () {
+            var actual = rpc.encodeResult(t.result, t.returns);
+            assert.strictEqual(actual, t.expected);
+        });
+    };
+
+    test({
+        result: "1",
+        returns: "number",
+        expected: "1"
+    });
+
+});
+
+describe("fire", function () {
+
+    var test = function (t) {
+        it(t.itx.method, function (done) {
+            this.timeout(TIMEOUT);
+            rpc.fire(t.itx, function (res) {
+                assert.strictEqual(res, t.expected);
+                done();
+            });
+        });
+    };
+
+    test({
+        itx: {
+            to: contracts.faucets,
+            from: COINBASE,
+            method: "reputationFaucet",
+            signature: "i",
+            params: "0xf69b5",
+            returns: "number"
+        },
+        expected: "1"
+    });
+
+});
+
+describe("checkBlockHash", function () {
+
+    var test = function (t) {
+        it(t.itx.method, function (done) {
+            this.timeout(TIMEOUT);
+            rpc.txs[t.txhash] = {
+                hash: t.txhash,
+                tx: t.tx,
+                count: 0,
+                status: "pending"
+            };
+            rpc.checkBlockHash(
+                t.tx,
+                t.callreturn,
+                t.itx,
+                t.txhash,
+                t.returns,
+                function (res) {
+                    callbacks.onSent(res);
+                    assert.strictEqual(res.callReturn, t.callreturn);
+                },
+                function (res) {
+                    callbacks.onSuccess(res);
+                    assert.strictEqual(abi.encode(t.itx), res.input);
+                    assert.strictEqual(rpc.txs[t.txhash].status, "confirmed");
+                    assert.strictEqual(rpc.txs[t.txhash].count, 1);
+                    done();
+                },
+                done
+            );
+        });
+    };
+
+    test({
+        tx: {
+            nonce: "0xf22",
+            blockHash: "0x043d7f980beb3c59b3335d90c4b14794f4577a71ff591c80858fac8a2f99dc39",
+            blockNumber: "0x2f336",
+            transactionIndex: "0x0",
+            from: "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec",
+            to: "0xd403f1657106c138843ea831bd99cbd2a4b8d648",
+            value: "0x0",
+            gas: "0x2fd618",
+            gasPrice: "0xba43b7400",
+            input: "0x988445fe00000000000000000000000000000000000000000000000000000000000f69b5",
+            callReturn: "1",
+            hash: "0xb47930faa3946f0e2ea64d3dbf479a4ac3b12e6eb59d7a6be402baa3f53f993d"
+        },
+        callreturn: "1",
+        itx: {
+            to: contracts.faucets,
+            from: COINBASE,
+            method: "reputationFaucet",
+            signature: "i",
+            params: "0xf69b5"
+        },
+        txhash: "0xb47930faa3946f0e2ea64d3dbf479a4ac3b12e6eb59d7a6be402baa3f53f993d",
+        returns: "number"
+    });
+
+});
+
+describe("txNotify", function () {
+
+    var test = function (t) {
+        it(t.itx.method, function (done) {
+            this.timeout(TIMEOUT);
+            rpc.txs[t.txhash] = {
+                hash: t.txhash,
+                tx: t.itx,
+                count: 0,
+                status: "pending"
+            };
+            rpc.txNotify(
+                t.callreturn,
+                t.itx,
+                t.txhash,
+                t.returns,
+                function (res) {
+                    callbacks.onSent(res);
+                    assert.strictEqual(res.callReturn, t.callreturn);
+                },
+                function (res) {
+                    callbacks.onSuccess(res);
+                    assert.notProperty(rpc.notifications, t.txhash);
+                    assert.strictEqual(abi.encode(t.itx), res.input);
+                    assert.strictEqual(rpc.txs[t.txhash].status, "confirmed");
+                    assert.strictEqual(rpc.txs[t.txhash].count, 1);
+                    done();
+                },
+                done
+            );
+        });
+        it("trailing timeout check", function (done) {
+            this.timeout(TIMEOUT);
+            rpc.TX_POLL_MAX = 2;
+            rpc.TX_POLL_INTERVAL = 1;
+            rpc.txs[t.txhash] = {
+                hash: t.txhash,
+                tx: t.itx,
+                count: 0,
+                status: "pending"
+            };
+            rpc.txNotify(
+                t.callreturn,
+                t.itx,
+                t.txhash,
+                t.returns,
+                function (res) {
+                    callbacks.onSent(res);
+                    assert.strictEqual(res.callReturn, t.callreturn);
+                },
+                function (res) {
+                    callbacks.onSuccess(res);
+                    assert.notProperty(rpc.notifications, t.txhash);
+                    assert.strictEqual(abi.encode(t.itx), res.input);
+                    assert.strictEqual(rpc.txs[t.txhash].status, "confirmed");
+                    assert.isTrue(false);
+                },
+                function (res) {
+                    assert.strictEqual(rpc.txs[t.txhash].count, rpc.TX_POLL_MAX);
+                    assert.strictEqual(rpc.txs[t.txhash].status, "unconfirmed");
+                    assert.deepEqual(res, errors.TRANSACTION_NOT_CONFIRMED);
+                    done();
+                }
+            );
+        });
+    };
+
+    test({
+        callreturn: "1",
+        itx: {
+            to: contracts.faucets,
+            from: COINBASE,
+            method: "reputationFaucet",
+            signature: "i",
+            params: "0xf69b5"
+        },
+        txhash: "0xb47930faa3946f0e2ea64d3dbf479a4ac3b12e6eb59d7a6be402baa3f53f993d",
+        returns: "number"
+    });
+
+});
+
+describe("confirmTx", function () {
+
+    var test = function (t) {
+        it(t.tx.method, function (done) {
+            this.timeout(TIMEOUT);
+            rpc.confirmTx(
+                t.tx,
+                t.txhash,
+                t.returns,
+                function (res) {
+                    callbacks.onSent(res);
+                    assert.strictEqual(res.callReturn, t.expected);
+                },
+                function (res) {
+                    callbacks.onSuccess(res);
+                    assert.strictEqual(abi.encode(t.tx), res.input);
+                    done();
+                },
+                done
+            );
+        });
+    };
+
+    test({
+        tx: {
+            to: contracts.faucets,
+            from: COINBASE,
+            method: "reputationFaucet",
+            signature: "i",
+            params: "0xf69b5",
+            returns: "number"
+        },
+        txhash: "0xb47930faa3946f0e2ea64d3dbf479a4ac3b12e6eb59d7a6be402baa3f53f993d",
+        returns: "number",
+        expected: "1"
+    });
+
+});
+
+describe("transact", function () {
+
+    var test = function (t) {
+        it(t.tx.method, function (done) {
+            this.timeout(TIMEOUT);
+            rpc.TX_POLL_MAX = 64;
+            rpc.TX_POLL_INTERVAL = 12000;
+            rpc.transact(
+                t.tx,
+                callbacks.onSent,
+                function (res) {
+                    callbacks.onSuccess(res);
+                    assert.strictEqual(abi.encode(t.tx), res.input);
+                    done();
+                },
+                done
+            );
+        });
+    };
+
+    test({
+        tx: {
+            to: contracts.faucets,
+            from: COINBASE,
+            method: "reputationFaucet",
+            signature: "i",
+            params: "0xf69b5",
+            returns: "number"
+        }
     });
 
 });

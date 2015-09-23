@@ -5,7 +5,7 @@ ethrpc
 [![Coverage Status](https://coveralls.io/repos/AugurProject/ethrpc/badge.svg?branch=master&service=github)](https://coveralls.io/github/AugurProject/ethrpc?branch=master)
 [![npm version](https://badge.fury.io/js/ethrpc.svg)](http://badge.fury.io/js/ethrpc)
 
-JavaScript JSON RPC bindings for Ethereum.
+JavaScript RPC communication with the Ethereum network.
 
 Usage
 -----
