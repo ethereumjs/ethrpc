@@ -14,7 +14,7 @@ var errors = require("../errors");
 
 require('it-each')({ testPerIteration: true });
 
-var TIMEOUT = 120000;
+var TIMEOUT = 1200000;
 var SAMPLES = 25;
 var COINBASE = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
 var SHA3_INPUT = "boom!";
