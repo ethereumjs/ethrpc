@@ -14,7 +14,7 @@ var errors = require("../errors");
 
 require('it-each')({ testPerIteration: true });
 
-var TIMEOUT = 1200000;
+var TIMEOUT = 360000;
 var SAMPLES = 25;
 var COINBASE = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
 var SHA3_INPUT = "boom!";
@@ -795,8 +795,7 @@ describe("sendEther", function () {
 
     it("send " + etherValue + " ether to " + recipient, function (done) {
         this.timeout(TIMEOUT*4);
-        var start_balance = abi.bignum(rpc.balance(recipient));
-        start_balance = start_balance.dividedBy(rpc.ETHER);
+        var start_balance = abi.bignum(rpc.balance(recipient)).dividedBy(rpc.ETHER);
         rpc.reset();
         rpc.sendEther({
             to: recipient,
@@ -813,10 +812,10 @@ describe("sendEther", function () {
             onSuccess: function (res) {
                 assert.strictEqual(res.from, COINBASE);
                 assert.strictEqual(res.to, recipient);
-                assert.strictEqual(abi.string(res.value), etherValue);
+                assert.strictEqual(abi.bignum(res.value).dividedBy(rpc.ETHER).toFixed(), etherValue);
                 var final_balance = rpc.balance(recipient);
                 final_balance = abi.bignum(final_balance).dividedBy(rpc.ETHER);
-                assert.strictEqual(final_balance.sub(start_balance).toNumber(), etherValue);
+                assert.strictEqual(final_balance.sub(start_balance).toFixed(), etherValue);
                 done();
             },
             onFailed: function (err) {
@@ -1497,6 +1496,7 @@ describe("confirmTx", function () {
     var test = function (t) {
         it(t.tx.method, function (done) {
             this.timeout(TIMEOUT);
+            delete rpc.txs[t.txhash];
             rpc.confirmTx(
                 t.tx,
                 t.txhash,
