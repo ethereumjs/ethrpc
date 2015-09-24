@@ -60,6 +60,14 @@
         "-3": "not enough money",
         "-4": "bad nonce/hash"
     },
+    "TRANSACTION_NOT_FOUND": {
+        "error": 404,
+        "message": "transaction not found"
+    },
+    "NULL_CALL_RETURN": {
+        "error": 406,
+        "message": "expected contract call to return value, received null"
+    },
     "NULL_RESPONSE": {
         "error": 407,
         "message": "expected transaction hash from Ethereum node, received null"

@@ -555,6 +555,25 @@ describe("multicast", function () {
 
 });
 
+describe("clear", function () {
+
+    it("delete cached network/notification/transaction data", function (done) {
+        this.timeout(TIMEOUT);
+        rpc.reset();
+        rpc.latency["0x1"] = "junk";
+        rpc.samples["0x1"] = "junk";
+        rpc.txs["0x1"] = { junk: "junk" };
+        rpc.notifications["0x1"] = setTimeout(function () { done(1); }, 1500);
+        rpc.clear();
+        assert.deepEqual(rpc.latency, {});
+        assert.deepEqual(rpc.samples, {});
+        assert.deepEqual(rpc.txs, {});
+        assert.deepEqual(rpc.notifications, {});
+        setTimeout(done, 2000);
+    });
+
+});
+
 describe("reset", function () {
 
     it("revert to default node list", function () {
