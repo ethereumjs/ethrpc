@@ -529,16 +529,27 @@ module.exports = {
         this.nodes.local = null;
     },
 
+    // delete cached network, notification, and transaction data
+    clear: function () {
+        this.latency = {};
+        this.samples = {};
+        this.txs = {};
+        for (var n in this.notifications) {
+            if (!this.notifications.hasOwnProperty(n)) continue;
+            if (this.notifications[n]) {
+                clearTimeout(this.notifications[n]);
+            }
+        }
+        this.notifications = {};
+    },
+
     // reset to default Ethereum nodes
     reset: function (deleteData) {
         this.nodes = {
             hosted: HOSTED_NODES.slice(),
             local: null
         };
-        if (deleteData) {
-            this.latency = {};
-            this.samples = {};
-        }
+        if (deleteData) this.clear();
     },
 
     /******************************
@@ -1086,9 +1097,9 @@ module.exports = {
                 } else {
                     this.txs[txhash] = { hash: txhash, tx: tx, count: 0, status: "pending" };
                     this.txs[txhash].tx.returns = returns;
-                    this.getTx(txhash, function (sent) {
+                    return this.getTx(txhash, function (sent) {
                         if (returns !== "null") {
-                            self.call({
+                            return self.call({
                                 from: sent.from,
                                 to: sent.to || tx.to,
                                 value: sent.value || tx.value,
@@ -1162,13 +1173,12 @@ module.exports = {
                                     }
                                 }
                             });
+                        }
 
                         // if returns type is null, skip the intermediate call
-                        } else {
-                            onSent({ txHash: txhash, callReturn: null });
-                            if (onSuccess && onSuccess.constructor === Function) {
-                                self.txNotify(null, tx, txhash, returns, onSent, onSuccess, onFailed);
-                            }
+                        onSent({ txHash: txhash, callReturn: null });
+                        if (onSuccess && onSuccess.constructor === Function) {
+                            self.txNotify(null, tx, txhash, returns, onSent, onSuccess, onFailed);
                         }
                     });
                 }
@@ -1182,18 +1192,21 @@ module.exports = {
         tx.send = true;
         delete tx.returns;
         if (onSent && onSent.constructor === Function) {
-            this.invoke(tx, function (txhash) {
-                if (txhash.error) {
-                    if (onFailed) onFailed(txhash);
+            return this.invoke(tx, function (txhash) {
+                if (txhash) {
+                    if (txhash.error) {
+                        if (onFailed) onFailed(txhash);
+                    } else {
+                        if (tx.invocation) delete tx.invocation;
+                        txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
+                        self.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
+                    }
                 } else {
-                    if (tx.invocation) delete tx.invocation;
-                    txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
-                    self.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
+                    if (onFailed) onFailed(errors.NULL_RESPONSE);
                 }
             });
-        } else {
-            return this.invoke(tx);
         }
+        return this.invoke(tx);
     }
 
 };

@@ -60,6 +60,10 @@
         "-3": "not enough money",
         "-4": "bad nonce/hash"
     },
+    "NULL_RESPONSE": {
+        "error": 407,
+        "message": "expected transaction hash from Ethereum node, received null"
+    },
     "NO_RESPONSE": {
         "error": 408,
         "message": "no response"
