@@ -1,10 +1,10 @@
 {
   "name": "ethrpc",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Ethereum JSON RPC",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/ipc.js && mocha test/rpc.js",
+    "test": "mocha",
     "lint": "jshint index.js",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/rpc.js"
   },

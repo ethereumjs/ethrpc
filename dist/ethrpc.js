@@ -3984,14 +3984,16 @@ module.exports = {
                     if (!callback) return response;
                     callback(response);
                 } else if (response.result !== undefined) {
-                    if (returns) {
-                        response.result = this.applyReturns(returns, response.result);
-                    } else {
-                        if (response.result && response.result.length > 2 &&
-                            response.result.slice(0,2) === "0x")
-                        {
-                            response.result = abi.remove_leading_zeros(response.result);
-                            response.result = abi.prefix_hex(response.result);
+                    if (typeof response.result !== "boolean") {
+                        if (returns) {
+                            response.result = this.applyReturns(returns, response.result);
+                        } else {
+                            if (response.result && response.result.length > 2 &&
+                                response.result.slice(0,2) === "0x")
+                            {
+                                response.result = abi.remove_leading_zeros(response.result);
+                                response.result = abi.prefix_hex(response.result);
+                            }
                         }
                     }
                     if (!callback) return response.result;
@@ -4007,11 +4009,13 @@ module.exports = {
                                 throw new this.Error(response.error);
                             }
                         } else if (response[i].result !== undefined) {
-                            if (returns[i]) {
-                                results[i] = this.applyReturns(returns[i], response[i].result);
-                            } else {
-                                results[i] = abi.remove_leading_zeros(results[i]);
-                                results[i] = abi.prefix_hex(results[i]);
+                            if (typeof response[i].result !== "boolean") {
+                                if (returns[i]) {
+                                    results[i] = this.applyReturns(returns[i], response[i].result);
+                                } else {
+                                    results[i] = abi.remove_leading_zeros(results[i]);
+                                    results[i] = abi.prefix_hex(results[i]);
+                                }
                             }
                         }
                     }
@@ -4295,7 +4299,9 @@ module.exports = {
                         console.log("nodes:", JSON.stringify(nodes));
                         console.log("post", command.method, "to:", node);
                     }
-                    var start = new Date().getTime();
+                    if (self.balancer) {
+                        start = new Date().getTime();
+                    }
                     self.post(node, command, returns, function (res) {
                         if (self.debug.logs) {
                             if (res && res.constructor === BigNumber) {
@@ -4309,21 +4315,34 @@ module.exports = {
                             !res.error && res !== "0x"))
                         {
                             completed = true;
-                            self.updateMeanLatency(node, new Date().getTime() - start);
-                            return nextNode(res);
+                            if (self.balancer) {
+                                self.updateMeanLatency(node, new Date().getTime() - start);
+                            }
+                            return nextNode({ output: res });
                         }
                         nextNode();
                     });
                 }
-            }, callback);
+            }, function (res) {
+                if (!res && res.output === undefined) return callback();
+                callback(res.output);
+            });
 
         // use synchronous http if no callback provided
         } else {
             for (var j = 0, len = nodes.length; j < len; ++j) {
                 try {
-                    start = new Date().getTime();
+                    if (this.debug.logs) {
+                        console.log("nodes:", JSON.stringify(nodes));
+                        console.log("synchronous post", command.method, "to:", nodes[j]);
+                    }
+                    if (this.balancer) {
+                        start = new Date().getTime();
+                    }
                     result = this.postSync(nodes[j], command, returns);
-                    this.updateMeanLatency(nodes[j], new Date().getTime() - start);
+                    if (this.balancer) {
+                        this.updateMeanLatency(nodes[j], new Date().getTime() - start);
+                    }
                 } catch (e) {
                     if (this.nodes.local) {
                         throw new this.Error(errors.LOCAL_NODE_FAILURE);
@@ -4446,14 +4465,20 @@ module.exports = {
     },
 
     balance: function (address, block, f) {
-        return this.broadcast(
-            this.marshal("getBalance", [ address, block || "latest" ]), f
-        );
+        if (block && block.constructor === Function) {
+            f = block;
+            block = null;
+        }
+        block = block || "latest";
+        return this.broadcast(this.marshal("getBalance", [ address, block ]), f);
     },
     getBalance: function (address, block, f) {
-        return this.broadcast(
-            this.marshal("getBalance", [ address, block || "latest" ]), f
-        );
+        if (block && block.constructor === Function) {
+            f = block;
+            block = null;
+        }
+        block = block || "latest";
+        return this.broadcast(this.marshal("getBalance", [ address, block ]), f);
     },
 
     txCount: function (address, f) {
