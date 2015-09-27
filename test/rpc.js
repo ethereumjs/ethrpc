@@ -19,12 +19,13 @@ var SAMPLES = 25;
 var COINBASE = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
 var SHA3_INPUT = "boom!";
 var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
-var PROTOCOL_VERSION = "61";
+var PROTOCOL_VERSION = "62";
 var NETWORK_ID = "7";
 contracts = contracts[NETWORK_ID];
 
 rpc.reset();
 rpc.balancer = false;
+rpc.ipcpath = null;
 var HOSTED_NODES = rpc.nodes.hosted.slice();
 
 var requests = 0;
@@ -606,11 +607,11 @@ describe("Ethereum bindings", function () {
     });
 
     it("eth('coinbase')", function () {
-        assert.strictEqual(COINBASE, rpc.eth("coinbase"));
+        assert.strictEqual(rpc.eth("coinbase"), COINBASE);
     });
 
     it("eth('protocolVersion')", function () {
-        assert.strictEqual(rpc.eth("protocolVersion"), "61");
+        assert.strictEqual(rpc.eth("protocolVersion"), PROTOCOL_VERSION);
     });
 
     it("web3_sha3('" + SHA3_INPUT + "')", function () {

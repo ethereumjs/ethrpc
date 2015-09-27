@@ -4,7 +4,7 @@
   "description": "Ethereum JSON RPC",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/rpc.js && mocha test/ipc.js",
+    "test": "mocha test/ipc.js && mocha test/rpc.js",
     "lint": "jshint index.js",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/rpc.js"
   },
