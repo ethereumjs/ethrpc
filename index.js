@@ -6,8 +6,9 @@
 "use strict";
 
 var NODE_JS = (typeof module !== "undefined") && process && !process.browser;
-var request, syncRequest;
+var net, request, syncRequest;
 if (NODE_JS) {
+    net = require("net");
     request = require("request");
     syncRequest = require("sync-request");
 }
@@ -48,8 +49,11 @@ module.exports = {
     // network load balancer
     balancer: true,
 
+    // use IPC (only available on Node + Linux/OSX)
+    ipcpath: null,
+
     // Maximum number of transaction verification attempts
-    TX_POLL_MAX: 64,
+    TX_POLL_MAX: 36,
 
     // Transaction polling interval
     TX_POLL_INTERVAL: 12000,
@@ -392,7 +396,7 @@ module.exports = {
 
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
-        var self, start, nodes, numCommands, returns, result, completed;
+        var start, nodes, numCommands, returns, result, completed, self = this;
 
         if (this.debug.logs) {
             if (command.method === "eth_call" || command.method === "eth_sendTransaction") {
@@ -437,6 +441,19 @@ module.exports = {
             returns = this.stripReturns(command);
         }
 
+        // if we're on Node, use IPC if available/enabled
+        if (NODE_JS && this.ipcpath) {
+            var socket = new net.Socket();
+            socket.setEncoding("utf8");
+            socket.connect({ path: this.ipcpath }, function () {
+                socket.write(JSON.stringify(command));
+            });
+            return socket.on("data", function (data) {
+                socket.destroy();
+                self.parse(data, returns, callback);
+            });
+        }
+
         // make sure the ethereum node list isn't empty
         if (!this.nodes.local && !this.nodes.hosted.length) {
             if (callback) return callback(errors.ETHEREUM_NOT_FOUND);
@@ -448,7 +465,6 @@ module.exports = {
 
         // asynchronous request if callback exists
         if (callback && callback.constructor === Function) {
-            self = this;
             async.eachSeries(nodes, function (node, nextNode) {
                 if (!completed) {
                     if (self.debug.logs) {
@@ -1028,16 +1044,17 @@ module.exports = {
     },
 
     fire: function (itx, callback) {
+        var self = this;
         var tx = abi.copy(itx);
         if (callback) {
             this.invoke(tx, function (res) {
-                res = this.errorCodes(tx, res);
+                res = self.errorCodes(tx, res);
                 if (res) {
                     if (res.error) return callback(res);
-                    return callback(this.encodeResult(res, itx.returns));
+                    return callback(self.encodeResult(res, itx.returns));
                 }
                 callback(errors.NO_RESPONSE);
-            }.bind(this));
+            });
         } else {
             var res = this.errorCodes(tx, this.invoke(tx));
             if (res) {
@@ -1053,6 +1070,8 @@ module.exports = {
      ***************************************/
 
     checkBlockHash: function (tx, callreturn, itx, txhash, returns, onSent, onSuccess, onFailed) {
+        if (!this.txs[txhash]) this.txs[txhash] = {};
+        if (this.txs[txhash].count === undefined) this.txs[txhash].count = 0;
         ++this.txs[txhash].count;
         if (tx && tx.blockHash && abi.number(tx.blockHash) !== 0) {
             tx.callReturn = this.encodeResult(callreturn, returns);

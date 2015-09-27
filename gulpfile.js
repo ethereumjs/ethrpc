@@ -10,7 +10,7 @@ gulp.task("clean", function (callback) {
 });
 
 gulp.task("lint", function (callback) {
-    cp.exec("jshint index.js && jshint test", function (err, stdout) {
+    cp.exec("npm run lint", function (err, stdout) {
         if (err) if (stdout) process.stdout.write(stdout);
         callback(err);
     });

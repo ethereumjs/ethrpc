@@ -7,7 +7,7 @@
 
 var assert = require("chai").assert;
 var async = require("async");
-var contracts = require("augur-contracts")['7'];
+var contracts = require("augur-contracts");
 var abi = require("augur-abi");
 var rpc = require("../");
 var errors = require("../errors");
@@ -20,12 +20,14 @@ var COINBASE = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
 var SHA3_INPUT = "boom!";
 var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
 var PROTOCOL_VERSION = "61";
+var NETWORK_ID = "7";
+contracts = contracts[NETWORK_ID];
 
-var requests = 0;
 rpc.reset();
+rpc.balancer = false;
 var HOSTED_NODES = rpc.nodes.hosted.slice();
 
-rpc.balancer = false;
+var requests = 0;
 
 describe("marshal", function () {
 
@@ -90,20 +92,19 @@ describe("broadcast", function () {
             // synchronous
             var response = rpc.broadcast(t.command);
             if (response.error) {
-                done(response);
-            } else {
-                assert.strictEqual(response, t.expected);
-
-                // asynchronous
-                rpc.broadcast(t.command, function (res) {
-                    if (res.error) {
-                        done(res);
-                    } else {
-                        assert.strictEqual(res, t.expected);
-                        done();
-                    }
-                });
+                return done(response);
             }
+            assert.strictEqual(response, t.expected);
+
+            // asynchronous
+            rpc.broadcast(t.command, function (res) {
+                if (res.error) {
+                    done(res);
+                } else {
+                    assert.strictEqual(res, t.expected);
+                    done();
+                }
+            });
         });
     };
 
