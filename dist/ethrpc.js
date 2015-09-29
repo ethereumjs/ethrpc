@@ -3867,11 +3867,11 @@ module.exports = {
         logs: false
     },
 
-    // remove unresponsive nodes
-    excision: true,
-
     // network load balancer
     balancer: true,
+
+    // remove unresponsive nodes
+    excision: false,
 
     // use IPC (only available on Node + Linux/OSX)
     ipcpath: null,
@@ -4034,7 +4034,7 @@ module.exports = {
             var err = e;
             if (e && e.name === "SyntaxError") {
                 err = errors.INVALID_RESPONSE;
-                err.bubble = response;
+                // err.bubble = response;
             }
             if (callback) return callback(err);
             throw new this.Error(err);
@@ -4270,16 +4270,28 @@ module.exports = {
         }
 
         // if we're on Node, use IPC if available/enabled
-        if (NODE_JS && this.ipcpath) {
+        if (NODE_JS && this.ipcpath && callback && command &&
+            command.method && command.method.indexOf("Filter") === -1)
+        {
+            var received = '';
             var socket = new net.Socket();
             socket.setEncoding("utf8");
             socket.connect({ path: this.ipcpath }, function () {
                 socket.write(JSON.stringify(command));
             });
-            return socket.on("data", function (data) {
-                socket.destroy();
-                self.parse(data, returns, callback);
+            socket.on("data", function (data) {
+                received += data;
+                self.parse(received, returns, function (parsed) {
+                    if (parsed && parsed.error === 409) return;
+                    socket.destroy();
+                    if (callback) callback(parsed);
+                });
             });
+            socket.on("error", function (err) {
+                console.error("domain socket error:", err);
+                socket.destroy();
+            });
+            return;
         }
 
         // make sure the ethereum node list isn't empty
@@ -4674,15 +4686,16 @@ module.exports = {
                     }
                     f(false);
                 });
-            }
-            var res = this.sign(account, "1010101");
-            if (res) {
-                if (res.error) {
-                    return false;
+            } else {
+                var res = this.sign(account, "1010101");
+                if (res) {
+                    if (res.error) {
+                        return false;
+                    }
+                    return true;
                 }
-                return true;
+                return false;
             }
-            return false;
         } catch (e) {
             if (f && f.constructor === Function) return f(false);
             return false;

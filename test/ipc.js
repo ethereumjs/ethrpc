@@ -20,13 +20,16 @@ describe("IPC", function () {
 
     var DEBUG = false;
     var DATADIR = path.join(process.env.HOME, ".augur-test");
+    // var DATADIR = path.join(process.env.HOME, ".ethereum-augur");
     var COINBASE = "0x05ae1d0ca6206c6168b42efcd1fbe0ed144e821b";
+    // var COINBASE = "0x639b41c4d3d399894f2a57894278e1653e7cd24c";
     var TIMEOUT = 360000;
     var SHA3_INPUT = "boom!";
     var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
     var PROTOCOL_VERSION = "62";
     var TXHASH = "0x8807d1cf7bfad194122285cc586ffa72e124e2c47ff6b56067d5193511993c28";
     var NETWORK_ID = "10101";
+    // var NETWORK_ID = "7";
     contracts = contracts[NETWORK_ID];
     var requests = 0;
     var geth;
@@ -73,8 +76,6 @@ describe("IPC", function () {
                 "--nodiscover",
                 "--networkid", NETWORK_ID,
                 "--port", 30304,
-                "--rpcport", 8547,
-                "--rpc",
                 "--datadir", DATADIR,
                 "--password", path.join(DATADIR, ".password")
             ]);
@@ -688,7 +689,9 @@ describe("IPC", function () {
             it("send " + etherValue + " ether to " + recipient, function (done) {
                 this.timeout(TIMEOUT);
                 rpc.balance(recipient, null, function (startBalance) {
-                    if (startBalance.error) return done(startBalance);
+                    if (!startBalance || startBalance.error) {
+                        return done(startBalance);
+                    }
                     startBalance = abi.bignum(startBalance).dividedBy(rpc.ETHER);
                     rpc.sendEther({
                         to: recipient,
@@ -707,7 +710,9 @@ describe("IPC", function () {
                             assert.strictEqual(res.to, recipient);
                             assert.strictEqual(abi.bignum(res.value).dividedBy(rpc.ETHER).toFixed(), etherValue);
                             rpc.balance(recipient, null, function (finalBalance) {
-                                if (finalBalance.error) return done(finalBalance);
+                                if (!finalBalance || finalBalance.error) {
+                                    return done(finalBalance);
+                                }
                                 finalBalance = abi.bignum(finalBalance).dividedBy(rpc.ETHER);
                                 assert.strictEqual(finalBalance.sub(startBalance).toFixed(), etherValue);
                                 done();

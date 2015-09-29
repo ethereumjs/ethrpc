@@ -33,6 +33,7 @@ describe("RPC", function () {
         rpc.reset();
         rpc.balancer = false;
         rpc.ipcpath = null;
+        rpc.excision = true;
         HOSTED_NODES = rpc.nodes.hosted.slice();
     });
 
