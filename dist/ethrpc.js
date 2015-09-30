@@ -3808,6 +3808,10 @@ module.exports={
         "error": 502,
         "message": "duplicate transaction"
     },
+    "LOOPBACK_NOT_FOUND": {
+        "error": 650,
+        "message": "loopback interface required for synchronous local commands"
+    },
     "ETHEREUM_NOT_FOUND": {
         "error": 651,
         "message": "no active ethereum node(s) found"
@@ -4053,7 +4057,7 @@ module.exports = {
     },
 
     exciseNode: function (err, deadNode, callback) {
-        if (deadNode && !this.nodes.local) {
+        if (deadNode && !this.nodes.local && !this.ipcpath) {
             if (this.debug.logs) {
                 console.log("[ethrpc] request to", deadNode, "failed:", err);
             }
@@ -4224,8 +4228,14 @@ module.exports = {
 
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
-        var start, nodes, numCommands, returns, result, completed, self = this;
+        var start, loopback, nodes, numCommands, returns, result, completed, self = this;
 
+        if (!command || (command.constructor === Object && !command.method) ||
+            (command.constructor === Array && !command.length))
+        {
+            if (!callback) return null;
+            return callback(null);
+        }
         if (this.debug.logs) {
             if (command.method === "eth_call" || command.method === "eth_sendTransaction") {
                 if (command.params && (!command.params.length || !command.params[0].from)) {
@@ -4270,32 +4280,42 @@ module.exports = {
         }
 
         // if we're on Node, use IPC if available/enabled
-        if (NODE_JS && this.ipcpath && callback && command &&
-            command.method && command.method.indexOf("Filter") === -1)
-        {
-            var received = '';
-            var socket = new net.Socket();
-            socket.setEncoding("utf8");
-            socket.connect({ path: this.ipcpath }, function () {
-                socket.write(JSON.stringify(command));
-            });
-            socket.on("data", function (data) {
-                received += data;
-                self.parse(received, returns, function (parsed) {
-                    if (parsed && parsed.error === 409) return;
-                    socket.destroy();
-                    if (callback) callback(parsed);
+        if (this.debug.logs) {
+            console.log("command:", JSON.stringify(command, null, 2));
+        }
+        loopback = this.nodes.local && (
+            (this.nodes.local.indexOf("127.0.0.1") > -1 ||
+            this.nodes.local.indexOf("localhost") > -1)
+        );
+        if (NODE_JS && this.ipcpath && command.method.indexOf("Filter") === -1) {
+            if (!callback && !loopback) {
+                throw new this.Error(errors.LOOPBACK_NOT_FOUND);
+            }
+            if (callback && command.constructor !== Array) {
+                var received = '';
+                var socket = new net.Socket();
+                socket.setEncoding("utf8");
+                socket.connect({ path: this.ipcpath }, function () {
+                    socket.write(JSON.stringify(command));
                 });
-            });
-            socket.on("error", function (err) {
-                console.error("domain socket error:", err);
-                socket.destroy();
-            });
-            return;
+                socket.on("data", function (data) {
+                    received += data;
+                    self.parse(received, returns, function (parsed) {
+                        if (parsed && parsed.error === 409) return;
+                        socket.destroy();
+                        callback(parsed);
+                    });
+                });
+                socket.on("error", function (err) {
+                    socket.destroy();
+                    callback(err);
+                });
+                return;
+            }
         }
 
         // make sure the ethereum node list isn't empty
-        if (!this.nodes.local && !this.nodes.hosted.length) {
+        if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath) {
             if (callback) return callback(errors.ETHEREUM_NOT_FOUND);
             throw new this.Error(errors.ETHEREUM_NOT_FOUND);
         }
@@ -4649,7 +4669,7 @@ module.exports = {
     listening: function (f) {
         var response, self = this;
         try {
-            if (!this.nodes.hosted.length && !this.nodes.local) {
+            if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
                 throw new this.Error(errors.ETHEREUM_NOT_FOUND);
             }
             if (f && f.constructor === Function) {
@@ -4674,7 +4694,7 @@ module.exports = {
     },
 
     unlocked: function (account, f) {
-        if (!this.nodes.hosted.length && !this.nodes.local) {
+        if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
             throw new this.Error(errors.ETHEREUM_NOT_FOUND);
         }
         try {
