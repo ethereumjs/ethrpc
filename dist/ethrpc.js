@@ -4045,13 +4045,16 @@ module.exports = {
         }
     },
 
-    stripReturns: function (tx) {
+    strip: function (tx) {
         var returns;
-        if (tx.params !== undefined && tx.params.length &&
-            tx.params[0] && tx.params[0].returns)
-        {
-            returns = tx.params[0].returns;
-            delete tx.params[0].returns;
+        if (tx.params !== undefined && tx.params.length && tx.params[0]) {
+            if (tx.params[0].returns) {
+                returns = tx.params[0].returns;
+                delete tx.params[0].returns;
+            }
+            if (tx.params[0].invocation) {
+                delete tx.params[0].invocation;
+            }
         }
         return returns;
     },
@@ -4228,7 +4231,7 @@ module.exports = {
 
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
-        var start, loopback, nodes, numCommands, returns, result, completed, self = this;
+        var start, nodes, numCommands, returns, result, completed, self = this;
 
         if (!command || (command.constructor === Object && !command.method) ||
             (command.constructor === Array && !command.length))
@@ -4268,26 +4271,27 @@ module.exports = {
             }
         }
 
-        // parse batched commands and strip "returns" fields
+        // parse batched commands and strip "returns" and "invocation" fields
         if (command.constructor === Array) {
             numCommands = command.length;
             returns = new Array(numCommands);
             for (var i = 0; i < numCommands; ++i) {
-                returns[i] = this.stripReturns(command[i]);
+                returns[i] = this.strip(command[i]);
             }
+
+        // parse commands and strip "returns" and "invocation" fields
         } else {
-            returns = this.stripReturns(command);
+            returns = this.strip(command);
         }
 
-        // if we're on Node, use IPC if available/enabled
-        if (this.debug.logs) {
-            console.log("command:", JSON.stringify(command, null, 2));
-        }
-        loopback = this.nodes.local && (
-            (this.nodes.local.indexOf("127.0.0.1") > -1 ||
-            this.nodes.local.indexOf("localhost") > -1)
-        );
-        if (NODE_JS && this.ipcpath && command.method.indexOf("Filter") === -1) {
+        // if we're on Node, use IPC if available and ipcpath is specified
+        if (NODE_JS && this.ipcpath && command.method &&
+            command.method.indexOf("Filter") === -1)
+        {
+            var loopback = this.nodes.local && (
+                (this.nodes.local.indexOf("127.0.0.1") > -1 ||
+                this.nodes.local.indexOf("localhost") > -1)
+            );
             if (!callback && !loopback) {
                 throw new this.Error(errors.LOOPBACK_NOT_FOUND);
             }
