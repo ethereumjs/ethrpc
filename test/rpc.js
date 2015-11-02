@@ -22,7 +22,7 @@ describe("RPC", function () {
     var COINBASE = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
     var SHA3_INPUT = "boom!";
     var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
-    var PROTOCOL_VERSION = "62";
+    var PROTOCOL_VERSION = "63";
     var TXHASH = "0xb47930faa3946f0e2ea64d3dbf479a4ac3b12e6eb59d7a6be402baa3f53f993d";
     var NETWORK_ID = "7";
     contracts = contracts[NETWORK_ID];
