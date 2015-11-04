@@ -1,4 +1,3 @@
-(function () {
 /**
  * ethrpc unit tests
  * @author Jack Peterson (jack@tinybike.net)
@@ -6,33 +5,63 @@
 
 "use strict";
 
-var path = require("path");
-var cp = require("child_process");
-var chalk = require("chalk");
+var join = require("path").join;
 var assert = require("chai").assert;
-var async = require("async");
-var contracts = require("augur-contracts");
 var abi = require("augur-abi");
-var rpc = require("../");
+var geth = require("geth");
+var ethrpc = require("../");
 var errors = require("../errors");
+
+var COINBASE = "0x05ae1d0ca6206c6168b42efcd1fbe0ed144e821b";
+
+var options = {
+    spawn_geth: true,
+    symlink: join(process.env.HOME, "ethlink"),
+    flags: {
+        networkid: "10101",
+        port: 30304,
+        rpcport: 8547,
+        mine: null,
+        unlock: COINBASE,
+        etherbase: COINBASE,
+        bootnodes: [
+            "enode://"+
+                "70eb80f63946c2b3f65e68311b4419a80c78271c099a7d1f3d8df8cdd8e37493"+
+                "4c795d8bc9f204dda21eb9a318d30197ba7593494eb27ceb52663c8339e9cb70"+
+                "@[::]:30303",
+            "enode://"+
+                "405e781c84b570f02cb2e4ebb18c60528aba5a08ccd72d4ebd7aeabc09208ef2"+
+                "4fa54e20ff3b10e478c203dd481f3820242e51fe72770a207a798eadfe8e7e6e"+
+                "@[::]:30303",
+            "enode://"+
+                "d4f4e7fd3954718562544dbf322c0c84d2c87f154dd66a39ea0787a6f74930c4"+
+                "2f5d13ba2cfef481b66a6f002bc3915f94964f67251524696a448ba40d1e2b12"+
+                "@[::]:30303",
+            "enode://"+
+                "8f3c33294774dc266446e9c8483fa1a21a49b157d2066717fd52e76d00fb4ed7"+
+                "71ad215631f9306db2e5a711884fe436bc0ca082684067836b3b54730a6c3995"+
+                "@[::]:30303",
+            "enode://"+
+                "4f23a991ea8739bcc5ab52625407fcfddb03ac31a36141184cf9072ff8bf3999"+
+                "54bb94ec47e1f653a0b0fea8d88a67fa3147dbe5c56067f39e0bd5125ae0d1f1"+
+                "@[::]:30303",
+            "enode://"+
+                "bafc7bbaebf6452dcbf9522a2af30f586b38c72c84922616eacad686ab6aaed2"+
+                "b50f808b3f91dba6a546474fe96b5bff97d51c9b062b4a2e8bc9339d9bb8e186"+
+                "@[::]:30303"
+        ]
+    }
+};
+var contracts = require("augur-contracts")[options.flags.networkid];
 
 describe("IPC", function () {
 
-    var DEBUG = false;
-    var DATADIR = path.join(process.env.HOME, ".augur-test");
-    // var DATADIR = path.join(process.env.HOME, ".ethereum-augur");
-    var COINBASE = "0x05ae1d0ca6206c6168b42efcd1fbe0ed144e821b";
-    // var COINBASE = "0x639b41c4d3d399894f2a57894278e1653e7cd24c";
     var TIMEOUT = 360000;
     var SHA3_INPUT = "boom!";
     var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
-    var PROTOCOL_VERSION = "62";
+    var PROTOCOL_VERSION = "63";
     var TXHASH = "0x8807d1cf7bfad194122285cc586ffa72e124e2c47ff6b56067d5193511993c28";
-    var NETWORK_ID = "10101";
-    // var NETWORK_ID = "7";
-    contracts = contracts[NETWORK_ID];
     var requests = 0;
-    var geth;
 
     var callbacks = {
         onSent: function (res) {
@@ -60,43 +89,18 @@ describe("IPC", function () {
         }
     };
 
-    process.on("exit", function () { if (geth) geth.kill(); });
-
     before(function (done) {
         this.timeout(TIMEOUT);
-        rpc.reset();
-        rpc.balancer = false;
-        rpc.ipcpath = path.join(DATADIR, "geth.ipc");
-        cp.exec("ps cax | grep geth > /dev/null", function (err, stdout) {
-            if (err === null) return done();
-            geth = cp.spawn("geth", [
-                "--etherbase", COINBASE,
-                "--unlock", COINBASE,
-                "--mine",
-                "--nodiscover",
-                "--networkid", NETWORK_ID,
-                "--port", 30304,
-                "--datadir", DATADIR,
-                "--password", path.join(DATADIR, ".password")
-            ]);
-            geth.stdout.on("data", function (data) {
-                if (DEBUG) process.stdout.write(chalk.cyan.dim(data));
+        ethrpc.reset();
+        ethrpc.balancer = false;
+        ethrpc.ipcpath = join(options.symlink, "geth.ipc");
+        if (options.spawn_geth) {
+            geth.start(geth.configure(options), function (err, spawned) {
+                if (err) return done(err);
+                if (!spawned) return done(new Error("where's the geth?"));
+                done();
             });
-            geth.stderr.on("data", function (data) {
-                if (DEBUG) process.stdout.write(chalk.white.dim(data));
-                if (data.toString().indexOf("IPC service started") > -1) {
-                    done();
-                }
-            });
-            geth.on("close", function (code) {
-                if (code !== 2 && code !== 0) geth.kill();
-            });
-        });
-    });
-
-    after(function (done) {
-        if (geth) geth.kill();
-        done();
+        }
     });
 
     describe("broadcast", function () {
@@ -104,7 +108,7 @@ describe("IPC", function () {
         var test = function (t) {
             it(JSON.stringify(t.command) + " -> " + t.expected, function (done) {
                 this.timeout(TIMEOUT);
-                rpc.broadcast(t.command, function (res) {
+                ethrpc.broadcast(t.command, function (res) {
                     if (res.error) return done(res);
                     assert.strictEqual(res, t.expected);
                     done();
@@ -156,7 +160,7 @@ describe("IPC", function () {
         var test = function (t) {
             it(t.node + " -> " + t.listening, function (done) {
                 this.timeout(TIMEOUT);
-                rpc.listening(function (listening) {
+                ethrpc.listening(function (listening) {
                     assert.strictEqual(listening, t.listening);
                     done();
                 });
@@ -172,7 +176,7 @@ describe("IPC", function () {
         var test = function (t) {
             it(t.node + " -> " + t.version, function (done) {
                 this.timeout(TIMEOUT);
-                rpc.version(function (version) {
+                ethrpc.version(function (version) {
                     if (version.error) return done(version);
                     assert.strictEqual(version, t.version);
                     done();
@@ -180,7 +184,7 @@ describe("IPC", function () {
             });
         };
 
-        test({ version: NETWORK_ID });
+        test({ version: options.flags.networkid });
 
     });
 
@@ -189,7 +193,7 @@ describe("IPC", function () {
         var test = function (t) {
             it(t.node + " -> " + t.unlocked, function (done) {
                 this.timeout(TIMEOUT);
-                rpc.unlocked(t.account, function (unlocked) {
+                ethrpc.unlocked(t.account, function (unlocked) {
                     if (unlocked.error) return done(unlocked);
                     assert.strictEqual(unlocked, t.unlocked);
                     done();
@@ -207,7 +211,7 @@ describe("IPC", function () {
     describe("Ethereum bindings", function () {
 
         it("raw('eth_coinbase')", function (done) {
-            rpc.raw("eth_coinbase", null, function (res) {
+            ethrpc.raw("eth_coinbase", null, function (res) {
                 if (res.error) return done(res);
                 assert.strictEqual(res, COINBASE);
                 done();
@@ -215,7 +219,7 @@ describe("IPC", function () {
         });
 
         it("eth('coinbase')", function (done) {
-            rpc.eth("coinbase", null, function (res) {
+            ethrpc.eth("coinbase", null, function (res) {
                 if (res.error) return done(res);
                 assert.strictEqual(res, COINBASE);
                 done();
@@ -223,7 +227,7 @@ describe("IPC", function () {
         });
 
         it("eth('protocolVersion')", function (done) {
-            rpc.eth("protocolVersion", null, function (res) {
+            ethrpc.eth("protocolVersion", null, function (res) {
                 if (res.error) return done(res);
                 assert.strictEqual(res, PROTOCOL_VERSION);
                 done();
@@ -231,10 +235,10 @@ describe("IPC", function () {
         });
 
         it("web3_sha3('" + SHA3_INPUT + "')", function (done) {
-            rpc.web3("sha3", SHA3_INPUT, function (res) {
+            ethrpc.web3("sha3", SHA3_INPUT, function (res) {
                 if (res.error) return done(res);
                 assert.strictEqual(res, SHA3_DIGEST);
-                rpc.sha3(SHA3_INPUT, function (res) {
+                ethrpc.sha3(SHA3_INPUT, function (res) {
                     if (res.error) return done(res);
                     assert.strictEqual(res, SHA3_DIGEST);
                     done();
@@ -243,7 +247,7 @@ describe("IPC", function () {
         });
 
         it("leveldb('putString')", function (done) {
-            rpc.leveldb("putString", [
+            ethrpc.leveldb("putString", [
                 "augur_test_DB",
                 "testkey",
                 "test!"
@@ -255,13 +259,13 @@ describe("IPC", function () {
         });
 
         it("leveldb('getString')", function (done) {
-            rpc.leveldb("putString", [
+            ethrpc.leveldb("putString", [
                 "augur_test_DB",
                 "testkey",
                 "test!"
             ], function (res) {
                 if (res.error) return done(res);
-                rpc.leveldb(
+                ethrpc.leveldb(
                     "getString",
                     ["augur_test_DB", "testkey"],
                     function (res) {
@@ -274,7 +278,7 @@ describe("IPC", function () {
         });
 
         it("gasPrice", function (done) {
-            rpc.gasPrice(function (res) {
+            ethrpc.gasPrice(function (res) {
                 if (res.error) return done(res);
                 assert.isAbove(parseInt(res), 0);
                 done();
@@ -282,7 +286,7 @@ describe("IPC", function () {
         });
 
         it("blockNumber", function (done) {
-            rpc.blockNumber(function (res) {
+            ethrpc.blockNumber(function (res) {
                 if (res.error) return done(res);
                 assert.isAbove(parseInt(res), 0);
                 done();
@@ -290,26 +294,26 @@ describe("IPC", function () {
         });
 
         it("balance/getBalance", function (done) {
-            rpc.balance(COINBASE, function (res) {
+            ethrpc.balance(COINBASE, function (res) {
                 if (res.error) return done(res);
                 assert.isAbove(parseInt(res), 0);
-                rpc.getBalance(COINBASE, function (r) {
+                ethrpc.getBalance(COINBASE, function (r) {
                     if (r.error) return done(r);
                     assert.isAbove(parseInt(r), 0);
                     assert.strictEqual(r, res);
-                    rpc.balance(COINBASE, "latest", function (r) {
+                    ethrpc.balance(COINBASE, "latest", function (r) {
                         if (r.error) return done(r);
                         assert.isAbove(parseInt(r), 0);
                         assert.strictEqual(r, res);
-                        rpc.getBalance(COINBASE, "latest", function (r) {
+                        ethrpc.getBalance(COINBASE, "latest", function (r) {
                             if (r.error) return done(r);
                             assert.isAbove(parseInt(r), 0);
                             assert.strictEqual(r, res);
-                            rpc.balance(COINBASE, null, function (r) {
+                            ethrpc.balance(COINBASE, null, function (r) {
                                 if (r.error) return done(r);
                                 assert.isAbove(parseInt(r), 0);
                                 assert.strictEqual(r, res);
-                                rpc.getBalance(COINBASE, null, function (r) {
+                                ethrpc.getBalance(COINBASE, null, function (r) {
                                     if (r.error) return done(r);
                                     assert.isAbove(parseInt(r), 0);
                                     assert.strictEqual(r, res);
@@ -323,10 +327,10 @@ describe("IPC", function () {
         });
 
         it("txCount/getTransactionCount", function (done) {
-            rpc.txCount(COINBASE, function (res) {
+            ethrpc.txCount(COINBASE, function (res) {
                 if (res.error) return done(res);
                 assert(parseInt(res) >= 0);
-                rpc.pendingTxCount(COINBASE, function (res) {
+                ethrpc.pendingTxCount(COINBASE, function (res) {
                     if (res.error) return done(res);
                     assert(parseInt(res) >= 0);
                     done();
@@ -335,16 +339,16 @@ describe("IPC", function () {
         });
 
         it("peerCount", function (done) {
-            switch (NETWORK_ID) {
+            switch (options.flags.networkid) {
             case "10101":
-                rpc.peerCount(function (res) {
+                ethrpc.peerCount(function (res) {
                     if (res.error) return done(res);
                     assert.strictEqual(parseInt(res), 0);
                     done();
                 });
                 break;
             default:
-                rpc.peerCount(function (res) {
+                ethrpc.peerCount(function (res) {
                     if (res.error) return done(res);
                     assert(parseInt(res) >= 0);
                     done();
@@ -353,7 +357,7 @@ describe("IPC", function () {
         });
 
         it("hashrate", function (done) {
-            rpc.hashrate(function (res) {
+            ethrpc.hashrate(function (res) {
                 if (res.error) return done(res);
                 assert(parseInt(res) >= 0);
                 done();
@@ -361,16 +365,16 @@ describe("IPC", function () {
         });
 
         it("mining", function (done) {
-            switch (NETWORK_ID) {
+            switch (options.flags.networkid) {
             case "10101":
-                rpc.mining(function (res) {
+                ethrpc.mining(function (res) {
                     if (res.error) return done(res);
                     assert.isTrue(res);
                     done();
                 });
                 break;
             default:
-                rpc.mining(function (res) {
+                ethrpc.mining(function (res) {
                     if (res.error) return done(res);
                     assert.isBoolean(res);
                     done();
@@ -379,7 +383,7 @@ describe("IPC", function () {
         });
 
         it("clientVersion", function (done) {
-            rpc.clientVersion(function (res) {
+            ethrpc.clientVersion(function (res) {
                 if (res.error) return done(res);
                 assert.isString(res);
                 assert.strictEqual(res.split('/')[0], "Geth");
@@ -432,7 +436,7 @@ describe("IPC", function () {
         var test = function (t) {
             it(t.blockNumber + " -> " + t.blockHash, function (done) {
                 this.timeout(TIMEOUT);
-                rpc.getBlock(t.blockNumber, true, function (block) {
+                ethrpc.getBlock(t.blockNumber, true, function (block) {
                     if (block.error) return done(block);
                     asserts(t, block);
                     done();
@@ -440,19 +444,30 @@ describe("IPC", function () {
             });
         };
 
-        // expected block hashes for network 10101
-        test({
-            blockNumber: "0x1",
-            blockHash: "0x9f9954b5da59d78d248c0fcc742e3256c38fce7733c02ae5af3d67d649633e91"
-        });
-        test({
-            blockNumber: "0x1b4",
-            blockHash: "0x0b8cac64fb0f4a9effc4156b6a7a076a0ad842833de7d6280971caadb0a45b44"
-        });
-        test({
-            blockNumber: "0x24f2",
-            blockHash: "0x22af941639d241562a1668a2fc78e3e975c982ae456ec29c8c1c872e13a901df"
-        });
+        switch (options.flags.networkid) {
+        case "10101":
+            test({
+                blockNumber: "0x1",
+                blockHash: "0xfd3a6dcaec75065cefd21b7c2d48294f3239d533ed125de6b7f2bdec1b77f986"
+            });
+            test({
+                blockNumber: "0x1b4",
+                blockHash: "0x4221319f188e70d30aa46ee06b6cce9f2d4859d2e2708abaafcb722b93666917"
+            });
+            break;
+        case "7":
+            test({
+                blockNumber: "0x1",
+                blockHash: "0x74aa258b2f71168b97d7d0c72ec8ff501ec15e4e2adc8c663a0f7b01a1025d88"
+            });
+            test({
+                blockNumber: "0x1b4",
+                blockHash: "0x721a93982fbbe858aa190476be937ea2052408d7f8ff6fb415cc969aaacaa045"
+            });
+            break;
+        default:
+            throw new Error("contracts not on the Frontier main net yet :(");
+        }
     });
 
     describe("getBlockByHash", function () {
@@ -498,26 +513,37 @@ describe("IPC", function () {
         var test = function (t) {
             it(t.blockHash + " -> " + t.blockNumber, function (done) {
                 this.timeout(TIMEOUT);
-                rpc.getBlockByHash(t.blockHash, true, function (block) {
+                ethrpc.getBlockByHash(t.blockHash, true, function (block) {
                     asserts(t, block);
                     done();
                 });
             });
         };
 
-        // network 10101
-        test({
-            blockHash: "0x9f9954b5da59d78d248c0fcc742e3256c38fce7733c02ae5af3d67d649633e91",
-            blockNumber: "0x1"
-        });
-        test({
-            blockHash: "0x0b8cac64fb0f4a9effc4156b6a7a076a0ad842833de7d6280971caadb0a45b44",
-            blockNumber: "0x1b4"
-        });
-        test({
-            blockHash: "0x22af941639d241562a1668a2fc78e3e975c982ae456ec29c8c1c872e13a901df",
-            blockNumber: "0x24f2"
-        });
+        switch (options.flags.networkid) {
+        case "10101":
+            test({
+                blockHash: "0xfd3a6dcaec75065cefd21b7c2d48294f3239d533ed125de6b7f2bdec1b77f986",
+                blockNumber: "0x1"
+            });
+            test({
+                blockHash: "0x4221319f188e70d30aa46ee06b6cce9f2d4859d2e2708abaafcb722b93666917",
+                blockNumber: "0x1b4"
+            });
+            break;
+        case "7":
+            test({
+                blockHash: "0x74aa258b2f71168b97d7d0c72ec8ff501ec15e4e2adc8c663a0f7b01a1025d88",
+                blockNumber: "0x1"
+            });
+            test({
+                blockHash: "0x721a93982fbbe858aa190476be937ea2052408d7f8ff6fb415cc969aaacaa045",
+                blockNumber: "0x1b4"
+            });
+            break;
+        default:
+            throw new Error("contracts not on the Frontier main net yet :(");
+        }
     });
 
     describe("Calls", function () {
@@ -539,7 +565,7 @@ describe("IPC", function () {
 
             it("invoke == call == broadcast", function (done) {
                 this.timeout(TIMEOUT);
-                rpc.invoke({
+                ethrpc.invoke({
                     to: contracts.branches,
                     from: COINBASE,
                     method: "getVotePeriod",
@@ -547,13 +573,13 @@ describe("IPC", function () {
                     returns: returns,
                     params: "0x0f69b5"
                 }, function (invokeResult) {
-                    rpc.call({
+                    ethrpc.call({
                         from: COINBASE,
                         to: contracts.branches,
                         data: encodedParams,
                         returns: returns
                     }, function (callResult) {
-                        rpc.broadcast({
+                        ethrpc.broadcast({
                             id: ++requests,
                             jsonrpc: "2.0",
                             method: "eth_call",
@@ -573,7 +599,7 @@ describe("IPC", function () {
             });
 
             it("cashFaucet -> raw", function (done) {
-                rpc.invoke(cashFaucet, function (res) {
+                ethrpc.invoke(cashFaucet, function (res) {
                     assert.include([
                         "0x01",
                         "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
@@ -584,14 +610,14 @@ describe("IPC", function () {
 
             it("cashFaucet -> number", function (done) {
                 cashFaucet.returns = "number";
-                rpc.invoke(cashFaucet, function (res) {
+                ethrpc.invoke(cashFaucet, function (res) {
                     assert.include(["1", "-1"], res);
                     done();
                 });
             });
 
             it("getMarkets(1010101) -> hash[]", function (done) {
-                rpc.invoke({
+                ethrpc.invoke({
                     to: contracts.branches,
                     from: COINBASE,
                     method: "getMarkets",
@@ -612,7 +638,7 @@ describe("IPC", function () {
 
             var test = function (t) {
                 it(t.itx.method, function () {
-                    var actual = rpc.errorCodes(t.itx, t.response);
+                    var actual = ethrpc.errorCodes(t.itx, t.response);
                     assert.strictEqual(actual, t.expected);
                 });
             };
@@ -637,7 +663,7 @@ describe("IPC", function () {
 
             var test = function (t) {
                 it(t.result + "," + t.returns + " -> " + t.expected, function () {
-                    var actual = rpc.encodeResult(t.result, t.returns);
+                    var actual = ethrpc.encodeResult(t.result, t.returns);
                     assert.strictEqual(actual, t.expected);
                 });
             };
@@ -655,7 +681,7 @@ describe("IPC", function () {
             var test = function (t) {
                 it(t.itx.method, function (done) {
                     this.timeout(TIMEOUT);
-                    rpc.fire(t.itx, function (res) {
+                    ethrpc.fire(t.itx, function (res) {
                         if (res.error) return done(res);
                         assert.strictEqual(res, t.expected);
                         done();
@@ -688,12 +714,12 @@ describe("IPC", function () {
 
             it("send " + etherValue + " ether to " + recipient, function (done) {
                 this.timeout(TIMEOUT);
-                rpc.balance(recipient, null, function (startBalance) {
+                ethrpc.balance(recipient, null, function (startBalance) {
                     if (!startBalance || startBalance.error) {
                         return done(startBalance);
                     }
-                    startBalance = abi.bignum(startBalance).dividedBy(rpc.ETHER);
-                    rpc.sendEther({
+                    startBalance = abi.bignum(startBalance).dividedBy(ethrpc.ETHER);
+                    ethrpc.sendEther({
                         to: recipient,
                         value: etherValue,
                         from: COINBASE,
@@ -708,12 +734,12 @@ describe("IPC", function () {
                         onSuccess: function (res) {
                             assert.strictEqual(res.from, COINBASE);
                             assert.strictEqual(res.to, recipient);
-                            assert.strictEqual(abi.bignum(res.value).dividedBy(rpc.ETHER).toFixed(), etherValue);
-                            rpc.balance(recipient, null, function (finalBalance) {
+                            assert.strictEqual(abi.bignum(res.value).dividedBy(ethrpc.ETHER).toFixed(), etherValue);
+                            ethrpc.balance(recipient, null, function (finalBalance) {
                                 if (!finalBalance || finalBalance.error) {
                                     return done(finalBalance);
                                 }
-                                finalBalance = abi.bignum(finalBalance).dividedBy(rpc.ETHER);
+                                finalBalance = abi.bignum(finalBalance).dividedBy(ethrpc.ETHER);
                                 assert.strictEqual(finalBalance.sub(startBalance).toFixed(), etherValue);
                                 done();
                             });
@@ -730,13 +756,13 @@ describe("IPC", function () {
             var test = function (t) {
                 it(t.itx.method, function (done) {
                     this.timeout(TIMEOUT);
-                    rpc.txs[t.txhash] = {
+                    ethrpc.txs[t.txhash] = {
                         hash: t.txhash,
                         tx: t.tx,
                         count: 0,
                         status: "pending"
                     };
-                    rpc.checkBlockHash(
+                    ethrpc.checkBlockHash(
                         t.tx,
                         t.callreturn,
                         t.itx,
@@ -749,8 +775,8 @@ describe("IPC", function () {
                         function (res) {
                             callbacks.onSuccess(res);
                             assert.strictEqual(abi.encode(t.itx), res.input);
-                            assert.strictEqual(rpc.txs[t.txhash].status, "confirmed");
-                            assert.strictEqual(rpc.txs[t.txhash].count, 1);
+                            assert.strictEqual(ethrpc.txs[t.txhash].status, "confirmed");
+                            assert.strictEqual(ethrpc.txs[t.txhash].count, 1);
                             done();
                         },
                         done
@@ -789,16 +815,44 @@ describe("IPC", function () {
 
         describe("txNotify", function () {
 
+            before(function (done) {
+                this.timeout(TIMEOUT);
+                ethrpc.TX_POLL_MAX = 64;
+                ethrpc.TX_POLL_INTERVAL = 12000;
+                var tx = {
+                    to: contracts.faucets,
+                    from: COINBASE,
+                    method: "reputationFaucet",
+                    signature: "i",
+                    params: "0xf69b5",
+                    returns: "number"
+                };
+                ethrpc.transact(tx,
+                    function (res) {
+                        callbacks.onSent(res);
+                        TXHASH = res.txHash;
+                    },
+                    function (res) {
+                        // console.log("success:", res);
+                        callbacks.onSuccess(res);
+                        assert.strictEqual(abi.encode(tx), res.input);
+                        done();
+                    },
+                    done
+                );
+            });
+
             var test = function (t) {
                 it(t.itx.method, function (done) {
                     this.timeout(TIMEOUT);
-                    rpc.txs[t.txhash] = {
+                    t.txhash = TXHASH;
+                    ethrpc.txs[t.txhash] = {
                         hash: t.txhash,
                         tx: t.itx,
                         count: 0,
                         status: "pending"
                     };
-                    rpc.txNotify(
+                    ethrpc.txNotify(
                         t.callreturn,
                         t.itx,
                         t.txhash,
@@ -809,10 +863,10 @@ describe("IPC", function () {
                         },
                         function (res) {
                             callbacks.onSuccess(res);
-                            assert.notProperty(rpc.notifications, t.txhash);
+                            // ethrpc.notifications check
                             assert.strictEqual(abi.encode(t.itx), res.input);
-                            assert.strictEqual(rpc.txs[t.txhash].status, "confirmed");
-                            assert.strictEqual(rpc.txs[t.txhash].count, 1);
+                            assert.strictEqual(ethrpc.txs[t.txhash].status, "confirmed");
+                            assert.strictEqual(ethrpc.txs[t.txhash].count, 1);
                             done();
                         },
                         done
@@ -820,15 +874,15 @@ describe("IPC", function () {
                 });
                 it("trailing timeout check", function (done) {
                     this.timeout(TIMEOUT);
-                    rpc.TX_POLL_MAX = 2;
-                    rpc.TX_POLL_INTERVAL = 1;
-                    rpc.txs[t.txhash] = {
+                    ethrpc.TX_POLL_MAX = 2;
+                    ethrpc.TX_POLL_INTERVAL = 1;
+                    ethrpc.txs[t.txhash] = {
                         hash: t.txhash,
                         tx: t.itx,
                         count: 0,
                         status: "pending"
                     };
-                    rpc.txNotify(
+                    ethrpc.txNotify(
                         t.callreturn,
                         t.itx,
                         t.txhash,
@@ -839,14 +893,14 @@ describe("IPC", function () {
                         },
                         function (res) {
                             callbacks.onSuccess(res);
-                            assert.notProperty(rpc.notifications, t.txhash);
+                            assert.notProperty(ethrpc.notifications, t.txhash);
                             assert.strictEqual(abi.encode(t.itx), res.input);
-                            assert.strictEqual(rpc.txs[t.txhash].status, "confirmed");
+                            assert.strictEqual(ethrpc.txs[t.txhash].status, "confirmed");
                             assert.isTrue(false);
                         },
                         function (res) {
-                            assert.strictEqual(rpc.txs[t.txhash].count, rpc.TX_POLL_MAX);
-                            assert.strictEqual(rpc.txs[t.txhash].status, "unconfirmed");
+                            assert.strictEqual(ethrpc.txs[t.txhash].count, ethrpc.TX_POLL_MAX);
+                            assert.strictEqual(ethrpc.txs[t.txhash].status, "unconfirmed");
                             assert.deepEqual(res, errors.TRANSACTION_NOT_CONFIRMED);
                             done();
                         }
@@ -874,8 +928,9 @@ describe("IPC", function () {
             var test = function (t) {
                 it(t.tx.method, function (done) {
                     this.timeout(TIMEOUT);
-                    delete rpc.txs[t.txhash];
-                    rpc.confirmTx(
+                    t.txhash = TXHASH;
+                    delete ethrpc.txs[t.txhash];
+                    ethrpc.confirmTx(
                         t.tx,
                         t.txhash,
                         t.returns,
@@ -914,9 +969,9 @@ describe("IPC", function () {
             var test = function (t) {
                 it(t.tx.method, function (done) {
                     this.timeout(TIMEOUT);
-                    rpc.TX_POLL_MAX = 64;
-                    rpc.TX_POLL_INTERVAL = 12000;
-                    rpc.transact(
+                    ethrpc.TX_POLL_MAX = 64;
+                    ethrpc.TX_POLL_INTERVAL = 12000;
+                    ethrpc.transact(
                         t.tx,
                         callbacks.onSent,
                         function (res) {
@@ -945,5 +1000,3 @@ describe("IPC", function () {
     });
 
 });
-
-})();

@@ -1,4 +1,3 @@
-(function () {
 /**
  * ethrpc unit tests
  * @author Jack Peterson (jack@tinybike.net)
@@ -1780,5 +1779,3 @@ describe("RPC", function () {
     });
 
 });
-
-})();

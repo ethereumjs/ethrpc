@@ -187,6 +187,8 @@ module.exports = {
 
     Error: RPCError,
 
+    errors: errors,
+
     nodes: {
         hosted: HOSTED_NODES.slice(),
         local: null
