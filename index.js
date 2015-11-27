@@ -28,10 +28,10 @@ function RPCError(err) {
 RPCError.prototype = new Error();
 
 var HOSTED_NODES = [
-    "http://eth1.augur.net",
-    "http://eth3.augur.net",
-    "http://eth4.augur.net",
-    "http://eth5.augur.net"
+    "https://eth5.augur.net",
+    "https://eth4.augur.net",
+    "https://eth3.augur.net",
+    "https://eth1.augur.net"
 ];
 
 module.exports = {

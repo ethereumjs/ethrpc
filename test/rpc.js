@@ -171,7 +171,7 @@ describe("RPC", function () {
         };
 
         test({
-            node: "http://eth1.augur.net",
+            node: "https://eth1.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -181,7 +181,7 @@ describe("RPC", function () {
             expected: COINBASE
         });
         test({
-            node: "http://eth1.augur.net",
+            node: "https://eth1.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -191,7 +191,7 @@ describe("RPC", function () {
             expected: SHA3_DIGEST
         });
         test({
-            node: "http://eth1.augur.net",
+            node: "https://eth1.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -201,7 +201,7 @@ describe("RPC", function () {
             expected: true
         });
         test({
-            node: "http://eth1.augur.net",
+            node: "https://eth1.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -229,7 +229,7 @@ describe("RPC", function () {
         };
 
         test({
-            node: "http://eth1.augur.net",
+            node: "https://eth1.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -239,7 +239,7 @@ describe("RPC", function () {
             expected: COINBASE
         });
         test({
-            node: "http://eth1.augur.net",
+            node: "https://eth1.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -249,7 +249,7 @@ describe("RPC", function () {
             expected: SHA3_DIGEST
         });
         test({
-            node: "http://eth1.augur.net",
+            node: "https://eth1.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -259,7 +259,7 @@ describe("RPC", function () {
             expected: true
         });
         test({
-            node: "http://eth1.augur.net",
+            node: "https://eth1.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -287,35 +287,19 @@ describe("RPC", function () {
         };
 
         test({
-            node: "http://eth1.augur.net",
+            node: "https://eth1.augur.net",
             listening: true
         });
         test({
-            node: "http://eth1.augur.net:8545",
+            node: "https://eth3.augur.net",
             listening: true
         });
         test({
-            node: "http://eth3.augur.net",
+            node: "https://eth4.augur.net",
             listening: true
         });
         test({
-            node: "http://eth3.augur.net:8545",
-            listening: true
-        });
-        test({
-            node: "http://eth4.augur.net",
-            listening: true
-        });
-        test({
-            node: "http://eth4.augur.net:8545",
-            listening: true
-        });
-        test({
-            node: "http://eth5.augur.net",
-            listening: true
-        });
-        test({
-            node: "http://eth5.augur.net:8545",
+            node: "https://eth5.augur.net",
             listening: true
         });
         test({
@@ -353,35 +337,19 @@ describe("RPC", function () {
         };
 
         test({
-            node: "http://eth1.augur.net",
+            node: "https://eth1.augur.net",
             version: "7"
         });
         test({
-            node: "http://eth1.augur.net:8545",
+            node: "https://eth3.augur.net",
             version: "7"
         });
         test({
-            node: "http://eth3.augur.net",
+            node: "https://eth4.augur.net",
             version: "7"
         });
         test({
-            node: "http://eth3.augur.net:8545",
-            version: "7"
-        });
-        test({
-            node: "http://eth4.augur.net",
-            version: "7"
-        });
-        test({
-            node: "http://eth4.augur.net:8545",
-            version: "7"
-        });
-        test({
-            node: "http://eth5.augur.net",
-            version: "7"
-        });
-        test({
-            node: "http://eth5.augur.net:8545",
+            node: "https://eth5.augur.net",
             version: "7"
         });
 
@@ -399,62 +367,27 @@ describe("RPC", function () {
         };
 
         test({
-            node: "http://eth1.augur.net",
+            node: "https://eth1.augur.net",
             account: COINBASE,
             unlocked: true
         });
         test({
-            node: "http://eth1.augur.net:8545",
+            node: "https://eth3.augur.net",
             account: COINBASE,
             unlocked: true
         });
         test({
-            node: "http://eth1.augur.net:8545",
+            node: "https://eth3.augur.net",
             account: COINBASE,
             unlocked: true
         });
         test({
-            node: "http://eth3.augur.net",
+            node: "https://eth4.augur.net",
             account: COINBASE,
             unlocked: true
         });
         test({
-            node: "http://eth3.augur.net",
-            account: COINBASE,
-            unlocked: true
-        });
-        test({
-            node: "http://eth3.augur.net:8545",
-            account: COINBASE,
-            unlocked: true
-        });
-        test({
-            node: "http://eth3.augur.net:8545",
-            account: COINBASE,
-            unlocked: true
-        });
-        test({
-            node: "http://eth4.augur.net",
-            account: COINBASE,
-            unlocked: true
-        });
-        test({
-            node: "http://eth4.augur.net:8545",
-            account: COINBASE,
-            unlocked: true
-        });
-        test({
-            node: "http://eth4.augur.net:8545",
-            account: COINBASE,
-            unlocked: true
-        });
-        test({
-            node: "http://eth5.augur.net",
-            account: COINBASE,
-            unlocked: true
-        });
-        test({
-            node: "http://eth5.augur.net:8545",
+            node: "https://eth5.augur.net",
             account: COINBASE,
             unlocked: true
         });
@@ -585,10 +518,10 @@ describe("RPC", function () {
     describe("reset", function () {
 
         it("revert to default node list", function () {
-            rpc.nodes.hosted = ["http://eth0.augur.net"];
+            rpc.nodes.hosted = ["https://eth0.augur.net"];
             assert.isArray(rpc.nodes.hosted);
             assert.strictEqual(rpc.nodes.hosted.length, 1);
-            assert.strictEqual(rpc.nodes.hosted[0], "http://eth0.augur.net");
+            assert.strictEqual(rpc.nodes.hosted[0], "https://eth0.augur.net");
             assert.isNull(rpc.nodes.local);
             rpc.nodes.local = "http://127.0.0.1:8545";
             assert.strictEqual(rpc.nodes.local, "http://127.0.0.1:8545");
@@ -1201,21 +1134,21 @@ describe("RPC", function () {
 
         it("[sync] graceful failover to eth1.augur.net", function () {
             this.timeout(TIMEOUT);
-            rpc.nodes.hosted = ["http://lol.lol.lol", "http://eth1.augur.net"];
+            rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth1.augur.net"];
             assert.strictEqual(rpc.nodes.hosted.length, 2);
             assert.strictEqual(rpc.version(), "7");
             assert.strictEqual(rpc.nodes.hosted.length, 1);
-            assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
+            assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
         });
 
         it("[async] graceful failover to eth1.augur.net", function (done) {
             this.timeout(TIMEOUT);
-            rpc.nodes.hosted = ["http://lol.lol.lol", "http://eth1.augur.net"];
+            rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth1.augur.net"];
             assert.strictEqual(rpc.nodes.hosted.length, 2);
             rpc.version(function (version) {
                 assert.strictEqual(version, "7");
                 assert.strictEqual(rpc.nodes.hosted.length, 1);
-                assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
+                assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
                 done();
             });
         });
@@ -1223,40 +1156,40 @@ describe("RPC", function () {
         it("[sync] graceful failover to eth[1,3,4].augur.net", function () {
             this.timeout(TIMEOUT);
             rpc.nodes.hosted = [
-                "http://lol.lol.lol",
-                "http://eth1.augur.net",
-                "http://eth3.augur.net",
-                "http://eth4.augur.net"
+                "https://lol.lol.lol",
+                "https://eth1.augur.net",
+                "https://eth3.augur.net",
+                "https://eth4.augur.net"
             ];
             assert.strictEqual(rpc.nodes.hosted.length, 4);
             assert.strictEqual(rpc.version(), "7");
             assert.strictEqual(rpc.nodes.hosted.length, 3);
-            assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
-            assert.strictEqual(rpc.nodes.hosted[1], "http://eth3.augur.net");
-            assert.strictEqual(rpc.nodes.hosted[2], "http://eth4.augur.net");
+            assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
+            assert.strictEqual(rpc.nodes.hosted[1], "https://eth3.augur.net");
+            assert.strictEqual(rpc.nodes.hosted[2], "https://eth4.augur.net");
         });
 
         it("[async] graceful failover to eth[1,3,4].augur.net", function (done) {
             this.timeout(TIMEOUT);
             rpc.nodes.hosted = [
-                "http://lol.lol.lol",
-                "http://eth1.augur.net",
-                "http://eth3.augur.net",
-                "http://eth4.augur.net"
+                "https://lol.lol.lol",
+                "https://eth1.augur.net",
+                "https://eth3.augur.net",
+                "https://eth4.augur.net"
             ];
             assert.strictEqual(rpc.nodes.hosted.length, 4);
             rpc.version(function (version) {
                 assert.strictEqual(version, "7");
                 assert.strictEqual(rpc.nodes.hosted.length, 3);
-                assert.strictEqual(rpc.nodes.hosted[0], "http://eth1.augur.net");
-                assert.strictEqual(rpc.nodes.hosted[1], "http://eth3.augur.net");
-                assert.strictEqual(rpc.nodes.hosted[2], "http://eth4.augur.net");
+                assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
+                assert.strictEqual(rpc.nodes.hosted[1], "https://eth3.augur.net");
+                assert.strictEqual(rpc.nodes.hosted[2], "https://eth4.augur.net");
                 done();
             });
         });
 
         it("[sync] hosted node failure", function () {
-            rpc.nodes.hosted = ["http://lol.lol.lol", "http://not.a.node"];
+            rpc.nodes.hosted = ["https://lol.lol.lol", "https://not.a.node"];
             assert.strictEqual(rpc.nodes.hosted.length, 2);
             assert.throws(function () {
                 rpc.broadcast({
@@ -1270,7 +1203,7 @@ describe("RPC", function () {
 
         it("[async] hosted node failure", function (done) {
             this.timeout(TIMEOUT);
-            rpc.nodes.hosted = ["http://lol.lol.lol", "http://not.a.node"];
+            rpc.nodes.hosted = ["https://lol.lol.lol", "https://not.a.node"];
             assert.strictEqual(rpc.nodes.hosted.length, 2);
             rpc.broadcast({
                 id: ++requests,
@@ -1308,8 +1241,8 @@ describe("RPC", function () {
             it("[sync] local node failure", function () {
                 this.timeout(TIMEOUT);
                 rpc.reset();
-                rpc.setLocalNode("http://127.0.0.0");
-                assert.strictEqual(rpc.nodes.local, "http://127.0.0.0");
+                rpc.setLocalNode("https://127.0.0.0");
+                assert.strictEqual(rpc.nodes.local, "https://127.0.0.0");
                 assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
                 assert.throws(function () { rpc.broadcast(command); }, Error, /410/);
             });
@@ -1317,8 +1250,8 @@ describe("RPC", function () {
             it("[async] local node failure", function (done) {
                 this.timeout(TIMEOUT);
                 rpc.reset();
-                rpc.setLocalNode("http://127.0.0.0");
-                assert.strictEqual(rpc.nodes.local, "http://127.0.0.0");
+                rpc.setLocalNode("https://127.0.0.0");
+                assert.strictEqual(rpc.nodes.local, "https://127.0.0.0");
                 assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
                 rpc.broadcast(command, function (err) {
                     assert.isNotNull(err);
@@ -1359,10 +1292,10 @@ describe("RPC", function () {
             rpc.balancer = true;
             rpc.reset(true);
             async.each([
-                "http://eth1.augur.net",
-                "http://eth3.augur.net",
-                "http://eth4.augur.net",
-                "http://eth5.augur.net"
+                "https://eth1.augur.net",
+                "https://eth3.augur.net",
+                "https://eth4.augur.net",
+                "https://eth5.augur.net"
             ], function (node, nextNode) {
                 rpc.nodes.hosted = [node];
                 rpc.version(function (version) {
