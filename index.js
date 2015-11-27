@@ -11,6 +11,8 @@ if (NODE_JS) {
     net = require("net");
     request = require("request");
     syncRequest = require("sync-request");
+} else {
+    request = require("browser-request");
 }
 var async = require("async");
 var BigNumber = require("bignumber.js");
@@ -272,45 +274,25 @@ module.exports = {
     },
 
     post: function (rpcUrl, command, returns, callback) {
-        var req, self = this;
-        if (NODE_JS) {
-            request({
-                url: rpcUrl,
-                method: 'POST',
-                json: command,
-                timeout: this.POST_TIMEOUT
-            }, function (err, response, body) {
-                if (err) {
-                    if (self.nodes.local) {
-                        var e = errors.LOCAL_NODE_FAILURE;
-                        e.bubble = err;
-                        return callback(e);
-                    } else if (self.excision) {
-                        self.exciseNode(err.code, rpcUrl, callback);
-                    }
-                } else if (response.statusCode === 200) {
-                    self.parse(body, returns, callback);
+        var self = this;
+        request({
+            url: rpcUrl,
+            method: 'POST',
+            json: command,
+            timeout: this.POST_TIMEOUT
+        }, function (err, response, body) {
+            if (err) {
+                if (self.nodes.local) {
+                    var e = errors.LOCAL_NODE_FAILURE;
+                    e.bubble = err;
+                    return callback(e);
+                } else if (self.excision) {
+                    self.exciseNode(err.code, rpcUrl, callback);
                 }
-            });
-        } else {
-            if (window.XMLHttpRequest) {
-                req = new window.XMLHttpRequest();
-            } else {
-                req = new window.ActiveXObject("Microsoft.XMLHTTP");
+            } else if (response.statusCode === 200) {
+                self.parse(body, returns, callback);
             }
-            req.onreadystatechange = function () {
-                if (req.readyState === 4) {
-                    self.parse(req.responseText, returns, callback);
-                }
-            };
-            req.onerror = req.ontimeout = function (err) {
-                if (self.excision) self.exciseNode(err, rpcUrl);
-                callback();
-            };
-            req.open("POST", rpcUrl, true);
-            req.setRequestHeader("Content-type", "application/json");
-            req.send(JSON.stringify(command));
-        }
+        });
     },
 
     // random primary node selection, weighted by (normalized)
