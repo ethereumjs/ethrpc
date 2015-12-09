@@ -16,7 +16,7 @@ var COINBASE = "0x05ae1d0ca6206c6168b42efcd1fbe0ed144e821b";
 
 var options = {
     spawn_geth: true,
-    symlink: join(process.env.HOME, "ethlink"),
+    symlink: join(process.env.HOME, ".ethereum"),
     flags: {
         networkid: "10101",
         port: 30304,
