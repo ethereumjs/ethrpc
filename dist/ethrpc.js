@@ -1,4 +1,2837 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports={
+    "0": {
+        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
+        "buyAndSellShares": "0xcb41186d3fa3eae83aa828eb776a913ffe94bcb7",
+        "checkQuorum": "0x7ad6e15cedf2a82651b5b407d1e98cbdf7c9e0e4",
+        "closeMarket": "0xfb8f4d790665457dcac8cbfa03965d1671d9e6a2",
+        "closeMarketEight": "0x3c348ffa3c66a7968110f64ae0a3d730cf20b670",
+        "closeMarketFour": "0x8cb16b2af081bf8a9cf06a5d8ae00a8f0d3a991f",
+        "closeMarketOne": "0x3aa010724da6a6d10d830905f6c83e31bfe47084",
+        "closeMarketTwo": "0xe4288ab0c0d886af4d5db6aa320c630c31a24b96",
+        "comments": "0x853cb123de348769d17108f505d6c3081fde2275",
+        "createBranch": "0x97aa6fe95e117a2c5c2e4f1419f5712d0ecfb66d",
+        "createEvent": "0xe3d1eef1fa0dba41796f08784033a32c3c2efd28",
+        "createMarket": "0x242219e309914836840a0ca0a55009478c5ba3d6",
+        "dispatch": "0x36004227035b544b981657d2736dd7de2ad1d30a",
+        "faucets": "0xd403f1657106c138843ea831bd99cbd2a4b8d648",
+        "makeReports": "0x9eed4f95d3bdc11775d7356709a8ae51f13f9bba",
+        "p2pWagers": "0x1c0e5ba6a9ba14420656be68657954917258eda6",
+        "sendReputation": "0xe5a16f3eef2158a63abd55c89474aef9ced7c82a",
+        "transferShares": "0x1743b8bd782221de0ad7c3ec010afc20da4c0d4f",
+        "accounts": "0x77ae4a8fa5c2775e618fcb40b0598f80a3b846f1",
+        "branches": "0x3a52e33bda40cb220cca98407bb332ec7579499b",
+        "cash": "0x25957529618e670165d49700c7d3f4ce4e2e00b9",
+        "events": "0x05b052da4cd80512f6a0837c72f7a4c3a591cbf6",
+        "expiringEvents": "0x554c2e7b73e62604e9d9f2e439b5a611da88fc87",
+        "fxpFunctions": "0x4abb75045783a639383aace45622ce97dec3b110",
+        "info": "0xe6e87575230b8e9315027c30648868e9ea80161c",
+        "ipfs": "0xbcfe600f4420d3db214bb2e7861b9c1c59ae2573",
+        "markets": "0x847adbfda58ca76ce0f5ff9952838a86192f510a",
+        "reporting": "0x772c698ff3121fde846002bae4d6828a39911fdb",
+        "adjust": "0x8fd78c97952f8bdd4351e8694e24c77f921446dd",
+        "center": "0x9c92cb96d4141204e2dc6e36b64192e4b6b1d29b",
+        "payout": "0x306973dc029f74fbfc83d9200e49b6c6978e77e9",
+        "redeem_adjust": "0xcfa0f80de838466d2605d7878f2ebb879e2aae60",
+        "redeem_center": "0x54d6594d3dc7d5af46f5bff12646d5f4ad152176",
+        "redeem_interpolate": "0xe8ff6008f6981d27f90cc6499d0f46546e6d8da7",
+        "redeem_payout": "0x701201acf46b40f449a815967fe0607a12645cd4",
+        "redeem_resolve": "0x46967961e529aaf9642742e08d27db1c8d33ba0d",
+        "redeem_score": "0x79988cdd607ef793f279d59d2686df2711c5b3a7",
+        "resolve": "0x145faea6f94952d73b54b2f85262ad8d8d474466",
+        "score": "0xe7fd9f29b2fbd3623574f303bee4355ca4645d62",
+        "statistics": "0xb44c5dffcb5092c06e8240b1d300b3287b0ca279"
+    },
+    "7": {
+        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
+        "buyAndSellShares": "0x222be5d1b153b7f04189b2f591166665a885aaf5",
+        "checkQuorum": "0x7a38967fab965444182e48fca12d63c62ceb3d96",
+        "closeMarket": "0xdb45fd72e0f88393c872c0387ad7a4c9e9df4296",
+        "closeMarketEight": "0xe327c3128520eeacfb1da6091149344a34457f99",
+        "closeMarketFour": "0x1d6c3999f23692326cf590addb050b482cdf79ba",
+        "closeMarketOne": "0x9e049aef53bf7d56caa398b6437218ebc548b9c7",
+        "closeMarketTwo": "0xf9ed008f6b3b5ec95fce763f3c738c32db17c2e0",
+        "comments": "0x853cb123de348769d17108f505d6c3081fde2275",
+        "createBranch": "0x7bf8e4f9e3183867f2ad8c8e61d7b4df3a9204a8",
+        "createEvent": "0xf21d1dc93739dddb2ff15db191d7922fe8a4e196",
+        "createMarket": "0x344b7273d6ba3ae6464de981e3f8f21de20eb429",
+        "dispatch": "0x4b22c2f46045f8eb791e9c31b3d17dc41ea33cb4",
+        "faucets": "0x1f7a7eb8bdf2690bd815c24a16f3301706005f42",
+        "makeReports": "0x66be17e5b82a1080dae93bbd65935516182ca20c",
+        "p2pWagers": "0x5637e628e8557528fcaa732380d471fecde52168",
+        "sendReputation": "0x9dce0b045622fd1536f0f49e3d7c5b4ffaf01bf7",
+        "transferShares": "0x615b1bbfd690a24cbf5679e7b326aab0227c492e",
+        "accounts": "0x4fc79e76158c6f347195a4a5564893e0f55f0ebf",
+        "branches": "0x6304d620fbdaf2d473079e44fe13d376fefe6164",
+        "cash": "0xa36a4f0bd323f15d6ebe04810dcb770d33f3466e",
+        "events": "0x435cb3ba15fbda3c466dc527f1b9cc78f5114d4f",
+        "expiringEvents": "0x27f07adb9921e7f69462e3e285d43c6c25768058",
+        "fxpFunctions": "0x1fa4745bcd612d19c698aad79c9ceee079cf65b6",
+        "info": "0x3c5062d58be6ce59534e8a2d10f1d533c1a0206e",
+        "ipfs": "0x0dc961533e26dccb673ccbaa93d8e8fd96b41765",
+        "markets": "0x44a270caf86e229f188b340994fa8671ae94450a",
+        "reporting": "0x1c6e0e4cd3980a458a6d7af1e98ba85bb67e5875",
+        "adjust": "0x360f45231a8f6f192dece487e30b51e8f9fca081",
+        "center": "0x8a0cf0b390a9acbaed8abe1df64e4a1eb7fde454",
+        "payout": "0x9a051313590855995a93b41ef3fd5c29ec52a120",
+        "redeem_adjust": "0xb5c5b32e285ba059cd5c79560885ac6448ecfc36",
+        "redeem_center": "0x608fa0fbee213d5ca2032fc30b50c16bc852b7da",
+        "redeem_interpolate": "0x9194647074999cc5792164fdebd1f653aa99397c",
+        "redeem_payout": "0xa4f49043cabb4c514eb8d7425932b982dd65c74c",
+        "redeem_resolve": "0x7368ad231be18e0c6859e6ec776c3c8e2857b747",
+        "redeem_score": "0x652b9c2095f2e244b7ca144237ff6b2ff2f32d67",
+        "resolve": "0xca39ef3752a20837ece0911c1f758ba8b621a33b",
+        "score": "0xa8347d21ff9dc37c8c087a665cbcb69d8f9fee4c",
+        "statistics": "0x29c1d95256f9090130e99dd9cab154ac3d3e060f"
+    },
+    "10101": {
+        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
+        "buyAndSellShares": "0xb1546e2f7aadb1281b8a67cf8c1ba7cd1c464890",
+        "checkQuorum": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d",
+        "closeMarket": "0xa27a12aa6701b0b7f1d2adfdaaed9b642d547b78",
+        "closeMarketEight": "0x7783fffea0e0e5634c469464c49ece7c4ed59cda",
+        "closeMarketFour": "0xd6e133db8628adba58d0ed91bb73b4ce290cde2a",
+        "closeMarketOne": "0xb556df7538fdbf10a89cc0f14c0556bf2fbfb74a",
+        "closeMarketTwo": "0xf1f207defe0d68873d9ff717ed68169e4d66af5e",
+        "comments": "0x014b14d07e5afb2f30eb6ebf81d927563f0f1238",
+        "createBranch": "0x606b26ba8b3c8e2550a709bbb152ca56d196cee7",
+        "createEvent": "0x77a53a8f3d6871754db8c51c657f9bfe9f4bd770",
+        "createMarket": "0xa53e3d24e013573445e174f4a0e20a7d29b7dd56",
+        "dispatch": "0xf26707c1f3b94d80611c5373013098ccd2d4ea9d",
+        "faucets": "0xb95d33d0f9cce6006d208b52d09ff7a0d66b9c2f",
+        "makeReports": "0x49ced69ae40d1f534c1b49aa15d7364bc9ceac19",
+        "p2pWagers": "0x26a988c7b7cfb92e5b297e87c76aff0cf694066f",
+        "sendReputation": "0x5ae1eecc678fcc8cc7b68ba44690928724fe6916",
+        "transferShares": "0x99b7265c85f7e3d8a26726d6897068eea615ce87",
+        "accounts": "0x77ae4a8fa5c2775e618fcb40b0598f80a3b846f1",
+        "branches": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd",
+        "cash": "0x7e685b235d6ef3f9ec84f1862d86e272f7d14dc1",
+        "events": "0x4a61f3db785f1e2a23ffefeafaceeef2df551667",
+        "expiringEvents": "0xd15a6cfc462ae76b9ec590cab8b34bfa8e1302d7",
+        "fxpFunctions": "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
+        "info": "0x5069d883e31429c6dd1325d961f443007747c7a2",
+        "ipfs": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e",
+        "markets": "0x9308cf21b5a11f182f9707ca284bbb71bb84f893",
+        "reporting": "0x81a7621e9a286d061b3dea040888a51c96693b1c",
+        "adjust": "0xbd19195b9e8a2d8ed14fc3a2823856b5c16f7f55",
+        "center": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c",
+        "payout": "0x8a4e2993a9972ee035453bb5674816fc3a698718",
+        "redeem_adjust": "0x8c19616de17acdfbc933b99d9f529a689d22098f",
+        "redeem_center": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79",
+        "redeem_interpolate": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea",
+        "redeem_payout": "0x93d878e28a64cf76f3b550ba286ad30a608b5d4b",
+        "redeem_resolve": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68",
+        "redeem_score": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7",
+        "resolve": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2",
+        "score": "0x708fdfe18bf28afe861a69e95419d183ace003eb",
+        "statistics": "0x8f2c2267687cb0f047b28a1b6f945da6e101a0d7"
+    }
+}
+},{}],2:[function(require,module,exports){
+module.exports = require("./contracts");
+
+},{"./contracts":1}],3:[function(require,module,exports){
+module.exports={
+    "0x": "no response or bad input",
+    "getSimulatedBuy": {
+        "-2": "cost updating error (did you enter a valid quantity?)"
+    },
+    "getSimulatedSell": {
+        "-2": "cost updating error (did you enter a valid quantity?)"
+    },
+    "closeMarket": {
+        "-1": "market has no cash",
+        "-2": "0 outcome",
+        "-3": "outcome indeterminable"
+    },
+    "report": {
+        "0": "could not set reporter ballot",
+        "-1": "report length does not match number of expiring events",
+        "-2": "voting period expired",
+        "-3": "incorrect hash"
+    },
+    "submitReportHash": {
+        "0": "could not set report hash",
+        "-1": "reporter doesn't exist, voting period is over, or voting period hasn't started yet",
+        "-2": "not in hash submitting timeframe"
+    },
+    "checkReportValidity": {
+        "-1": "report isn't long enough",
+        "-2": "reporter doesn't exist, voting period is over, or voting period hasn't started yet"
+    },
+    "slashRep": {
+        "0": "incorrect hash",
+        "-2": "incorrect reporter ID"
+    },
+    "createEvent": {
+        "0": "not enough money to pay fees or event already exists",
+        "-1": "we're either already past that date, branch doesn't exist, or description is bad"
+    },
+    "createMarket": {
+        "-1": "bad input or parent doesn't exist",
+        "-2": "too many events",
+        "-3": "too many outcomes",
+        "-4": "not enough money or market already exists"
+    },
+    "sendReputation": {
+        "0": "not enough reputation",
+        "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
+        "-2": "Receiving address doesn't exist"
+    },
+    "buyShares": {
+        "-1": "invalid outcome or trading closed",
+        "-2": "entered a negative number of shares",
+        "-3": "not enough money",
+        "-4": "bad nonce/hash"
+    },
+    "sellShares": {
+        "-1": "invalid outcome or trading closed",
+        "-2": "entered a negative number of shares",
+        "-3": "not enough money",
+        "-4": "bad nonce/hash"
+    },
+    "TRANSACTION_NOT_FOUND": {
+        "error": 404,
+        "message": "transaction not found"
+    },
+    "NULL_CALL_RETURN": {
+        "error": 406,
+        "message": "expected contract call to return value, received null"
+    },
+    "NULL_RESPONSE": {
+        "error": 407,
+        "message": "expected transaction hash from Ethereum node, received null"
+    },
+    "NO_RESPONSE": {
+        "error": 408,
+        "message": "no response"
+    },
+    "INVALID_RESPONSE": {
+        "error": 409,
+        "message": "could not parse response from Ethereum node"
+    },
+    "LOCAL_NODE_FAILURE": {
+        "error": 410,
+        "message": "RPC request to local Ethereum node failed"
+    },
+    "HOSTED_NODE_FAILURE": {
+        "error": 411,
+        "message": "RPC request to hosted nodes failed"
+    },
+    "TRANSACTION_FAILED": {
+        "error": 500,
+        "message": "transaction failed"
+    },
+    "TRANSACTION_NOT_CONFIRMED": {
+        "error": 501,
+        "message": "polled network but could not confirm transaction"
+    },
+    "DUPLICATE_TRANSACTION": {
+        "error": 502,
+        "message": "duplicate transaction"
+    },
+    "LOOPBACK_NOT_FOUND": {
+        "error": 650,
+        "message": "loopback interface required for synchronous local commands"
+    },
+    "ETHEREUM_NOT_FOUND": {
+        "error": 651,
+        "message": "no active ethereum node(s) found"
+    }
+}
+
+},{}],4:[function(require,module,exports){
+(function (global){
+var ethrpc = global.ethrpc || require("./");
+global.ethrpc = ethrpc;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./":5}],5:[function(require,module,exports){
+(function (process){
+/**
+ * JSON RPC methods for Ethereum
+ * @author Jack Peterson (jack@tinybike.net)
+ */
+
+"use strict";
+
+var NODE_JS = (typeof module !== "undefined") && process && !process.browser;
+var net, request, syncRequest;
+if (NODE_JS) {
+    net = require("net");
+    request = require("request");
+    syncRequest = require("sync-request");
+} else {
+    request = require("browser-request");
+}
+var async = require("async");
+var BigNumber = require("bignumber.js");
+var contracts = require("augur-contracts");
+var abi = require("augur-abi");
+var errors = require("./errors");
+
+BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
+
+function RPCError(err) {
+    this.name = err.error || err.name;
+    this.message = (err.error || err.name) + ": " + err.message;
+}
+
+RPCError.prototype = new Error();
+
+var HOSTED_NODES = [
+    "https://eth5.augur.net",
+    "https://eth4.augur.net",
+    "https://eth3.augur.net",
+    "https://eth1.augur.net"
+];
+
+module.exports = {
+
+    debug: {
+        broadcast: false,
+        fallback: false,
+        latency: true,
+        logs: false
+    },
+
+    // network load balancer
+    balancer: true,
+
+    // remove unresponsive nodes
+    excision: false,
+
+    // use IPC (only available on Node + Linux/OSX)
+    ipcpath: null,
+
+    // Maximum number of transaction verification attempts
+    TX_POLL_MAX: 72,
+
+    // Transaction polling interval
+    TX_POLL_INTERVAL: 3000,
+
+    POST_TIMEOUT: 180000,
+
+    DEFAULT_GAS: "0x2fd618",
+
+    ETHER: new BigNumber(10).toPower(18),
+
+    Error: RPCError,
+
+    errors: errors,
+
+    nodes: {
+        hosted: HOSTED_NODES.slice(),
+        local: null
+    },
+
+    // Mean network latency for each node
+    latency: {},
+
+    // Number of latency samples taken for each node
+    samples: {},
+
+    // Unweighted mean network latency across all nodes
+    // (use debug.latency=true to see this)
+    netLatency: null,
+
+    // Total number of samples taken across all nodes
+    // (use debug.latency=true to see this)
+    netSamples: 0,
+
+    requests: 1,
+
+    txs: {},
+
+    rawTxs: {},
+
+    notifications: {},
+
+    unmarshal: function (string, returns, stride, init) {
+        var elements, array, position;
+        if (string && string.length >= 66) {
+            stride = stride || 64;
+            elements = Math.ceil((string.length - 2) / stride);
+            array = new Array(elements);
+            position = init || 2;
+            for (var i = 0; i < elements; ++i) {
+                array[i] = abi.prefix_hex(
+                    string.slice(position, position + stride)
+                );
+                position += stride;
+            }
+            if (array.length) {
+                if (parseInt(array[0]) === array.length - 1) {
+                    array.splice(0, 1);
+                } else if (parseInt(array[1]) === array.length - 2 ||
+                    parseInt(array[1]) / 32 === array.length - 2) {
+                    array.splice(0, 2);
+                }
+            }
+            for (i = 0; i < array.length; ++i) {
+                if (returns === "number[]") {
+                    array[i] = abi.string(array[i]);
+                } else if (returns === "unfix[]") {
+                    array[i] = abi.unfix(array[i], "string");
+                }
+            }
+            return array;
+        } else {
+            return string;
+        }
+    },
+
+    applyReturns: function (returns, result) {
+        returns = returns.toLowerCase();
+        if (result && result !== "0x") {
+            if (returns && returns.slice(-2) === "[]") {
+                result = this.unmarshal(result, returns);
+            } else if (returns === "string") {
+                result = abi.decode_hex(result, true);
+            } else if (returns === "number") {
+                result = abi.string(result);
+            } else if (returns === "bignumber") {
+                result = abi.bignum(result);
+            } else if (returns === "unfix") {
+                result = abi.unfix(result, "string");
+            }
+        }
+        return result;
+    },
+
+    parse: function (response, returns, callback) {
+        var results, len;
+        try {
+            if (response && typeof response === "string") {
+                response = JSON.parse(response);
+            }
+            if (response && typeof response === "object" && response !== null) {
+                if (response.error) {
+                    response = {
+                        error: response.error.code,
+                        message: response.error.message
+                    };
+                    if (!callback) return response;
+                    callback(response);
+                } else if (response.result !== undefined) {
+                    if (typeof response.result !== "boolean") {
+                        if (returns) {
+                            response.result = this.applyReturns(returns, response.result);
+                        } else {
+                            if (response.result && response.result.length > 2 &&
+                                response.result.slice(0,2) === "0x")
+                            {
+                                response.result = abi.remove_leading_zeros(response.result);
+                                response.result = abi.prefix_hex(response.result);
+                            }
+                        }
+                    }
+                    if (!callback) return response.result;
+                    callback(response.result);
+                } else if (response.constructor === Array && response.length) {
+                    len = response.length;
+                    results = new Array(len);
+                    for (var i = 0; i < len; ++i) {
+                        results[i] = response[i].result;
+                        if (response.error || (response[i] && response[i].error)) {
+                            if (this.debug.broadcast) {
+                                if (callback) return callback(response.error);
+                                throw new this.Error(response.error);
+                            }
+                        } else if (response[i].result !== undefined) {
+                            if (typeof response[i].result !== "boolean") {
+                                if (returns[i]) {
+                                    results[i] = this.applyReturns(returns[i], response[i].result);
+                                } else {
+                                    results[i] = abi.remove_leading_zeros(results[i]);
+                                    results[i] = abi.prefix_hex(results[i]);
+                                }
+                            }
+                        }
+                    }
+                    if (!callback) return results;
+                    callback(results);
+
+                // no result or error field
+                } else {
+                    var err = errors.NO_RESPONSE;
+                    err.bubble = response;
+                    if (callback) return callback(err);
+                    throw new this.Error(err);
+                }
+            }
+        } catch (e) {
+            var err = e;
+            if (e && e.name === "SyntaxError") {
+                err = errors.INVALID_RESPONSE;
+                // err.bubble = response;
+            }
+            if (callback) return callback(err);
+            throw new this.Error(err);
+        }
+    },
+
+    strip: function (tx) {
+        var returns;
+        if (tx.params !== undefined && tx.params.length && tx.params[0]) {
+            if (tx.params[0].returns) {
+                returns = tx.params[0].returns;
+                delete tx.params[0].returns;
+            }
+            if (tx.params[0].invocation) {
+                delete tx.params[0].invocation;
+            }
+        }
+        return returns;
+    },
+
+    exciseNode: function (err, deadNode, callback) {
+        if (deadNode && !this.nodes.local && !this.ipcpath) {
+            if (this.debug.logs) {
+                console.log("[ethrpc] request to", deadNode, "failed:", err);
+            }
+            var deadIndex = this.nodes.hosted.indexOf(deadNode);
+            if (deadIndex > -1) {
+                this.nodes.hosted.splice(deadIndex, 1);
+                if (!this.nodes.hosted.length) {
+                    if (callback) {
+                        return callback(errors.HOSTED_NODE_FAILURE);
+                    }
+                    throw new this.Error(errors.HOSTED_NODE_FAILURE);
+                }
+            }
+            if (callback) callback();
+        }
+    },
+
+    postSync: function (rpcUrl, command, returns) {
+        var req = null;
+        if (NODE_JS) {
+            req = syncRequest('POST', rpcUrl, { json: command });
+            var response = req.getBody().toString();
+            return this.parse(response, returns);
+        } else {
+            if (window.XMLHttpRequest) {
+                req = new window.XMLHttpRequest();
+            } else {
+                req = new window.ActiveXObject("Microsoft.XMLHTTP");
+            }
+            req.open("POST", rpcUrl, false);
+            req.setRequestHeader("Content-type", "application/json");
+            req.send(JSON.stringify(command));
+            return this.parse(req.responseText, returns);
+        }
+    },
+
+    post: function (rpcUrl, command, returns, callback) {
+        var self = this;
+        request({
+            url: rpcUrl,
+            method: 'POST',
+            json: command,
+            timeout: this.POST_TIMEOUT
+        }, function (err, response, body) {
+            if (err) {
+                if (self.nodes.local) {
+                    var e = errors.LOCAL_NODE_FAILURE;
+                    e.bubble = err;
+                    return callback(e);
+                } else if (self.excision) {
+                    self.exciseNode(err.code, rpcUrl, callback);
+                }
+            } else if (response.statusCode === 200) {
+                self.parse(body, returns, callback);
+            }
+        });
+    },
+
+    // random primary node selection, weighted by (normalized)
+    // inverse mean network latency
+    selectPrimaryNode: function (nodes) {
+        var select, rand, numNodes, total, weights, cdf, high, low;
+        rand = Math.random();
+        numNodes = nodes.length;
+        weights = new Array(numNodes);
+        for (var k = 0; k < numNodes; ++k) {
+            weights[k] = 1 / this.latency[nodes[k]];
+        }
+        cdf = new Array(numNodes);
+        total = 0;
+        for (k = 0; k < numNodes; ++k) {
+            total += weights[k];
+            cdf[k] = total;
+        }
+        for (k = 0; k < numNodes; ++k) {
+            cdf[k] /= total;
+        }
+        high = numNodes - 1;
+        low = 0;
+        while (low < high) {
+            select = Math.ceil((high + low) / 2);
+            if (cdf[select] < rand) {
+                low = select + 1;
+            } else if (cdf[select] > rand) {
+                high = select - 1;
+            } else {
+                return nodes[select];
+            }
+        }
+        if (low != high) {
+            select = (cdf[low] >= rand) ? low : select;
+        } else {
+            select = (cdf[low] >= rand) ? low : low + 1;
+        }
+        return [nodes[select]].concat(nodes);
+    },
+
+    selectNodes: function () {
+        if (this.nodes.local) return [this.nodes.local];
+        if (!this.balancer || this.nodes.hosted.length === 1) {
+            return this.nodes.hosted.slice();
+        }
+
+        // rotate nodes until we have enough samples to weight them
+        if (!this.samples[HOSTED_NODES[0]] || this.samples[HOSTED_NODES[0]] < 5) {
+            this.nodes.hosted.unshift(this.nodes.hosted.pop());
+            return this.nodes.hosted.slice();
+
+        // if we have sufficient data, select a primary node
+        } else {
+            return this.selectPrimaryNode(this.nodes.hosted);
+        }
+    },
+
+    // update the active node's mean network latency
+    updateMeanLatency: function (node, latency) {
+        if (!this.samples[node]) {
+            this.samples[node] = 1;
+            this.latency[node] = latency;
+        } else {
+            ++this.samples[node];
+            this.latency[node] = (
+                (this.samples[node] - 1)*this.latency[node] + latency
+            ) / this.samples[node];
+        }
+        if (this.debug.latency) {
+            if (this.netLatency === null) {
+                this.netSamples = 1;
+                this.netLatency = latency;
+            } else {
+                ++this.netSamples;
+                this.netLatency = (
+                    (this.netSamples - 1)*this.netLatency + latency
+                ) / this.netSamples;
+                if (this.debug.logs) {
+                    console.log(
+                        "[" + this.netSamples.toString() + "] mean network latency:",
+                        this.netLatency
+                    );
+                }
+            }
+        }
+    },
+
+    contracts: function (network) {
+        return contracts[network || this.version()];
+    },
+
+    // Post JSON-RPC command to all Ethereum nodes
+    broadcast: function (command, callback) {
+        var start, nodes, numCommands, returns, result, completed, self = this;
+
+        if (!command || (command.constructor === Object && !command.method) ||
+            (command.constructor === Array && !command.length))
+        {
+            if (!callback) return null;
+            return callback(null);
+        }
+        if (this.debug.logs) {
+            if (command.method === "eth_call" || command.method === "eth_sendTransaction") {
+                if (command.params && (!command.params.length || !command.params[0].from)) {
+                    console.log(
+                        "**************************\n"+
+                        "* OH GOD WHAT DID YOU DO *\n"+
+                        "**************************"
+                    );
+                    var network = this.version();
+                    var contracts = this.contracts(network);
+                    var contract;
+                    for (var address in contracts) {
+                        if (!contracts.hasOwnProperty(address)) continue;
+                        if (contracts[address] === command.params[0].to) {
+                            contract = address;
+                            break;
+                        }
+                    }
+                    console.log(
+                        "network:", network, "\n"+
+                        "contract:", contract, "[" + command.params[0].to + "]\n"+
+                        "method:", command.method, "\n"+
+                        "params:", JSON.stringify(command.params, null, 2)
+                    );
+                    if (command.debug) {
+                        console.log("tx:", JSON.stringify(command.debug, null, 2));
+                        delete command.debug;
+                    }
+                }
+            }
+        }
+
+        // parse batched commands and strip "returns" and "invocation" fields
+        if (command.constructor === Array) {
+            numCommands = command.length;
+            returns = new Array(numCommands);
+            for (var i = 0; i < numCommands; ++i) {
+                returns[i] = this.strip(command[i]);
+            }
+
+        // parse commands and strip "returns" and "invocation" fields
+        } else {
+            returns = this.strip(command);
+        }
+
+        // if we're on Node, use IPC if available and ipcpath is specified
+        if (NODE_JS && this.ipcpath && command.method &&
+            command.method.indexOf("Filter") === -1)
+        {
+            var loopback = this.nodes.local && (
+                (this.nodes.local.indexOf("127.0.0.1") > -1 ||
+                this.nodes.local.indexOf("localhost") > -1)
+            );
+            if (!callback && !loopback) {
+                throw new this.Error(errors.LOOPBACK_NOT_FOUND);
+            }
+            if (callback && command.constructor !== Array) {
+                var received = '';
+                var socket = new net.Socket();
+                socket.setEncoding("utf8");
+                socket.connect({ path: this.ipcpath }, function () {
+                    socket.write(JSON.stringify(command));
+                });
+                socket.on("data", function (data) {
+                    received += data;
+                    self.parse(received, returns, function (parsed) {
+                        if (parsed && parsed.error === 409) return;
+                        socket.destroy();
+                        callback(parsed);
+                    });
+                });
+                socket.on("error", function (err) {
+                    socket.destroy();
+                    callback(err);
+                });
+                return;
+            }
+        }
+
+        // make sure the ethereum node list isn't empty
+        if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath) {
+            if (callback) return callback(errors.ETHEREUM_NOT_FOUND);
+            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
+        }
+
+        // select local / hosted node(s) to receive RPC
+        nodes = this.selectNodes();
+
+        // asynchronous request if callback exists
+        if (callback && callback.constructor === Function) {
+            async.eachSeries(nodes, function (node, nextNode) {
+                if (!completed) {
+                    if (self.debug.logs) {
+                        console.log("nodes:", JSON.stringify(nodes));
+                        console.log("post", command.method, "to:", node);
+                    }
+                    if (self.balancer) {
+                        start = new Date().getTime();
+                    }
+                    self.post(node, command, returns, function (res) {
+                        if (self.debug.logs) {
+                            if (res && res.constructor === BigNumber) {
+                                console.log(node, "response:", abi.string(res));
+                            } else {
+                                console.log(node, "response:", res);
+                            }
+                        }
+                        if (node === nodes[nodes.length - 1] ||
+                            (res !== undefined && res !== null &&
+                            !res.error && res !== "0x"))
+                        {
+                            completed = true;
+                            if (self.balancer) {
+                                self.updateMeanLatency(node, new Date().getTime() - start);
+                            }
+                            return nextNode({ output: res });
+                        }
+                        nextNode();
+                    });
+                }
+            }, function (res) {
+                if (!res && res.output === undefined) return callback();
+                callback(res.output);
+            });
+
+        // use synchronous http if no callback provided
+        } else {
+            for (var j = 0, len = nodes.length; j < len; ++j) {
+                try {
+                    if (this.debug.logs) {
+                        console.log("nodes:", JSON.stringify(nodes));
+                        console.log("synchronous post", command.method, "to:", nodes[j]);
+                    }
+                    if (this.balancer) {
+                        start = new Date().getTime();
+                    }
+                    result = this.postSync(nodes[j], command, returns);
+                    if (this.balancer) {
+                        this.updateMeanLatency(nodes[j], new Date().getTime() - start);
+                    }
+                } catch (e) {
+                    if (this.nodes.local) {
+                        throw new this.Error(errors.LOCAL_NODE_FAILURE);
+                    } else if (this.excision) {
+                        this.exciseNode(e, nodes[j]);
+                    }
+                }
+                if (result) return result;
+            }
+            throw new this.Error(errors.NO_RESPONSE);
+        }
+    },
+
+    marshal: function (command, params, prefix) {
+        var payload = {
+            id: this.requests++,
+            jsonrpc: "2.0"
+        };
+        if (prefix === "null") {
+            payload.method = command.toString();
+        } else {
+            payload.method = (prefix || "eth_") + command.toString();
+        }
+        if (params !== undefined && params !== null) {
+            if (this.debug.broadcast && params.debug) {
+                payload.debug = abi.copy(params.debug);
+                delete params.debug;
+            }
+            if (params.constructor === Array) {
+                payload.params = params;
+            } else {
+                payload.params = [params];
+            }
+        } else {
+            payload.params = [];
+        }
+        return payload;
+    },
+
+    setLocalNode: function (urlstr) {
+        this.nodes.local = urlstr;
+    },
+
+    useHostedNode: function () {
+        this.nodes.local = null;
+    },
+
+    // delete cached network, notification, and transaction data
+    clear: function () {
+        this.latency = {};
+        this.samples = {};
+        this.txs = {};
+        for (var n in this.notifications) {
+            if (!this.notifications.hasOwnProperty(n)) continue;
+            if (this.notifications[n]) {
+                clearTimeout(this.notifications[n]);
+            }
+        }
+        this.notifications = {};
+    },
+
+    // reset to default Ethereum nodes
+    reset: function (deleteData) {
+        this.nodes = {
+            hosted: HOSTED_NODES.slice(),
+            local: null
+        };
+        if (deleteData) this.clear();
+    },
+
+    /******************************
+     * Ethereum JSON-RPC bindings *
+     ******************************/
+
+    raw: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "null"), f);
+    },
+
+    eth: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params), f);
+    },
+
+    net: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "net_"), f);
+    },
+
+    web3: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "web3_"), f);
+    },
+
+    leveldb: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "db_"), f);
+    },
+
+    shh: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "shh_"), f);
+    },
+
+    sha3: function (data, f) {
+        return this.broadcast(this.marshal("sha3", data.toString(), "web3_"), f);
+    },
+    hash: function (data, f) {
+        return this.broadcast(this.marshal("sha3", data.toString(), "web3_"), f);
+    },
+
+    gasPrice: function (f) {
+        return this.broadcast(this.marshal("gasPrice"), f);
+    },
+
+    blockNumber: function (f) {
+        if (f) {
+            this.broadcast(this.marshal("blockNumber"), f);
+        } else {
+            return parseInt(this.broadcast(this.marshal("blockNumber")));
+        }
+    },
+
+    coinbase: function (f) {
+        return this.broadcast(this.marshal("coinbase"), f);
+    },
+
+    balance: function (address, block, f) {
+        if (block && block.constructor === Function) {
+            f = block;
+            block = null;
+        }
+        block = block || "latest";
+        return this.broadcast(this.marshal("getBalance", [ address, block ]), f);
+    },
+    getBalance: function (address, block, f) {
+        if (block && block.constructor === Function) {
+            f = block;
+            block = null;
+        }
+        block = block || "latest";
+        return this.broadcast(this.marshal("getBalance", [ address, block ]), f);
+    },
+
+    txCount: function (address, f) {
+        return this.broadcast(this.marshal("getTransactionCount", address), f);
+    },
+    getTransactionCount: function (address, f) {
+        return this.broadcast(this.marshal("getTransactionCount", address), f);
+    },
+    pendingTxCount: function (address, f) {
+        return this.broadcast(
+            this.marshal("getTransactionCount", [ address, "pending" ]), f
+        );
+    },
+
+    sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
+        if (to && to.constructor === Object && to.value) {
+            value = to.value;
+            if (to.from) from = to.from;
+            if (to.onSent) onSent = to.onSent;
+            if (to.onSuccess) onSuccess = to.onSuccess;
+            if (to.onFailed) onFailed = to.onFailed;
+            to = to.to;
+        }
+        return this.transact({
+            from: from,
+            to: to,
+            invocation: { invoke: this.sendTx, context: this },
+            value: abi.bignum(value).mul(this.ETHER).toFixed(),
+            returns: "null"
+        }, onSent, onSuccess, onFailed);
+    },
+
+    sign: function (address, data, f) {
+        return this.broadcast(this.marshal("sign", [address, data]), f);
+    },
+
+    getTx: function (hash, f) {
+        return this.broadcast(this.marshal("getTransactionByHash", hash), f);
+    },
+    getTransaction: function (hash, f) {
+        return this.broadcast(this.marshal("getTransactionByHash", hash), f);
+    },
+
+    peerCount: function (f) {
+        if (f) {
+            this.broadcast(this.marshal("peerCount", [], "net_"), f);
+        } else {
+            return parseInt(this.broadcast(this.marshal("peerCount", [], "net_")));
+        }
+    },
+
+    accounts: function (f) {
+        return this.broadcast(this.marshal("accounts"), f);
+    },
+
+    mining: function (f) {
+        return this.broadcast(this.marshal("mining"), f);
+    },
+
+    hashrate: function (f) {
+        if (f) {
+            this.broadcast(this.marshal("hashrate"), f);
+        } else {
+            return parseInt(this.broadcast(this.marshal("hashrate")));
+        }
+    },
+
+    getBlockByHash: function (hash, full, f) {
+        return this.broadcast(this.marshal("getBlockByHash", [hash, full || true]), f);
+    },
+
+    getBlock: function (number, full, f) {
+        return this.broadcast(this.marshal("getBlockByNumber", [number, full || true]), f);
+    },
+    getBlockByNumber: function (number, full, f) {
+        return this.broadcast(this.marshal("getBlockByNumber", [number, full || true]), f);
+    },
+
+    version: function (f) {
+        return this.broadcast(this.marshal("version", [], "net_"), f);
+    },
+    netVersion: function (f) {
+        return this.broadcast(this.marshal("version", [], "net_"), f);
+    },
+
+    // estimate a transaction's gas cost
+    estimateGas: function (tx, f) {
+        tx.to = tx.to || "";
+        return this.broadcast(this.marshal("estimateGas", tx), f);
+    },
+
+    // execute functions on contracts on the blockchain
+    call: function (tx, f) {
+        tx.to = tx.to || "";
+        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
+        return this.broadcast(this.marshal("call", tx), f);
+    },
+
+    sendTx: function (tx, f) {
+        tx.to = tx.to || "";
+        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
+        return this.broadcast(this.marshal("sendTransaction", tx), f);
+    },
+    sendTransaction: function (tx, f) {
+        tx.to = tx.to || "";
+        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
+        return this.broadcast(this.marshal("sendTransaction", tx), f);
+    },
+
+    // sendRawTx(RLP(tx.signed(privateKey))) -> txhash
+    sendRawTx: function (rawTx, f) {
+        return this.broadcast(this.marshal("sendRawTransaction", rawTx), f);
+    },
+    sendRawTransaction: function (rawTx, f) {
+        return this.broadcast(this.marshal("sendRawTransaction", rawTx), f);
+    },
+
+    receipt: function (txhash, f) {
+        return this.broadcast(this.marshal("getTransactionReceipt", txhash), f);
+    },
+    getTransactionReceipt: function (txhash, f) {
+        return this.broadcast(this.marshal("getTransactionReceipt", txhash), f);
+    },
+
+    clientVersion: function (f) {
+        return this.broadcast(this.marshal("clientVersion", [], "web3_"), f);
+    },
+
+    compileSerpent: function (code, f) {
+        return this.broadcast(this.marshal("compileSerpent", code), f);
+    },
+
+    compileSolidity: function (code, f) {
+        return this.broadcast(this.marshal("compileSolidity", code), f);
+    },
+
+    compileLLL: function (code, f) {
+        return this.broadcast(this.marshal("compileLLL", code), f);
+    },
+
+    // publish a new contract to the blockchain (from the coinbase account)
+    publish: function (compiled, f) {
+        return this.sendTx({ from: this.coinbase(), data: compiled }, f);
+    },
+
+    // Read the code in a contract on the blockchain
+    read: function (address, block, f) {
+        return this.broadcast(this.marshal("getCode", [address, block || "latest"]), f);
+    },
+    getCode: function (address, block, f) {
+        return this.broadcast(this.marshal("getCode", [address, block || "latest"]), f);
+    },
+
+    // Ethereum node status checks
+
+    listening: function (f) {
+        var response, self = this;
+        try {
+            if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
+                throw new this.Error(errors.ETHEREUM_NOT_FOUND);
+            }
+            if (f && f.constructor === Function) {
+                var timeout = setTimeout(function () {
+                    if (!response) f(false);
+                }, 2500);
+                setTimeout(function () {
+                    self.net("listening", [], function (res) {
+                        clearTimeout(timeout);
+                        f(!!res);
+                    });
+                }, 0);
+            } else {
+                return !!this.net("listening");
+            }
+        } catch (e) {
+            if (f && f.constructor === Function) {
+                return f(false);
+            }
+            return false;
+        }
+    },
+
+    unlocked: function (account, f) {
+        if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
+            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
+        }
+        try {
+            if (f && f.constructor === Function) {
+                this.sign(account, "1010101", function (res) {
+                    if (res) {
+                        if (res.error) return f(false);
+                        return f(true);
+                    }
+                    f(false);
+                });
+            } else {
+                var res = this.sign(account, "1010101");
+                if (res) {
+                    if (res.error) {
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
+        } catch (e) {
+            if (f && f.constructor === Function) return f(false);
+            return false;
+        }
+    },
+
+    /**
+     * Invoke a function from a contract on the blockchain.
+     *
+     * Input tx format:
+     * {
+     *    from: <sender's address> (hexstring; optional, coinbase default)
+     *    to: <contract address> (hexstring)
+     *    method: <function name> (string)
+     *    signature: <function signature, e.g. "iia"> (string)
+     *    params: <parameters passed to the function> (optional)
+     *    returns: <"number[]", "int", "BigNumber", or "string" (default)>
+     *    send: <true to sendTransaction, false to call (default)>
+     * }
+     */
+    invoke: function (itx, f) {
+        var tx, dataAbi, packaged, invocation, invoked;
+        try {
+            if (itx) {
+                if (itx.send && itx.invocation && itx.invocation.invoke &&
+                    itx.invocation.invoke.constructor === Function)
+                {
+                    return itx.invocation.invoke.call(itx.invocation.context, itx, f);
+                } else {
+                    tx = abi.copy(itx);
+                    if (tx.params !== undefined) {
+                        if (tx.params.constructor === Array) {
+                            for (var i = 0, len = tx.params.length; i < len; ++i) {
+                                if (tx.params[i] !== undefined &&
+                                    tx.params[i].constructor === BigNumber) {
+                                    tx.params[i] = abi.hex(tx.params[i]);
+                                }
+                            }
+                        } else if (tx.params.constructor === BigNumber) {
+                            tx.params = [abi.hex(tx.params)];
+                        } else {
+                            tx.params = [tx.params];
+                        }
+                    }
+                    if (tx.to) tx.to = abi.prefix_hex(tx.to);
+                    if (tx.from) tx.from = abi.prefix_hex(tx.from);
+                    dataAbi = abi.encode(tx);
+                    if (dataAbi) {
+                        packaged = {
+                            from: tx.from,
+                            to: tx.to,
+                            data: dataAbi,
+                            gas: tx.gas || this.DEFAULT_GAS,
+                            gasPrice: tx.gasPrice
+                        };
+                        if (tx.value) packaged.value = tx.value;
+                        if (tx.returns) packaged.returns = tx.returns;
+                        if (this.debug.broadcast) {
+                            packaged.debug = abi.copy(tx);
+                            packaged.debug.batch = false;
+                        }
+                        invocation = (tx.send) ? this.sendTx : this.call;
+                        invoked = true;
+                        return invocation.call(this, packaged, f);
+                    }
+                }
+            }
+        } catch (exc) {
+            if (f) return f(errors.TRANSACTION_FAILED);
+            return errors.TRANSACTION_FAILED;
+        }
+        if (!invoked) {
+            if (f) return f(errors.TRANSACTION_FAILED);
+            return errors.TRANSACTION_FAILED;
+        }
+    },
+
+    /**
+     * Batched RPC commands
+     */
+    batch: function (txlist, f) {
+        var numCommands, rpclist, callbacks, tx, dataAbi, packaged, invocation;
+        if (txlist.constructor === Array) {
+            numCommands = txlist.length;
+            rpclist = new Array(numCommands);
+            callbacks = new Array(numCommands);
+            for (var i = 0; i < numCommands; ++i) {
+                tx = abi.copy(txlist[i]);
+                if (tx.params !== undefined) {
+                    if (tx.params.constructor === Array) {
+                        for (var j = 0, len = tx.params.length; j < len; ++j) {
+                            if (tx.params[j] !== undefined &&
+                                tx.params[j] !== null &&
+                                tx.params[j].constructor === BigNumber) {
+                                tx.params[j] = abi.hex(tx.params[j]);
+                            }
+                        }
+                    } else if (tx.params.constructor === BigNumber) {
+                        tx.params = abi.hex(tx.params);
+                    }
+                }
+                if (tx.from) tx.from = abi.prefix_hex(tx.from);
+                tx.to = abi.prefix_hex(tx.to);
+                dataAbi = abi.encode(tx);
+                if (dataAbi) {
+                    if (tx.callback && tx.callback.constructor === Function) {
+                        callbacks[i] = tx.callback;
+                        delete tx.callback;
+                    }
+                    packaged = {
+                        from: tx.from,
+                        to: tx.to,
+                        data: dataAbi,
+                        gas: tx.gas || this.DEFAULT_GAS,
+                        gasPrice: tx.gasPrice
+                    };
+                    if (tx.value) packaged.value = tx.value;
+                    if (tx.returns) packaged.returns = tx.returns;
+                    if (this.debug.broadcast) {
+                        packaged.debug = abi.copy(tx);
+                        packaged.debug.batch = true;
+                    }
+                    invocation = (tx.send) ? "sendTransaction" : "call";
+                    rpclist[i] = this.marshal(invocation, packaged);
+                } else {
+                    console.log("unable to package commands for batch RPC");
+                    return rpclist;
+                }
+            }
+            if (f) {
+                if (f.constructor === Function) { // callback on whole array
+                    this.broadcast(rpclist, f);
+                } else if (f === true) {
+                    this.broadcast(rpclist, function (res) {
+                        if (res) {
+                            if (res.constructor === Array && res.length) {
+                                for (j = 0; j < numCommands; ++j) {
+                                    if (res[j] && callbacks[j]) {
+                                        callbacks[j](res[j]);
+                                    }
+                                }
+                            } else {
+                                if (callbacks.length && callbacks[0]) {
+                                    callbacks[0](res);
+                                }
+                            }
+                        }
+                    });
+                }
+            } else {
+                return this.broadcast(rpclist, f);
+            }
+        } else {
+            console.log("expected array for batch RPC, invoking instead");
+            return this.invoke(txlist, f);
+        }
+    },
+
+    encodeResult: function (result, returns) {
+        if (result) {
+            if (returns === "null") {
+                result = null;
+            } else if (returns === "address" || returns === "address[]") {
+                result = abi.format_address(result);
+            } else {
+                if (!returns || returns === "hash[]" || returns === "hash") {
+                    result = abi.hex(result);
+                } else if (returns === "number") {
+                    result = abi.string(result);
+                }
+            }
+        }
+        return result;
+    },
+
+    errorCodes: function (tx, response) {
+        if (response) {
+            if (response.constructor === Array) {
+                for (var i = 0, len = response.length; i < len; ++i) {
+                    response[i] = this.errorCodes(tx.method, response[i]);
+                }
+            } else if (response.name && response.message && response.stack) {
+                response.error = response.name;
+            } else if (!response.error) {
+                if (errors[response]) {
+                    response = {
+                        error: response,
+                        message: errors[response]
+                    };
+                } else {
+                    if (tx.returns && tx.returns !== "string" ||
+                        (response && response.constructor === String &&
+                        response.slice(0,2) === "0x"))
+                    {
+                        var responseNumber = abi.bignum(response);
+                        if (responseNumber) {
+                            responseNumber = abi.string(responseNumber);
+                            if (errors[tx.method] && errors[tx.method][responseNumber]) {
+                                response = {
+                                    error: responseNumber,
+                                    message: errors[tx.method][responseNumber]
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return response;
+    },
+
+    fire: function (itx, callback) {
+        var self = this;
+        var tx = abi.copy(itx);
+        if (callback) {
+            this.invoke(tx, function (res) {
+                res = self.errorCodes(tx, res);
+                if (res) {
+                    if (res.error) return callback(res);
+                    return callback(self.encodeResult(res, itx.returns));
+                }
+                callback(errors.NO_RESPONSE);
+            });
+        } else {
+            var res = this.errorCodes(tx, this.invoke(tx));
+            if (res) {
+                if (res.error) return res;
+                return this.encodeResult(res, itx.returns);
+            }
+            throw new this.Error(errors.NO_RESPONSE);
+        }
+    },
+
+    /***************************************
+     * Send-call-confirm callback sequence *
+     ***************************************/
+
+    checkBlockHash: function (tx, callreturn, itx, txhash, returns, onSent, onSuccess, onFailed) {
+        if (!this.txs[txhash]) this.txs[txhash] = {};
+        if (this.txs[txhash].count === undefined) this.txs[txhash].count = 0;
+        ++this.txs[txhash].count;
+        if (tx && tx.blockHash && abi.number(tx.blockHash) !== 0) {
+            tx.callReturn = this.encodeResult(callreturn, returns);
+            tx.txHash = tx.hash;
+            delete tx.hash;
+            this.txs[txhash].status = "confirmed";
+            clearTimeout(this.notifications[txhash]);
+            if (onSuccess && onSuccess.constructor === Function) onSuccess(tx);
+        } else {
+            var self = this;
+            if (this.txs[txhash].count < this.TX_POLL_MAX) {
+                this.notifications[txhash] = setTimeout(function () {
+                    if (self.txs[txhash].status === "pending") {
+                        self.txNotify(callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
+                    }
+                }, this.TX_POLL_INTERVAL);
+            } else {
+                self.txs[txhash].status = "unconfirmed";
+                if (onFailed && onFailed.constructor === Function) {
+                    onFailed(errors.TRANSACTION_NOT_CONFIRMED);
+                }
+            }
+        }
+    },
+
+    txNotify: function (callreturn, itx, txhash, returns, onSent, onSuccess, onFailed) {
+        var self = this;
+        this.getTx(txhash, function (tx) {
+            if (tx) {
+                return self.checkBlockHash(tx, callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
+            }
+            self.txs[txhash].status = "failed";
+
+            // resubmit if this is a raw transaction and has a duplicate nonce
+            if (self.rawTxs[txhash] && self.rawTxs[txhash].tx) {
+                var duplicateNonce;
+                for (var hash in self.rawTxs) {
+                    if (!self.rawTxs.hasOwnProperty(hash)) continue;
+                    if (self.rawTxs[hash].tx.nonce === self.rawTxs[txhash].tx.nonce) {
+                        duplicateNonce = true;
+                        break;
+                    }
+                }
+                if (duplicateNonce) {
+                    if (returns) itx.returns = returns;
+                    self.txs[txhash].status = "resubmitted";
+                    return self.transact(itx, onSent, onSuccess, onFailed);
+                } else {
+                    if (onFailed) onFailed(errors.TRANSACTION_NOT_FOUND);
+                }
+            } else {
+                if (onFailed) onFailed(errors.TRANSACTION_NOT_FOUND);
+            }
+        });
+    },
+
+    confirmTx: function (tx, txhash, returns, onSent, onSuccess, onFailed) {
+        var self = this;
+        if (tx && txhash) {
+            if (errors[txhash]) {
+                if (onFailed) onFailed({
+                    error: txhash,
+                    message: errors[txhash],
+                    tx: tx
+                });
+            } else {
+                if (this.txs[txhash]) {
+                    if (onFailed) onFailed(errors.DUPLICATE_TRANSACTION);
+                } else {
+                    this.txs[txhash] = { hash: txhash, tx: tx, count: 0, status: "pending" };
+                    this.txs[txhash].tx.returns = returns;
+                    return this.getTx(txhash, function (sent) {
+                        if (returns !== "null") {
+                            return self.call({
+                                from: sent.from,
+                                to: sent.to || tx.to,
+                                value: sent.value || tx.value,
+                                data: sent.input
+                            }, function (callReturn) {
+                                if (callReturn) {
+                                    if (errors[callReturn]) {
+                                        self.txs[txhash].status = "failed";
+                                        if (onFailed) onFailed({
+                                            error: callReturn,
+                                            message: errors[callReturn],
+                                            tx: tx
+                                        });
+                                    } else {
+                                        callReturn = JSON.stringify({ result: callReturn });
+
+                                        // transform callReturn to a number
+                                        var numReturn = self.parse(callReturn, "number");
+
+                                        // check if numReturn is an error object
+                                        if (numReturn.constructor === Object && numReturn.error) {
+                                            self.txs[txhash].status = "failed";
+                                            if (onFailed) onFailed(numReturn);
+                                        } else if (errors[numReturn]) {
+                                            self.txs[txhash].status = "failed";
+                                            if (onFailed) onFailed({
+                                                error: numReturn,
+                                                message: errors[numReturn],
+                                                tx: tx
+                                            });
+                                        } else {
+                                            try {
+
+                                                // check if numReturn is an error code
+                                                if (numReturn && numReturn.constructor === BigNumber) {
+                                                    numReturn = numReturn.toFixed();
+                                                }
+                                                if (numReturn && errors[tx.method] && errors[tx.method][numReturn]) {
+                                                    self.txs[txhash].status = "failed";
+                                                    if (onFailed) onFailed({
+                                                        error: numReturn,
+                                                        message: errors[tx.method][numReturn],
+                                                        tx: tx
+                                                    });
+                                                } else {
+
+                                                    // no errors found, so transform to the requested
+                                                    // return type, specified by "returns" parameter
+                                                    callReturn = self.parse(callReturn, returns);
+                                                    self.txs[txhash].callReturn = self.encodeResult(callReturn, returns);
+
+                                                    // send the transaction hash and return value back
+                                                    // to the client, using the onSent callback
+                                                    onSent({
+                                                        txHash: txhash,
+                                                        callReturn: self.encodeResult(callReturn, returns)
+                                                    });
+
+                                                    // if an onSuccess callback was supplied, then
+                                                    // poll the network until the transaction is
+                                                    // included in a block (i.e., has a non-null
+                                                    // blockHash field)
+                                                    if (onSuccess && onSuccess.constructor === Function) {
+                                                        self.txNotify(
+                                                            callReturn,
+                                                            tx,
+                                                            txhash,
+                                                            returns,
+                                                            onSent,
+                                                            onSuccess,
+                                                            onFailed
+                                                        );
+                                                    }
+                                                }
+
+                                            // something went wrong :(
+                                            } catch (e) {
+                                                self.txs[txhash].status = "failed";
+                                                if (onFailed) onFailed(e);
+                                            }
+                                        }
+                                    }
+
+                                // no return value for call
+                                } else {
+                                    self.txs[txhash].status = "failed";
+                                    if (onFailed) onFailed(errors.NULL_CALL_RETURN);
+                                }
+                            });
+                        }
+
+                        // if returns type is null, skip the intermediate call
+                        onSent({ txHash: txhash, callReturn: null });
+                        if (onSuccess && onSuccess.constructor === Function) {
+                            self.txNotify(null, tx, txhash, returns, onSent, onSuccess, onFailed);
+                        }
+                    });
+                }
+            }
+        }
+    },
+
+    transact: function (tx, onSent, onSuccess, onFailed) {
+        var self = this;
+        var returns = tx.returns;
+        tx.send = true;
+        delete tx.returns;
+        if (onSent && onSent.constructor === Function) {
+            return this.invoke(tx, function (txhash) {
+                if (txhash) {
+                    if (txhash.error) {
+                        if (onFailed) onFailed(txhash);
+                    } else {
+                        txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
+                        self.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
+                    }
+                } else {
+                    if (onFailed) onFailed(errors.NULL_RESPONSE);
+                }
+            });
+        }
+        return this.invoke(tx);
+    }
+
+};
+
+}).call(this,require('_process'))
+},{"./errors":3,"_process":229,"async":6,"augur-abi":7,"augur-contracts":2,"bignumber.js":9,"browser-request":10,"net":11,"request":264,"sync-request":13}],6:[function(require,module,exports){
+(function (process,global){
+/*!
+ * async
+ * https://github.com/caolan/async
+ *
+ * Copyright 2010-2014 Caolan McMahon
+ * Released under the MIT license
+ */
+(function () {
+
+    var async = {};
+    function noop() {}
+    function identity(v) {
+        return v;
+    }
+    function toBool(v) {
+        return !!v;
+    }
+    function notId(v) {
+        return !v;
+    }
+
+    // global on the server, window in the browser
+    var previous_async;
+
+    // Establish the root object, `window` (`self`) in the browser, `global`
+    // on the server, or `this` in some virtual machines. We use `self`
+    // instead of `window` for `WebWorker` support.
+    var root = typeof self === 'object' && self.self === self && self ||
+            typeof global === 'object' && global.global === global && global ||
+            this;
+
+    if (root != null) {
+        previous_async = root.async;
+    }
+
+    async.noConflict = function () {
+        root.async = previous_async;
+        return async;
+    };
+
+    function only_once(fn) {
+        return function() {
+            if (fn === null) throw new Error("Callback was already called.");
+            fn.apply(this, arguments);
+            fn = null;
+        };
+    }
+
+    function _once(fn) {
+        return function() {
+            if (fn === null) return;
+            fn.apply(this, arguments);
+            fn = null;
+        };
+    }
+
+    //// cross-browser compatiblity functions ////
+
+    var _toString = Object.prototype.toString;
+
+    var _isArray = Array.isArray || function (obj) {
+        return _toString.call(obj) === '[object Array]';
+    };
+
+    // Ported from underscore.js isObject
+    var _isObject = function(obj) {
+        var type = typeof obj;
+        return type === 'function' || type === 'object' && !!obj;
+    };
+
+    function _isArrayLike(arr) {
+        return _isArray(arr) || (
+            // has a positive integer length property
+            typeof arr.length === "number" &&
+            arr.length >= 0 &&
+            arr.length % 1 === 0
+        );
+    }
+
+    function _arrayEach(arr, iterator) {
+        var index = -1,
+            length = arr.length;
+
+        while (++index < length) {
+            iterator(arr[index], index, arr);
+        }
+    }
+
+    function _map(arr, iterator) {
+        var index = -1,
+            length = arr.length,
+            result = Array(length);
+
+        while (++index < length) {
+            result[index] = iterator(arr[index], index, arr);
+        }
+        return result;
+    }
+
+    function _range(count) {
+        return _map(Array(count), function (v, i) { return i; });
+    }
+
+    function _reduce(arr, iterator, memo) {
+        _arrayEach(arr, function (x, i, a) {
+            memo = iterator(memo, x, i, a);
+        });
+        return memo;
+    }
+
+    function _forEachOf(object, iterator) {
+        _arrayEach(_keys(object), function (key) {
+            iterator(object[key], key);
+        });
+    }
+
+    function _indexOf(arr, item) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] === item) return i;
+        }
+        return -1;
+    }
+
+    var _keys = Object.keys || function (obj) {
+        var keys = [];
+        for (var k in obj) {
+            if (obj.hasOwnProperty(k)) {
+                keys.push(k);
+            }
+        }
+        return keys;
+    };
+
+    function _keyIterator(coll) {
+        var i = -1;
+        var len;
+        var keys;
+        if (_isArrayLike(coll)) {
+            len = coll.length;
+            return function next() {
+                i++;
+                return i < len ? i : null;
+            };
+        } else {
+            keys = _keys(coll);
+            len = keys.length;
+            return function next() {
+                i++;
+                return i < len ? keys[i] : null;
+            };
+        }
+    }
+
+    // Similar to ES6's rest param (http://ariya.ofilabs.com/2013/03/es6-and-rest-parameter.html)
+    // This accumulates the arguments passed into an array, after a given index.
+    // From underscore.js (https://github.com/jashkenas/underscore/pull/2140).
+    function _restParam(func, startIndex) {
+        startIndex = startIndex == null ? func.length - 1 : +startIndex;
+        return function() {
+            var length = Math.max(arguments.length - startIndex, 0);
+            var rest = Array(length);
+            for (var index = 0; index < length; index++) {
+                rest[index] = arguments[index + startIndex];
+            }
+            switch (startIndex) {
+                case 0: return func.call(this, rest);
+                case 1: return func.call(this, arguments[0], rest);
+            }
+            // Currently unused but handle cases outside of the switch statement:
+            // var args = Array(startIndex + 1);
+            // for (index = 0; index < startIndex; index++) {
+            //     args[index] = arguments[index];
+            // }
+            // args[startIndex] = rest;
+            // return func.apply(this, args);
+        };
+    }
+
+    function _withoutIndex(iterator) {
+        return function (value, index, callback) {
+            return iterator(value, callback);
+        };
+    }
+
+    //// exported async module functions ////
+
+    //// nextTick implementation with browser-compatible fallback ////
+
+    // capture the global reference to guard against fakeTimer mocks
+    var _setImmediate = typeof setImmediate === 'function' && setImmediate;
+
+    var _delay = _setImmediate ? function(fn) {
+        // not a direct alias for IE10 compatibility
+        _setImmediate(fn);
+    } : function(fn) {
+        setTimeout(fn, 0);
+    };
+
+    if (typeof process === 'object' && typeof process.nextTick === 'function') {
+        async.nextTick = process.nextTick;
+    } else {
+        async.nextTick = _delay;
+    }
+    async.setImmediate = _setImmediate ? _delay : async.nextTick;
+
+
+    async.forEach =
+    async.each = function (arr, iterator, callback) {
+        return async.eachOf(arr, _withoutIndex(iterator), callback);
+    };
+
+    async.forEachSeries =
+    async.eachSeries = function (arr, iterator, callback) {
+        return async.eachOfSeries(arr, _withoutIndex(iterator), callback);
+    };
+
+
+    async.forEachLimit =
+    async.eachLimit = function (arr, limit, iterator, callback) {
+        return _eachOfLimit(limit)(arr, _withoutIndex(iterator), callback);
+    };
+
+    async.forEachOf =
+    async.eachOf = function (object, iterator, callback) {
+        callback = _once(callback || noop);
+        object = object || [];
+
+        var iter = _keyIterator(object);
+        var key, completed = 0;
+
+        while ((key = iter()) != null) {
+            completed += 1;
+            iterator(object[key], key, only_once(done));
+        }
+
+        if (completed === 0) callback(null);
+
+        function done(err) {
+            completed--;
+            if (err) {
+                callback(err);
+            }
+            // Check key is null in case iterator isn't exhausted
+            // and done resolved synchronously.
+            else if (key === null && completed <= 0) {
+                callback(null);
+            }
+        }
+    };
+
+    async.forEachOfSeries =
+    async.eachOfSeries = function (obj, iterator, callback) {
+        callback = _once(callback || noop);
+        obj = obj || [];
+        var nextKey = _keyIterator(obj);
+        var key = nextKey();
+        function iterate() {
+            var sync = true;
+            if (key === null) {
+                return callback(null);
+            }
+            iterator(obj[key], key, only_once(function (err) {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    key = nextKey();
+                    if (key === null) {
+                        return callback(null);
+                    } else {
+                        if (sync) {
+                            async.setImmediate(iterate);
+                        } else {
+                            iterate();
+                        }
+                    }
+                }
+            }));
+            sync = false;
+        }
+        iterate();
+    };
+
+
+
+    async.forEachOfLimit =
+    async.eachOfLimit = function (obj, limit, iterator, callback) {
+        _eachOfLimit(limit)(obj, iterator, callback);
+    };
+
+    function _eachOfLimit(limit) {
+
+        return function (obj, iterator, callback) {
+            callback = _once(callback || noop);
+            obj = obj || [];
+            var nextKey = _keyIterator(obj);
+            if (limit <= 0) {
+                return callback(null);
+            }
+            var done = false;
+            var running = 0;
+            var errored = false;
+
+            (function replenish () {
+                if (done && running <= 0) {
+                    return callback(null);
+                }
+
+                while (running < limit && !errored) {
+                    var key = nextKey();
+                    if (key === null) {
+                        done = true;
+                        if (running <= 0) {
+                            callback(null);
+                        }
+                        return;
+                    }
+                    running += 1;
+                    iterator(obj[key], key, only_once(function (err) {
+                        running -= 1;
+                        if (err) {
+                            callback(err);
+                            errored = true;
+                        }
+                        else {
+                            replenish();
+                        }
+                    }));
+                }
+            })();
+        };
+    }
+
+
+    function doParallel(fn) {
+        return function (obj, iterator, callback) {
+            return fn(async.eachOf, obj, iterator, callback);
+        };
+    }
+    function doParallelLimit(fn) {
+        return function (obj, limit, iterator, callback) {
+            return fn(_eachOfLimit(limit), obj, iterator, callback);
+        };
+    }
+    function doSeries(fn) {
+        return function (obj, iterator, callback) {
+            return fn(async.eachOfSeries, obj, iterator, callback);
+        };
+    }
+
+    function _asyncMap(eachfn, arr, iterator, callback) {
+        callback = _once(callback || noop);
+        arr = arr || [];
+        var results = _isArrayLike(arr) ? [] : {};
+        eachfn(arr, function (value, index, callback) {
+            iterator(value, function (err, v) {
+                results[index] = v;
+                callback(err);
+            });
+        }, function (err) {
+            callback(err, results);
+        });
+    }
+
+    async.map = doParallel(_asyncMap);
+    async.mapSeries = doSeries(_asyncMap);
+    async.mapLimit = doParallelLimit(_asyncMap);
+
+    // reduce only has a series version, as doing reduce in parallel won't
+    // work in many situations.
+    async.inject =
+    async.foldl =
+    async.reduce = function (arr, memo, iterator, callback) {
+        async.eachOfSeries(arr, function (x, i, callback) {
+            iterator(memo, x, function (err, v) {
+                memo = v;
+                callback(err);
+            });
+        }, function (err) {
+            callback(err, memo);
+        });
+    };
+
+    async.foldr =
+    async.reduceRight = function (arr, memo, iterator, callback) {
+        var reversed = _map(arr, identity).reverse();
+        async.reduce(reversed, memo, iterator, callback);
+    };
+
+    async.transform = function (arr, memo, iterator, callback) {
+        if (arguments.length === 3) {
+            callback = iterator;
+            iterator = memo;
+            memo = _isArray(arr) ? [] : {};
+        }
+
+        async.eachOf(arr, function(v, k, cb) {
+            iterator(memo, v, k, cb);
+        }, function(err) {
+            callback(err, memo);
+        });
+    };
+
+    function _filter(eachfn, arr, iterator, callback) {
+        var results = [];
+        eachfn(arr, function (x, index, callback) {
+            iterator(x, function (v) {
+                if (v) {
+                    results.push({index: index, value: x});
+                }
+                callback();
+            });
+        }, function () {
+            callback(_map(results.sort(function (a, b) {
+                return a.index - b.index;
+            }), function (x) {
+                return x.value;
+            }));
+        });
+    }
+
+    async.select =
+    async.filter = doParallel(_filter);
+
+    async.selectLimit =
+    async.filterLimit = doParallelLimit(_filter);
+
+    async.selectSeries =
+    async.filterSeries = doSeries(_filter);
+
+    function _reject(eachfn, arr, iterator, callback) {
+        _filter(eachfn, arr, function(value, cb) {
+            iterator(value, function(v) {
+                cb(!v);
+            });
+        }, callback);
+    }
+    async.reject = doParallel(_reject);
+    async.rejectLimit = doParallelLimit(_reject);
+    async.rejectSeries = doSeries(_reject);
+
+    function _createTester(eachfn, check, getResult) {
+        return function(arr, limit, iterator, cb) {
+            function done() {
+                if (cb) cb(getResult(false, void 0));
+            }
+            function iteratee(x, _, callback) {
+                if (!cb) return callback();
+                iterator(x, function (v) {
+                    if (cb && check(v)) {
+                        cb(getResult(true, x));
+                        cb = iterator = false;
+                    }
+                    callback();
+                });
+            }
+            if (arguments.length > 3) {
+                eachfn(arr, limit, iteratee, done);
+            } else {
+                cb = iterator;
+                iterator = limit;
+                eachfn(arr, iteratee, done);
+            }
+        };
+    }
+
+    async.any =
+    async.some = _createTester(async.eachOf, toBool, identity);
+
+    async.someLimit = _createTester(async.eachOfLimit, toBool, identity);
+
+    async.all =
+    async.every = _createTester(async.eachOf, notId, notId);
+
+    async.everyLimit = _createTester(async.eachOfLimit, notId, notId);
+
+    function _findGetResult(v, x) {
+        return x;
+    }
+    async.detect = _createTester(async.eachOf, identity, _findGetResult);
+    async.detectSeries = _createTester(async.eachOfSeries, identity, _findGetResult);
+    async.detectLimit = _createTester(async.eachOfLimit, identity, _findGetResult);
+
+    async.sortBy = function (arr, iterator, callback) {
+        async.map(arr, function (x, callback) {
+            iterator(x, function (err, criteria) {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    callback(null, {value: x, criteria: criteria});
+                }
+            });
+        }, function (err, results) {
+            if (err) {
+                return callback(err);
+            }
+            else {
+                callback(null, _map(results.sort(comparator), function (x) {
+                    return x.value;
+                }));
+            }
+
+        });
+
+        function comparator(left, right) {
+            var a = left.criteria, b = right.criteria;
+            return a < b ? -1 : a > b ? 1 : 0;
+        }
+    };
+
+    async.auto = function (tasks, concurrency, callback) {
+        if (!callback) {
+            // concurrency is optional, shift the args.
+            callback = concurrency;
+            concurrency = null;
+        }
+        callback = _once(callback || noop);
+        var keys = _keys(tasks);
+        var remainingTasks = keys.length;
+        if (!remainingTasks) {
+            return callback(null);
+        }
+        if (!concurrency) {
+            concurrency = remainingTasks;
+        }
+
+        var results = {};
+        var runningTasks = 0;
+
+        var listeners = [];
+        function addListener(fn) {
+            listeners.unshift(fn);
+        }
+        function removeListener(fn) {
+            var idx = _indexOf(listeners, fn);
+            if (idx >= 0) listeners.splice(idx, 1);
+        }
+        function taskComplete() {
+            remainingTasks--;
+            _arrayEach(listeners.slice(0), function (fn) {
+                fn();
+            });
+        }
+
+        addListener(function () {
+            if (!remainingTasks) {
+                callback(null, results);
+            }
+        });
+
+        _arrayEach(keys, function (k) {
+            var task = _isArray(tasks[k]) ? tasks[k]: [tasks[k]];
+            var taskCallback = _restParam(function(err, args) {
+                runningTasks--;
+                if (args.length <= 1) {
+                    args = args[0];
+                }
+                if (err) {
+                    var safeResults = {};
+                    _forEachOf(results, function(val, rkey) {
+                        safeResults[rkey] = val;
+                    });
+                    safeResults[k] = args;
+                    callback(err, safeResults);
+                }
+                else {
+                    results[k] = args;
+                    async.setImmediate(taskComplete);
+                }
+            });
+            var requires = task.slice(0, task.length - 1);
+            // prevent dead-locks
+            var len = requires.length;
+            var dep;
+            while (len--) {
+                if (!(dep = tasks[requires[len]])) {
+                    throw new Error('Has inexistant dependency');
+                }
+                if (_isArray(dep) && _indexOf(dep, k) >= 0) {
+                    throw new Error('Has cyclic dependencies');
+                }
+            }
+            function ready() {
+                return runningTasks < concurrency && _reduce(requires, function (a, x) {
+                    return (a && results.hasOwnProperty(x));
+                }, true) && !results.hasOwnProperty(k);
+            }
+            if (ready()) {
+                runningTasks++;
+                task[task.length - 1](taskCallback, results);
+            }
+            else {
+                addListener(listener);
+            }
+            function listener() {
+                if (ready()) {
+                    runningTasks++;
+                    removeListener(listener);
+                    task[task.length - 1](taskCallback, results);
+                }
+            }
+        });
+    };
+
+
+
+    async.retry = function(times, task, callback) {
+        var DEFAULT_TIMES = 5;
+        var DEFAULT_INTERVAL = 0;
+
+        var attempts = [];
+
+        var opts = {
+            times: DEFAULT_TIMES,
+            interval: DEFAULT_INTERVAL
+        };
+
+        function parseTimes(acc, t){
+            if(typeof t === 'number'){
+                acc.times = parseInt(t, 10) || DEFAULT_TIMES;
+            } else if(typeof t === 'object'){
+                acc.times = parseInt(t.times, 10) || DEFAULT_TIMES;
+                acc.interval = parseInt(t.interval, 10) || DEFAULT_INTERVAL;
+            } else {
+                throw new Error('Unsupported argument type for \'times\': ' + typeof t);
+            }
+        }
+
+        var length = arguments.length;
+        if (length < 1 || length > 3) {
+            throw new Error('Invalid arguments - must be either (task), (task, callback), (times, task) or (times, task, callback)');
+        } else if (length <= 2 && typeof times === 'function') {
+            callback = task;
+            task = times;
+        }
+        if (typeof times !== 'function') {
+            parseTimes(opts, times);
+        }
+        opts.callback = callback;
+        opts.task = task;
+
+        function wrappedTask(wrappedCallback, wrappedResults) {
+            function retryAttempt(task, finalAttempt) {
+                return function(seriesCallback) {
+                    task(function(err, result){
+                        seriesCallback(!err || finalAttempt, {err: err, result: result});
+                    }, wrappedResults);
+                };
+            }
+
+            function retryInterval(interval){
+                return function(seriesCallback){
+                    setTimeout(function(){
+                        seriesCallback(null);
+                    }, interval);
+                };
+            }
+
+            while (opts.times) {
+
+                var finalAttempt = !(opts.times-=1);
+                attempts.push(retryAttempt(opts.task, finalAttempt));
+                if(!finalAttempt && opts.interval > 0){
+                    attempts.push(retryInterval(opts.interval));
+                }
+            }
+
+            async.series(attempts, function(done, data){
+                data = data[data.length - 1];
+                (wrappedCallback || opts.callback)(data.err, data.result);
+            });
+        }
+
+        // If a callback is passed, run this as a controll flow
+        return opts.callback ? wrappedTask() : wrappedTask;
+    };
+
+    async.waterfall = function (tasks, callback) {
+        callback = _once(callback || noop);
+        if (!_isArray(tasks)) {
+            var err = new Error('First argument to waterfall must be an array of functions');
+            return callback(err);
+        }
+        if (!tasks.length) {
+            return callback();
+        }
+        function wrapIterator(iterator) {
+            return _restParam(function (err, args) {
+                if (err) {
+                    callback.apply(null, [err].concat(args));
+                }
+                else {
+                    var next = iterator.next();
+                    if (next) {
+                        args.push(wrapIterator(next));
+                    }
+                    else {
+                        args.push(callback);
+                    }
+                    ensureAsync(iterator).apply(null, args);
+                }
+            });
+        }
+        wrapIterator(async.iterator(tasks))();
+    };
+
+    function _parallel(eachfn, tasks, callback) {
+        callback = callback || noop;
+        var results = _isArrayLike(tasks) ? [] : {};
+
+        eachfn(tasks, function (task, key, callback) {
+            task(_restParam(function (err, args) {
+                if (args.length <= 1) {
+                    args = args[0];
+                }
+                results[key] = args;
+                callback(err);
+            }));
+        }, function (err) {
+            callback(err, results);
+        });
+    }
+
+    async.parallel = function (tasks, callback) {
+        _parallel(async.eachOf, tasks, callback);
+    };
+
+    async.parallelLimit = function(tasks, limit, callback) {
+        _parallel(_eachOfLimit(limit), tasks, callback);
+    };
+
+    async.series = function(tasks, callback) {
+        _parallel(async.eachOfSeries, tasks, callback);
+    };
+
+    async.iterator = function (tasks) {
+        function makeCallback(index) {
+            function fn() {
+                if (tasks.length) {
+                    tasks[index].apply(null, arguments);
+                }
+                return fn.next();
+            }
+            fn.next = function () {
+                return (index < tasks.length - 1) ? makeCallback(index + 1): null;
+            };
+            return fn;
+        }
+        return makeCallback(0);
+    };
+
+    async.apply = _restParam(function (fn, args) {
+        return _restParam(function (callArgs) {
+            return fn.apply(
+                null, args.concat(callArgs)
+            );
+        });
+    });
+
+    function _concat(eachfn, arr, fn, callback) {
+        var result = [];
+        eachfn(arr, function (x, index, cb) {
+            fn(x, function (err, y) {
+                result = result.concat(y || []);
+                cb(err);
+            });
+        }, function (err) {
+            callback(err, result);
+        });
+    }
+    async.concat = doParallel(_concat);
+    async.concatSeries = doSeries(_concat);
+
+    async.whilst = function (test, iterator, callback) {
+        callback = callback || noop;
+        if (test()) {
+            var next = _restParam(function(err, args) {
+                if (err) {
+                    callback(err);
+                } else if (test.apply(this, args)) {
+                    iterator(next);
+                } else {
+                    callback(null);
+                }
+            });
+            iterator(next);
+        } else {
+            callback(null);
+        }
+    };
+
+    async.doWhilst = function (iterator, test, callback) {
+        var calls = 0;
+        return async.whilst(function() {
+            return ++calls <= 1 || test.apply(this, arguments);
+        }, iterator, callback);
+    };
+
+    async.until = function (test, iterator, callback) {
+        return async.whilst(function() {
+            return !test.apply(this, arguments);
+        }, iterator, callback);
+    };
+
+    async.doUntil = function (iterator, test, callback) {
+        return async.doWhilst(iterator, function() {
+            return !test.apply(this, arguments);
+        }, callback);
+    };
+
+    async.during = function (test, iterator, callback) {
+        callback = callback || noop;
+
+        var next = _restParam(function(err, args) {
+            if (err) {
+                callback(err);
+            } else {
+                args.push(check);
+                test.apply(this, args);
+            }
+        });
+
+        var check = function(err, truth) {
+            if (err) {
+                callback(err);
+            } else if (truth) {
+                iterator(next);
+            } else {
+                callback(null);
+            }
+        };
+
+        test(check);
+    };
+
+    async.doDuring = function (iterator, test, callback) {
+        var calls = 0;
+        async.during(function(next) {
+            if (calls++ < 1) {
+                next(null, true);
+            } else {
+                test.apply(this, arguments);
+            }
+        }, iterator, callback);
+    };
+
+    function _queue(worker, concurrency, payload) {
+        if (concurrency == null) {
+            concurrency = 1;
+        }
+        else if(concurrency === 0) {
+            throw new Error('Concurrency must not be zero');
+        }
+        function _insert(q, data, pos, callback) {
+            if (callback != null && typeof callback !== "function") {
+                throw new Error("task callback must be a function");
+            }
+            q.started = true;
+            if (!_isArray(data)) {
+                data = [data];
+            }
+            if(data.length === 0 && q.idle()) {
+                // call drain immediately if there are no tasks
+                return async.setImmediate(function() {
+                    q.drain();
+                });
+            }
+            _arrayEach(data, function(task) {
+                var item = {
+                    data: task,
+                    callback: callback || noop
+                };
+
+                if (pos) {
+                    q.tasks.unshift(item);
+                } else {
+                    q.tasks.push(item);
+                }
+
+                if (q.tasks.length === q.concurrency) {
+                    q.saturated();
+                }
+            });
+            async.setImmediate(q.process);
+        }
+        function _next(q, tasks) {
+            return function(){
+                workers -= 1;
+
+                var removed = false;
+                var args = arguments;
+                _arrayEach(tasks, function (task) {
+                    _arrayEach(workersList, function (worker, index) {
+                        if (worker === task && !removed) {
+                            workersList.splice(index, 1);
+                            removed = true;
+                        }
+                    });
+
+                    task.callback.apply(task, args);
+                });
+                if (q.tasks.length + workers === 0) {
+                    q.drain();
+                }
+                q.process();
+            };
+        }
+
+        var workers = 0;
+        var workersList = [];
+        var q = {
+            tasks: [],
+            concurrency: concurrency,
+            payload: payload,
+            saturated: noop,
+            empty: noop,
+            drain: noop,
+            started: false,
+            paused: false,
+            push: function (data, callback) {
+                _insert(q, data, false, callback);
+            },
+            kill: function () {
+                q.drain = noop;
+                q.tasks = [];
+            },
+            unshift: function (data, callback) {
+                _insert(q, data, true, callback);
+            },
+            process: function () {
+                if (!q.paused && workers < q.concurrency && q.tasks.length) {
+                    while(workers < q.concurrency && q.tasks.length){
+                        var tasks = q.payload ?
+                            q.tasks.splice(0, q.payload) :
+                            q.tasks.splice(0, q.tasks.length);
+
+                        var data = _map(tasks, function (task) {
+                            return task.data;
+                        });
+
+                        if (q.tasks.length === 0) {
+                            q.empty();
+                        }
+                        workers += 1;
+                        workersList.push(tasks[0]);
+                        var cb = only_once(_next(q, tasks));
+                        worker(data, cb);
+                    }
+                }
+            },
+            length: function () {
+                return q.tasks.length;
+            },
+            running: function () {
+                return workers;
+            },
+            workersList: function () {
+                return workersList;
+            },
+            idle: function() {
+                return q.tasks.length + workers === 0;
+            },
+            pause: function () {
+                q.paused = true;
+            },
+            resume: function () {
+                if (q.paused === false) { return; }
+                q.paused = false;
+                var resumeCount = Math.min(q.concurrency, q.tasks.length);
+                // Need to call q.process once per concurrent
+                // worker to preserve full concurrency after pause
+                for (var w = 1; w <= resumeCount; w++) {
+                    async.setImmediate(q.process);
+                }
+            }
+        };
+        return q;
+    }
+
+    async.queue = function (worker, concurrency) {
+        var q = _queue(function (items, cb) {
+            worker(items[0], cb);
+        }, concurrency, 1);
+
+        return q;
+    };
+
+    async.priorityQueue = function (worker, concurrency) {
+
+        function _compareTasks(a, b){
+            return a.priority - b.priority;
+        }
+
+        function _binarySearch(sequence, item, compare) {
+            var beg = -1,
+                end = sequence.length - 1;
+            while (beg < end) {
+                var mid = beg + ((end - beg + 1) >>> 1);
+                if (compare(item, sequence[mid]) >= 0) {
+                    beg = mid;
+                } else {
+                    end = mid - 1;
+                }
+            }
+            return beg;
+        }
+
+        function _insert(q, data, priority, callback) {
+            if (callback != null && typeof callback !== "function") {
+                throw new Error("task callback must be a function");
+            }
+            q.started = true;
+            if (!_isArray(data)) {
+                data = [data];
+            }
+            if(data.length === 0) {
+                // call drain immediately if there are no tasks
+                return async.setImmediate(function() {
+                    q.drain();
+                });
+            }
+            _arrayEach(data, function(task) {
+                var item = {
+                    data: task,
+                    priority: priority,
+                    callback: typeof callback === 'function' ? callback : noop
+                };
+
+                q.tasks.splice(_binarySearch(q.tasks, item, _compareTasks) + 1, 0, item);
+
+                if (q.tasks.length === q.concurrency) {
+                    q.saturated();
+                }
+                async.setImmediate(q.process);
+            });
+        }
+
+        // Start with a normal queue
+        var q = async.queue(worker, concurrency);
+
+        // Override push to accept second parameter representing priority
+        q.push = function (data, priority, callback) {
+            _insert(q, data, priority, callback);
+        };
+
+        // Remove unshift function
+        delete q.unshift;
+
+        return q;
+    };
+
+    async.cargo = function (worker, payload) {
+        return _queue(worker, 1, payload);
+    };
+
+    function _console_fn(name) {
+        return _restParam(function (fn, args) {
+            fn.apply(null, args.concat([_restParam(function (err, args) {
+                if (typeof console === 'object') {
+                    if (err) {
+                        if (console.error) {
+                            console.error(err);
+                        }
+                    }
+                    else if (console[name]) {
+                        _arrayEach(args, function (x) {
+                            console[name](x);
+                        });
+                    }
+                }
+            })]));
+        });
+    }
+    async.log = _console_fn('log');
+    async.dir = _console_fn('dir');
+    /*async.info = _console_fn('info');
+    async.warn = _console_fn('warn');
+    async.error = _console_fn('error');*/
+
+    async.memoize = function (fn, hasher) {
+        var memo = {};
+        var queues = {};
+        hasher = hasher || identity;
+        var memoized = _restParam(function memoized(args) {
+            var callback = args.pop();
+            var key = hasher.apply(null, args);
+            if (key in memo) {
+                async.setImmediate(function () {
+                    callback.apply(null, memo[key]);
+                });
+            }
+            else if (key in queues) {
+                queues[key].push(callback);
+            }
+            else {
+                queues[key] = [callback];
+                fn.apply(null, args.concat([_restParam(function (args) {
+                    memo[key] = args;
+                    var q = queues[key];
+                    delete queues[key];
+                    for (var i = 0, l = q.length; i < l; i++) {
+                        q[i].apply(null, args);
+                    }
+                })]));
+            }
+        });
+        memoized.memo = memo;
+        memoized.unmemoized = fn;
+        return memoized;
+    };
+
+    async.unmemoize = function (fn) {
+        return function () {
+            return (fn.unmemoized || fn).apply(null, arguments);
+        };
+    };
+
+    function _times(mapper) {
+        return function (count, iterator, callback) {
+            mapper(_range(count), iterator, callback);
+        };
+    }
+
+    async.times = _times(async.map);
+    async.timesSeries = _times(async.mapSeries);
+    async.timesLimit = function (count, limit, iterator, callback) {
+        return async.mapLimit(_range(count), limit, iterator, callback);
+    };
+
+    async.seq = function (/* functions... */) {
+        var fns = arguments;
+        return _restParam(function (args) {
+            var that = this;
+
+            var callback = args[args.length - 1];
+            if (typeof callback == 'function') {
+                args.pop();
+            } else {
+                callback = noop;
+            }
+
+            async.reduce(fns, args, function (newargs, fn, cb) {
+                fn.apply(that, newargs.concat([_restParam(function (err, nextargs) {
+                    cb(err, nextargs);
+                })]));
+            },
+            function (err, results) {
+                callback.apply(that, [err].concat(results));
+            });
+        });
+    };
+
+    async.compose = function (/* functions... */) {
+        return async.seq.apply(null, Array.prototype.reverse.call(arguments));
+    };
+
+
+    function _applyEach(eachfn) {
+        return _restParam(function(fns, args) {
+            var go = _restParam(function(args) {
+                var that = this;
+                var callback = args.pop();
+                return eachfn(fns, function (fn, _, cb) {
+                    fn.apply(that, args.concat([cb]));
+                },
+                callback);
+            });
+            if (args.length) {
+                return go.apply(this, args);
+            }
+            else {
+                return go;
+            }
+        });
+    }
+
+    async.applyEach = _applyEach(async.eachOf);
+    async.applyEachSeries = _applyEach(async.eachOfSeries);
+
+
+    async.forever = function (fn, callback) {
+        var done = only_once(callback || noop);
+        var task = ensureAsync(fn);
+        function next(err) {
+            if (err) {
+                return done(err);
+            }
+            task(next);
+        }
+        next();
+    };
+
+    function ensureAsync(fn) {
+        return _restParam(function (args) {
+            var callback = args.pop();
+            args.push(function () {
+                var innerArgs = arguments;
+                if (sync) {
+                    async.setImmediate(function () {
+                        callback.apply(null, innerArgs);
+                    });
+                } else {
+                    callback.apply(null, innerArgs);
+                }
+            });
+            var sync = true;
+            fn.apply(this, args);
+            sync = false;
+        });
+    }
+
+    async.ensureAsync = ensureAsync;
+
+    async.constant = _restParam(function(values) {
+        var args = [null].concat(values);
+        return function (callback) {
+            return callback.apply(this, args);
+        };
+    });
+
+    async.wrapSync =
+    async.asyncify = function asyncify(func) {
+        return _restParam(function (args) {
+            var callback = args.pop();
+            var result;
+            try {
+                result = func.apply(this, args);
+            } catch (e) {
+                return callback(e);
+            }
+            // if result is Promise object
+            if (_isObject(result) && typeof result.then === "function") {
+                result.then(function(value) {
+                    callback(null, value);
+                })["catch"](function(err) {
+                    callback(err.message ? err : new Error(err));
+                });
+            } else {
+                callback(null, result);
+            }
+        });
+    };
+
+    // Node.js
+    if (typeof module === 'object' && module.exports) {
+        module.exports = async;
+    }
+    // AMD / RequireJS
+    else if (typeof define === 'function' && define.amd) {
+        define([], function () {
+            return async;
+        });
+    }
+    // included directly via <script> tag
+    else {
+        root.async = async;
+    }
+
+}());
+
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"_process":229}],7:[function(require,module,exports){
 (function (Buffer){
 /**
  * Ethereum contract ABI data serialization.
@@ -607,7 +3440,443 @@ module.exports = {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"bignumber.js":2,"buffer":28,"js-sha3":3}],2:[function(require,module,exports){
+},{"bignumber.js":9,"buffer":27,"js-sha3":8}],8:[function(require,module,exports){
+(function (global){
+/*
+ * js-sha3 v0.3.1
+ * https://github.com/emn178/js-sha3
+ *
+ * Copyright 2015, emn178@gmail.com
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ */
+;(function(root, undefined) {
+  'use strict';
+
+  var NODE_JS = typeof(module) != 'undefined';
+  if(NODE_JS) {
+    root = global;
+    if(root.JS_SHA3_TEST) {
+      root.navigator = { userAgent: 'Chrome'};
+    }
+  }
+  var CHROME = (root.JS_SHA3_TEST || !NODE_JS) && navigator.userAgent.indexOf('Chrome') != -1;
+  var HEX_CHARS = '0123456789abcdef'.split('');
+  var KECCAK_PADDING = [1, 256, 65536, 16777216];
+  var PADDING = [6, 1536, 393216, 100663296];
+  var SHIFT = [0, 8, 16, 24];
+  var RC = [1, 0, 32898, 0, 32906, 2147483648, 2147516416, 2147483648, 32907, 0, 2147483649,
+            0, 2147516545, 2147483648, 32777, 2147483648, 138, 0, 136, 0, 2147516425, 0, 
+            2147483658, 0, 2147516555, 0, 139, 2147483648, 32905, 2147483648, 32771, 
+            2147483648, 32770, 2147483648, 128, 2147483648, 32778, 0, 2147483658, 2147483648,
+            2147516545, 2147483648, 32896, 2147483648, 2147483649, 0, 2147516424, 2147483648];
+
+  var blocks = [], s = [];
+
+  var keccak_224 = function(message) {
+    return keccak(message, 224, KECCAK_PADDING);
+  };
+
+  var keccak_256 = function(message) {
+    return keccak(message, 256, KECCAK_PADDING);
+  };
+
+  var keccak_384 = function(message) {
+    return keccak(message, 384, KECCAK_PADDING);
+  };
+
+  var sha3_224 = function(message) {
+    return keccak(message, 224, PADDING);
+  };
+
+  var sha3_256 = function(message) {
+    return keccak(message, 256, PADDING);
+  };
+
+  var sha3_384 = function(message) {
+    return keccak(message, 384, PADDING);
+  };
+
+  var sha3_512 = function(message) {
+    return keccak(message, 512, PADDING);
+  };
+
+  var keccak = function(message, bits, padding) {
+    var notString = typeof(message) != 'string';
+    if(notString && message.constructor == root.ArrayBuffer) {
+      message = new Uint8Array(message);
+    }
+
+    if(bits === undefined) {
+      bits = 512;
+      padding = KECCAK_PADDING;
+    }
+
+    var block, code, end = false, index = 0, start = 0, length = message.length,
+        n, i, h, l, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, 
+        b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17, 
+        b18, b19, b20, b21, b22, b23, b24, b25, b26, b27, b28, b29, b30, b31, b32, b33, 
+        b34, b35, b36, b37, b38, b39, b40, b41, b42, b43, b44, b45, b46, b47, b48, b49;
+    var blockCount = (1600 - bits * 2) / 32;
+    var byteCount = blockCount * 4;
+
+    for(i = 0;i < 50;++i) {
+      s[i] = 0;
+    }
+
+    block = 0;
+    do {
+      blocks[0] = block;
+      for(i = 1;i < blockCount + 1;++i) {
+        blocks[i] = 0;
+      }
+      if(notString) {
+        for (i = start;index < length && i < byteCount; ++index) {
+          blocks[i >> 2] |= message[index] << SHIFT[i++ & 3];
+        }
+      } else {
+        for (i = start;index < length && i < byteCount; ++index) {
+          code = message.charCodeAt(index);
+          if (code < 0x80) {
+            blocks[i >> 2] |= code << SHIFT[i++ & 3];
+          } else if (code < 0x800) {
+            blocks[i >> 2] |= (0xc0 | (code >> 6)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
+          } else if (code < 0xd800 || code >= 0xe000) {
+            blocks[i >> 2] |= (0xe0 | (code >> 12)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
+          } else {
+            code = 0x10000 + (((code & 0x3ff) << 10) | (message.charCodeAt(++index) & 0x3ff));
+            blocks[i >> 2] |= (0xf0 | (code >> 18)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | ((code >> 12) & 0x3f)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
+          }
+        }
+      }
+      start = i - byteCount;
+      if(index == length) {
+        blocks[i >> 2] |= padding[i & 3];
+        ++index;
+      }
+      block = blocks[blockCount];
+      if(index > length && i < byteCount) {
+        blocks[blockCount - 1] |= 0x80000000;
+        end = true;
+      }
+
+      for(i = 0;i < blockCount;++i) {
+        s[i] ^= blocks[i];
+      }
+
+      for(n = 0; n < 48; n += 2) {
+        c0 = s[0] ^ s[10] ^ s[20] ^ s[30] ^ s[40];
+        c1 = s[1] ^ s[11] ^ s[21] ^ s[31] ^ s[41];
+        c2 = s[2] ^ s[12] ^ s[22] ^ s[32] ^ s[42];
+        c3 = s[3] ^ s[13] ^ s[23] ^ s[33] ^ s[43];
+        c4 = s[4] ^ s[14] ^ s[24] ^ s[34] ^ s[44];
+        c5 = s[5] ^ s[15] ^ s[25] ^ s[35] ^ s[45];
+        c6 = s[6] ^ s[16] ^ s[26] ^ s[36] ^ s[46];
+        c7 = s[7] ^ s[17] ^ s[27] ^ s[37] ^ s[47];
+        c8 = s[8] ^ s[18] ^ s[28] ^ s[38] ^ s[48];
+        c9 = s[9] ^ s[19] ^ s[29] ^ s[39] ^ s[49];
+
+        h = c8 ^ ((c2 << 1) | (c3 >>> 31));
+        l = c9 ^ ((c3 << 1) | (c2 >>> 31));
+        s[0] ^= h;
+        s[1] ^= l;
+        s[10] ^= h;
+        s[11] ^= l;
+        s[20] ^= h;
+        s[21] ^= l;
+        s[30] ^= h;
+        s[31] ^= l;
+        s[40] ^= h;
+        s[41] ^= l;
+        h = c0 ^ ((c4 << 1) | (c5 >>> 31));
+        l = c1 ^ ((c5 << 1) | (c4 >>> 31));
+        s[2] ^= h;
+        s[3] ^= l;
+        s[12] ^= h;
+        s[13] ^= l;
+        s[22] ^= h;
+        s[23] ^= l;
+        s[32] ^= h;
+        s[33] ^= l;
+        s[42] ^= h;
+        s[43] ^= l;
+        h = c2 ^ ((c6 << 1) | (c7 >>> 31));
+        l = c3 ^ ((c7 << 1) | (c6 >>> 31));
+        s[4] ^= h;
+        s[5] ^= l;
+        s[14] ^= h;
+        s[15] ^= l;
+        s[24] ^= h;
+        s[25] ^= l;
+        s[34] ^= h;
+        s[35] ^= l;
+        s[44] ^= h;
+        s[45] ^= l;
+        h = c4 ^ ((c8 << 1) | (c9 >>> 31));
+        l = c5 ^ ((c9 << 1) | (c8 >>> 31));
+        s[6] ^= h;
+        s[7] ^= l;
+        s[16] ^= h;
+        s[17] ^= l;
+        s[26] ^= h;
+        s[27] ^= l;
+        s[36] ^= h;
+        s[37] ^= l;
+        s[46] ^= h;
+        s[47] ^= l;
+        h = c6 ^ ((c0 << 1) | (c1 >>> 31));
+        l = c7 ^ ((c1 << 1) | (c0 >>> 31));
+        s[8] ^= h;
+        s[9] ^= l;
+        s[18] ^= h;
+        s[19] ^= l;
+        s[28] ^= h;
+        s[29] ^= l;
+        s[38] ^= h;
+        s[39] ^= l;
+        s[48] ^= h;
+        s[49] ^= l;
+
+        b0 = s[0];
+        b1 = s[1];
+        b32 = (s[11] << 4) | (s[10] >>> 28);
+        b33 = (s[10] << 4) | (s[11] >>> 28);
+        b14 = (s[20] << 3) | (s[21] >>> 29);
+        b15 = (s[21] << 3) | (s[20] >>> 29);
+        b46 = (s[31] << 9) | (s[30] >>> 23);
+        b47 = (s[30] << 9) | (s[31] >>> 23);
+        b28 = (s[40] << 18) | (s[41] >>> 14);
+        b29 = (s[41] << 18) | (s[40] >>> 14);
+        b20 = (s[2] << 1) | (s[3] >>> 31);
+        b21 = (s[3] << 1) | (s[2] >>> 31);
+        b2 = (s[13] << 12) | (s[12] >>> 20);
+        b3 = (s[12] << 12) | (s[13] >>> 20);
+        b34 = (s[22] << 10) | (s[23] >>> 22);
+        b35 = (s[23] << 10) | (s[22] >>> 22);
+        b16 = (s[33] << 13) | (s[32] >>> 19);
+        b17 = (s[32] << 13) | (s[33] >>> 19);
+        b48 = (s[42] << 2) | (s[43] >>> 30);
+        b49 = (s[43] << 2) | (s[42] >>> 30);
+        b40 = (s[5] << 30) | (s[4] >>> 2);
+        b41 = (s[4] << 30) | (s[5] >>> 2);
+        b22 = (s[14] << 6) | (s[15] >>> 26);
+        b23 = (s[15] << 6) | (s[14] >>> 26);
+        b4 = (s[25] << 11) | (s[24] >>> 21);
+        b5 = (s[24] << 11) | (s[25] >>> 21);
+        b36 = (s[34] << 15) | (s[35] >>> 17);
+        b37 = (s[35] << 15) | (s[34] >>> 17);
+        b18 = (s[45] << 29) | (s[44] >>> 3);
+        b19 = (s[44] << 29) | (s[45] >>> 3);
+        b10 = (s[6] << 28) | (s[7] >>> 4);
+        b11 = (s[7] << 28) | (s[6] >>> 4);
+        b42 = (s[17] << 23) | (s[16] >>> 9);
+        b43 = (s[16] << 23) | (s[17] >>> 9);
+        b24 = (s[26] << 25) | (s[27] >>> 7);
+        b25 = (s[27] << 25) | (s[26] >>> 7);
+        b6 = (s[36] << 21) | (s[37] >>> 11);
+        b7 = (s[37] << 21) | (s[36] >>> 11);
+        b38 = (s[47] << 24) | (s[46] >>> 8);
+        b39 = (s[46] << 24) | (s[47] >>> 8);
+        b30 = (s[8] << 27) | (s[9] >>> 5);
+        b31 = (s[9] << 27) | (s[8] >>> 5);
+        b12 = (s[18] << 20) | (s[19] >>> 12);
+        b13 = (s[19] << 20) | (s[18] >>> 12);
+        b44 = (s[29] << 7) | (s[28] >>> 25);
+        b45 = (s[28] << 7) | (s[29] >>> 25);
+        b26 = (s[38] << 8) | (s[39] >>> 24);
+        b27 = (s[39] << 8) | (s[38] >>> 24);
+        b8 = (s[48] << 14) | (s[49] >>> 18);
+        b9 = (s[49] << 14) | (s[48] >>> 18);
+
+        s[0] = b0 ^ (~b2 & b4);
+        s[1] = b1 ^ (~b3 & b5);
+        s[10] = b10 ^ (~b12 & b14);
+        s[11] = b11 ^ (~b13 & b15);
+        s[20] = b20 ^ (~b22 & b24);
+        s[21] = b21 ^ (~b23 & b25);
+        s[30] = b30 ^ (~b32 & b34);
+        s[31] = b31 ^ (~b33 & b35);
+        s[40] = b40 ^ (~b42 & b44);
+        s[41] = b41 ^ (~b43 & b45);
+        s[2] = b2 ^ (~b4 & b6);
+        s[3] = b3 ^ (~b5 & b7);
+        s[12] = b12 ^ (~b14 & b16);
+        s[13] = b13 ^ (~b15 & b17);
+        s[22] = b22 ^ (~b24 & b26);
+        s[23] = b23 ^ (~b25 & b27);
+        s[32] = b32 ^ (~b34 & b36);
+        s[33] = b33 ^ (~b35 & b37);
+        s[42] = b42 ^ (~b44 & b46);
+        s[43] = b43 ^ (~b45 & b47);
+        s[4] = b4 ^ (~b6 & b8);
+        s[5] = b5 ^ (~b7 & b9);
+        s[14] = b14 ^ (~b16 & b18);
+        s[15] = b15 ^ (~b17 & b19);
+        s[24] = b24 ^ (~b26 & b28);
+        s[25] = b25 ^ (~b27 & b29);
+        s[34] = b34 ^ (~b36 & b38);
+        s[35] = b35 ^ (~b37 & b39);
+        s[44] = b44 ^ (~b46 & b48);
+        s[45] = b45 ^ (~b47 & b49);
+        s[6] = b6 ^ (~b8 & b0);
+        s[7] = b7 ^ (~b9 & b1);
+        s[16] = b16 ^ (~b18 & b10);
+        s[17] = b17 ^ (~b19 & b11);
+        s[26] = b26 ^ (~b28 & b20);
+        s[27] = b27 ^ (~b29 & b21);
+        s[36] = b36 ^ (~b38 & b30);
+        s[37] = b37 ^ (~b39 & b31);
+        s[46] = b46 ^ (~b48 & b40);
+        s[47] = b47 ^ (~b49 & b41);
+        s[8] = b8 ^ (~b0 & b2);
+        s[9] = b9 ^ (~b1 & b3);
+        s[18] = b18 ^ (~b10 & b12);
+        s[19] = b19 ^ (~b11 & b13);
+        s[28] = b28 ^ (~b20 & b22);
+        s[29] = b29 ^ (~b21 & b23);
+        s[38] = b38 ^ (~b30 & b32);
+        s[39] = b39 ^ (~b31 & b33);
+        s[48] = b48 ^ (~b40 & b42);
+        s[49] = b49 ^ (~b41 & b43);
+
+        s[0] ^= RC[n];
+        s[1] ^= RC[n + 1];
+      }
+    } while(!end);
+
+    var hex = '';
+    if(CHROME) {
+      b0 = s[0];
+      b1 = s[1];
+      b2 = s[2];
+      b3 = s[3];
+      b4 = s[4];
+      b5 = s[5];
+      b6 = s[6];
+      b7 = s[7];
+      b8 = s[8];
+      b9 = s[9];
+      b10 = s[10];
+      b11 = s[11];
+      b12 = s[12];
+      b13 = s[13];
+      b14 = s[14];
+      b15 = s[15];
+      hex += HEX_CHARS[(b0 >> 4) & 0x0F] + HEX_CHARS[b0 & 0x0F] +
+             HEX_CHARS[(b0 >> 12) & 0x0F] + HEX_CHARS[(b0 >> 8) & 0x0F] +
+             HEX_CHARS[(b0 >> 20) & 0x0F] + HEX_CHARS[(b0 >> 16) & 0x0F] +
+             HEX_CHARS[(b0 >> 28) & 0x0F] + HEX_CHARS[(b0 >> 24) & 0x0F] +
+             HEX_CHARS[(b1 >> 4) & 0x0F] + HEX_CHARS[b1 & 0x0F] +
+             HEX_CHARS[(b1 >> 12) & 0x0F] + HEX_CHARS[(b1 >> 8) & 0x0F] +
+             HEX_CHARS[(b1 >> 20) & 0x0F] + HEX_CHARS[(b1 >> 16) & 0x0F] +
+             HEX_CHARS[(b1 >> 28) & 0x0F] + HEX_CHARS[(b1 >> 24) & 0x0F] +
+             HEX_CHARS[(b2 >> 4) & 0x0F] + HEX_CHARS[b2 & 0x0F] +
+             HEX_CHARS[(b2 >> 12) & 0x0F] + HEX_CHARS[(b2 >> 8) & 0x0F] +
+             HEX_CHARS[(b2 >> 20) & 0x0F] + HEX_CHARS[(b2 >> 16) & 0x0F] +
+             HEX_CHARS[(b2 >> 28) & 0x0F] + HEX_CHARS[(b2 >> 24) & 0x0F] +
+             HEX_CHARS[(b3 >> 4) & 0x0F] + HEX_CHARS[b3 & 0x0F] +
+             HEX_CHARS[(b3 >> 12) & 0x0F] + HEX_CHARS[(b3 >> 8) & 0x0F] +
+             HEX_CHARS[(b3 >> 20) & 0x0F] + HEX_CHARS[(b3 >> 16) & 0x0F] +
+             HEX_CHARS[(b3 >> 28) & 0x0F] + HEX_CHARS[(b3 >> 24) & 0x0F] +
+             HEX_CHARS[(b4 >> 4) & 0x0F] + HEX_CHARS[b4 & 0x0F] +
+             HEX_CHARS[(b4 >> 12) & 0x0F] + HEX_CHARS[(b4 >> 8) & 0x0F] +
+             HEX_CHARS[(b4 >> 20) & 0x0F] + HEX_CHARS[(b4 >> 16) & 0x0F] +
+             HEX_CHARS[(b4 >> 28) & 0x0F] + HEX_CHARS[(b4 >> 24) & 0x0F] +
+             HEX_CHARS[(b5 >> 4) & 0x0F] + HEX_CHARS[b5 & 0x0F] +
+             HEX_CHARS[(b5 >> 12) & 0x0F] + HEX_CHARS[(b5 >> 8) & 0x0F] +
+             HEX_CHARS[(b5 >> 20) & 0x0F] + HEX_CHARS[(b5 >> 16) & 0x0F] +
+             HEX_CHARS[(b5 >> 28) & 0x0F] + HEX_CHARS[(b5 >> 24) & 0x0F] +
+             HEX_CHARS[(b6 >> 4) & 0x0F] + HEX_CHARS[b6 & 0x0F] +
+             HEX_CHARS[(b6 >> 12) & 0x0F] + HEX_CHARS[(b6 >> 8) & 0x0F] +
+             HEX_CHARS[(b6 >> 20) & 0x0F] + HEX_CHARS[(b6 >> 16) & 0x0F] +
+             HEX_CHARS[(b6 >> 28) & 0x0F] + HEX_CHARS[(b6 >> 24) & 0x0F];
+
+      if(bits >= 256) {
+        hex += HEX_CHARS[(b7 >> 4) & 0x0F] + HEX_CHARS[b7 & 0x0F] +
+               HEX_CHARS[(b7 >> 12) & 0x0F] + HEX_CHARS[(b7 >> 8) & 0x0F] +
+               HEX_CHARS[(b7 >> 20) & 0x0F] + HEX_CHARS[(b7 >> 16) & 0x0F] +
+               HEX_CHARS[(b7 >> 28) & 0x0F] + HEX_CHARS[(b7 >> 24) & 0x0F];
+      }
+      if(bits >= 384) {
+        hex += HEX_CHARS[(b8 >> 4) & 0x0F] + HEX_CHARS[b8 & 0x0F] +
+               HEX_CHARS[(b8 >> 12) & 0x0F] + HEX_CHARS[(b8 >> 8) & 0x0F] +
+               HEX_CHARS[(b8 >> 20) & 0x0F] + HEX_CHARS[(b8 >> 16) & 0x0F] +
+               HEX_CHARS[(b8 >> 28) & 0x0F] + HEX_CHARS[(b8 >> 24) & 0x0F] +
+               HEX_CHARS[(b9 >> 4) & 0x0F] + HEX_CHARS[b9 & 0x0F] +
+               HEX_CHARS[(b9 >> 12) & 0x0F] + HEX_CHARS[(b9 >> 8) & 0x0F] +
+               HEX_CHARS[(b9 >> 20) & 0x0F] + HEX_CHARS[(b9 >> 16) & 0x0F] +
+               HEX_CHARS[(b9 >> 28) & 0x0F] + HEX_CHARS[(b9 >> 24) & 0x0F] +
+               HEX_CHARS[(b10 >> 4) & 0x0F] + HEX_CHARS[b10 & 0x0F] +
+               HEX_CHARS[(b10 >> 12) & 0x0F] + HEX_CHARS[(b10 >> 8) & 0x0F] +
+               HEX_CHARS[(b10 >> 20) & 0x0F] + HEX_CHARS[(b10 >> 16) & 0x0F] +
+               HEX_CHARS[(b10 >> 28) & 0x0F] + HEX_CHARS[(b10 >> 24) & 0x0F] +
+               HEX_CHARS[(b11 >> 4) & 0x0F] + HEX_CHARS[b11 & 0x0F] +
+               HEX_CHARS[(b11 >> 12) & 0x0F] + HEX_CHARS[(b11 >> 8) & 0x0F] +
+               HEX_CHARS[(b11 >> 20) & 0x0F] + HEX_CHARS[(b11 >> 16) & 0x0F] +
+               HEX_CHARS[(b11 >> 28) & 0x0F] + HEX_CHARS[(b11 >> 24) & 0x0F];
+      }
+      if(bits == 512) {
+        hex += HEX_CHARS[(b12 >> 4) & 0x0F] + HEX_CHARS[b12 & 0x0F] +
+               HEX_CHARS[(b12 >> 12) & 0x0F] + HEX_CHARS[(b12 >> 8) & 0x0F] +
+               HEX_CHARS[(b12 >> 20) & 0x0F] + HEX_CHARS[(b12 >> 16) & 0x0F] +
+               HEX_CHARS[(b12 >> 28) & 0x0F] + HEX_CHARS[(b12 >> 24) & 0x0F] +
+               HEX_CHARS[(b13 >> 4) & 0x0F] + HEX_CHARS[b13 & 0x0F] +
+               HEX_CHARS[(b13 >> 12) & 0x0F] + HEX_CHARS[(b13 >> 8) & 0x0F] +
+               HEX_CHARS[(b13 >> 20) & 0x0F] + HEX_CHARS[(b13 >> 16) & 0x0F] +
+               HEX_CHARS[(b13 >> 28) & 0x0F] + HEX_CHARS[(b13 >> 24) & 0x0F] +
+               HEX_CHARS[(b14 >> 4) & 0x0F] + HEX_CHARS[b14 & 0x0F] +
+               HEX_CHARS[(b14 >> 12) & 0x0F] + HEX_CHARS[(b14 >> 8) & 0x0F] +
+               HEX_CHARS[(b14 >> 20) & 0x0F] + HEX_CHARS[(b14 >> 16) & 0x0F] +
+               HEX_CHARS[(b14 >> 28) & 0x0F] + HEX_CHARS[(b14 >> 24) & 0x0F] +
+               HEX_CHARS[(b15 >> 4) & 0x0F] + HEX_CHARS[b15 & 0x0F] +
+               HEX_CHARS[(b15 >> 12) & 0x0F] + HEX_CHARS[(b15 >> 8) & 0x0F] +
+               HEX_CHARS[(b15 >> 20) & 0x0F] + HEX_CHARS[(b15 >> 16) & 0x0F] +
+               HEX_CHARS[(b15 >> 28) & 0x0F] + HEX_CHARS[(b15 >> 24) & 0x0F];
+      }
+    } else {
+      for(i = 0, n = bits / 32;i < n;++i) {
+        h = s[i];
+        hex += HEX_CHARS[(h >> 4) & 0x0F] + HEX_CHARS[h & 0x0F] +
+               HEX_CHARS[(h >> 12) & 0x0F] + HEX_CHARS[(h >> 8) & 0x0F] +
+               HEX_CHARS[(h >> 20) & 0x0F] + HEX_CHARS[(h >> 16) & 0x0F] +
+               HEX_CHARS[(h >> 28) & 0x0F] + HEX_CHARS[(h >> 24) & 0x0F];
+      }
+    }
+    return hex;
+  };
+  
+  if(!root.JS_SHA3_TEST && NODE_JS) {
+    module.exports = {
+      sha3_512: sha3_512,
+      sha3_384: sha3_384,
+      sha3_256: sha3_256,
+      sha3_224: sha3_224,
+      keccak_512: keccak,
+      keccak_384: keccak_384,
+      keccak_256: keccak_256,
+      keccak_224: keccak_224
+    };
+  } else if(root) {
+    root.sha3_512 = sha3_512;
+    root.sha3_384 = sha3_384;
+    root.sha3_256 = sha3_256;
+    root.sha3_224 = sha3_224;
+    root.keccak_512 = keccak;
+    root.keccak_384 = keccak_384;
+    root.keccak_256 = keccak_256;
+    root.keccak_224 = keccak_224;
+  }
+}(this));
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],9:[function(require,module,exports){
 /*! bignumber.js v2.0.8 https://github.com/MikeMcl/bignumber.js/LICENCE */
 
 ;(function (global) {
@@ -3302,3276 +6571,7 @@ module.exports = {
     }
 })(this);
 
-},{"crypto":32}],3:[function(require,module,exports){
-(function (global){
-/*
- * js-sha3 v0.3.1
- * https://github.com/emn178/js-sha3
- *
- * Copyright 2015, emn178@gmail.com
- *
- * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
- */
-;(function(root, undefined) {
-  'use strict';
-
-  var NODE_JS = typeof(module) != 'undefined';
-  if(NODE_JS) {
-    root = global;
-    if(root.JS_SHA3_TEST) {
-      root.navigator = { userAgent: 'Chrome'};
-    }
-  }
-  var CHROME = (root.JS_SHA3_TEST || !NODE_JS) && navigator.userAgent.indexOf('Chrome') != -1;
-  var HEX_CHARS = '0123456789abcdef'.split('');
-  var KECCAK_PADDING = [1, 256, 65536, 16777216];
-  var PADDING = [6, 1536, 393216, 100663296];
-  var SHIFT = [0, 8, 16, 24];
-  var RC = [1, 0, 32898, 0, 32906, 2147483648, 2147516416, 2147483648, 32907, 0, 2147483649,
-            0, 2147516545, 2147483648, 32777, 2147483648, 138, 0, 136, 0, 2147516425, 0, 
-            2147483658, 0, 2147516555, 0, 139, 2147483648, 32905, 2147483648, 32771, 
-            2147483648, 32770, 2147483648, 128, 2147483648, 32778, 0, 2147483658, 2147483648,
-            2147516545, 2147483648, 32896, 2147483648, 2147483649, 0, 2147516424, 2147483648];
-
-  var blocks = [], s = [];
-
-  var keccak_224 = function(message) {
-    return keccak(message, 224, KECCAK_PADDING);
-  };
-
-  var keccak_256 = function(message) {
-    return keccak(message, 256, KECCAK_PADDING);
-  };
-
-  var keccak_384 = function(message) {
-    return keccak(message, 384, KECCAK_PADDING);
-  };
-
-  var sha3_224 = function(message) {
-    return keccak(message, 224, PADDING);
-  };
-
-  var sha3_256 = function(message) {
-    return keccak(message, 256, PADDING);
-  };
-
-  var sha3_384 = function(message) {
-    return keccak(message, 384, PADDING);
-  };
-
-  var sha3_512 = function(message) {
-    return keccak(message, 512, PADDING);
-  };
-
-  var keccak = function(message, bits, padding) {
-    var notString = typeof(message) != 'string';
-    if(notString && message.constructor == root.ArrayBuffer) {
-      message = new Uint8Array(message);
-    }
-
-    if(bits === undefined) {
-      bits = 512;
-      padding = KECCAK_PADDING;
-    }
-
-    var block, code, end = false, index = 0, start = 0, length = message.length,
-        n, i, h, l, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, 
-        b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17, 
-        b18, b19, b20, b21, b22, b23, b24, b25, b26, b27, b28, b29, b30, b31, b32, b33, 
-        b34, b35, b36, b37, b38, b39, b40, b41, b42, b43, b44, b45, b46, b47, b48, b49;
-    var blockCount = (1600 - bits * 2) / 32;
-    var byteCount = blockCount * 4;
-
-    for(i = 0;i < 50;++i) {
-      s[i] = 0;
-    }
-
-    block = 0;
-    do {
-      blocks[0] = block;
-      for(i = 1;i < blockCount + 1;++i) {
-        blocks[i] = 0;
-      }
-      if(notString) {
-        for (i = start;index < length && i < byteCount; ++index) {
-          blocks[i >> 2] |= message[index] << SHIFT[i++ & 3];
-        }
-      } else {
-        for (i = start;index < length && i < byteCount; ++index) {
-          code = message.charCodeAt(index);
-          if (code < 0x80) {
-            blocks[i >> 2] |= code << SHIFT[i++ & 3];
-          } else if (code < 0x800) {
-            blocks[i >> 2] |= (0xc0 | (code >> 6)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
-          } else if (code < 0xd800 || code >= 0xe000) {
-            blocks[i >> 2] |= (0xe0 | (code >> 12)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
-          } else {
-            code = 0x10000 + (((code & 0x3ff) << 10) | (message.charCodeAt(++index) & 0x3ff));
-            blocks[i >> 2] |= (0xf0 | (code >> 18)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | ((code >> 12) & 0x3f)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
-          }
-        }
-      }
-      start = i - byteCount;
-      if(index == length) {
-        blocks[i >> 2] |= padding[i & 3];
-        ++index;
-      }
-      block = blocks[blockCount];
-      if(index > length && i < byteCount) {
-        blocks[blockCount - 1] |= 0x80000000;
-        end = true;
-      }
-
-      for(i = 0;i < blockCount;++i) {
-        s[i] ^= blocks[i];
-      }
-
-      for(n = 0; n < 48; n += 2) {
-        c0 = s[0] ^ s[10] ^ s[20] ^ s[30] ^ s[40];
-        c1 = s[1] ^ s[11] ^ s[21] ^ s[31] ^ s[41];
-        c2 = s[2] ^ s[12] ^ s[22] ^ s[32] ^ s[42];
-        c3 = s[3] ^ s[13] ^ s[23] ^ s[33] ^ s[43];
-        c4 = s[4] ^ s[14] ^ s[24] ^ s[34] ^ s[44];
-        c5 = s[5] ^ s[15] ^ s[25] ^ s[35] ^ s[45];
-        c6 = s[6] ^ s[16] ^ s[26] ^ s[36] ^ s[46];
-        c7 = s[7] ^ s[17] ^ s[27] ^ s[37] ^ s[47];
-        c8 = s[8] ^ s[18] ^ s[28] ^ s[38] ^ s[48];
-        c9 = s[9] ^ s[19] ^ s[29] ^ s[39] ^ s[49];
-
-        h = c8 ^ ((c2 << 1) | (c3 >>> 31));
-        l = c9 ^ ((c3 << 1) | (c2 >>> 31));
-        s[0] ^= h;
-        s[1] ^= l;
-        s[10] ^= h;
-        s[11] ^= l;
-        s[20] ^= h;
-        s[21] ^= l;
-        s[30] ^= h;
-        s[31] ^= l;
-        s[40] ^= h;
-        s[41] ^= l;
-        h = c0 ^ ((c4 << 1) | (c5 >>> 31));
-        l = c1 ^ ((c5 << 1) | (c4 >>> 31));
-        s[2] ^= h;
-        s[3] ^= l;
-        s[12] ^= h;
-        s[13] ^= l;
-        s[22] ^= h;
-        s[23] ^= l;
-        s[32] ^= h;
-        s[33] ^= l;
-        s[42] ^= h;
-        s[43] ^= l;
-        h = c2 ^ ((c6 << 1) | (c7 >>> 31));
-        l = c3 ^ ((c7 << 1) | (c6 >>> 31));
-        s[4] ^= h;
-        s[5] ^= l;
-        s[14] ^= h;
-        s[15] ^= l;
-        s[24] ^= h;
-        s[25] ^= l;
-        s[34] ^= h;
-        s[35] ^= l;
-        s[44] ^= h;
-        s[45] ^= l;
-        h = c4 ^ ((c8 << 1) | (c9 >>> 31));
-        l = c5 ^ ((c9 << 1) | (c8 >>> 31));
-        s[6] ^= h;
-        s[7] ^= l;
-        s[16] ^= h;
-        s[17] ^= l;
-        s[26] ^= h;
-        s[27] ^= l;
-        s[36] ^= h;
-        s[37] ^= l;
-        s[46] ^= h;
-        s[47] ^= l;
-        h = c6 ^ ((c0 << 1) | (c1 >>> 31));
-        l = c7 ^ ((c1 << 1) | (c0 >>> 31));
-        s[8] ^= h;
-        s[9] ^= l;
-        s[18] ^= h;
-        s[19] ^= l;
-        s[28] ^= h;
-        s[29] ^= l;
-        s[38] ^= h;
-        s[39] ^= l;
-        s[48] ^= h;
-        s[49] ^= l;
-
-        b0 = s[0];
-        b1 = s[1];
-        b32 = (s[11] << 4) | (s[10] >>> 28);
-        b33 = (s[10] << 4) | (s[11] >>> 28);
-        b14 = (s[20] << 3) | (s[21] >>> 29);
-        b15 = (s[21] << 3) | (s[20] >>> 29);
-        b46 = (s[31] << 9) | (s[30] >>> 23);
-        b47 = (s[30] << 9) | (s[31] >>> 23);
-        b28 = (s[40] << 18) | (s[41] >>> 14);
-        b29 = (s[41] << 18) | (s[40] >>> 14);
-        b20 = (s[2] << 1) | (s[3] >>> 31);
-        b21 = (s[3] << 1) | (s[2] >>> 31);
-        b2 = (s[13] << 12) | (s[12] >>> 20);
-        b3 = (s[12] << 12) | (s[13] >>> 20);
-        b34 = (s[22] << 10) | (s[23] >>> 22);
-        b35 = (s[23] << 10) | (s[22] >>> 22);
-        b16 = (s[33] << 13) | (s[32] >>> 19);
-        b17 = (s[32] << 13) | (s[33] >>> 19);
-        b48 = (s[42] << 2) | (s[43] >>> 30);
-        b49 = (s[43] << 2) | (s[42] >>> 30);
-        b40 = (s[5] << 30) | (s[4] >>> 2);
-        b41 = (s[4] << 30) | (s[5] >>> 2);
-        b22 = (s[14] << 6) | (s[15] >>> 26);
-        b23 = (s[15] << 6) | (s[14] >>> 26);
-        b4 = (s[25] << 11) | (s[24] >>> 21);
-        b5 = (s[24] << 11) | (s[25] >>> 21);
-        b36 = (s[34] << 15) | (s[35] >>> 17);
-        b37 = (s[35] << 15) | (s[34] >>> 17);
-        b18 = (s[45] << 29) | (s[44] >>> 3);
-        b19 = (s[44] << 29) | (s[45] >>> 3);
-        b10 = (s[6] << 28) | (s[7] >>> 4);
-        b11 = (s[7] << 28) | (s[6] >>> 4);
-        b42 = (s[17] << 23) | (s[16] >>> 9);
-        b43 = (s[16] << 23) | (s[17] >>> 9);
-        b24 = (s[26] << 25) | (s[27] >>> 7);
-        b25 = (s[27] << 25) | (s[26] >>> 7);
-        b6 = (s[36] << 21) | (s[37] >>> 11);
-        b7 = (s[37] << 21) | (s[36] >>> 11);
-        b38 = (s[47] << 24) | (s[46] >>> 8);
-        b39 = (s[46] << 24) | (s[47] >>> 8);
-        b30 = (s[8] << 27) | (s[9] >>> 5);
-        b31 = (s[9] << 27) | (s[8] >>> 5);
-        b12 = (s[18] << 20) | (s[19] >>> 12);
-        b13 = (s[19] << 20) | (s[18] >>> 12);
-        b44 = (s[29] << 7) | (s[28] >>> 25);
-        b45 = (s[28] << 7) | (s[29] >>> 25);
-        b26 = (s[38] << 8) | (s[39] >>> 24);
-        b27 = (s[39] << 8) | (s[38] >>> 24);
-        b8 = (s[48] << 14) | (s[49] >>> 18);
-        b9 = (s[49] << 14) | (s[48] >>> 18);
-
-        s[0] = b0 ^ (~b2 & b4);
-        s[1] = b1 ^ (~b3 & b5);
-        s[10] = b10 ^ (~b12 & b14);
-        s[11] = b11 ^ (~b13 & b15);
-        s[20] = b20 ^ (~b22 & b24);
-        s[21] = b21 ^ (~b23 & b25);
-        s[30] = b30 ^ (~b32 & b34);
-        s[31] = b31 ^ (~b33 & b35);
-        s[40] = b40 ^ (~b42 & b44);
-        s[41] = b41 ^ (~b43 & b45);
-        s[2] = b2 ^ (~b4 & b6);
-        s[3] = b3 ^ (~b5 & b7);
-        s[12] = b12 ^ (~b14 & b16);
-        s[13] = b13 ^ (~b15 & b17);
-        s[22] = b22 ^ (~b24 & b26);
-        s[23] = b23 ^ (~b25 & b27);
-        s[32] = b32 ^ (~b34 & b36);
-        s[33] = b33 ^ (~b35 & b37);
-        s[42] = b42 ^ (~b44 & b46);
-        s[43] = b43 ^ (~b45 & b47);
-        s[4] = b4 ^ (~b6 & b8);
-        s[5] = b5 ^ (~b7 & b9);
-        s[14] = b14 ^ (~b16 & b18);
-        s[15] = b15 ^ (~b17 & b19);
-        s[24] = b24 ^ (~b26 & b28);
-        s[25] = b25 ^ (~b27 & b29);
-        s[34] = b34 ^ (~b36 & b38);
-        s[35] = b35 ^ (~b37 & b39);
-        s[44] = b44 ^ (~b46 & b48);
-        s[45] = b45 ^ (~b47 & b49);
-        s[6] = b6 ^ (~b8 & b0);
-        s[7] = b7 ^ (~b9 & b1);
-        s[16] = b16 ^ (~b18 & b10);
-        s[17] = b17 ^ (~b19 & b11);
-        s[26] = b26 ^ (~b28 & b20);
-        s[27] = b27 ^ (~b29 & b21);
-        s[36] = b36 ^ (~b38 & b30);
-        s[37] = b37 ^ (~b39 & b31);
-        s[46] = b46 ^ (~b48 & b40);
-        s[47] = b47 ^ (~b49 & b41);
-        s[8] = b8 ^ (~b0 & b2);
-        s[9] = b9 ^ (~b1 & b3);
-        s[18] = b18 ^ (~b10 & b12);
-        s[19] = b19 ^ (~b11 & b13);
-        s[28] = b28 ^ (~b20 & b22);
-        s[29] = b29 ^ (~b21 & b23);
-        s[38] = b38 ^ (~b30 & b32);
-        s[39] = b39 ^ (~b31 & b33);
-        s[48] = b48 ^ (~b40 & b42);
-        s[49] = b49 ^ (~b41 & b43);
-
-        s[0] ^= RC[n];
-        s[1] ^= RC[n + 1];
-      }
-    } while(!end);
-
-    var hex = '';
-    if(CHROME) {
-      b0 = s[0];
-      b1 = s[1];
-      b2 = s[2];
-      b3 = s[3];
-      b4 = s[4];
-      b5 = s[5];
-      b6 = s[6];
-      b7 = s[7];
-      b8 = s[8];
-      b9 = s[9];
-      b10 = s[10];
-      b11 = s[11];
-      b12 = s[12];
-      b13 = s[13];
-      b14 = s[14];
-      b15 = s[15];
-      hex += HEX_CHARS[(b0 >> 4) & 0x0F] + HEX_CHARS[b0 & 0x0F] +
-             HEX_CHARS[(b0 >> 12) & 0x0F] + HEX_CHARS[(b0 >> 8) & 0x0F] +
-             HEX_CHARS[(b0 >> 20) & 0x0F] + HEX_CHARS[(b0 >> 16) & 0x0F] +
-             HEX_CHARS[(b0 >> 28) & 0x0F] + HEX_CHARS[(b0 >> 24) & 0x0F] +
-             HEX_CHARS[(b1 >> 4) & 0x0F] + HEX_CHARS[b1 & 0x0F] +
-             HEX_CHARS[(b1 >> 12) & 0x0F] + HEX_CHARS[(b1 >> 8) & 0x0F] +
-             HEX_CHARS[(b1 >> 20) & 0x0F] + HEX_CHARS[(b1 >> 16) & 0x0F] +
-             HEX_CHARS[(b1 >> 28) & 0x0F] + HEX_CHARS[(b1 >> 24) & 0x0F] +
-             HEX_CHARS[(b2 >> 4) & 0x0F] + HEX_CHARS[b2 & 0x0F] +
-             HEX_CHARS[(b2 >> 12) & 0x0F] + HEX_CHARS[(b2 >> 8) & 0x0F] +
-             HEX_CHARS[(b2 >> 20) & 0x0F] + HEX_CHARS[(b2 >> 16) & 0x0F] +
-             HEX_CHARS[(b2 >> 28) & 0x0F] + HEX_CHARS[(b2 >> 24) & 0x0F] +
-             HEX_CHARS[(b3 >> 4) & 0x0F] + HEX_CHARS[b3 & 0x0F] +
-             HEX_CHARS[(b3 >> 12) & 0x0F] + HEX_CHARS[(b3 >> 8) & 0x0F] +
-             HEX_CHARS[(b3 >> 20) & 0x0F] + HEX_CHARS[(b3 >> 16) & 0x0F] +
-             HEX_CHARS[(b3 >> 28) & 0x0F] + HEX_CHARS[(b3 >> 24) & 0x0F] +
-             HEX_CHARS[(b4 >> 4) & 0x0F] + HEX_CHARS[b4 & 0x0F] +
-             HEX_CHARS[(b4 >> 12) & 0x0F] + HEX_CHARS[(b4 >> 8) & 0x0F] +
-             HEX_CHARS[(b4 >> 20) & 0x0F] + HEX_CHARS[(b4 >> 16) & 0x0F] +
-             HEX_CHARS[(b4 >> 28) & 0x0F] + HEX_CHARS[(b4 >> 24) & 0x0F] +
-             HEX_CHARS[(b5 >> 4) & 0x0F] + HEX_CHARS[b5 & 0x0F] +
-             HEX_CHARS[(b5 >> 12) & 0x0F] + HEX_CHARS[(b5 >> 8) & 0x0F] +
-             HEX_CHARS[(b5 >> 20) & 0x0F] + HEX_CHARS[(b5 >> 16) & 0x0F] +
-             HEX_CHARS[(b5 >> 28) & 0x0F] + HEX_CHARS[(b5 >> 24) & 0x0F] +
-             HEX_CHARS[(b6 >> 4) & 0x0F] + HEX_CHARS[b6 & 0x0F] +
-             HEX_CHARS[(b6 >> 12) & 0x0F] + HEX_CHARS[(b6 >> 8) & 0x0F] +
-             HEX_CHARS[(b6 >> 20) & 0x0F] + HEX_CHARS[(b6 >> 16) & 0x0F] +
-             HEX_CHARS[(b6 >> 28) & 0x0F] + HEX_CHARS[(b6 >> 24) & 0x0F];
-
-      if(bits >= 256) {
-        hex += HEX_CHARS[(b7 >> 4) & 0x0F] + HEX_CHARS[b7 & 0x0F] +
-               HEX_CHARS[(b7 >> 12) & 0x0F] + HEX_CHARS[(b7 >> 8) & 0x0F] +
-               HEX_CHARS[(b7 >> 20) & 0x0F] + HEX_CHARS[(b7 >> 16) & 0x0F] +
-               HEX_CHARS[(b7 >> 28) & 0x0F] + HEX_CHARS[(b7 >> 24) & 0x0F];
-      }
-      if(bits >= 384) {
-        hex += HEX_CHARS[(b8 >> 4) & 0x0F] + HEX_CHARS[b8 & 0x0F] +
-               HEX_CHARS[(b8 >> 12) & 0x0F] + HEX_CHARS[(b8 >> 8) & 0x0F] +
-               HEX_CHARS[(b8 >> 20) & 0x0F] + HEX_CHARS[(b8 >> 16) & 0x0F] +
-               HEX_CHARS[(b8 >> 28) & 0x0F] + HEX_CHARS[(b8 >> 24) & 0x0F] +
-               HEX_CHARS[(b9 >> 4) & 0x0F] + HEX_CHARS[b9 & 0x0F] +
-               HEX_CHARS[(b9 >> 12) & 0x0F] + HEX_CHARS[(b9 >> 8) & 0x0F] +
-               HEX_CHARS[(b9 >> 20) & 0x0F] + HEX_CHARS[(b9 >> 16) & 0x0F] +
-               HEX_CHARS[(b9 >> 28) & 0x0F] + HEX_CHARS[(b9 >> 24) & 0x0F] +
-               HEX_CHARS[(b10 >> 4) & 0x0F] + HEX_CHARS[b10 & 0x0F] +
-               HEX_CHARS[(b10 >> 12) & 0x0F] + HEX_CHARS[(b10 >> 8) & 0x0F] +
-               HEX_CHARS[(b10 >> 20) & 0x0F] + HEX_CHARS[(b10 >> 16) & 0x0F] +
-               HEX_CHARS[(b10 >> 28) & 0x0F] + HEX_CHARS[(b10 >> 24) & 0x0F] +
-               HEX_CHARS[(b11 >> 4) & 0x0F] + HEX_CHARS[b11 & 0x0F] +
-               HEX_CHARS[(b11 >> 12) & 0x0F] + HEX_CHARS[(b11 >> 8) & 0x0F] +
-               HEX_CHARS[(b11 >> 20) & 0x0F] + HEX_CHARS[(b11 >> 16) & 0x0F] +
-               HEX_CHARS[(b11 >> 28) & 0x0F] + HEX_CHARS[(b11 >> 24) & 0x0F];
-      }
-      if(bits == 512) {
-        hex += HEX_CHARS[(b12 >> 4) & 0x0F] + HEX_CHARS[b12 & 0x0F] +
-               HEX_CHARS[(b12 >> 12) & 0x0F] + HEX_CHARS[(b12 >> 8) & 0x0F] +
-               HEX_CHARS[(b12 >> 20) & 0x0F] + HEX_CHARS[(b12 >> 16) & 0x0F] +
-               HEX_CHARS[(b12 >> 28) & 0x0F] + HEX_CHARS[(b12 >> 24) & 0x0F] +
-               HEX_CHARS[(b13 >> 4) & 0x0F] + HEX_CHARS[b13 & 0x0F] +
-               HEX_CHARS[(b13 >> 12) & 0x0F] + HEX_CHARS[(b13 >> 8) & 0x0F] +
-               HEX_CHARS[(b13 >> 20) & 0x0F] + HEX_CHARS[(b13 >> 16) & 0x0F] +
-               HEX_CHARS[(b13 >> 28) & 0x0F] + HEX_CHARS[(b13 >> 24) & 0x0F] +
-               HEX_CHARS[(b14 >> 4) & 0x0F] + HEX_CHARS[b14 & 0x0F] +
-               HEX_CHARS[(b14 >> 12) & 0x0F] + HEX_CHARS[(b14 >> 8) & 0x0F] +
-               HEX_CHARS[(b14 >> 20) & 0x0F] + HEX_CHARS[(b14 >> 16) & 0x0F] +
-               HEX_CHARS[(b14 >> 28) & 0x0F] + HEX_CHARS[(b14 >> 24) & 0x0F] +
-               HEX_CHARS[(b15 >> 4) & 0x0F] + HEX_CHARS[b15 & 0x0F] +
-               HEX_CHARS[(b15 >> 12) & 0x0F] + HEX_CHARS[(b15 >> 8) & 0x0F] +
-               HEX_CHARS[(b15 >> 20) & 0x0F] + HEX_CHARS[(b15 >> 16) & 0x0F] +
-               HEX_CHARS[(b15 >> 28) & 0x0F] + HEX_CHARS[(b15 >> 24) & 0x0F];
-      }
-    } else {
-      for(i = 0, n = bits / 32;i < n;++i) {
-        h = s[i];
-        hex += HEX_CHARS[(h >> 4) & 0x0F] + HEX_CHARS[h & 0x0F] +
-               HEX_CHARS[(h >> 12) & 0x0F] + HEX_CHARS[(h >> 8) & 0x0F] +
-               HEX_CHARS[(h >> 20) & 0x0F] + HEX_CHARS[(h >> 16) & 0x0F] +
-               HEX_CHARS[(h >> 28) & 0x0F] + HEX_CHARS[(h >> 24) & 0x0F];
-      }
-    }
-    return hex;
-  };
-  
-  if(!root.JS_SHA3_TEST && NODE_JS) {
-    module.exports = {
-      sha3_512: sha3_512,
-      sha3_384: sha3_384,
-      sha3_256: sha3_256,
-      sha3_224: sha3_224,
-      keccak_512: keccak,
-      keccak_384: keccak_384,
-      keccak_256: keccak_256,
-      keccak_224: keccak_224
-    };
-  } else if(root) {
-    root.sha3_512 = sha3_512;
-    root.sha3_384 = sha3_384;
-    root.sha3_256 = sha3_256;
-    root.sha3_224 = sha3_224;
-    root.keccak_512 = keccak;
-    root.keccak_384 = keccak_384;
-    root.keccak_256 = keccak_256;
-    root.keccak_224 = keccak_224;
-  }
-}(this));
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],4:[function(require,module,exports){
-module.exports={
-    "0": {
-        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
-        "buyAndSellShares": "0xcb41186d3fa3eae83aa828eb776a913ffe94bcb7",
-        "checkQuorum": "0x7ad6e15cedf2a82651b5b407d1e98cbdf7c9e0e4",
-        "closeMarket": "0xfb8f4d790665457dcac8cbfa03965d1671d9e6a2",
-        "closeMarketEight": "0x3c348ffa3c66a7968110f64ae0a3d730cf20b670",
-        "closeMarketFour": "0x8cb16b2af081bf8a9cf06a5d8ae00a8f0d3a991f",
-        "closeMarketOne": "0x3aa010724da6a6d10d830905f6c83e31bfe47084",
-        "closeMarketTwo": "0xe4288ab0c0d886af4d5db6aa320c630c31a24b96",
-        "createBranch": "0x97aa6fe95e117a2c5c2e4f1419f5712d0ecfb66d",
-        "createEvent": "0xe3d1eef1fa0dba41796f08784033a32c3c2efd28",
-        "createMarket": "0x242219e309914836840a0ca0a55009478c5ba3d6",
-        "dispatch": "0x36004227035b544b981657d2736dd7de2ad1d30a",
-        "faucets": "0xd403f1657106c138843ea831bd99cbd2a4b8d648",
-        "makeReports": "0x9eed4f95d3bdc11775d7356709a8ae51f13f9bba",
-        "p2pWagers": "0x1c0e5ba6a9ba14420656be68657954917258eda6",
-        "sendReputation": "0xe5a16f3eef2158a63abd55c89474aef9ced7c82a",
-        "transferShares": "0x1743b8bd782221de0ad7c3ec010afc20da4c0d4f",
-        "accounts": "0x77ae4a8fa5c2775e618fcb40b0598f80a3b846f1",
-        "branches": "0x3a52e33bda40cb220cca98407bb332ec7579499b",
-        "cash": "0x25957529618e670165d49700c7d3f4ce4e2e00b9",
-        "events": "0x05b052da4cd80512f6a0837c72f7a4c3a591cbf6",
-        "expiringEvents": "0x554c2e7b73e62604e9d9f2e439b5a611da88fc87",
-        "fxpFunctions": "0x4abb75045783a639383aace45622ce97dec3b110",
-        "info": "0xe6e87575230b8e9315027c30648868e9ea80161c",
-        "ipfs": "0xbcfe600f4420d3db214bb2e7861b9c1c59ae2573",
-        "markets": "0x847adbfda58ca76ce0f5ff9952838a86192f510a",
-        "reporting": "0x772c698ff3121fde846002bae4d6828a39911fdb",
-        "adjust": "0x8fd78c97952f8bdd4351e8694e24c77f921446dd",
-        "center": "0x9c92cb96d4141204e2dc6e36b64192e4b6b1d29b",
-        "payout": "0x306973dc029f74fbfc83d9200e49b6c6978e77e9",
-        "redeem_adjust": "0xcfa0f80de838466d2605d7878f2ebb879e2aae60",
-        "redeem_center": "0x54d6594d3dc7d5af46f5bff12646d5f4ad152176",
-        "redeem_interpolate": "0xe8ff6008f6981d27f90cc6499d0f46546e6d8da7",
-        "redeem_payout": "0x701201acf46b40f449a815967fe0607a12645cd4",
-        "redeem_resolve": "0x46967961e529aaf9642742e08d27db1c8d33ba0d",
-        "redeem_score": "0x79988cdd607ef793f279d59d2686df2711c5b3a7",
-        "resolve": "0x145faea6f94952d73b54b2f85262ad8d8d474466",
-        "score": "0xe7fd9f29b2fbd3623574f303bee4355ca4645d62",
-        "statistics": "0xb44c5dffcb5092c06e8240b1d300b3287b0ca279"
-    },
-    "7": {
-        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
-        "buyAndSellShares": "0x222be5d1b153b7f04189b2f591166665a885aaf5",
-        "checkQuorum": "0x7a38967fab965444182e48fca12d63c62ceb3d96",
-        "closeMarket": "0xdb45fd72e0f88393c872c0387ad7a4c9e9df4296",
-        "closeMarketEight": "0xe327c3128520eeacfb1da6091149344a34457f99",
-        "closeMarketFour": "0x1d6c3999f23692326cf590addb050b482cdf79ba",
-        "closeMarketOne": "0x9e049aef53bf7d56caa398b6437218ebc548b9c7",
-        "closeMarketTwo": "0xf9ed008f6b3b5ec95fce763f3c738c32db17c2e0",
-        "createBranch": "0x7bf8e4f9e3183867f2ad8c8e61d7b4df3a9204a8",
-        "createEvent": "0xf21d1dc93739dddb2ff15db191d7922fe8a4e196",
-        "createMarket": "0x344b7273d6ba3ae6464de981e3f8f21de20eb429",
-        "dispatch": "0x4b22c2f46045f8eb791e9c31b3d17dc41ea33cb4",
-        "faucets": "0x1f7a7eb8bdf2690bd815c24a16f3301706005f42",
-        "makeReports": "0x66be17e5b82a1080dae93bbd65935516182ca20c",
-        "p2pWagers": "0x5637e628e8557528fcaa732380d471fecde52168",
-        "sendReputation": "0x9dce0b045622fd1536f0f49e3d7c5b4ffaf01bf7",
-        "transferShares": "0x615b1bbfd690a24cbf5679e7b326aab0227c492e",
-        "accounts": "0x4fc79e76158c6f347195a4a5564893e0f55f0ebf",
-        "branches": "0x6304d620fbdaf2d473079e44fe13d376fefe6164",
-        "cash": "0xa36a4f0bd323f15d6ebe04810dcb770d33f3466e",
-        "events": "0x435cb3ba15fbda3c466dc527f1b9cc78f5114d4f",
-        "expiringEvents": "0x27f07adb9921e7f69462e3e285d43c6c25768058",
-        "fxpFunctions": "0x1fa4745bcd612d19c698aad79c9ceee079cf65b6",
-        "info": "0x3c5062d58be6ce59534e8a2d10f1d533c1a0206e",
-        "ipfs": "0x0dc961533e26dccb673ccbaa93d8e8fd96b41765",
-        "markets": "0x44a270caf86e229f188b340994fa8671ae94450a",
-        "reporting": "0x1c6e0e4cd3980a458a6d7af1e98ba85bb67e5875",
-        "adjust": "0x360f45231a8f6f192dece487e30b51e8f9fca081",
-        "center": "0x8a0cf0b390a9acbaed8abe1df64e4a1eb7fde454",
-        "payout": "0x9a051313590855995a93b41ef3fd5c29ec52a120",
-        "redeem_adjust": "0xb5c5b32e285ba059cd5c79560885ac6448ecfc36",
-        "redeem_center": "0x608fa0fbee213d5ca2032fc30b50c16bc852b7da",
-        "redeem_interpolate": "0x9194647074999cc5792164fdebd1f653aa99397c",
-        "redeem_payout": "0xa4f49043cabb4c514eb8d7425932b982dd65c74c",
-        "redeem_resolve": "0x7368ad231be18e0c6859e6ec776c3c8e2857b747",
-        "redeem_score": "0x652b9c2095f2e244b7ca144237ff6b2ff2f32d67",
-        "resolve": "0xca39ef3752a20837ece0911c1f758ba8b621a33b",
-        "score": "0xa8347d21ff9dc37c8c087a665cbcb69d8f9fee4c",
-        "statistics": "0x29c1d95256f9090130e99dd9cab154ac3d3e060f"
-    },
-    "10101": {
-        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
-        "buyAndSellShares": "0x2e5a882aa53805f1a9da3cf18f73673bca98fa0f",
-        "checkQuorum": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d",
-        "closeMarket": "0xcece47d6c0a6a1c90521f38ec5bf7550df983804",
-        "closeMarketEight": "0x031d9d02520cc708ea3c865278508c9cdb92bd51",
-        "closeMarketFour": "0xcd6c7bc634257f82903b182142aae7156d72a200",
-        "closeMarketOne": "0xd2e9f7c2fd4635199b8cc9e8128fc4d27c693945",
-        "closeMarketTwo": "0x7d4b581a0868204b7481c316b430a97fd292a2fb",
-        "createBranch": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df",
-        "createEvent": "0x9fe69262bbaa47f013b7dbd6ca5f01e17446c645",
-        "createMarket": "0x448c01a2e1fd6c2ef133402c403d2f48c99993e7",
-        "dispatch": "0x70a893eb9569041e97a3787f0c76a1eb6378d8b2",
-        "faucets": "0x509592c96eee7e19f6a34772fd8783cb072ca3c6",
-        "makeReports": "0x3f3276849a878a176b2f02dd48a483e8182a49e4",
-        "p2pWagers": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6",
-        "sendReputation": "0x35152caa07026203a1add680771afb690d872d7d",
-        "transferShares": "0xd70c6e1f3857d23bd96c3e4d2ec346fa7c3931f3",
-        "accounts": "0x77ae4a8fa5c2775e618fcb40b0598f80a3b846f1",
-        "branches": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd",
-        "cash": "0xe4714fcbdcdba49629bc408183ef40d120700b8d",
-        "events": "0x4a61f3db785f1e2a23ffefeafaceeef2df551667",
-        "expiringEvents": "0xd15a6cfc462ae76b9ec590cab8b34bfa8e1302d7",
-        "fxpFunctions": "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
-        "info": "0x5069d883e31429c6dd1325d961f443007747c7a2",
-        "ipfs": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e",
-        "markets": "0x9308cf21b5a11f182f9707ca284bbb71bb84f893",
-        "reporting": "0x81a7621e9a286d061b3dea040888a51c96693b1c",
-        "adjust": "0xbd19195b9e8a2d8ed14fc3a2823856b5c16f7f55",
-        "center": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c",
-        "payout": "0x8a4e2993a9972ee035453bb5674816fc3a698718",
-        "redeem_adjust": "0x8c19616de17acdfbc933b99d9f529a689d22098f",
-        "redeem_center": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79",
-        "redeem_interpolate": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea",
-        "redeem_payout": "0xe5b327630cfa7f4b2324f9066c897dceecfd88a3",
-        "redeem_resolve": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68",
-        "redeem_score": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7",
-        "resolve": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2",
-        "score": "0x708fdfe18bf28afe861a69e95419d183ace003eb",
-        "statistics": "0x8f2c2267687cb0f047b28a1b6f945da6e101a0d7"
-    }
-}
-},{}],5:[function(require,module,exports){
-module.exports = require("./contracts");
-
-},{"./contracts":4}],6:[function(require,module,exports){
-module.exports={
-    "0x": "no response or bad input",
-    "cashFaucet": {
-        "-1": "Hey, you're not broke!"
-    },
-    "getSimulatedBuy": {
-        "-2": "cost updating error (did you enter a valid quantity?)"
-    },
-    "getSimulatedSell": {
-        "-2": "cost updating error (did you enter a valid quantity?)"
-    },
-    "closeMarket": {
-        "-1": "market has no cash",
-        "-2": "0 outcome",
-        "-3": "outcome indeterminable"
-    },
-    "report": {
-        "0": "could not set reporter ballot",
-        "-1": "report length does not match number of expiring events",
-        "-2": "voting period expired",
-        "-3": "incorrect hash"
-    },
-    "submitReportHash": {
-        "0": "could not set report hash",
-        "-1": "reporter doesn't exist, voting period is over, or voting period hasn't started yet",
-        "-2": "not in hash submitting timeframe"
-    },
-    "checkReportValidity": {
-        "-1": "report isn't long enough",
-        "-2": "reporter doesn't exist, voting period is over, or voting period hasn't started yet"
-    },
-    "slashRep": {
-        "0": "incorrect hash",
-        "-2": "incorrect reporter ID"
-    },
-    "createEvent": {
-        "0": "not enough money to pay fees or event already exists",
-        "-1": "we're either already past that date, branch doesn't exist, or description is bad"
-    },
-    "createMarket": {
-        "-1": "bad input or parent doesn't exist",
-        "-2": "too many events",
-        "-3": "too many outcomes",
-        "-4": "not enough money or market already exists"
-    },
-    "sendReputation": {
-        "0": "not enough reputation",
-        "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
-        "-2": "Receiving address doesn't exist"
-    },
-    "buyShares": {
-        "-1": "invalid outcome or trading closed",
-        "-2": "entered a negative number of shares",
-        "-3": "not enough money",
-        "-4": "bad nonce/hash"
-    },
-    "sellShares": {
-        "-1": "invalid outcome or trading closed",
-        "-2": "entered a negative number of shares",
-        "-3": "not enough money",
-        "-4": "bad nonce/hash"
-    },
-    "TRANSACTION_NOT_FOUND": {
-        "error": 404,
-        "message": "transaction not found"
-    },
-    "NULL_CALL_RETURN": {
-        "error": 406,
-        "message": "expected contract call to return value, received null"
-    },
-    "NULL_RESPONSE": {
-        "error": 407,
-        "message": "expected transaction hash from Ethereum node, received null"
-    },
-    "NO_RESPONSE": {
-        "error": 408,
-        "message": "no response"
-    },
-    "INVALID_RESPONSE": {
-        "error": 409,
-        "message": "could not parse response from Ethereum node"
-    },
-    "LOCAL_NODE_FAILURE": {
-        "error": 410,
-        "message": "RPC request to local Ethereum node failed"
-    },
-    "HOSTED_NODE_FAILURE": {
-        "error": 411,
-        "message": "RPC request to hosted nodes failed"
-    },
-    "TRANSACTION_FAILED": {
-        "error": 500,
-        "message": "transaction failed"
-    },
-    "TRANSACTION_NOT_CONFIRMED": {
-        "error": 501,
-        "message": "polled network but could not confirm transaction"
-    },
-    "DUPLICATE_TRANSACTION": {
-        "error": 502,
-        "message": "duplicate transaction"
-    },
-    "LOOPBACK_NOT_FOUND": {
-        "error": 650,
-        "message": "loopback interface required for synchronous local commands"
-    },
-    "ETHEREUM_NOT_FOUND": {
-        "error": 651,
-        "message": "no active ethereum node(s) found"
-    }
-}
-
-},{}],7:[function(require,module,exports){
-(function (global){
-var ethrpc = global.ethrpc || require("./");
-global.ethrpc = ethrpc;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./":8}],8:[function(require,module,exports){
-(function (process){
-/**
- * JSON RPC methods for Ethereum
- * @author Jack Peterson (jack@tinybike.net)
- */
-
-"use strict";
-
-var NODE_JS = (typeof module !== "undefined") && process && !process.browser;
-var net, request, syncRequest;
-if (NODE_JS) {
-    net = require("net");
-    request = require("request");
-    syncRequest = require("sync-request");
-} else {
-    request = require("browser-request");
-}
-var async = require("async");
-var BigNumber = require("bignumber.js");
-var contracts = require("augur-contracts");
-var abi = require("augur-abi");
-var errors = require("./errors");
-
-BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
-
-function RPCError(err) {
-    this.name = err.error || err.name;
-    this.message = (err.error || err.name) + ": " + err.message;
-}
-
-RPCError.prototype = new Error();
-
-var HOSTED_NODES = [
-    "https://eth5.augur.net",
-    "https://eth4.augur.net",
-    "https://eth3.augur.net",
-    "https://eth1.augur.net"
-];
-
-module.exports = {
-
-    debug: {
-        broadcast: false,
-        fallback: false,
-        latency: true,
-        logs: false
-    },
-
-    // network load balancer
-    balancer: true,
-
-    // remove unresponsive nodes
-    excision: false,
-
-    // use IPC (only available on Node + Linux/OSX)
-    ipcpath: null,
-
-    // Maximum number of transaction verification attempts
-    TX_POLL_MAX: 36,
-
-    // Transaction polling interval
-    TX_POLL_INTERVAL: 12000,
-
-    POST_TIMEOUT: 180000,
-
-    DEFAULT_GAS: "0x2fd618",
-
-    ETHER: new BigNumber(10).toPower(18),
-
-    Error: RPCError,
-
-    errors: errors,
-
-    nodes: {
-        hosted: HOSTED_NODES.slice(),
-        local: null
-    },
-
-    // Mean network latency for each node
-    latency: {},
-
-    // Number of latency samples taken for each node
-    samples: {},
-
-    // Unweighted mean network latency across all nodes
-    // (use debug.latency=true to see this)
-    netLatency: null,
-
-    // Total number of samples taken across all nodes
-    // (use debug.latency=true to see this)
-    netSamples: 0,
-
-    requests: 1,
-
-    txs: {},
-
-    rawTxs: {},
-
-    notifications: {},
-
-    unmarshal: function (string, returns, stride, init) {
-        var elements, array, position;
-        if (string && string.length >= 66) {
-            stride = stride || 64;
-            elements = Math.ceil((string.length - 2) / stride);
-            array = new Array(elements);
-            position = init || 2;
-            for (var i = 0; i < elements; ++i) {
-                array[i] = abi.prefix_hex(
-                    string.slice(position, position + stride)
-                );
-                position += stride;
-            }
-            if (array.length) {
-                if (parseInt(array[0]) === array.length - 1) {
-                    array.splice(0, 1);
-                } else if (parseInt(array[1]) === array.length - 2 ||
-                    parseInt(array[1]) / 32 === array.length - 2) {
-                    array.splice(0, 2);
-                }
-            }
-            for (i = 0; i < array.length; ++i) {
-                if (returns === "number[]") {
-                    array[i] = abi.string(array[i]);
-                } else if (returns === "unfix[]") {
-                    array[i] = abi.unfix(array[i], "string");
-                }
-            }
-            return array;
-        } else {
-            return string;
-        }
-    },
-
-    applyReturns: function (returns, result) {
-        returns = returns.toLowerCase();
-        if (result && result !== "0x") {
-            if (returns && returns.slice(-2) === "[]") {
-                result = this.unmarshal(result, returns);
-            } else if (returns === "string") {
-                result = abi.decode_hex(result, true);
-            } else if (returns === "number") {
-                result = abi.string(result);
-            } else if (returns === "bignumber") {
-                result = abi.bignum(result);
-            } else if (returns === "unfix") {
-                result = abi.unfix(result, "string");
-            }
-        }
-        return result;
-    },
-
-    parse: function (response, returns, callback) {
-        var results, len;
-        try {
-            if (response && typeof response === "string") {
-                response = JSON.parse(response);
-            }
-            if (response && typeof response === "object" && response !== null) {
-                if (response.error) {
-                    response = {
-                        error: response.error.code,
-                        message: response.error.message
-                    };
-                    if (!callback) return response;
-                    callback(response);
-                } else if (response.result !== undefined) {
-                    if (typeof response.result !== "boolean") {
-                        if (returns) {
-                            response.result = this.applyReturns(returns, response.result);
-                        } else {
-                            if (response.result && response.result.length > 2 &&
-                                response.result.slice(0,2) === "0x")
-                            {
-                                response.result = abi.remove_leading_zeros(response.result);
-                                response.result = abi.prefix_hex(response.result);
-                            }
-                        }
-                    }
-                    if (!callback) return response.result;
-                    callback(response.result);
-                } else if (response.constructor === Array && response.length) {
-                    len = response.length;
-                    results = new Array(len);
-                    for (var i = 0; i < len; ++i) {
-                        results[i] = response[i].result;
-                        if (response.error || (response[i] && response[i].error)) {
-                            if (this.debug.broadcast) {
-                                if (callback) return callback(response.error);
-                                throw new this.Error(response.error);
-                            }
-                        } else if (response[i].result !== undefined) {
-                            if (typeof response[i].result !== "boolean") {
-                                if (returns[i]) {
-                                    results[i] = this.applyReturns(returns[i], response[i].result);
-                                } else {
-                                    results[i] = abi.remove_leading_zeros(results[i]);
-                                    results[i] = abi.prefix_hex(results[i]);
-                                }
-                            }
-                        }
-                    }
-                    if (!callback) return results;
-                    callback(results);
-
-                // no result or error field
-                } else {
-                    var err = errors.NO_RESPONSE;
-                    err.bubble = response;
-                    if (callback) return callback(err);
-                    throw new this.Error(err);
-                }
-            }
-        } catch (e) {
-            var err = e;
-            if (e && e.name === "SyntaxError") {
-                err = errors.INVALID_RESPONSE;
-                // err.bubble = response;
-            }
-            if (callback) return callback(err);
-            throw new this.Error(err);
-        }
-    },
-
-    strip: function (tx) {
-        var returns;
-        if (tx.params !== undefined && tx.params.length && tx.params[0]) {
-            if (tx.params[0].returns) {
-                returns = tx.params[0].returns;
-                delete tx.params[0].returns;
-            }
-            if (tx.params[0].invocation) {
-                delete tx.params[0].invocation;
-            }
-        }
-        return returns;
-    },
-
-    exciseNode: function (err, deadNode, callback) {
-        if (deadNode && !this.nodes.local && !this.ipcpath) {
-            if (this.debug.logs) {
-                console.log("[ethrpc] request to", deadNode, "failed:", err);
-            }
-            var deadIndex = this.nodes.hosted.indexOf(deadNode);
-            if (deadIndex > -1) {
-                this.nodes.hosted.splice(deadIndex, 1);
-                if (!this.nodes.hosted.length) {
-                    if (callback) {
-                        return callback(errors.HOSTED_NODE_FAILURE);
-                    }
-                    throw new this.Error(errors.HOSTED_NODE_FAILURE);
-                }
-            }
-            if (callback) callback();
-        }
-    },
-
-    postSync: function (rpcUrl, command, returns) {
-        var req = null;
-        if (NODE_JS) {
-            req = syncRequest('POST', rpcUrl, { json: command });
-            var response = req.getBody().toString();
-            return this.parse(response, returns);
-        } else {
-            if (window.XMLHttpRequest) {
-                req = new window.XMLHttpRequest();
-            } else {
-                req = new window.ActiveXObject("Microsoft.XMLHTTP");
-            }
-            req.open("POST", rpcUrl, false);
-            req.setRequestHeader("Content-type", "application/json");
-            req.send(JSON.stringify(command));
-            return this.parse(req.responseText, returns);
-        }
-    },
-
-    post: function (rpcUrl, command, returns, callback) {
-        var self = this;
-        request({
-            url: rpcUrl,
-            method: 'POST',
-            json: command,
-            timeout: this.POST_TIMEOUT
-        }, function (err, response, body) {
-            if (err) {
-                if (self.nodes.local) {
-                    var e = errors.LOCAL_NODE_FAILURE;
-                    e.bubble = err;
-                    return callback(e);
-                } else if (self.excision) {
-                    self.exciseNode(err.code, rpcUrl, callback);
-                }
-            } else if (response.statusCode === 200) {
-                self.parse(body, returns, callback);
-            }
-        });
-    },
-
-    // random primary node selection, weighted by (normalized)
-    // inverse mean network latency
-    selectPrimaryNode: function (nodes) {
-        var select, rand, numNodes, total, weights, cdf, high, low;
-        rand = Math.random();
-        numNodes = nodes.length;
-        weights = new Array(numNodes);
-        for (var k = 0; k < numNodes; ++k) {
-            weights[k] = 1 / this.latency[nodes[k]];
-        }
-        cdf = new Array(numNodes);
-        total = 0;
-        for (k = 0; k < numNodes; ++k) {
-            total += weights[k];
-            cdf[k] = total;
-        }
-        for (k = 0; k < numNodes; ++k) {
-            cdf[k] /= total;
-        }
-        high = numNodes - 1;
-        low = 0;
-        while (low < high) {
-            select = Math.ceil((high + low) / 2);
-            if (cdf[select] < rand) {
-                low = select + 1;
-            } else if (cdf[select] > rand) {
-                high = select - 1;
-            } else {
-                return nodes[select];
-            }
-        }
-        if (low != high) {
-            select = (cdf[low] >= rand) ? low : select;
-        } else {
-            select = (cdf[low] >= rand) ? low : low + 1;
-        }
-        return [nodes[select]].concat(nodes);
-    },
-
-    selectNodes: function () {
-        if (this.nodes.local) return [this.nodes.local];
-        if (!this.balancer || this.nodes.hosted.length === 1) {
-            return this.nodes.hosted.slice();
-        }
-
-        // rotate nodes until we have enough samples to weight them
-        if (!this.samples[HOSTED_NODES[0]] || this.samples[HOSTED_NODES[0]] < 5) {
-            this.nodes.hosted.unshift(this.nodes.hosted.pop());
-            return this.nodes.hosted.slice();
-
-        // if we have sufficient data, select a primary node
-        } else {
-            return this.selectPrimaryNode(this.nodes.hosted);
-        }
-    },
-
-    // update the active node's mean network latency
-    updateMeanLatency: function (node, latency) {
-        if (!this.samples[node]) {
-            this.samples[node] = 1;
-            this.latency[node] = latency;
-        } else {
-            ++this.samples[node];
-            this.latency[node] = (
-                (this.samples[node] - 1)*this.latency[node] + latency
-            ) / this.samples[node];
-        }
-        if (this.debug.latency) {
-            if (this.netLatency === null) {
-                this.netSamples = 1;
-                this.netLatency = latency;
-            } else {
-                ++this.netSamples;
-                this.netLatency = (
-                    (this.netSamples - 1)*this.netLatency + latency
-                ) / this.netSamples;
-                if (this.debug.logs) {
-                    console.log(
-                        "[" + this.netSamples.toString() + "] mean network latency:",
-                        this.netLatency
-                    );
-                }
-            }
-        }
-    },
-
-    contracts: function (network) {
-        return contracts[network || this.version()];
-    },
-
-    // Post JSON-RPC command to all Ethereum nodes
-    broadcast: function (command, callback) {
-        var start, nodes, numCommands, returns, result, completed, self = this;
-
-        if (!command || (command.constructor === Object && !command.method) ||
-            (command.constructor === Array && !command.length))
-        {
-            if (!callback) return null;
-            return callback(null);
-        }
-        if (this.debug.logs) {
-            if (command.method === "eth_call" || command.method === "eth_sendTransaction") {
-                if (command.params && (!command.params.length || !command.params[0].from)) {
-                    console.log(
-                        "**************************\n"+
-                        "* OH GOD WHAT DID YOU DO *\n"+
-                        "**************************"
-                    );
-                    var network = this.version();
-                    var contracts = this.contracts(network);
-                    var contract;
-                    for (var address in contracts) {
-                        if (!contracts.hasOwnProperty(address)) continue;
-                        if (contracts[address] === command.params[0].to) {
-                            contract = address;
-                            break;
-                        }
-                    }
-                    console.log(
-                        "network:", network, "\n"+
-                        "contract:", contract, "[" + command.params[0].to + "]\n"+
-                        "method:", command.method, "\n"+
-                        "params:", JSON.stringify(command.params, null, 2)
-                    );
-                    if (command.debug) {
-                        console.log("tx:", JSON.stringify(command.debug, null, 2));
-                        delete command.debug;
-                    }
-                }
-            }
-        }
-
-        // parse batched commands and strip "returns" and "invocation" fields
-        if (command.constructor === Array) {
-            numCommands = command.length;
-            returns = new Array(numCommands);
-            for (var i = 0; i < numCommands; ++i) {
-                returns[i] = this.strip(command[i]);
-            }
-
-        // parse commands and strip "returns" and "invocation" fields
-        } else {
-            returns = this.strip(command);
-        }
-
-        // if we're on Node, use IPC if available and ipcpath is specified
-        if (NODE_JS && this.ipcpath && command.method &&
-            command.method.indexOf("Filter") === -1)
-        {
-            var loopback = this.nodes.local && (
-                (this.nodes.local.indexOf("127.0.0.1") > -1 ||
-                this.nodes.local.indexOf("localhost") > -1)
-            );
-            if (!callback && !loopback) {
-                throw new this.Error(errors.LOOPBACK_NOT_FOUND);
-            }
-            if (callback && command.constructor !== Array) {
-                var received = '';
-                var socket = new net.Socket();
-                socket.setEncoding("utf8");
-                socket.connect({ path: this.ipcpath }, function () {
-                    socket.write(JSON.stringify(command));
-                });
-                socket.on("data", function (data) {
-                    received += data;
-                    self.parse(received, returns, function (parsed) {
-                        if (parsed && parsed.error === 409) return;
-                        socket.destroy();
-                        callback(parsed);
-                    });
-                });
-                socket.on("error", function (err) {
-                    socket.destroy();
-                    callback(err);
-                });
-                return;
-            }
-        }
-
-        // make sure the ethereum node list isn't empty
-        if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath) {
-            if (callback) return callback(errors.ETHEREUM_NOT_FOUND);
-            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
-        }
-
-        // select local / hosted node(s) to receive RPC
-        nodes = this.selectNodes();
-
-        // asynchronous request if callback exists
-        if (callback && callback.constructor === Function) {
-            async.eachSeries(nodes, function (node, nextNode) {
-                if (!completed) {
-                    if (self.debug.logs) {
-                        console.log("nodes:", JSON.stringify(nodes));
-                        console.log("post", command.method, "to:", node);
-                    }
-                    if (self.balancer) {
-                        start = new Date().getTime();
-                    }
-                    self.post(node, command, returns, function (res) {
-                        if (self.debug.logs) {
-                            if (res && res.constructor === BigNumber) {
-                                console.log(node, "response:", abi.string(res));
-                            } else {
-                                console.log(node, "response:", res);
-                            }
-                        }
-                        if (node === nodes[nodes.length - 1] ||
-                            (res !== undefined && res !== null &&
-                            !res.error && res !== "0x"))
-                        {
-                            completed = true;
-                            if (self.balancer) {
-                                self.updateMeanLatency(node, new Date().getTime() - start);
-                            }
-                            return nextNode({ output: res });
-                        }
-                        nextNode();
-                    });
-                }
-            }, function (res) {
-                if (!res && res.output === undefined) return callback();
-                callback(res.output);
-            });
-
-        // use synchronous http if no callback provided
-        } else {
-            for (var j = 0, len = nodes.length; j < len; ++j) {
-                try {
-                    if (this.debug.logs) {
-                        console.log("nodes:", JSON.stringify(nodes));
-                        console.log("synchronous post", command.method, "to:", nodes[j]);
-                    }
-                    if (this.balancer) {
-                        start = new Date().getTime();
-                    }
-                    result = this.postSync(nodes[j], command, returns);
-                    if (this.balancer) {
-                        this.updateMeanLatency(nodes[j], new Date().getTime() - start);
-                    }
-                } catch (e) {
-                    if (this.nodes.local) {
-                        throw new this.Error(errors.LOCAL_NODE_FAILURE);
-                    } else if (this.excision) {
-                        this.exciseNode(e, nodes[j]);
-                    }
-                }
-                if (result) return result;
-            }
-            throw new this.Error(errors.NO_RESPONSE);
-        }
-    },
-
-    marshal: function (command, params, prefix) {
-        var payload = {
-            id: this.requests++,
-            jsonrpc: "2.0"
-        };
-        if (prefix === "null") {
-            payload.method = command.toString();
-        } else {
-            payload.method = (prefix || "eth_") + command.toString();
-        }
-        if (params !== undefined && params !== null) {
-            if (this.debug.broadcast && params.debug) {
-                payload.debug = abi.copy(params.debug);
-                delete params.debug;
-            }
-            if (params.constructor === Array) {
-                payload.params = params;
-            } else {
-                payload.params = [params];
-            }
-        } else {
-            payload.params = [];
-        }
-        return payload;
-    },
-
-    setLocalNode: function (urlstr) {
-        this.nodes.local = urlstr;
-    },
-
-    useHostedNode: function () {
-        this.nodes.local = null;
-    },
-
-    // delete cached network, notification, and transaction data
-    clear: function () {
-        this.latency = {};
-        this.samples = {};
-        this.txs = {};
-        for (var n in this.notifications) {
-            if (!this.notifications.hasOwnProperty(n)) continue;
-            if (this.notifications[n]) {
-                clearTimeout(this.notifications[n]);
-            }
-        }
-        this.notifications = {};
-    },
-
-    // reset to default Ethereum nodes
-    reset: function (deleteData) {
-        this.nodes = {
-            hosted: HOSTED_NODES.slice(),
-            local: null
-        };
-        if (deleteData) this.clear();
-    },
-
-    /******************************
-     * Ethereum JSON-RPC bindings *
-     ******************************/
-
-    raw: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "null"), f);
-    },
-
-    eth: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params), f);
-    },
-
-    net: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "net_"), f);
-    },
-
-    web3: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "web3_"), f);
-    },
-
-    leveldb: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "db_"), f);
-    },
-
-    shh: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "shh_"), f);
-    },
-
-    sha3: function (data, f) {
-        return this.broadcast(this.marshal("sha3", data.toString(), "web3_"), f);
-    },
-    hash: function (data, f) {
-        return this.broadcast(this.marshal("sha3", data.toString(), "web3_"), f);
-    },
-
-    gasPrice: function (f) {
-        return this.broadcast(this.marshal("gasPrice"), f);
-    },
-
-    blockNumber: function (f) {
-        if (f) {
-            this.broadcast(this.marshal("blockNumber"), f);
-        } else {
-            return parseInt(this.broadcast(this.marshal("blockNumber")));
-        }
-    },
-
-    coinbase: function (f) {
-        return this.broadcast(this.marshal("coinbase"), f);
-    },
-
-    balance: function (address, block, f) {
-        if (block && block.constructor === Function) {
-            f = block;
-            block = null;
-        }
-        block = block || "latest";
-        return this.broadcast(this.marshal("getBalance", [ address, block ]), f);
-    },
-    getBalance: function (address, block, f) {
-        if (block && block.constructor === Function) {
-            f = block;
-            block = null;
-        }
-        block = block || "latest";
-        return this.broadcast(this.marshal("getBalance", [ address, block ]), f);
-    },
-
-    txCount: function (address, f) {
-        return this.broadcast(this.marshal("getTransactionCount", address), f);
-    },
-    getTransactionCount: function (address, f) {
-        return this.broadcast(this.marshal("getTransactionCount", address), f);
-    },
-    pendingTxCount: function (address, f) {
-        return this.broadcast(
-            this.marshal("getTransactionCount", [ address, "pending" ]), f
-        );
-    },
-
-    sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
-        if (to && to.constructor === Object && to.value) {
-            value = to.value;
-            if (to.from) from = to.from;
-            if (to.onSent) onSent = to.onSent;
-            if (to.onSuccess) onSuccess = to.onSuccess;
-            if (to.onFailed) onFailed = to.onFailed;
-            to = to.to;
-        }
-        return this.transact({
-            from: from,
-            to: to,
-            invocation: { invoke: this.sendTx, context: this },
-            value: abi.bignum(value).mul(this.ETHER).toFixed(),
-            returns: "null"
-        }, onSent, onSuccess, onFailed);
-    },
-
-    sign: function (address, data, f) {
-        return this.broadcast(this.marshal("sign", [address, data]), f);
-    },
-
-    getTx: function (hash, f) {
-        return this.broadcast(this.marshal("getTransactionByHash", hash), f);
-    },
-    getTransaction: function (hash, f) {
-        return this.broadcast(this.marshal("getTransactionByHash", hash), f);
-    },
-
-    peerCount: function (f) {
-        if (f) {
-            this.broadcast(this.marshal("peerCount", [], "net_"), f);
-        } else {
-            return parseInt(this.broadcast(this.marshal("peerCount", [], "net_")));
-        }
-    },
-
-    accounts: function (f) {
-        return this.broadcast(this.marshal("accounts"), f);
-    },
-
-    mining: function (f) {
-        return this.broadcast(this.marshal("mining"), f);
-    },
-
-    hashrate: function (f) {
-        if (f) {
-            this.broadcast(this.marshal("hashrate"), f);
-        } else {
-            return parseInt(this.broadcast(this.marshal("hashrate")));
-        }
-    },
-
-    getBlockByHash: function (hash, full, f) {
-        return this.broadcast(this.marshal("getBlockByHash", [hash, full || true]), f);
-    },
-
-    getBlock: function (number, full, f) {
-        return this.broadcast(this.marshal("getBlockByNumber", [number, full || true]), f);
-    },
-    getBlockByNumber: function (number, full, f) {
-        return this.broadcast(this.marshal("getBlockByNumber", [number, full || true]), f);
-    },
-
-    version: function (f) {
-        return this.broadcast(this.marshal("version", [], "net_"), f);
-    },
-    netVersion: function (f) {
-        return this.broadcast(this.marshal("version", [], "net_"), f);
-    },
-
-    // estimate a transaction's gas cost
-    estimateGas: function (tx, f) {
-        tx.to = tx.to || "";
-        return this.broadcast(this.marshal("estimateGas", tx), f);
-    },
-
-    // execute functions on contracts on the blockchain
-    call: function (tx, f) {
-        tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
-        return this.broadcast(this.marshal("call", tx), f);
-    },
-
-    sendTx: function (tx, f) {
-        tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
-        return this.broadcast(this.marshal("sendTransaction", tx), f);
-    },
-    sendTransaction: function (tx, f) {
-        tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
-        return this.broadcast(this.marshal("sendTransaction", tx), f);
-    },
-
-    // sendRawTx(RLP(tx.signed(privateKey))) -> txhash
-    sendRawTx: function (rawTx, f) {
-        return this.broadcast(this.marshal("sendRawTransaction", rawTx), f);
-    },
-    sendRawTransaction: function (rawTx, f) {
-        return this.broadcast(this.marshal("sendRawTransaction", rawTx), f);
-    },
-
-    receipt: function (txhash, f) {
-        return this.broadcast(this.marshal("getTransactionReceipt", txhash), f);
-    },
-    getTransactionReceipt: function (txhash, f) {
-        return this.broadcast(this.marshal("getTransactionReceipt", txhash), f);
-    },
-
-    clientVersion: function (f) {
-        return this.broadcast(this.marshal("clientVersion", [], "web3_"), f);
-    },
-
-    compileSerpent: function (code, f) {
-        return this.broadcast(this.marshal("compileSerpent", code), f);
-    },
-
-    compileSolidity: function (code, f) {
-        return this.broadcast(this.marshal("compileSolidity", code), f);
-    },
-
-    compileLLL: function (code, f) {
-        return this.broadcast(this.marshal("compileLLL", code), f);
-    },
-
-    // publish a new contract to the blockchain (from the coinbase account)
-    publish: function (compiled, f) {
-        return this.sendTx({ from: this.coinbase(), data: compiled }, f);
-    },
-
-    // Read the code in a contract on the blockchain
-    read: function (address, block, f) {
-        return this.broadcast(this.marshal("getCode", [address, block || "latest"]), f);
-    },
-    getCode: function (address, block, f) {
-        return this.broadcast(this.marshal("getCode", [address, block || "latest"]), f);
-    },
-
-    // Ethereum node status checks
-
-    listening: function (f) {
-        var response, self = this;
-        try {
-            if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
-                throw new this.Error(errors.ETHEREUM_NOT_FOUND);
-            }
-            if (f && f.constructor === Function) {
-                var timeout = setTimeout(function () {
-                    if (!response) f(false);
-                }, 2500);
-                setTimeout(function () {
-                    self.net("listening", [], function (res) {
-                        clearTimeout(timeout);
-                        f(!!res);
-                    });
-                }, 0);
-            } else {
-                return !!this.net("listening");
-            }
-        } catch (e) {
-            if (f && f.constructor === Function) {
-                return f(false);
-            }
-            return false;
-        }
-    },
-
-    unlocked: function (account, f) {
-        if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
-            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
-        }
-        try {
-            if (f && f.constructor === Function) {
-                this.sign(account, "1010101", function (res) {
-                    if (res) {
-                        if (res.error) return f(false);
-                        return f(true);
-                    }
-                    f(false);
-                });
-            } else {
-                var res = this.sign(account, "1010101");
-                if (res) {
-                    if (res.error) {
-                        return false;
-                    }
-                    return true;
-                }
-                return false;
-            }
-        } catch (e) {
-            if (f && f.constructor === Function) return f(false);
-            return false;
-        }
-    },
-
-    /**
-     * Invoke a function from a contract on the blockchain.
-     *
-     * Input tx format:
-     * {
-     *    from: <sender's address> (hexstring; optional, coinbase default)
-     *    to: <contract address> (hexstring)
-     *    method: <function name> (string)
-     *    signature: <function signature, e.g. "iia"> (string)
-     *    params: <parameters passed to the function> (optional)
-     *    returns: <"number[]", "int", "BigNumber", or "string" (default)>
-     *    send: <true to sendTransaction, false to call (default)>
-     * }
-     */
-    invoke: function (itx, f) {
-        var tx, data_abi, packaged, invocation, invoked;
-        try {
-            if (itx) {
-                if (itx.send && itx.invocation && itx.invocation.invoke &&
-                    itx.invocation.invoke.constructor === Function)
-                {
-                    return itx.invocation.invoke.call(itx.invocation.context, itx, f);
-                } else {
-                    tx = abi.copy(itx);
-                    if (tx.params !== undefined) {
-                        if (tx.params.constructor === Array) {
-                            for (var i = 0, len = tx.params.length; i < len; ++i) {
-                                if (tx.params[i] !== undefined &&
-                                    tx.params[i].constructor === BigNumber) {
-                                    tx.params[i] = abi.hex(tx.params[i]);
-                                }
-                            }
-                        } else if (tx.params.constructor === BigNumber) {
-                            tx.params = abi.hex(tx.params);
-                        }
-                    }
-                    if (tx.to) tx.to = abi.prefix_hex(tx.to);
-                    if (tx.from) tx.from = abi.prefix_hex(tx.from);
-                    data_abi = abi.encode(tx);
-                    if (data_abi) {
-                        packaged = {
-                            from: tx.from,
-                            to: tx.to,
-                            data: data_abi,
-                            gas: tx.gas || this.DEFAULT_GAS,
-                            gasPrice: tx.gasPrice
-                        };
-                        if (tx.value) packaged.value = tx.value;
-                        if (tx.returns) packaged.returns = tx.returns;
-                        if (this.debug.broadcast) {
-                            packaged.debug = abi.copy(tx);
-                            packaged.debug.batch = false;
-                        }
-                        invocation = (tx.send) ? this.sendTx : this.call;
-                        invoked = true;
-                        return invocation.call(this, packaged, f);
-                    }
-                }
-            }
-        } catch (exc) {
-            if (f) return f(errors.TRANSACTION_FAILED);
-            return errors.TRANSACTION_FAILED;
-        }
-        if (!invoked) {
-            if (f) return f(errors.TRANSACTION_FAILED);
-            return errors.TRANSACTION_FAILED;
-        }
-    },
-
-    /**
-     * Batched RPC commands
-     */
-    batch: function (txlist, f) {
-        var numCommands, rpclist, callbacks, tx, data_abi, packaged, invocation;
-        if (txlist.constructor === Array) {
-            numCommands = txlist.length;
-            rpclist = new Array(numCommands);
-            callbacks = new Array(numCommands);
-            for (var i = 0; i < numCommands; ++i) {
-                tx = abi.copy(txlist[i]);
-                if (tx.params !== undefined) {
-                    if (tx.params.constructor === Array) {
-                        for (var j = 0, len = tx.params.length; j < len; ++j) {
-                            if (tx.params[j] !== undefined &&
-                                tx.params[j] !== null &&
-                                tx.params[j].constructor === BigNumber) {
-                                tx.params[j] = abi.hex(tx.params[j]);
-                            }
-                        }
-                    } else if (tx.params.constructor === BigNumber) {
-                        tx.params = abi.hex(tx.params);
-                    }
-                }
-                if (tx.from) tx.from = abi.prefix_hex(tx.from);
-                tx.to = abi.prefix_hex(tx.to);
-                data_abi = abi.encode(tx);
-                if (data_abi) {
-                    if (tx.callback && tx.callback.constructor === Function) {
-                        callbacks[i] = tx.callback;
-                        delete tx.callback;
-                    }
-                    packaged = {
-                        from: tx.from,
-                        to: tx.to,
-                        data: data_abi,
-                        gas: tx.gas || this.DEFAULT_GAS,
-                        gasPrice: tx.gasPrice
-                    };
-                    if (tx.value) packaged.value = tx.value;
-                    if (tx.returns) packaged.returns = tx.returns;
-                    if (this.debug.broadcast) {
-                        packaged.debug = abi.copy(tx);
-                        packaged.debug.batch = true;
-                    }
-                    invocation = (tx.send) ? "sendTransaction" : "call";
-                    rpclist[i] = this.marshal(invocation, packaged);
-                } else {
-                    console.log("unable to package commands for batch RPC");
-                    return rpclist;
-                }
-            }
-            if (f) {
-                if (f.constructor === Function) { // callback on whole array
-                    this.broadcast(rpclist, f);
-                } else if (f === true) {
-                    this.broadcast(rpclist, function (res) {
-                        if (res) {
-                            if (res.constructor === Array && res.length) {
-                                for (j = 0; j < numCommands; ++j) {
-                                    if (res[j] && callbacks[j]) {
-                                        callbacks[j](res[j]);
-                                    }
-                                }
-                            } else {
-                                if (callbacks.length && callbacks[0]) {
-                                    callbacks[0](res);
-                                }
-                            }
-                        }
-                    });
-                }
-            } else {
-                return this.broadcast(rpclist, f);
-            }
-        } else {
-            console.log("expected array for batch RPC, invoking instead");
-            return this.invoke(txlist, f);
-        }
-    },
-
-    encodeResult: function (result, returns) {
-        if (result) {
-            if (returns === "null") {
-                result = null;
-            } else if (returns === "address" || returns === "address[]") {
-                result = abi.format_address(result);
-            } else {
-                if (!returns || returns === "hash[]" || returns === "hash") {
-                    result = abi.hex(result);
-                } else if (returns === "number") {
-                    result = abi.string(result);
-                }
-            }
-        }
-        return result;
-    },
-
-    errorCodes: function (tx, response) {
-        if (response) {
-            if (response.constructor === Array) {
-                for (var i = 0, len = response.length; i < len; ++i) {
-                    response[i] = this.errorCodes(tx.method, response[i]);
-                }
-            } else if (response.name && response.message && response.stack) {
-                response.error = response.name;
-            } else if (!response.error) {
-                if (errors[response]) {
-                    response = {
-                        error: response,
-                        message: errors[response]
-                    };
-                } else {
-                    if (tx.returns && tx.returns !== "string" ||
-                        (response && response.constructor === String &&
-                        response.slice(0,2) === "0x"))
-                    {
-                        var responseNumber = abi.bignum(response);
-                        if (responseNumber) {
-                            responseNumber = abi.string(responseNumber);
-                            if (errors[tx.method] && errors[tx.method][responseNumber]) {
-                                response = {
-                                    error: responseNumber,
-                                    message: errors[tx.method][responseNumber]
-                                };
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return response;
-    },
-
-    fire: function (itx, callback) {
-        var self = this;
-        var tx = abi.copy(itx);
-        if (callback) {
-            this.invoke(tx, function (res) {
-                res = self.errorCodes(tx, res);
-                if (res) {
-                    if (res.error) return callback(res);
-                    return callback(self.encodeResult(res, itx.returns));
-                }
-                callback(errors.NO_RESPONSE);
-            });
-        } else {
-            var res = this.errorCodes(tx, this.invoke(tx));
-            if (res) {
-                if (res.error) return res;
-                return this.encodeResult(res, itx.returns);
-            }
-            throw new this.Error(errors.NO_RESPONSE);
-        }
-    },
-
-    /***************************************
-     * Send-call-confirm callback sequence *
-     ***************************************/
-
-    checkBlockHash: function (tx, callreturn, itx, txhash, returns, onSent, onSuccess, onFailed) {
-        if (!this.txs[txhash]) this.txs[txhash] = {};
-        if (this.txs[txhash].count === undefined) this.txs[txhash].count = 0;
-        ++this.txs[txhash].count;
-        if (tx && tx.blockHash && abi.number(tx.blockHash) !== 0) {
-            tx.callReturn = this.encodeResult(callreturn, returns);
-            tx.txHash = tx.hash;
-            delete tx.hash;
-            this.txs[txhash].status = "confirmed";
-            clearTimeout(this.notifications[txhash]);
-            if (onSuccess && onSuccess.constructor === Function) onSuccess(tx);
-        } else {
-            var self = this;
-            if (this.txs[txhash].count < this.TX_POLL_MAX) {
-                this.notifications[txhash] = setTimeout(function () {
-                    if (self.txs[txhash].status === "pending") {
-                        self.txNotify(callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
-                    }
-                }, this.TX_POLL_INTERVAL);
-            } else {
-                self.txs[txhash].status = "unconfirmed";
-                if (onFailed && onFailed.constructor === Function) {
-                    onFailed(errors.TRANSACTION_NOT_CONFIRMED);
-                }
-            }
-        }
-    },
-
-    txNotify: function (callreturn, itx, txhash, returns, onSent, onSuccess, onFailed) {
-        var self = this;
-        this.getTx(txhash, function (tx) {
-            if (tx) {
-                return self.checkBlockHash(tx, callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
-            }
-            self.txs[txhash].status = "failed";
-
-            // resubmit if this is a raw transaction and has a duplicate nonce
-            if (self.rawTxs[txhash] && self.rawTxs[txhash].tx) {
-                var duplicateNonce;
-                for (var hash in self.rawTxs) {
-                    if (!self.rawTxs.hasOwnProperty(hash)) continue;
-                    if (self.rawTxs[hash].tx.nonce === self.rawTxs[txhash].tx.nonce) {
-                        duplicateNonce = true;
-                        break;
-                    }
-                }
-                if (duplicateNonce) {
-                    if (returns) itx.returns = returns;
-                    self.txs[txhash].status = "resubmitted";
-                    return self.transact(itx, onSent, onSuccess, onFailed);
-                } else {
-                    if (onFailed) onFailed(errors.TRANSACTION_NOT_FOUND);
-                }
-            } else {
-                if (onFailed) onFailed(errors.TRANSACTION_NOT_FOUND);
-            }
-        });
-    },
-
-    confirmTx: function (tx, txhash, returns, onSent, onSuccess, onFailed) {
-        var self = this;
-        if (tx && txhash) {
-            if (errors[txhash]) {
-                if (onFailed) onFailed({
-                    error: txhash,
-                    message: errors[txhash],
-                    tx: tx
-                });
-            } else {
-                if (this.txs[txhash]) {
-                    if (onFailed) onFailed(errors.DUPLICATE_TRANSACTION);
-                } else {
-                    this.txs[txhash] = { hash: txhash, tx: tx, count: 0, status: "pending" };
-                    this.txs[txhash].tx.returns = returns;
-                    return this.getTx(txhash, function (sent) {
-                        if (returns !== "null") {
-                            return self.call({
-                                from: sent.from,
-                                to: sent.to || tx.to,
-                                value: sent.value || tx.value,
-                                data: sent.input
-                            }, function (callReturn) {
-                                if (callReturn) {
-                                    if (errors[callReturn]) {
-                                        self.txs[txhash].status = "failed";
-                                        if (onFailed) onFailed({
-                                            error: callReturn,
-                                            message: errors[callReturn],
-                                            tx: tx
-                                        });
-                                    } else {
-                                        callReturn = JSON.stringify({ result: callReturn });
-
-                                        // transform callReturn to a number
-                                        var numReturn = self.parse(callReturn, "number");
-
-                                        // check if numReturn is an error object
-                                        if (numReturn.constructor === Object && numReturn.error) {
-                                            self.txs[txhash].status = "failed";
-                                            if (onFailed) onFailed(numReturn);
-                                        } else if (errors[numReturn]) {
-                                            self.txs[txhash].status = "failed";
-                                            if (onFailed) onFailed({
-                                                error: numReturn,
-                                                message: errors[numReturn],
-                                                tx: tx
-                                            });
-                                        } else {
-                                            try {
-
-                                                // check if numReturn is an error code
-                                                if (numReturn && numReturn.constructor === BigNumber) {
-                                                    numReturn = numReturn.toFixed();
-                                                }
-                                                if (numReturn && errors[tx.method] && errors[tx.method][numReturn]) {
-                                                    self.txs[txhash].status = "failed";
-                                                    if (onFailed) onFailed({
-                                                        error: numReturn,
-                                                        message: errors[tx.method][numReturn],
-                                                        tx: tx
-                                                    });
-                                                } else {
-
-                                                    // no errors found, so transform to the requested
-                                                    // return type, specified by "returns" parameter
-                                                    callReturn = self.parse(callReturn, returns);
-                                                    self.txs[txhash].callReturn = self.encodeResult(callReturn, returns);
-
-                                                    // send the transaction hash and return value back
-                                                    // to the client, using the onSent callback
-                                                    onSent({
-                                                        txHash: txhash,
-                                                        callReturn: self.encodeResult(callReturn, returns)
-                                                    });
-
-                                                    // if an onSuccess callback was supplied, then
-                                                    // poll the network until the transaction is
-                                                    // included in a block (i.e., has a non-null
-                                                    // blockHash field)
-                                                    if (onSuccess && onSuccess.constructor === Function) {
-                                                        self.txNotify(
-                                                            callReturn,
-                                                            tx,
-                                                            txhash,
-                                                            returns,
-                                                            onSent,
-                                                            onSuccess,
-                                                            onFailed
-                                                        );
-                                                    }
-                                                }
-
-                                            // something went wrong :(
-                                            } catch (e) {
-                                                self.txs[txhash].status = "failed";
-                                                if (onFailed) onFailed(e);
-                                            }
-                                        }
-                                    }
-
-                                // no return value for call
-                                } else {
-                                    self.txs[txhash].status = "failed";
-                                    if (onFailed) onFailed(errors.NULL_CALL_RETURN);
-                                }
-                            });
-                        }
-
-                        // if returns type is null, skip the intermediate call
-                        onSent({ txHash: txhash, callReturn: null });
-                        if (onSuccess && onSuccess.constructor === Function) {
-                            self.txNotify(null, tx, txhash, returns, onSent, onSuccess, onFailed);
-                        }
-                    });
-                }
-            }
-        }
-    },
-
-    transact: function (tx, onSent, onSuccess, onFailed) {
-        var self = this;
-        var returns = tx.returns;
-        tx.send = true;
-        delete tx.returns;
-        if (onSent && onSent.constructor === Function) {
-            return this.invoke(tx, function (txhash) {
-                if (txhash) {
-                    if (txhash.error) {
-                        if (onFailed) onFailed(txhash);
-                    } else {
-                        txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
-                        self.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
-                    }
-                } else {
-                    if (onFailed) onFailed(errors.NULL_RESPONSE);
-                }
-            });
-        }
-        return this.invoke(tx);
-    }
-
-};
-
-}).call(this,require('_process'))
-},{"./errors":6,"_process":230,"async":9,"augur-abi":1,"augur-contracts":5,"bignumber.js":10,"browser-request":11,"net":12,"request":265,"sync-request":14}],9:[function(require,module,exports){
-(function (process,global){
-/*!
- * async
- * https://github.com/caolan/async
- *
- * Copyright 2010-2014 Caolan McMahon
- * Released under the MIT license
- */
-(function () {
-
-    var async = {};
-    function noop() {}
-    function identity(v) {
-        return v;
-    }
-    function toBool(v) {
-        return !!v;
-    }
-    function notId(v) {
-        return !v;
-    }
-
-    // global on the server, window in the browser
-    var previous_async;
-
-    // Establish the root object, `window` (`self`) in the browser, `global`
-    // on the server, or `this` in some virtual machines. We use `self`
-    // instead of `window` for `WebWorker` support.
-    var root = typeof self === 'object' && self.self === self && self ||
-            typeof global === 'object' && global.global === global && global ||
-            this;
-
-    if (root != null) {
-        previous_async = root.async;
-    }
-
-    async.noConflict = function () {
-        root.async = previous_async;
-        return async;
-    };
-
-    function only_once(fn) {
-        return function() {
-            if (fn === null) throw new Error("Callback was already called.");
-            fn.apply(this, arguments);
-            fn = null;
-        };
-    }
-
-    function _once(fn) {
-        return function() {
-            if (fn === null) return;
-            fn.apply(this, arguments);
-            fn = null;
-        };
-    }
-
-    //// cross-browser compatiblity functions ////
-
-    var _toString = Object.prototype.toString;
-
-    var _isArray = Array.isArray || function (obj) {
-        return _toString.call(obj) === '[object Array]';
-    };
-
-    // Ported from underscore.js isObject
-    var _isObject = function(obj) {
-        var type = typeof obj;
-        return type === 'function' || type === 'object' && !!obj;
-    };
-
-    function _isArrayLike(arr) {
-        return _isArray(arr) || (
-            // has a positive integer length property
-            typeof arr.length === "number" &&
-            arr.length >= 0 &&
-            arr.length % 1 === 0
-        );
-    }
-
-    function _arrayEach(arr, iterator) {
-        var index = -1,
-            length = arr.length;
-
-        while (++index < length) {
-            iterator(arr[index], index, arr);
-        }
-    }
-
-    function _map(arr, iterator) {
-        var index = -1,
-            length = arr.length,
-            result = Array(length);
-
-        while (++index < length) {
-            result[index] = iterator(arr[index], index, arr);
-        }
-        return result;
-    }
-
-    function _range(count) {
-        return _map(Array(count), function (v, i) { return i; });
-    }
-
-    function _reduce(arr, iterator, memo) {
-        _arrayEach(arr, function (x, i, a) {
-            memo = iterator(memo, x, i, a);
-        });
-        return memo;
-    }
-
-    function _forEachOf(object, iterator) {
-        _arrayEach(_keys(object), function (key) {
-            iterator(object[key], key);
-        });
-    }
-
-    function _indexOf(arr, item) {
-        for (var i = 0; i < arr.length; i++) {
-            if (arr[i] === item) return i;
-        }
-        return -1;
-    }
-
-    var _keys = Object.keys || function (obj) {
-        var keys = [];
-        for (var k in obj) {
-            if (obj.hasOwnProperty(k)) {
-                keys.push(k);
-            }
-        }
-        return keys;
-    };
-
-    function _keyIterator(coll) {
-        var i = -1;
-        var len;
-        var keys;
-        if (_isArrayLike(coll)) {
-            len = coll.length;
-            return function next() {
-                i++;
-                return i < len ? i : null;
-            };
-        } else {
-            keys = _keys(coll);
-            len = keys.length;
-            return function next() {
-                i++;
-                return i < len ? keys[i] : null;
-            };
-        }
-    }
-
-    // Similar to ES6's rest param (http://ariya.ofilabs.com/2013/03/es6-and-rest-parameter.html)
-    // This accumulates the arguments passed into an array, after a given index.
-    // From underscore.js (https://github.com/jashkenas/underscore/pull/2140).
-    function _restParam(func, startIndex) {
-        startIndex = startIndex == null ? func.length - 1 : +startIndex;
-        return function() {
-            var length = Math.max(arguments.length - startIndex, 0);
-            var rest = Array(length);
-            for (var index = 0; index < length; index++) {
-                rest[index] = arguments[index + startIndex];
-            }
-            switch (startIndex) {
-                case 0: return func.call(this, rest);
-                case 1: return func.call(this, arguments[0], rest);
-            }
-            // Currently unused but handle cases outside of the switch statement:
-            // var args = Array(startIndex + 1);
-            // for (index = 0; index < startIndex; index++) {
-            //     args[index] = arguments[index];
-            // }
-            // args[startIndex] = rest;
-            // return func.apply(this, args);
-        };
-    }
-
-    function _withoutIndex(iterator) {
-        return function (value, index, callback) {
-            return iterator(value, callback);
-        };
-    }
-
-    //// exported async module functions ////
-
-    //// nextTick implementation with browser-compatible fallback ////
-
-    // capture the global reference to guard against fakeTimer mocks
-    var _setImmediate = typeof setImmediate === 'function' && setImmediate;
-
-    var _delay = _setImmediate ? function(fn) {
-        // not a direct alias for IE10 compatibility
-        _setImmediate(fn);
-    } : function(fn) {
-        setTimeout(fn, 0);
-    };
-
-    if (typeof process === 'object' && typeof process.nextTick === 'function') {
-        async.nextTick = process.nextTick;
-    } else {
-        async.nextTick = _delay;
-    }
-    async.setImmediate = _setImmediate ? _delay : async.nextTick;
-
-
-    async.forEach =
-    async.each = function (arr, iterator, callback) {
-        return async.eachOf(arr, _withoutIndex(iterator), callback);
-    };
-
-    async.forEachSeries =
-    async.eachSeries = function (arr, iterator, callback) {
-        return async.eachOfSeries(arr, _withoutIndex(iterator), callback);
-    };
-
-
-    async.forEachLimit =
-    async.eachLimit = function (arr, limit, iterator, callback) {
-        return _eachOfLimit(limit)(arr, _withoutIndex(iterator), callback);
-    };
-
-    async.forEachOf =
-    async.eachOf = function (object, iterator, callback) {
-        callback = _once(callback || noop);
-        object = object || [];
-
-        var iter = _keyIterator(object);
-        var key, completed = 0;
-
-        while ((key = iter()) != null) {
-            completed += 1;
-            iterator(object[key], key, only_once(done));
-        }
-
-        if (completed === 0) callback(null);
-
-        function done(err) {
-            completed--;
-            if (err) {
-                callback(err);
-            }
-            // Check key is null in case iterator isn't exhausted
-            // and done resolved synchronously.
-            else if (key === null && completed <= 0) {
-                callback(null);
-            }
-        }
-    };
-
-    async.forEachOfSeries =
-    async.eachOfSeries = function (obj, iterator, callback) {
-        callback = _once(callback || noop);
-        obj = obj || [];
-        var nextKey = _keyIterator(obj);
-        var key = nextKey();
-        function iterate() {
-            var sync = true;
-            if (key === null) {
-                return callback(null);
-            }
-            iterator(obj[key], key, only_once(function (err) {
-                if (err) {
-                    callback(err);
-                }
-                else {
-                    key = nextKey();
-                    if (key === null) {
-                        return callback(null);
-                    } else {
-                        if (sync) {
-                            async.setImmediate(iterate);
-                        } else {
-                            iterate();
-                        }
-                    }
-                }
-            }));
-            sync = false;
-        }
-        iterate();
-    };
-
-
-
-    async.forEachOfLimit =
-    async.eachOfLimit = function (obj, limit, iterator, callback) {
-        _eachOfLimit(limit)(obj, iterator, callback);
-    };
-
-    function _eachOfLimit(limit) {
-
-        return function (obj, iterator, callback) {
-            callback = _once(callback || noop);
-            obj = obj || [];
-            var nextKey = _keyIterator(obj);
-            if (limit <= 0) {
-                return callback(null);
-            }
-            var done = false;
-            var running = 0;
-            var errored = false;
-
-            (function replenish () {
-                if (done && running <= 0) {
-                    return callback(null);
-                }
-
-                while (running < limit && !errored) {
-                    var key = nextKey();
-                    if (key === null) {
-                        done = true;
-                        if (running <= 0) {
-                            callback(null);
-                        }
-                        return;
-                    }
-                    running += 1;
-                    iterator(obj[key], key, only_once(function (err) {
-                        running -= 1;
-                        if (err) {
-                            callback(err);
-                            errored = true;
-                        }
-                        else {
-                            replenish();
-                        }
-                    }));
-                }
-            })();
-        };
-    }
-
-
-    function doParallel(fn) {
-        return function (obj, iterator, callback) {
-            return fn(async.eachOf, obj, iterator, callback);
-        };
-    }
-    function doParallelLimit(fn) {
-        return function (obj, limit, iterator, callback) {
-            return fn(_eachOfLimit(limit), obj, iterator, callback);
-        };
-    }
-    function doSeries(fn) {
-        return function (obj, iterator, callback) {
-            return fn(async.eachOfSeries, obj, iterator, callback);
-        };
-    }
-
-    function _asyncMap(eachfn, arr, iterator, callback) {
-        callback = _once(callback || noop);
-        arr = arr || [];
-        var results = _isArrayLike(arr) ? [] : {};
-        eachfn(arr, function (value, index, callback) {
-            iterator(value, function (err, v) {
-                results[index] = v;
-                callback(err);
-            });
-        }, function (err) {
-            callback(err, results);
-        });
-    }
-
-    async.map = doParallel(_asyncMap);
-    async.mapSeries = doSeries(_asyncMap);
-    async.mapLimit = doParallelLimit(_asyncMap);
-
-    // reduce only has a series version, as doing reduce in parallel won't
-    // work in many situations.
-    async.inject =
-    async.foldl =
-    async.reduce = function (arr, memo, iterator, callback) {
-        async.eachOfSeries(arr, function (x, i, callback) {
-            iterator(memo, x, function (err, v) {
-                memo = v;
-                callback(err);
-            });
-        }, function (err) {
-            callback(err, memo);
-        });
-    };
-
-    async.foldr =
-    async.reduceRight = function (arr, memo, iterator, callback) {
-        var reversed = _map(arr, identity).reverse();
-        async.reduce(reversed, memo, iterator, callback);
-    };
-
-    async.transform = function (arr, memo, iterator, callback) {
-        if (arguments.length === 3) {
-            callback = iterator;
-            iterator = memo;
-            memo = _isArray(arr) ? [] : {};
-        }
-
-        async.eachOf(arr, function(v, k, cb) {
-            iterator(memo, v, k, cb);
-        }, function(err) {
-            callback(err, memo);
-        });
-    };
-
-    function _filter(eachfn, arr, iterator, callback) {
-        var results = [];
-        eachfn(arr, function (x, index, callback) {
-            iterator(x, function (v) {
-                if (v) {
-                    results.push({index: index, value: x});
-                }
-                callback();
-            });
-        }, function () {
-            callback(_map(results.sort(function (a, b) {
-                return a.index - b.index;
-            }), function (x) {
-                return x.value;
-            }));
-        });
-    }
-
-    async.select =
-    async.filter = doParallel(_filter);
-
-    async.selectLimit =
-    async.filterLimit = doParallelLimit(_filter);
-
-    async.selectSeries =
-    async.filterSeries = doSeries(_filter);
-
-    function _reject(eachfn, arr, iterator, callback) {
-        _filter(eachfn, arr, function(value, cb) {
-            iterator(value, function(v) {
-                cb(!v);
-            });
-        }, callback);
-    }
-    async.reject = doParallel(_reject);
-    async.rejectLimit = doParallelLimit(_reject);
-    async.rejectSeries = doSeries(_reject);
-
-    function _createTester(eachfn, check, getResult) {
-        return function(arr, limit, iterator, cb) {
-            function done() {
-                if (cb) cb(getResult(false, void 0));
-            }
-            function iteratee(x, _, callback) {
-                if (!cb) return callback();
-                iterator(x, function (v) {
-                    if (cb && check(v)) {
-                        cb(getResult(true, x));
-                        cb = iterator = false;
-                    }
-                    callback();
-                });
-            }
-            if (arguments.length > 3) {
-                eachfn(arr, limit, iteratee, done);
-            } else {
-                cb = iterator;
-                iterator = limit;
-                eachfn(arr, iteratee, done);
-            }
-        };
-    }
-
-    async.any =
-    async.some = _createTester(async.eachOf, toBool, identity);
-
-    async.someLimit = _createTester(async.eachOfLimit, toBool, identity);
-
-    async.all =
-    async.every = _createTester(async.eachOf, notId, notId);
-
-    async.everyLimit = _createTester(async.eachOfLimit, notId, notId);
-
-    function _findGetResult(v, x) {
-        return x;
-    }
-    async.detect = _createTester(async.eachOf, identity, _findGetResult);
-    async.detectSeries = _createTester(async.eachOfSeries, identity, _findGetResult);
-    async.detectLimit = _createTester(async.eachOfLimit, identity, _findGetResult);
-
-    async.sortBy = function (arr, iterator, callback) {
-        async.map(arr, function (x, callback) {
-            iterator(x, function (err, criteria) {
-                if (err) {
-                    callback(err);
-                }
-                else {
-                    callback(null, {value: x, criteria: criteria});
-                }
-            });
-        }, function (err, results) {
-            if (err) {
-                return callback(err);
-            }
-            else {
-                callback(null, _map(results.sort(comparator), function (x) {
-                    return x.value;
-                }));
-            }
-
-        });
-
-        function comparator(left, right) {
-            var a = left.criteria, b = right.criteria;
-            return a < b ? -1 : a > b ? 1 : 0;
-        }
-    };
-
-    async.auto = function (tasks, concurrency, callback) {
-        if (!callback) {
-            // concurrency is optional, shift the args.
-            callback = concurrency;
-            concurrency = null;
-        }
-        callback = _once(callback || noop);
-        var keys = _keys(tasks);
-        var remainingTasks = keys.length;
-        if (!remainingTasks) {
-            return callback(null);
-        }
-        if (!concurrency) {
-            concurrency = remainingTasks;
-        }
-
-        var results = {};
-        var runningTasks = 0;
-
-        var listeners = [];
-        function addListener(fn) {
-            listeners.unshift(fn);
-        }
-        function removeListener(fn) {
-            var idx = _indexOf(listeners, fn);
-            if (idx >= 0) listeners.splice(idx, 1);
-        }
-        function taskComplete() {
-            remainingTasks--;
-            _arrayEach(listeners.slice(0), function (fn) {
-                fn();
-            });
-        }
-
-        addListener(function () {
-            if (!remainingTasks) {
-                callback(null, results);
-            }
-        });
-
-        _arrayEach(keys, function (k) {
-            var task = _isArray(tasks[k]) ? tasks[k]: [tasks[k]];
-            var taskCallback = _restParam(function(err, args) {
-                runningTasks--;
-                if (args.length <= 1) {
-                    args = args[0];
-                }
-                if (err) {
-                    var safeResults = {};
-                    _forEachOf(results, function(val, rkey) {
-                        safeResults[rkey] = val;
-                    });
-                    safeResults[k] = args;
-                    callback(err, safeResults);
-                }
-                else {
-                    results[k] = args;
-                    async.setImmediate(taskComplete);
-                }
-            });
-            var requires = task.slice(0, task.length - 1);
-            // prevent dead-locks
-            var len = requires.length;
-            var dep;
-            while (len--) {
-                if (!(dep = tasks[requires[len]])) {
-                    throw new Error('Has inexistant dependency');
-                }
-                if (_isArray(dep) && _indexOf(dep, k) >= 0) {
-                    throw new Error('Has cyclic dependencies');
-                }
-            }
-            function ready() {
-                return runningTasks < concurrency && _reduce(requires, function (a, x) {
-                    return (a && results.hasOwnProperty(x));
-                }, true) && !results.hasOwnProperty(k);
-            }
-            if (ready()) {
-                runningTasks++;
-                task[task.length - 1](taskCallback, results);
-            }
-            else {
-                addListener(listener);
-            }
-            function listener() {
-                if (ready()) {
-                    runningTasks++;
-                    removeListener(listener);
-                    task[task.length - 1](taskCallback, results);
-                }
-            }
-        });
-    };
-
-
-
-    async.retry = function(times, task, callback) {
-        var DEFAULT_TIMES = 5;
-        var DEFAULT_INTERVAL = 0;
-
-        var attempts = [];
-
-        var opts = {
-            times: DEFAULT_TIMES,
-            interval: DEFAULT_INTERVAL
-        };
-
-        function parseTimes(acc, t){
-            if(typeof t === 'number'){
-                acc.times = parseInt(t, 10) || DEFAULT_TIMES;
-            } else if(typeof t === 'object'){
-                acc.times = parseInt(t.times, 10) || DEFAULT_TIMES;
-                acc.interval = parseInt(t.interval, 10) || DEFAULT_INTERVAL;
-            } else {
-                throw new Error('Unsupported argument type for \'times\': ' + typeof t);
-            }
-        }
-
-        var length = arguments.length;
-        if (length < 1 || length > 3) {
-            throw new Error('Invalid arguments - must be either (task), (task, callback), (times, task) or (times, task, callback)');
-        } else if (length <= 2 && typeof times === 'function') {
-            callback = task;
-            task = times;
-        }
-        if (typeof times !== 'function') {
-            parseTimes(opts, times);
-        }
-        opts.callback = callback;
-        opts.task = task;
-
-        function wrappedTask(wrappedCallback, wrappedResults) {
-            function retryAttempt(task, finalAttempt) {
-                return function(seriesCallback) {
-                    task(function(err, result){
-                        seriesCallback(!err || finalAttempt, {err: err, result: result});
-                    }, wrappedResults);
-                };
-            }
-
-            function retryInterval(interval){
-                return function(seriesCallback){
-                    setTimeout(function(){
-                        seriesCallback(null);
-                    }, interval);
-                };
-            }
-
-            while (opts.times) {
-
-                var finalAttempt = !(opts.times-=1);
-                attempts.push(retryAttempt(opts.task, finalAttempt));
-                if(!finalAttempt && opts.interval > 0){
-                    attempts.push(retryInterval(opts.interval));
-                }
-            }
-
-            async.series(attempts, function(done, data){
-                data = data[data.length - 1];
-                (wrappedCallback || opts.callback)(data.err, data.result);
-            });
-        }
-
-        // If a callback is passed, run this as a controll flow
-        return opts.callback ? wrappedTask() : wrappedTask;
-    };
-
-    async.waterfall = function (tasks, callback) {
-        callback = _once(callback || noop);
-        if (!_isArray(tasks)) {
-            var err = new Error('First argument to waterfall must be an array of functions');
-            return callback(err);
-        }
-        if (!tasks.length) {
-            return callback();
-        }
-        function wrapIterator(iterator) {
-            return _restParam(function (err, args) {
-                if (err) {
-                    callback.apply(null, [err].concat(args));
-                }
-                else {
-                    var next = iterator.next();
-                    if (next) {
-                        args.push(wrapIterator(next));
-                    }
-                    else {
-                        args.push(callback);
-                    }
-                    ensureAsync(iterator).apply(null, args);
-                }
-            });
-        }
-        wrapIterator(async.iterator(tasks))();
-    };
-
-    function _parallel(eachfn, tasks, callback) {
-        callback = callback || noop;
-        var results = _isArrayLike(tasks) ? [] : {};
-
-        eachfn(tasks, function (task, key, callback) {
-            task(_restParam(function (err, args) {
-                if (args.length <= 1) {
-                    args = args[0];
-                }
-                results[key] = args;
-                callback(err);
-            }));
-        }, function (err) {
-            callback(err, results);
-        });
-    }
-
-    async.parallel = function (tasks, callback) {
-        _parallel(async.eachOf, tasks, callback);
-    };
-
-    async.parallelLimit = function(tasks, limit, callback) {
-        _parallel(_eachOfLimit(limit), tasks, callback);
-    };
-
-    async.series = function(tasks, callback) {
-        _parallel(async.eachOfSeries, tasks, callback);
-    };
-
-    async.iterator = function (tasks) {
-        function makeCallback(index) {
-            function fn() {
-                if (tasks.length) {
-                    tasks[index].apply(null, arguments);
-                }
-                return fn.next();
-            }
-            fn.next = function () {
-                return (index < tasks.length - 1) ? makeCallback(index + 1): null;
-            };
-            return fn;
-        }
-        return makeCallback(0);
-    };
-
-    async.apply = _restParam(function (fn, args) {
-        return _restParam(function (callArgs) {
-            return fn.apply(
-                null, args.concat(callArgs)
-            );
-        });
-    });
-
-    function _concat(eachfn, arr, fn, callback) {
-        var result = [];
-        eachfn(arr, function (x, index, cb) {
-            fn(x, function (err, y) {
-                result = result.concat(y || []);
-                cb(err);
-            });
-        }, function (err) {
-            callback(err, result);
-        });
-    }
-    async.concat = doParallel(_concat);
-    async.concatSeries = doSeries(_concat);
-
-    async.whilst = function (test, iterator, callback) {
-        callback = callback || noop;
-        if (test()) {
-            var next = _restParam(function(err, args) {
-                if (err) {
-                    callback(err);
-                } else if (test.apply(this, args)) {
-                    iterator(next);
-                } else {
-                    callback(null);
-                }
-            });
-            iterator(next);
-        } else {
-            callback(null);
-        }
-    };
-
-    async.doWhilst = function (iterator, test, callback) {
-        var calls = 0;
-        return async.whilst(function() {
-            return ++calls <= 1 || test.apply(this, arguments);
-        }, iterator, callback);
-    };
-
-    async.until = function (test, iterator, callback) {
-        return async.whilst(function() {
-            return !test.apply(this, arguments);
-        }, iterator, callback);
-    };
-
-    async.doUntil = function (iterator, test, callback) {
-        return async.doWhilst(iterator, function() {
-            return !test.apply(this, arguments);
-        }, callback);
-    };
-
-    async.during = function (test, iterator, callback) {
-        callback = callback || noop;
-
-        var next = _restParam(function(err, args) {
-            if (err) {
-                callback(err);
-            } else {
-                args.push(check);
-                test.apply(this, args);
-            }
-        });
-
-        var check = function(err, truth) {
-            if (err) {
-                callback(err);
-            } else if (truth) {
-                iterator(next);
-            } else {
-                callback(null);
-            }
-        };
-
-        test(check);
-    };
-
-    async.doDuring = function (iterator, test, callback) {
-        var calls = 0;
-        async.during(function(next) {
-            if (calls++ < 1) {
-                next(null, true);
-            } else {
-                test.apply(this, arguments);
-            }
-        }, iterator, callback);
-    };
-
-    function _queue(worker, concurrency, payload) {
-        if (concurrency == null) {
-            concurrency = 1;
-        }
-        else if(concurrency === 0) {
-            throw new Error('Concurrency must not be zero');
-        }
-        function _insert(q, data, pos, callback) {
-            if (callback != null && typeof callback !== "function") {
-                throw new Error("task callback must be a function");
-            }
-            q.started = true;
-            if (!_isArray(data)) {
-                data = [data];
-            }
-            if(data.length === 0 && q.idle()) {
-                // call drain immediately if there are no tasks
-                return async.setImmediate(function() {
-                    q.drain();
-                });
-            }
-            _arrayEach(data, function(task) {
-                var item = {
-                    data: task,
-                    callback: callback || noop
-                };
-
-                if (pos) {
-                    q.tasks.unshift(item);
-                } else {
-                    q.tasks.push(item);
-                }
-
-                if (q.tasks.length === q.concurrency) {
-                    q.saturated();
-                }
-            });
-            async.setImmediate(q.process);
-        }
-        function _next(q, tasks) {
-            return function(){
-                workers -= 1;
-
-                var removed = false;
-                var args = arguments;
-                _arrayEach(tasks, function (task) {
-                    _arrayEach(workersList, function (worker, index) {
-                        if (worker === task && !removed) {
-                            workersList.splice(index, 1);
-                            removed = true;
-                        }
-                    });
-
-                    task.callback.apply(task, args);
-                });
-                if (q.tasks.length + workers === 0) {
-                    q.drain();
-                }
-                q.process();
-            };
-        }
-
-        var workers = 0;
-        var workersList = [];
-        var q = {
-            tasks: [],
-            concurrency: concurrency,
-            payload: payload,
-            saturated: noop,
-            empty: noop,
-            drain: noop,
-            started: false,
-            paused: false,
-            push: function (data, callback) {
-                _insert(q, data, false, callback);
-            },
-            kill: function () {
-                q.drain = noop;
-                q.tasks = [];
-            },
-            unshift: function (data, callback) {
-                _insert(q, data, true, callback);
-            },
-            process: function () {
-                if (!q.paused && workers < q.concurrency && q.tasks.length) {
-                    while(workers < q.concurrency && q.tasks.length){
-                        var tasks = q.payload ?
-                            q.tasks.splice(0, q.payload) :
-                            q.tasks.splice(0, q.tasks.length);
-
-                        var data = _map(tasks, function (task) {
-                            return task.data;
-                        });
-
-                        if (q.tasks.length === 0) {
-                            q.empty();
-                        }
-                        workers += 1;
-                        workersList.push(tasks[0]);
-                        var cb = only_once(_next(q, tasks));
-                        worker(data, cb);
-                    }
-                }
-            },
-            length: function () {
-                return q.tasks.length;
-            },
-            running: function () {
-                return workers;
-            },
-            workersList: function () {
-                return workersList;
-            },
-            idle: function() {
-                return q.tasks.length + workers === 0;
-            },
-            pause: function () {
-                q.paused = true;
-            },
-            resume: function () {
-                if (q.paused === false) { return; }
-                q.paused = false;
-                var resumeCount = Math.min(q.concurrency, q.tasks.length);
-                // Need to call q.process once per concurrent
-                // worker to preserve full concurrency after pause
-                for (var w = 1; w <= resumeCount; w++) {
-                    async.setImmediate(q.process);
-                }
-            }
-        };
-        return q;
-    }
-
-    async.queue = function (worker, concurrency) {
-        var q = _queue(function (items, cb) {
-            worker(items[0], cb);
-        }, concurrency, 1);
-
-        return q;
-    };
-
-    async.priorityQueue = function (worker, concurrency) {
-
-        function _compareTasks(a, b){
-            return a.priority - b.priority;
-        }
-
-        function _binarySearch(sequence, item, compare) {
-            var beg = -1,
-                end = sequence.length - 1;
-            while (beg < end) {
-                var mid = beg + ((end - beg + 1) >>> 1);
-                if (compare(item, sequence[mid]) >= 0) {
-                    beg = mid;
-                } else {
-                    end = mid - 1;
-                }
-            }
-            return beg;
-        }
-
-        function _insert(q, data, priority, callback) {
-            if (callback != null && typeof callback !== "function") {
-                throw new Error("task callback must be a function");
-            }
-            q.started = true;
-            if (!_isArray(data)) {
-                data = [data];
-            }
-            if(data.length === 0) {
-                // call drain immediately if there are no tasks
-                return async.setImmediate(function() {
-                    q.drain();
-                });
-            }
-            _arrayEach(data, function(task) {
-                var item = {
-                    data: task,
-                    priority: priority,
-                    callback: typeof callback === 'function' ? callback : noop
-                };
-
-                q.tasks.splice(_binarySearch(q.tasks, item, _compareTasks) + 1, 0, item);
-
-                if (q.tasks.length === q.concurrency) {
-                    q.saturated();
-                }
-                async.setImmediate(q.process);
-            });
-        }
-
-        // Start with a normal queue
-        var q = async.queue(worker, concurrency);
-
-        // Override push to accept second parameter representing priority
-        q.push = function (data, priority, callback) {
-            _insert(q, data, priority, callback);
-        };
-
-        // Remove unshift function
-        delete q.unshift;
-
-        return q;
-    };
-
-    async.cargo = function (worker, payload) {
-        return _queue(worker, 1, payload);
-    };
-
-    function _console_fn(name) {
-        return _restParam(function (fn, args) {
-            fn.apply(null, args.concat([_restParam(function (err, args) {
-                if (typeof console === 'object') {
-                    if (err) {
-                        if (console.error) {
-                            console.error(err);
-                        }
-                    }
-                    else if (console[name]) {
-                        _arrayEach(args, function (x) {
-                            console[name](x);
-                        });
-                    }
-                }
-            })]));
-        });
-    }
-    async.log = _console_fn('log');
-    async.dir = _console_fn('dir');
-    /*async.info = _console_fn('info');
-    async.warn = _console_fn('warn');
-    async.error = _console_fn('error');*/
-
-    async.memoize = function (fn, hasher) {
-        var memo = {};
-        var queues = {};
-        hasher = hasher || identity;
-        var memoized = _restParam(function memoized(args) {
-            var callback = args.pop();
-            var key = hasher.apply(null, args);
-            if (key in memo) {
-                async.setImmediate(function () {
-                    callback.apply(null, memo[key]);
-                });
-            }
-            else if (key in queues) {
-                queues[key].push(callback);
-            }
-            else {
-                queues[key] = [callback];
-                fn.apply(null, args.concat([_restParam(function (args) {
-                    memo[key] = args;
-                    var q = queues[key];
-                    delete queues[key];
-                    for (var i = 0, l = q.length; i < l; i++) {
-                        q[i].apply(null, args);
-                    }
-                })]));
-            }
-        });
-        memoized.memo = memo;
-        memoized.unmemoized = fn;
-        return memoized;
-    };
-
-    async.unmemoize = function (fn) {
-        return function () {
-            return (fn.unmemoized || fn).apply(null, arguments);
-        };
-    };
-
-    function _times(mapper) {
-        return function (count, iterator, callback) {
-            mapper(_range(count), iterator, callback);
-        };
-    }
-
-    async.times = _times(async.map);
-    async.timesSeries = _times(async.mapSeries);
-    async.timesLimit = function (count, limit, iterator, callback) {
-        return async.mapLimit(_range(count), limit, iterator, callback);
-    };
-
-    async.seq = function (/* functions... */) {
-        var fns = arguments;
-        return _restParam(function (args) {
-            var that = this;
-
-            var callback = args[args.length - 1];
-            if (typeof callback == 'function') {
-                args.pop();
-            } else {
-                callback = noop;
-            }
-
-            async.reduce(fns, args, function (newargs, fn, cb) {
-                fn.apply(that, newargs.concat([_restParam(function (err, nextargs) {
-                    cb(err, nextargs);
-                })]));
-            },
-            function (err, results) {
-                callback.apply(that, [err].concat(results));
-            });
-        });
-    };
-
-    async.compose = function (/* functions... */) {
-        return async.seq.apply(null, Array.prototype.reverse.call(arguments));
-    };
-
-
-    function _applyEach(eachfn) {
-        return _restParam(function(fns, args) {
-            var go = _restParam(function(args) {
-                var that = this;
-                var callback = args.pop();
-                return eachfn(fns, function (fn, _, cb) {
-                    fn.apply(that, args.concat([cb]));
-                },
-                callback);
-            });
-            if (args.length) {
-                return go.apply(this, args);
-            }
-            else {
-                return go;
-            }
-        });
-    }
-
-    async.applyEach = _applyEach(async.eachOf);
-    async.applyEachSeries = _applyEach(async.eachOfSeries);
-
-
-    async.forever = function (fn, callback) {
-        var done = only_once(callback || noop);
-        var task = ensureAsync(fn);
-        function next(err) {
-            if (err) {
-                return done(err);
-            }
-            task(next);
-        }
-        next();
-    };
-
-    function ensureAsync(fn) {
-        return _restParam(function (args) {
-            var callback = args.pop();
-            args.push(function () {
-                var innerArgs = arguments;
-                if (sync) {
-                    async.setImmediate(function () {
-                        callback.apply(null, innerArgs);
-                    });
-                } else {
-                    callback.apply(null, innerArgs);
-                }
-            });
-            var sync = true;
-            fn.apply(this, args);
-            sync = false;
-        });
-    }
-
-    async.ensureAsync = ensureAsync;
-
-    async.constant = _restParam(function(values) {
-        var args = [null].concat(values);
-        return function (callback) {
-            return callback.apply(this, args);
-        };
-    });
-
-    async.wrapSync =
-    async.asyncify = function asyncify(func) {
-        return _restParam(function (args) {
-            var callback = args.pop();
-            var result;
-            try {
-                result = func.apply(this, args);
-            } catch (e) {
-                return callback(e);
-            }
-            // if result is Promise object
-            if (_isObject(result) && typeof result.then === "function") {
-                result.then(function(value) {
-                    callback(null, value);
-                })["catch"](function(err) {
-                    callback(err.message ? err : new Error(err));
-                });
-            } else {
-                callback(null, result);
-            }
-        });
-    };
-
-    // Node.js
-    if (typeof module === 'object' && module.exports) {
-        module.exports = async;
-    }
-    // AMD / RequireJS
-    else if (typeof define === 'function' && define.amd) {
-        define([], function () {
-            return async;
-        });
-    }
-    // included directly via <script> tag
-    else {
-        root.async = async;
-    }
-
-}());
-
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":230}],10:[function(require,module,exports){
-arguments[4][2][0].apply(exports,arguments)
-},{"crypto":32,"dup":2}],11:[function(require,module,exports){
+},{"crypto":31}],10:[function(require,module,exports){
 // Browser Request
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -7067,9 +7067,9 @@ function b64_enc (data) {
 }));
 //UMD FOOTER END
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -7430,9 +7430,9 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":261}],14:[function(require,module,exports){
-arguments[4][12][0].apply(exports,arguments)
-},{"dup":12}],15:[function(require,module,exports){
+},{"util/":260}],13:[function(require,module,exports){
+arguments[4][11][0].apply(exports,arguments)
+},{"dup":11}],14:[function(require,module,exports){
 'use strict';
 
 
@@ -7536,7 +7536,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -7570,7 +7570,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = {
 
   /* Allowed flush values; see deflate() and inflate() below for details */
@@ -7619,7 +7619,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -7662,7 +7662,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 var utils   = require('../utils/common');
@@ -9429,7 +9429,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":15,"./adler32":16,"./crc32":18,"./messages":23,"./trees":24}],20:[function(require,module,exports){
+},{"../utils/common":14,"./adler32":15,"./crc32":17,"./messages":22,"./trees":23}],19:[function(require,module,exports){
 'use strict';
 
 // See state defs from inflate.js
@@ -9757,7 +9757,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 
@@ -11262,7 +11262,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":15,"./adler32":16,"./crc32":18,"./inffast":20,"./inftrees":22}],22:[function(require,module,exports){
+},{"../utils/common":14,"./adler32":15,"./crc32":17,"./inffast":19,"./inftrees":21}],21:[function(require,module,exports){
 'use strict';
 
 
@@ -11591,7 +11591,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":15}],23:[function(require,module,exports){
+},{"../utils/common":14}],22:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -11606,7 +11606,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],24:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 
@@ -12807,7 +12807,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":15}],25:[function(require,module,exports){
+},{"../utils/common":14}],24:[function(require,module,exports){
 'use strict';
 
 
@@ -12838,7 +12838,7 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (process,Buffer){
 var msg = require('pako/lib/zlib/messages');
 var zstream = require('pako/lib/zlib/zstream');
@@ -13078,7 +13078,7 @@ Zlib.prototype._error = function(status) {
 exports.Zlib = Zlib;
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":230,"buffer":28,"pako/lib/zlib/constants":17,"pako/lib/zlib/deflate.js":19,"pako/lib/zlib/inflate.js":21,"pako/lib/zlib/messages":23,"pako/lib/zlib/zstream":25}],27:[function(require,module,exports){
+},{"_process":229,"buffer":27,"pako/lib/zlib/constants":16,"pako/lib/zlib/deflate.js":18,"pako/lib/zlib/inflate.js":20,"pako/lib/zlib/messages":22,"pako/lib/zlib/zstream":24}],26:[function(require,module,exports){
 (function (process,Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -13692,7 +13692,7 @@ util.inherits(InflateRaw, Zlib);
 util.inherits(Unzip, Zlib);
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"./binding":26,"_process":230,"_stream_transform":246,"assert":13,"buffer":28,"util":261}],28:[function(require,module,exports){
+},{"./binding":25,"_process":229,"_stream_transform":245,"assert":12,"buffer":27,"util":260}],27:[function(require,module,exports){
 (function (global){
 /*!
  * The buffer module from node.js, for the browser.
@@ -15240,7 +15240,7 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":29,"ieee754":30,"is-array":31}],29:[function(require,module,exports){
+},{"base64-js":28,"ieee754":29,"is-array":30}],28:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -15366,7 +15366,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -15452,7 +15452,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 
 /**
  * isArray
@@ -15487,7 +15487,7 @@ module.exports = isArray || function (val) {
   return !! val && '[object Array]' == str.call(val);
 };
 
-},{}],32:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -15566,7 +15566,7 @@ var publicEncrypt = require('public-encrypt')
   }
 })
 
-},{"browserify-cipher":33,"browserify-sign":63,"browserify-sign/algos":62,"create-ecdh":130,"create-hash":156,"create-hmac":169,"diffie-hellman":170,"pbkdf2":177,"public-encrypt":178,"randombytes":223}],33:[function(require,module,exports){
+},{"browserify-cipher":32,"browserify-sign":62,"browserify-sign/algos":61,"create-ecdh":129,"create-hash":155,"create-hmac":168,"diffie-hellman":169,"pbkdf2":176,"public-encrypt":177,"randombytes":222}],32:[function(require,module,exports){
 var ebtk = require('evp_bytestokey')
 var aes = require('browserify-aes/browser')
 var DES = require('browserify-des')
@@ -15641,7 +15641,7 @@ function getCiphers () {
 }
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"browserify-aes/browser":36,"browserify-aes/modes":40,"browserify-des":51,"browserify-des/modes":52,"evp_bytestokey":61}],34:[function(require,module,exports){
+},{"browserify-aes/browser":35,"browserify-aes/modes":39,"browserify-des":50,"browserify-des/modes":51,"evp_bytestokey":60}],33:[function(require,module,exports){
 (function (Buffer){
 // based on the aes implimentation in triple sec
 // https://github.com/keybase/triplesec
@@ -15822,7 +15822,7 @@ AES.prototype._doCryptBlock = function (M, keySchedule, SUB_MIX, SBOX) {
 exports.AES = AES
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28}],35:[function(require,module,exports){
+},{"buffer":27}],34:[function(require,module,exports){
 (function (Buffer){
 var aes = require('./aes')
 var Transform = require('cipher-base')
@@ -15923,7 +15923,7 @@ function xorTest (a, b) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./aes":34,"./ghash":39,"buffer":28,"buffer-xor":48,"cipher-base":49,"inherits":226}],36:[function(require,module,exports){
+},{"./aes":33,"./ghash":38,"buffer":27,"buffer-xor":47,"cipher-base":48,"inherits":225}],35:[function(require,module,exports){
 var ciphers = require('./encrypter')
 exports.createCipher = exports.Cipher = ciphers.createCipher
 exports.createCipheriv = exports.Cipheriv = ciphers.createCipheriv
@@ -15936,7 +15936,7 @@ function getCiphers () {
 }
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"./decrypter":37,"./encrypter":38,"./modes":40}],37:[function(require,module,exports){
+},{"./decrypter":36,"./encrypter":37,"./modes":39}],36:[function(require,module,exports){
 (function (Buffer){
 var aes = require('./aes')
 var Transform = require('cipher-base')
@@ -16076,7 +16076,7 @@ exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
 }).call(this,require("buffer").Buffer)
-},{"./aes":34,"./authCipher":35,"./modes":40,"./modes/cbc":41,"./modes/cfb":42,"./modes/cfb1":43,"./modes/cfb8":44,"./modes/ctr":45,"./modes/ecb":46,"./modes/ofb":47,"./streamCipher":50,"buffer":28,"cipher-base":49,"evp_bytestokey":61,"inherits":226}],38:[function(require,module,exports){
+},{"./aes":33,"./authCipher":34,"./modes":39,"./modes/cbc":40,"./modes/cfb":41,"./modes/cfb1":42,"./modes/cfb8":43,"./modes/ctr":44,"./modes/ecb":45,"./modes/ofb":46,"./streamCipher":49,"buffer":27,"cipher-base":48,"evp_bytestokey":60,"inherits":225}],37:[function(require,module,exports){
 (function (Buffer){
 var aes = require('./aes')
 var Transform = require('cipher-base')
@@ -16201,7 +16201,7 @@ exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
 }).call(this,require("buffer").Buffer)
-},{"./aes":34,"./authCipher":35,"./modes":40,"./modes/cbc":41,"./modes/cfb":42,"./modes/cfb1":43,"./modes/cfb8":44,"./modes/ctr":45,"./modes/ecb":46,"./modes/ofb":47,"./streamCipher":50,"buffer":28,"cipher-base":49,"evp_bytestokey":61,"inherits":226}],39:[function(require,module,exports){
+},{"./aes":33,"./authCipher":34,"./modes":39,"./modes/cbc":40,"./modes/cfb":41,"./modes/cfb1":42,"./modes/cfb8":43,"./modes/ctr":44,"./modes/ecb":45,"./modes/ofb":46,"./streamCipher":49,"buffer":27,"cipher-base":48,"evp_bytestokey":60,"inherits":225}],38:[function(require,module,exports){
 (function (Buffer){
 var zeros = new Buffer(16)
 zeros.fill(0)
@@ -16303,7 +16303,7 @@ function xor (a, b) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28}],40:[function(require,module,exports){
+},{"buffer":27}],39:[function(require,module,exports){
 exports['aes-128-ecb'] = {
   cipher: 'AES',
   key: 128,
@@ -16476,7 +16476,7 @@ exports['aes-256-gcm'] = {
   type: 'auth'
 }
 
-},{}],41:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 var xor = require('buffer-xor')
 
 exports.encrypt = function (self, block) {
@@ -16495,7 +16495,7 @@ exports.decrypt = function (self, block) {
   return xor(out, pad)
 }
 
-},{"buffer-xor":48}],42:[function(require,module,exports){
+},{"buffer-xor":47}],41:[function(require,module,exports){
 (function (Buffer){
 var xor = require('buffer-xor')
 
@@ -16530,7 +16530,7 @@ function encryptStart (self, data, decrypt) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"buffer-xor":48}],43:[function(require,module,exports){
+},{"buffer":27,"buffer-xor":47}],42:[function(require,module,exports){
 (function (Buffer){
 function encryptByte (self, byteParam, decrypt) {
   var pad
@@ -16568,7 +16568,7 @@ function shiftIn (buffer, value) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28}],44:[function(require,module,exports){
+},{"buffer":27}],43:[function(require,module,exports){
 (function (Buffer){
 function encryptByte (self, byteParam, decrypt) {
   var pad = self._cipher.encryptBlock(self._prev)
@@ -16587,7 +16587,7 @@ exports.encrypt = function (self, chunk, decrypt) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28}],45:[function(require,module,exports){
+},{"buffer":27}],44:[function(require,module,exports){
 (function (Buffer){
 var xor = require('buffer-xor')
 
@@ -16622,7 +16622,7 @@ exports.encrypt = function (self, chunk) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"buffer-xor":48}],46:[function(require,module,exports){
+},{"buffer":27,"buffer-xor":47}],45:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -16630,7 +16630,7 @@ exports.decrypt = function (self, block) {
   return self._cipher.decryptBlock(block)
 }
 
-},{}],47:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 (function (Buffer){
 var xor = require('buffer-xor')
 
@@ -16650,7 +16650,7 @@ exports.encrypt = function (self, chunk) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"buffer-xor":48}],48:[function(require,module,exports){
+},{"buffer":27,"buffer-xor":47}],47:[function(require,module,exports){
 (function (Buffer){
 module.exports = function xor (a, b) {
   var length = Math.min(a.length, b.length)
@@ -16664,7 +16664,7 @@ module.exports = function xor (a, b) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28}],49:[function(require,module,exports){
+},{"buffer":27}],48:[function(require,module,exports){
 (function (Buffer){
 var Transform = require('stream').Transform
 var inherits = require('inherits')
@@ -16758,7 +16758,7 @@ CipherBase.prototype._toString = function (value, enc, final) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"inherits":226,"stream":248,"string_decoder":258}],50:[function(require,module,exports){
+},{"buffer":27,"inherits":225,"stream":247,"string_decoder":257}],49:[function(require,module,exports){
 (function (Buffer){
 var aes = require('./aes')
 var Transform = require('cipher-base')
@@ -16787,7 +16787,7 @@ StreamCipher.prototype._final = function () {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./aes":34,"buffer":28,"cipher-base":49,"inherits":226}],51:[function(require,module,exports){
+},{"./aes":33,"buffer":27,"cipher-base":48,"inherits":225}],50:[function(require,module,exports){
 (function (Buffer){
 var CipherBase = require('cipher-base')
 var des = require('des.js')
@@ -16834,7 +16834,7 @@ DES.prototype._final = function () {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"cipher-base":53,"des.js":54,"inherits":226}],52:[function(require,module,exports){
+},{"buffer":27,"cipher-base":52,"des.js":53,"inherits":225}],51:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -16860,9 +16860,9 @@ exports['des-ede'] = {
   iv: 0
 }
 
-},{}],53:[function(require,module,exports){
-arguments[4][49][0].apply(exports,arguments)
-},{"buffer":28,"dup":49,"inherits":226,"stream":248,"string_decoder":258}],54:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
+arguments[4][48][0].apply(exports,arguments)
+},{"buffer":27,"dup":48,"inherits":225,"stream":247,"string_decoder":257}],53:[function(require,module,exports){
 'use strict';
 
 exports.utils = require('./des/utils');
@@ -16871,7 +16871,7 @@ exports.DES = require('./des/des');
 exports.CBC = require('./des/cbc');
 exports.EDE = require('./des/ede');
 
-},{"./des/cbc":55,"./des/cipher":56,"./des/des":57,"./des/ede":58,"./des/utils":59}],55:[function(require,module,exports){
+},{"./des/cbc":54,"./des/cipher":55,"./des/des":56,"./des/ede":57,"./des/utils":58}],54:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -16938,7 +16938,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
   }
 };
 
-},{"inherits":226,"minimalistic-assert":60}],56:[function(require,module,exports){
+},{"inherits":225,"minimalistic-assert":59}],55:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -17081,7 +17081,7 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
   return this._unpad(out);
 };
 
-},{"minimalistic-assert":60}],57:[function(require,module,exports){
+},{"minimalistic-assert":59}],56:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -17226,7 +17226,7 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
   utils.rip(l, r, out, off);
 };
 
-},{"../des":54,"inherits":226,"minimalistic-assert":60}],58:[function(require,module,exports){
+},{"../des":53,"inherits":225,"minimalistic-assert":59}],57:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -17283,7 +17283,7 @@ EDE.prototype._update = function _update(inp, inOff, out, outOff) {
 EDE.prototype._pad = DES.prototype._pad;
 EDE.prototype._unpad = DES.prototype._unpad;
 
-},{"../des":54,"inherits":226,"minimalistic-assert":60}],59:[function(require,module,exports){
+},{"../des":53,"inherits":225,"minimalistic-assert":59}],58:[function(require,module,exports){
 'use strict';
 
 exports.readUInt32BE = function readUInt32BE(bytes, off) {
@@ -17541,7 +17541,7 @@ exports.padSplit = function padSplit(num, size, group) {
   return out.join(' ');
 };
 
-},{}],60:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -17554,7 +17554,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-},{}],61:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 (function (Buffer){
 var md5 = require('create-hash/md5')
 module.exports = EVP_BytesToKey
@@ -17626,7 +17626,7 @@ function EVP_BytesToKey (password, salt, keyLen, ivLen) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"create-hash/md5":158}],62:[function(require,module,exports){
+},{"buffer":27,"create-hash/md5":157}],61:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 exports['RSA-SHA224'] = exports.sha224WithRSAEncryption = {
@@ -17702,7 +17702,7 @@ exports['RSA-MD5'] = exports.md5WithRSAEncryption = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28}],63:[function(require,module,exports){
+},{"buffer":27}],62:[function(require,module,exports){
 (function (Buffer){
 var _algos = require('./algos')
 var createHash = require('create-hash')
@@ -17809,7 +17809,7 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./algos":62,"./sign":128,"./verify":129,"buffer":28,"create-hash":156,"inherits":226,"stream":248}],64:[function(require,module,exports){
+},{"./algos":61,"./sign":127,"./verify":128,"buffer":27,"create-hash":155,"inherits":225,"stream":247}],63:[function(require,module,exports){
 'use strict'
 exports['1.3.132.0.10'] = 'secp256k1'
 
@@ -17823,7 +17823,7 @@ exports['1.3.132.0.34'] = 'p384'
 
 exports['1.3.132.0.35'] = 'p521'
 
-},{}],65:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 (function (module, exports) {
 
 'use strict';
@@ -20311,7 +20311,7 @@ Mont.prototype.invm = function invm(a) {
 
 })(typeof module === 'undefined' || module, this);
 
-},{}],66:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 (function (Buffer){
 var bn = require('bn.js');
 var randomBytes = require('randombytes');
@@ -20355,7 +20355,7 @@ function getr(priv) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bn.js":65,"buffer":28,"randombytes":223}],67:[function(require,module,exports){
+},{"bn.js":64,"buffer":27,"randombytes":222}],66:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -20371,7 +20371,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":90,"./elliptic/curve":70,"./elliptic/curves":73,"./elliptic/ec":74,"./elliptic/eddsa":77,"./elliptic/hmac-drbg":80,"./elliptic/utils":82,"brorand":83}],68:[function(require,module,exports){
+},{"../package.json":89,"./elliptic/curve":69,"./elliptic/curves":72,"./elliptic/ec":73,"./elliptic/eddsa":76,"./elliptic/hmac-drbg":79,"./elliptic/utils":81,"brorand":82}],67:[function(require,module,exports){
 'use strict';
 
 var bn = require('bn.js');
@@ -20724,7 +20724,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../../elliptic":67,"bn.js":65}],69:[function(require,module,exports){
+},{"../../elliptic":66,"bn.js":64}],68:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -21132,7 +21132,7 @@ Point.prototype.eq = function eq(other) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../../elliptic":67,"../curve":70,"bn.js":65,"inherits":226}],70:[function(require,module,exports){
+},{"../../elliptic":66,"../curve":69,"bn.js":64,"inherits":225}],69:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -21142,7 +21142,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":68,"./edwards":69,"./mont":71,"./short":72}],71:[function(require,module,exports){
+},{"./base":67,"./edwards":68,"./mont":70,"./short":71}],70:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -21320,7 +21320,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../../elliptic":67,"../curve":70,"bn.js":65,"inherits":226}],72:[function(require,module,exports){
+},{"../../elliptic":66,"../curve":69,"bn.js":64,"inherits":225}],71:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -22229,7 +22229,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../../elliptic":67,"../curve":70,"bn.js":65,"inherits":226}],73:[function(require,module,exports){
+},{"../../elliptic":66,"../curve":69,"bn.js":64,"inherits":225}],72:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -22436,7 +22436,7 @@ defineCurve('secp256k1', {
   ]
 });
 
-},{"../elliptic":67,"./precomputed/secp256k1":81,"hash.js":84}],74:[function(require,module,exports){
+},{"../elliptic":66,"./precomputed/secp256k1":80,"hash.js":83}],73:[function(require,module,exports){
 'use strict';
 
 var bn = require('bn.js');
@@ -22654,7 +22654,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../../elliptic":67,"./key":75,"./signature":76,"bn.js":65}],75:[function(require,module,exports){
+},{"../../elliptic":66,"./key":74,"./signature":75,"bn.js":64}],74:[function(require,module,exports){
 'use strict';
 
 var bn = require('bn.js');
@@ -22763,7 +22763,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"bn.js":65}],76:[function(require,module,exports){
+},{"bn.js":64}],75:[function(require,module,exports){
 'use strict';
 
 var bn = require('bn.js');
@@ -22900,7 +22900,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../../elliptic":67,"bn.js":65}],77:[function(require,module,exports){
+},{"../../elliptic":66,"bn.js":64}],76:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -23020,7 +23020,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../../elliptic":67,"./key":78,"./signature":79,"hash.js":84}],78:[function(require,module,exports){
+},{"../../elliptic":66,"./key":77,"./signature":78,"hash.js":83}],77:[function(require,module,exports){
 'use strict';
 
 var elliptic = require('../../elliptic');
@@ -23118,7 +23118,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../../elliptic":67}],79:[function(require,module,exports){
+},{"../../elliptic":66}],78:[function(require,module,exports){
 'use strict';
 
 var bn = require('bn.js');
@@ -23186,7 +23186,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../../elliptic":67,"bn.js":65}],80:[function(require,module,exports){
+},{"../../elliptic":66,"bn.js":64}],79:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -23302,7 +23302,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"../elliptic":67,"hash.js":84}],81:[function(require,module,exports){
+},{"../elliptic":66,"hash.js":83}],80:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -24084,7 +24084,7 @@ module.exports = {
   }
 };
 
-},{}],82:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -24259,7 +24259,7 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":65}],83:[function(require,module,exports){
+},{"bn.js":64}],82:[function(require,module,exports){
 var r;
 
 module.exports = function rand(len) {
@@ -24318,7 +24318,7 @@ if (typeof window === 'object') {
   }
 }
 
-},{}],84:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -24335,7 +24335,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":85,"./hash/hmac":86,"./hash/ripemd":87,"./hash/sha":88,"./hash/utils":89}],85:[function(require,module,exports){
+},{"./hash/common":84,"./hash/hmac":85,"./hash/ripemd":86,"./hash/sha":87,"./hash/utils":88}],84:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 var assert = utils.assert;
@@ -24428,7 +24428,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"../hash":84}],86:[function(require,module,exports){
+},{"../hash":83}],85:[function(require,module,exports){
 var hmac = exports;
 
 var hash = require('../hash');
@@ -24478,7 +24478,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"../hash":84}],87:[function(require,module,exports){
+},{"../hash":83}],86:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 
@@ -24624,7 +24624,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"../hash":84}],88:[function(require,module,exports){
+},{"../hash":83}],87:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 var assert = utils.assert;
@@ -25190,7 +25190,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../hash":84}],89:[function(require,module,exports){
+},{"../hash":83}],88:[function(require,module,exports){
 var utils = exports;
 var inherits = require('inherits');
 
@@ -25449,7 +25449,7 @@ function shr64_lo(ah, al, num) {
 };
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":226}],90:[function(require,module,exports){
+},{"inherits":225}],89:[function(require,module,exports){
 module.exports={
   "name": "elliptic",
   "version": "6.0.1",
@@ -25518,7 +25518,7 @@ module.exports={
   "readme": "ERROR: No README data found!"
 }
 
-},{}],91:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.2": "aes-128-cbc",
 "2.16.840.1.101.3.4.1.3": "aes-128-ofb",
@@ -25532,7 +25532,7 @@ module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.43": "aes-256-ofb",
 "2.16.840.1.101.3.4.1.44": "aes-256-cfb"
 }
-},{}],92:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 // from https://github.com/indutny/self-signed/blob/gh-pages/lib/asn1.js
 // Fedor, you are amazing.
 
@@ -25651,7 +25651,7 @@ exports.signature = asn1.define('signature', function () {
   )
 })
 
-},{"asn1.js":95}],93:[function(require,module,exports){
+},{"asn1.js":94}],92:[function(require,module,exports){
 (function (Buffer){
 // adapted from https://github.com/apatil/pemstrip
 var findProc = /Proc-Type: 4,ENCRYPTED\r?\nDEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)\r?\n\r?\n([0-9A-z\n\r\+\/\=]+)\r?\n/m
@@ -25685,7 +25685,7 @@ module.exports = function (okey, password) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"browserify-aes":112,"buffer":28,"evp_bytestokey":127}],94:[function(require,module,exports){
+},{"browserify-aes":111,"buffer":27,"evp_bytestokey":126}],93:[function(require,module,exports){
 (function (Buffer){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
@@ -25790,7 +25790,7 @@ function decrypt (data, password) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./aesid.json":91,"./asn1":92,"./fixProc":93,"browserify-aes":112,"buffer":28,"pbkdf2":177}],95:[function(require,module,exports){
+},{"./aesid.json":90,"./asn1":91,"./fixProc":92,"browserify-aes":111,"buffer":27,"pbkdf2":176}],94:[function(require,module,exports){
 var asn1 = exports;
 
 asn1.bignum = require('bn.js');
@@ -25801,7 +25801,7 @@ asn1.constants = require('./asn1/constants');
 asn1.decoders = require('./asn1/decoders');
 asn1.encoders = require('./asn1/encoders');
 
-},{"./asn1/api":96,"./asn1/base":98,"./asn1/constants":102,"./asn1/decoders":104,"./asn1/encoders":107,"bn.js":65}],96:[function(require,module,exports){
+},{"./asn1/api":95,"./asn1/base":97,"./asn1/constants":101,"./asn1/decoders":103,"./asn1/encoders":106,"bn.js":64}],95:[function(require,module,exports){
 var asn1 = require('../asn1');
 var inherits = require('inherits');
 
@@ -25862,7 +25862,7 @@ Entity.prototype.encode = function encode(data, enc, /* internal */ reporter) {
   return this._getEncoder(enc).encode(data, reporter);
 };
 
-},{"../asn1":95,"inherits":226,"vm":262}],97:[function(require,module,exports){
+},{"../asn1":94,"inherits":225,"vm":261}],96:[function(require,module,exports){
 var inherits = require('inherits');
 var Reporter = require('../base').Reporter;
 var Buffer = require('buffer').Buffer;
@@ -25980,7 +25980,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base":98,"buffer":28,"inherits":226}],98:[function(require,module,exports){
+},{"../base":97,"buffer":27,"inherits":225}],97:[function(require,module,exports){
 var base = exports;
 
 base.Reporter = require('./reporter').Reporter;
@@ -25988,7 +25988,7 @@ base.DecoderBuffer = require('./buffer').DecoderBuffer;
 base.EncoderBuffer = require('./buffer').EncoderBuffer;
 base.Node = require('./node');
 
-},{"./buffer":97,"./node":99,"./reporter":100}],99:[function(require,module,exports){
+},{"./buffer":96,"./node":98,"./reporter":99}],98:[function(require,module,exports){
 var Reporter = require('../base').Reporter;
 var EncoderBuffer = require('../base').EncoderBuffer;
 var assert = require('minimalistic-assert');
@@ -26588,7 +26588,7 @@ Node.prototype._encodePrimitive = function encodePrimitive(tag, data) {
     throw new Error('Unsupported tag: ' + tag);
 };
 
-},{"../base":98,"minimalistic-assert":109}],100:[function(require,module,exports){
+},{"../base":97,"minimalistic-assert":108}],99:[function(require,module,exports){
 var inherits = require('inherits');
 
 function Reporter(options) {
@@ -26692,7 +26692,7 @@ ReporterError.prototype.rethrow = function rethrow(msg) {
   return this;
 };
 
-},{"inherits":226}],101:[function(require,module,exports){
+},{"inherits":225}],100:[function(require,module,exports){
 var constants = require('../constants');
 
 exports.tagClass = {
@@ -26736,7 +26736,7 @@ exports.tag = {
 };
 exports.tagByName = constants._reverse(exports.tag);
 
-},{"../constants":102}],102:[function(require,module,exports){
+},{"../constants":101}],101:[function(require,module,exports){
 var constants = exports;
 
 // Helper
@@ -26757,7 +26757,7 @@ constants._reverse = function reverse(map) {
 
 constants.der = require('./der');
 
-},{"./der":101}],103:[function(require,module,exports){
+},{"./der":100}],102:[function(require,module,exports){
 var inherits = require('inherits');
 
 var asn1 = require('../../asn1');
@@ -27050,13 +27050,13 @@ function derDecodeLen(buf, primitive, fail) {
   return len;
 }
 
-},{"../../asn1":95,"inherits":226}],104:[function(require,module,exports){
+},{"../../asn1":94,"inherits":225}],103:[function(require,module,exports){
 var decoders = exports;
 
 decoders.der = require('./der');
 decoders.pem = require('./pem');
 
-},{"./der":103,"./pem":105}],105:[function(require,module,exports){
+},{"./der":102,"./pem":104}],104:[function(require,module,exports){
 var inherits = require('inherits');
 var Buffer = require('buffer').Buffer;
 
@@ -27108,7 +27108,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"../../asn1":95,"./der":103,"buffer":28,"inherits":226}],106:[function(require,module,exports){
+},{"../../asn1":94,"./der":102,"buffer":27,"inherits":225}],105:[function(require,module,exports){
 var inherits = require('inherits');
 var Buffer = require('buffer').Buffer;
 
@@ -27382,13 +27382,13 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../../asn1":95,"buffer":28,"inherits":226}],107:[function(require,module,exports){
+},{"../../asn1":94,"buffer":27,"inherits":225}],106:[function(require,module,exports){
 var encoders = exports;
 
 encoders.der = require('./der');
 encoders.pem = require('./pem');
 
-},{"./der":106,"./pem":108}],108:[function(require,module,exports){
+},{"./der":105,"./pem":107}],107:[function(require,module,exports){
 var inherits = require('inherits');
 var Buffer = require('buffer').Buffer;
 
@@ -27413,45 +27413,45 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   return out.join('\n');
 };
 
-},{"../../asn1":95,"./der":106,"buffer":28,"inherits":226}],109:[function(require,module,exports){
-arguments[4][60][0].apply(exports,arguments)
-},{"dup":60}],110:[function(require,module,exports){
+},{"../../asn1":94,"./der":105,"buffer":27,"inherits":225}],108:[function(require,module,exports){
+arguments[4][59][0].apply(exports,arguments)
+},{"dup":59}],109:[function(require,module,exports){
+arguments[4][33][0].apply(exports,arguments)
+},{"buffer":27,"dup":33}],110:[function(require,module,exports){
 arguments[4][34][0].apply(exports,arguments)
-},{"buffer":28,"dup":34}],111:[function(require,module,exports){
+},{"./aes":109,"./ghash":114,"buffer":27,"buffer-xor":123,"cipher-base":124,"dup":34,"inherits":225}],111:[function(require,module,exports){
 arguments[4][35][0].apply(exports,arguments)
-},{"./aes":110,"./ghash":115,"buffer":28,"buffer-xor":124,"cipher-base":125,"dup":35,"inherits":226}],112:[function(require,module,exports){
+},{"./decrypter":112,"./encrypter":113,"./modes":115,"dup":35}],112:[function(require,module,exports){
 arguments[4][36][0].apply(exports,arguments)
-},{"./decrypter":113,"./encrypter":114,"./modes":116,"dup":36}],113:[function(require,module,exports){
+},{"./aes":109,"./authCipher":110,"./modes":115,"./modes/cbc":116,"./modes/cfb":117,"./modes/cfb1":118,"./modes/cfb8":119,"./modes/ctr":120,"./modes/ecb":121,"./modes/ofb":122,"./streamCipher":125,"buffer":27,"cipher-base":124,"dup":36,"evp_bytestokey":126,"inherits":225}],113:[function(require,module,exports){
 arguments[4][37][0].apply(exports,arguments)
-},{"./aes":110,"./authCipher":111,"./modes":116,"./modes/cbc":117,"./modes/cfb":118,"./modes/cfb1":119,"./modes/cfb8":120,"./modes/ctr":121,"./modes/ecb":122,"./modes/ofb":123,"./streamCipher":126,"buffer":28,"cipher-base":125,"dup":37,"evp_bytestokey":127,"inherits":226}],114:[function(require,module,exports){
+},{"./aes":109,"./authCipher":110,"./modes":115,"./modes/cbc":116,"./modes/cfb":117,"./modes/cfb1":118,"./modes/cfb8":119,"./modes/ctr":120,"./modes/ecb":121,"./modes/ofb":122,"./streamCipher":125,"buffer":27,"cipher-base":124,"dup":37,"evp_bytestokey":126,"inherits":225}],114:[function(require,module,exports){
 arguments[4][38][0].apply(exports,arguments)
-},{"./aes":110,"./authCipher":111,"./modes":116,"./modes/cbc":117,"./modes/cfb":118,"./modes/cfb1":119,"./modes/cfb8":120,"./modes/ctr":121,"./modes/ecb":122,"./modes/ofb":123,"./streamCipher":126,"buffer":28,"cipher-base":125,"dup":38,"evp_bytestokey":127,"inherits":226}],115:[function(require,module,exports){
+},{"buffer":27,"dup":38}],115:[function(require,module,exports){
 arguments[4][39][0].apply(exports,arguments)
-},{"buffer":28,"dup":39}],116:[function(require,module,exports){
+},{"dup":39}],116:[function(require,module,exports){
 arguments[4][40][0].apply(exports,arguments)
-},{"dup":40}],117:[function(require,module,exports){
+},{"buffer-xor":123,"dup":40}],117:[function(require,module,exports){
 arguments[4][41][0].apply(exports,arguments)
-},{"buffer-xor":124,"dup":41}],118:[function(require,module,exports){
+},{"buffer":27,"buffer-xor":123,"dup":41}],118:[function(require,module,exports){
 arguments[4][42][0].apply(exports,arguments)
-},{"buffer":28,"buffer-xor":124,"dup":42}],119:[function(require,module,exports){
+},{"buffer":27,"dup":42}],119:[function(require,module,exports){
 arguments[4][43][0].apply(exports,arguments)
-},{"buffer":28,"dup":43}],120:[function(require,module,exports){
+},{"buffer":27,"dup":43}],120:[function(require,module,exports){
 arguments[4][44][0].apply(exports,arguments)
-},{"buffer":28,"dup":44}],121:[function(require,module,exports){
+},{"buffer":27,"buffer-xor":123,"dup":44}],121:[function(require,module,exports){
 arguments[4][45][0].apply(exports,arguments)
-},{"buffer":28,"buffer-xor":124,"dup":45}],122:[function(require,module,exports){
+},{"dup":45}],122:[function(require,module,exports){
 arguments[4][46][0].apply(exports,arguments)
-},{"dup":46}],123:[function(require,module,exports){
+},{"buffer":27,"buffer-xor":123,"dup":46}],123:[function(require,module,exports){
 arguments[4][47][0].apply(exports,arguments)
-},{"buffer":28,"buffer-xor":124,"dup":47}],124:[function(require,module,exports){
+},{"buffer":27,"dup":47}],124:[function(require,module,exports){
 arguments[4][48][0].apply(exports,arguments)
-},{"buffer":28,"dup":48}],125:[function(require,module,exports){
+},{"buffer":27,"dup":48,"inherits":225,"stream":247,"string_decoder":257}],125:[function(require,module,exports){
 arguments[4][49][0].apply(exports,arguments)
-},{"buffer":28,"dup":49,"inherits":226,"stream":248,"string_decoder":258}],126:[function(require,module,exports){
-arguments[4][50][0].apply(exports,arguments)
-},{"./aes":110,"buffer":28,"cipher-base":125,"dup":50,"inherits":226}],127:[function(require,module,exports){
-arguments[4][61][0].apply(exports,arguments)
-},{"buffer":28,"create-hash/md5":158,"dup":61}],128:[function(require,module,exports){
+},{"./aes":109,"buffer":27,"cipher-base":124,"dup":49,"inherits":225}],126:[function(require,module,exports){
+arguments[4][60][0].apply(exports,arguments)
+},{"buffer":27,"create-hash/md5":157,"dup":60}],127:[function(require,module,exports){
 (function (Buffer){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var createHmac = require('create-hmac')
@@ -27640,7 +27640,7 @@ module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
 }).call(this,require("buffer").Buffer)
-},{"./curves":64,"bn.js":65,"browserify-rsa":66,"buffer":28,"create-hmac":169,"elliptic":67,"parse-asn1":94}],129:[function(require,module,exports){
+},{"./curves":63,"bn.js":64,"browserify-rsa":65,"buffer":27,"create-hmac":168,"elliptic":66,"parse-asn1":93}],128:[function(require,module,exports){
 (function (Buffer){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var curves = require('./curves')
@@ -27747,7 +27747,7 @@ function checkValue (b, q) {
 module.exports = verify
 
 }).call(this,require("buffer").Buffer)
-},{"./curves":64,"bn.js":65,"buffer":28,"elliptic":67,"parse-asn1":94}],130:[function(require,module,exports){
+},{"./curves":63,"bn.js":64,"buffer":27,"elliptic":66,"parse-asn1":93}],129:[function(require,module,exports){
 (function (Buffer){
 var elliptic = require('elliptic');
 var BN = require('bn.js');
@@ -27873,57 +27873,57 @@ function formatReturnValue(bn, enc, len) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bn.js":131,"buffer":28,"elliptic":132}],131:[function(require,module,exports){
-arguments[4][65][0].apply(exports,arguments)
-},{"dup":65}],132:[function(require,module,exports){
+},{"bn.js":130,"buffer":27,"elliptic":131}],130:[function(require,module,exports){
+arguments[4][64][0].apply(exports,arguments)
+},{"dup":64}],131:[function(require,module,exports){
+arguments[4][66][0].apply(exports,arguments)
+},{"../package.json":154,"./elliptic/curve":134,"./elliptic/curves":137,"./elliptic/ec":138,"./elliptic/eddsa":141,"./elliptic/hmac-drbg":144,"./elliptic/utils":146,"brorand":147,"dup":66}],132:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"../package.json":155,"./elliptic/curve":135,"./elliptic/curves":138,"./elliptic/ec":139,"./elliptic/eddsa":142,"./elliptic/hmac-drbg":145,"./elliptic/utils":147,"brorand":148,"dup":67}],133:[function(require,module,exports){
+},{"../../elliptic":131,"bn.js":130,"dup":67}],133:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"../../elliptic":132,"bn.js":131,"dup":68}],134:[function(require,module,exports){
+},{"../../elliptic":131,"../curve":134,"bn.js":130,"dup":68,"inherits":225}],134:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"../../elliptic":132,"../curve":135,"bn.js":131,"dup":69,"inherits":226}],135:[function(require,module,exports){
+},{"./base":132,"./edwards":133,"./mont":135,"./short":136,"dup":69}],135:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"./base":133,"./edwards":134,"./mont":136,"./short":137,"dup":70}],136:[function(require,module,exports){
+},{"../../elliptic":131,"../curve":134,"bn.js":130,"dup":70,"inherits":225}],136:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"../../elliptic":132,"../curve":135,"bn.js":131,"dup":71,"inherits":226}],137:[function(require,module,exports){
+},{"../../elliptic":131,"../curve":134,"bn.js":130,"dup":71,"inherits":225}],137:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"../../elliptic":132,"../curve":135,"bn.js":131,"dup":72,"inherits":226}],138:[function(require,module,exports){
+},{"../elliptic":131,"./precomputed/secp256k1":145,"dup":72,"hash.js":148}],138:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"../elliptic":132,"./precomputed/secp256k1":146,"dup":73,"hash.js":149}],139:[function(require,module,exports){
+},{"../../elliptic":131,"./key":139,"./signature":140,"bn.js":130,"dup":73}],139:[function(require,module,exports){
 arguments[4][74][0].apply(exports,arguments)
-},{"../../elliptic":132,"./key":140,"./signature":141,"bn.js":131,"dup":74}],140:[function(require,module,exports){
+},{"bn.js":130,"dup":74}],140:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"bn.js":131,"dup":75}],141:[function(require,module,exports){
+},{"../../elliptic":131,"bn.js":130,"dup":75}],141:[function(require,module,exports){
 arguments[4][76][0].apply(exports,arguments)
-},{"../../elliptic":132,"bn.js":131,"dup":76}],142:[function(require,module,exports){
+},{"../../elliptic":131,"./key":142,"./signature":143,"dup":76,"hash.js":148}],142:[function(require,module,exports){
 arguments[4][77][0].apply(exports,arguments)
-},{"../../elliptic":132,"./key":143,"./signature":144,"dup":77,"hash.js":149}],143:[function(require,module,exports){
+},{"../../elliptic":131,"dup":77}],143:[function(require,module,exports){
 arguments[4][78][0].apply(exports,arguments)
-},{"../../elliptic":132,"dup":78}],144:[function(require,module,exports){
+},{"../../elliptic":131,"bn.js":130,"dup":78}],144:[function(require,module,exports){
 arguments[4][79][0].apply(exports,arguments)
-},{"../../elliptic":132,"bn.js":131,"dup":79}],145:[function(require,module,exports){
+},{"../elliptic":131,"dup":79,"hash.js":148}],145:[function(require,module,exports){
 arguments[4][80][0].apply(exports,arguments)
-},{"../elliptic":132,"dup":80,"hash.js":149}],146:[function(require,module,exports){
+},{"dup":80}],146:[function(require,module,exports){
 arguments[4][81][0].apply(exports,arguments)
-},{"dup":81}],147:[function(require,module,exports){
+},{"bn.js":130,"dup":81}],147:[function(require,module,exports){
 arguments[4][82][0].apply(exports,arguments)
-},{"bn.js":131,"dup":82}],148:[function(require,module,exports){
+},{"dup":82}],148:[function(require,module,exports){
 arguments[4][83][0].apply(exports,arguments)
-},{"dup":83}],149:[function(require,module,exports){
+},{"./hash/common":149,"./hash/hmac":150,"./hash/ripemd":151,"./hash/sha":152,"./hash/utils":153,"dup":83}],149:[function(require,module,exports){
 arguments[4][84][0].apply(exports,arguments)
-},{"./hash/common":150,"./hash/hmac":151,"./hash/ripemd":152,"./hash/sha":153,"./hash/utils":154,"dup":84}],150:[function(require,module,exports){
+},{"../hash":148,"dup":84}],150:[function(require,module,exports){
 arguments[4][85][0].apply(exports,arguments)
-},{"../hash":149,"dup":85}],151:[function(require,module,exports){
+},{"../hash":148,"dup":85}],151:[function(require,module,exports){
 arguments[4][86][0].apply(exports,arguments)
-},{"../hash":149,"dup":86}],152:[function(require,module,exports){
+},{"../hash":148,"dup":86}],152:[function(require,module,exports){
 arguments[4][87][0].apply(exports,arguments)
-},{"../hash":149,"dup":87}],153:[function(require,module,exports){
+},{"../hash":148,"dup":87}],153:[function(require,module,exports){
 arguments[4][88][0].apply(exports,arguments)
-},{"../hash":149,"dup":88}],154:[function(require,module,exports){
+},{"dup":88,"inherits":225}],154:[function(require,module,exports){
 arguments[4][89][0].apply(exports,arguments)
-},{"dup":89,"inherits":226}],155:[function(require,module,exports){
-arguments[4][90][0].apply(exports,arguments)
-},{"dup":90}],156:[function(require,module,exports){
+},{"dup":89}],155:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var inherits = require('inherits')
@@ -27979,7 +27979,7 @@ module.exports = function createHash (alg) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./md5":158,"buffer":28,"cipher-base":159,"inherits":226,"ripemd160":160,"sha.js":162}],157:[function(require,module,exports){
+},{"./md5":157,"buffer":27,"cipher-base":158,"inherits":225,"ripemd160":159,"sha.js":161}],156:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var intSize = 4;
@@ -28016,7 +28016,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 }
 exports.hash = hash;
 }).call(this,require("buffer").Buffer)
-},{"buffer":28}],158:[function(require,module,exports){
+},{"buffer":27}],157:[function(require,module,exports){
 'use strict';
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -28173,9 +28173,9 @@ function bit_rol(num, cnt)
 module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
-},{"./helpers":157}],159:[function(require,module,exports){
-arguments[4][49][0].apply(exports,arguments)
-},{"buffer":28,"dup":49,"inherits":226,"stream":248,"string_decoder":258}],160:[function(require,module,exports){
+},{"./helpers":156}],158:[function(require,module,exports){
+arguments[4][48][0].apply(exports,arguments)
+},{"buffer":27,"dup":48,"inherits":225,"stream":247,"string_decoder":257}],159:[function(require,module,exports){
 (function (Buffer){
 /*
 CryptoJS v3.1.2
@@ -28389,7 +28389,7 @@ function ripemd160 (message) {
 module.exports = ripemd160
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28}],161:[function(require,module,exports){
+},{"buffer":27}],160:[function(require,module,exports){
 (function (Buffer){
 // prototype class for hash functions
 function Hash (blockSize, finalSize) {
@@ -28462,7 +28462,7 @@ Hash.prototype._update = function () {
 module.exports = Hash
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28}],162:[function(require,module,exports){
+},{"buffer":27}],161:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -28479,7 +28479,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":163,"./sha1":164,"./sha224":165,"./sha256":166,"./sha384":167,"./sha512":168}],163:[function(require,module,exports){
+},{"./sha":162,"./sha1":163,"./sha224":164,"./sha256":165,"./sha384":166,"./sha512":167}],162:[function(require,module,exports){
 (function (Buffer){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
@@ -28583,7 +28583,7 @@ module.exports = Sha
 
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":161,"buffer":28,"inherits":226}],164:[function(require,module,exports){
+},{"./hash":160,"buffer":27,"inherits":225}],163:[function(require,module,exports){
 (function (Buffer){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
@@ -28683,7 +28683,7 @@ Sha1.prototype._hash = function () {
 module.exports = Sha1
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":161,"buffer":28,"inherits":226}],165:[function(require,module,exports){
+},{"./hash":160,"buffer":27,"inherits":225}],164:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -28739,7 +28739,7 @@ Sha224.prototype._hash = function () {
 module.exports = Sha224
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":161,"./sha256":166,"buffer":28,"inherits":226}],166:[function(require,module,exports){
+},{"./hash":160,"./sha256":165,"buffer":27,"inherits":225}],165:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -28884,7 +28884,7 @@ Sha256.prototype._hash = function () {
 module.exports = Sha256
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":161,"buffer":28,"inherits":226}],167:[function(require,module,exports){
+},{"./hash":160,"buffer":27,"inherits":225}],166:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
@@ -28944,7 +28944,7 @@ Sha384.prototype._hash = function () {
 module.exports = Sha384
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":161,"./sha512":168,"buffer":28,"inherits":226}],168:[function(require,module,exports){
+},{"./hash":160,"./sha512":167,"buffer":27,"inherits":225}],167:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var Hash = require('./hash')
@@ -29214,7 +29214,7 @@ Sha512.prototype._hash = function () {
 module.exports = Sha512
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":161,"buffer":28,"inherits":226}],169:[function(require,module,exports){
+},{"./hash":160,"buffer":27,"inherits":225}],168:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var createHash = require('create-hash/browser');
@@ -29286,7 +29286,7 @@ module.exports = function createHmac(alg, key) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"create-hash/browser":156,"inherits":226,"stream":248}],170:[function(require,module,exports){
+},{"buffer":27,"create-hash/browser":155,"inherits":225,"stream":247}],169:[function(require,module,exports){
 (function (Buffer){
 var generatePrime = require('./lib/generatePrime');
 var primes = require('./lib/primes');
@@ -29330,7 +29330,7 @@ exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffi
 exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman;
 
 }).call(this,require("buffer").Buffer)
-},{"./lib/dh":171,"./lib/generatePrime":172,"./lib/primes":173,"buffer":28}],171:[function(require,module,exports){
+},{"./lib/dh":170,"./lib/generatePrime":171,"./lib/primes":172,"buffer":27}],170:[function(require,module,exports){
 (function (Buffer){
 var BN = require('bn.js');
 var MillerRabin = require('miller-rabin');
@@ -29498,7 +29498,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./generatePrime":172,"bn.js":174,"buffer":28,"miller-rabin":175,"randombytes":223}],172:[function(require,module,exports){
+},{"./generatePrime":171,"bn.js":173,"buffer":27,"miller-rabin":174,"randombytes":222}],171:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -29605,7 +29605,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":174,"miller-rabin":175,"randombytes":223}],173:[function(require,module,exports){
+},{"bn.js":173,"miller-rabin":174,"randombytes":222}],172:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -29640,9 +29640,9 @@ module.exports={
         "prime": "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c93402849236c3fab4d27c7026c1d4dcb2602646dec9751e763dba37bdf8ff9406ad9e530ee5db382f413001aeb06a53ed9027d831179727b0865a8918da3edbebcf9b14ed44ce6cbaced4bb1bdb7f1447e6cc254b332051512bd7af426fb8f401378cd2bf5983ca01c64b92ecf032ea15d1721d03f482d7ce6e74fef6d55e702f46980c82b5a84031900b1c9e59e7c97fbec7e8f323a97a7e36cc88be0f1d45b7ff585ac54bd407b22b4154aacc8f6d7ebf48e1d814cc5ed20f8037e0a79715eef29be32806a1d58bb7c5da76f550aa3d8a1fbff0eb19ccb1a313d55cda56c9ec2ef29632387fe8d76e3c0468043e8f663f4860ee12bf2d5b0b7474d6e694f91e6dbe115974a3926f12fee5e438777cb6a932df8cd8bec4d073b931ba3bc832b68d9dd300741fa7bf8afc47ed2576f6936ba424663aab639c5ae4f5683423b4742bf1c978238f16cbe39d652de3fdb8befc848ad922222e04a4037c0713eb57a81a23f0c73473fc646cea306b4bcbc8862f8385ddfa9d4b7fa2c087e879683303ed5bdd3a062b3cf5b3a278a66d2a13f83f44f82ddf310ee074ab6a364597e899a0255dc164f31cc50846851df9ab48195ded7ea1b1d510bd7ee74d73faf36bc31ecfa268359046f4eb879f924009438b481c6cd7889a002ed5ee382bc9190da6fc026e479558e4475677e9aa9e3050e2765694dfc81f56e880b96e7160c980dd98edd3dfffffffffffffffff"
     }
 }
-},{}],174:[function(require,module,exports){
-arguments[4][65][0].apply(exports,arguments)
-},{"dup":65}],175:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
+arguments[4][64][0].apply(exports,arguments)
+},{"dup":64}],174:[function(require,module,exports){
 var bn = require('bn.js');
 var brorand = require('brorand');
 
@@ -29757,9 +29757,9 @@ MillerRabin.prototype.getDivisor = function getDivisor(n, k) {
   return false;
 };
 
-},{"bn.js":174,"brorand":176}],176:[function(require,module,exports){
-arguments[4][83][0].apply(exports,arguments)
-},{"dup":83}],177:[function(require,module,exports){
+},{"bn.js":173,"brorand":175}],175:[function(require,module,exports){
+arguments[4][82][0].apply(exports,arguments)
+},{"dup":82}],176:[function(require,module,exports){
 (function (Buffer){
 var createHmac = require('create-hmac')
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
@@ -29843,7 +29843,7 @@ function pbkdf2Sync (password, salt, iterations, keylen, digest) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"create-hmac":169}],178:[function(require,module,exports){
+},{"buffer":27,"create-hmac":168}],177:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt');
 exports.privateDecrypt = require('./privateDecrypt');
 
@@ -29854,7 +29854,7 @@ exports.privateEncrypt = function privateEncrypt(key, buf) {
 exports.publicDecrypt = function publicDecrypt(key, buf) {
   return exports.privateDecrypt(key, buf, true);
 };
-},{"./privateDecrypt":219,"./publicEncrypt":220}],179:[function(require,module,exports){
+},{"./privateDecrypt":218,"./publicEncrypt":219}],178:[function(require,module,exports){
 (function (Buffer){
 var createHash = require('create-hash');
 module.exports = function (seed, len) {
@@ -29873,85 +29873,85 @@ function i2ops(c) {
   return out;
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"create-hash":156}],180:[function(require,module,exports){
+},{"buffer":27,"create-hash":155}],179:[function(require,module,exports){
+arguments[4][64][0].apply(exports,arguments)
+},{"dup":64}],180:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"dup":65}],181:[function(require,module,exports){
-arguments[4][66][0].apply(exports,arguments)
-},{"bn.js":180,"buffer":28,"dup":66,"randombytes":223}],182:[function(require,module,exports){
+},{"bn.js":179,"buffer":27,"dup":65,"randombytes":222}],181:[function(require,module,exports){
+arguments[4][90][0].apply(exports,arguments)
+},{"dup":90}],182:[function(require,module,exports){
 arguments[4][91][0].apply(exports,arguments)
-},{"dup":91}],183:[function(require,module,exports){
+},{"asn1.js":185,"dup":91}],183:[function(require,module,exports){
 arguments[4][92][0].apply(exports,arguments)
-},{"asn1.js":186,"dup":92}],184:[function(require,module,exports){
+},{"browserify-aes":202,"buffer":27,"dup":92,"evp_bytestokey":217}],184:[function(require,module,exports){
 arguments[4][93][0].apply(exports,arguments)
-},{"browserify-aes":203,"buffer":28,"dup":93,"evp_bytestokey":218}],185:[function(require,module,exports){
+},{"./aesid.json":181,"./asn1":182,"./fixProc":183,"browserify-aes":202,"buffer":27,"dup":93,"pbkdf2":176}],185:[function(require,module,exports){
 arguments[4][94][0].apply(exports,arguments)
-},{"./aesid.json":182,"./asn1":183,"./fixProc":184,"browserify-aes":203,"buffer":28,"dup":94,"pbkdf2":177}],186:[function(require,module,exports){
+},{"./asn1/api":186,"./asn1/base":188,"./asn1/constants":192,"./asn1/decoders":194,"./asn1/encoders":197,"bn.js":179,"dup":94}],186:[function(require,module,exports){
 arguments[4][95][0].apply(exports,arguments)
-},{"./asn1/api":187,"./asn1/base":189,"./asn1/constants":193,"./asn1/decoders":195,"./asn1/encoders":198,"bn.js":180,"dup":95}],187:[function(require,module,exports){
+},{"../asn1":185,"dup":95,"inherits":225,"vm":261}],187:[function(require,module,exports){
 arguments[4][96][0].apply(exports,arguments)
-},{"../asn1":186,"dup":96,"inherits":226,"vm":262}],188:[function(require,module,exports){
+},{"../base":188,"buffer":27,"dup":96,"inherits":225}],188:[function(require,module,exports){
 arguments[4][97][0].apply(exports,arguments)
-},{"../base":189,"buffer":28,"dup":97,"inherits":226}],189:[function(require,module,exports){
+},{"./buffer":187,"./node":189,"./reporter":190,"dup":97}],189:[function(require,module,exports){
 arguments[4][98][0].apply(exports,arguments)
-},{"./buffer":188,"./node":190,"./reporter":191,"dup":98}],190:[function(require,module,exports){
+},{"../base":188,"dup":98,"minimalistic-assert":199}],190:[function(require,module,exports){
 arguments[4][99][0].apply(exports,arguments)
-},{"../base":189,"dup":99,"minimalistic-assert":200}],191:[function(require,module,exports){
+},{"dup":99,"inherits":225}],191:[function(require,module,exports){
 arguments[4][100][0].apply(exports,arguments)
-},{"dup":100,"inherits":226}],192:[function(require,module,exports){
+},{"../constants":192,"dup":100}],192:[function(require,module,exports){
 arguments[4][101][0].apply(exports,arguments)
-},{"../constants":193,"dup":101}],193:[function(require,module,exports){
+},{"./der":191,"dup":101}],193:[function(require,module,exports){
 arguments[4][102][0].apply(exports,arguments)
-},{"./der":192,"dup":102}],194:[function(require,module,exports){
+},{"../../asn1":185,"dup":102,"inherits":225}],194:[function(require,module,exports){
 arguments[4][103][0].apply(exports,arguments)
-},{"../../asn1":186,"dup":103,"inherits":226}],195:[function(require,module,exports){
+},{"./der":193,"./pem":195,"dup":103}],195:[function(require,module,exports){
 arguments[4][104][0].apply(exports,arguments)
-},{"./der":194,"./pem":196,"dup":104}],196:[function(require,module,exports){
+},{"../../asn1":185,"./der":193,"buffer":27,"dup":104,"inherits":225}],196:[function(require,module,exports){
 arguments[4][105][0].apply(exports,arguments)
-},{"../../asn1":186,"./der":194,"buffer":28,"dup":105,"inherits":226}],197:[function(require,module,exports){
+},{"../../asn1":185,"buffer":27,"dup":105,"inherits":225}],197:[function(require,module,exports){
 arguments[4][106][0].apply(exports,arguments)
-},{"../../asn1":186,"buffer":28,"dup":106,"inherits":226}],198:[function(require,module,exports){
+},{"./der":196,"./pem":198,"dup":106}],198:[function(require,module,exports){
 arguments[4][107][0].apply(exports,arguments)
-},{"./der":197,"./pem":199,"dup":107}],199:[function(require,module,exports){
-arguments[4][108][0].apply(exports,arguments)
-},{"../../asn1":186,"./der":197,"buffer":28,"dup":108,"inherits":226}],200:[function(require,module,exports){
-arguments[4][60][0].apply(exports,arguments)
-},{"dup":60}],201:[function(require,module,exports){
+},{"../../asn1":185,"./der":196,"buffer":27,"dup":107,"inherits":225}],199:[function(require,module,exports){
+arguments[4][59][0].apply(exports,arguments)
+},{"dup":59}],200:[function(require,module,exports){
+arguments[4][33][0].apply(exports,arguments)
+},{"buffer":27,"dup":33}],201:[function(require,module,exports){
 arguments[4][34][0].apply(exports,arguments)
-},{"buffer":28,"dup":34}],202:[function(require,module,exports){
+},{"./aes":200,"./ghash":205,"buffer":27,"buffer-xor":214,"cipher-base":215,"dup":34,"inherits":225}],202:[function(require,module,exports){
 arguments[4][35][0].apply(exports,arguments)
-},{"./aes":201,"./ghash":206,"buffer":28,"buffer-xor":215,"cipher-base":216,"dup":35,"inherits":226}],203:[function(require,module,exports){
+},{"./decrypter":203,"./encrypter":204,"./modes":206,"dup":35}],203:[function(require,module,exports){
 arguments[4][36][0].apply(exports,arguments)
-},{"./decrypter":204,"./encrypter":205,"./modes":207,"dup":36}],204:[function(require,module,exports){
+},{"./aes":200,"./authCipher":201,"./modes":206,"./modes/cbc":207,"./modes/cfb":208,"./modes/cfb1":209,"./modes/cfb8":210,"./modes/ctr":211,"./modes/ecb":212,"./modes/ofb":213,"./streamCipher":216,"buffer":27,"cipher-base":215,"dup":36,"evp_bytestokey":217,"inherits":225}],204:[function(require,module,exports){
 arguments[4][37][0].apply(exports,arguments)
-},{"./aes":201,"./authCipher":202,"./modes":207,"./modes/cbc":208,"./modes/cfb":209,"./modes/cfb1":210,"./modes/cfb8":211,"./modes/ctr":212,"./modes/ecb":213,"./modes/ofb":214,"./streamCipher":217,"buffer":28,"cipher-base":216,"dup":37,"evp_bytestokey":218,"inherits":226}],205:[function(require,module,exports){
+},{"./aes":200,"./authCipher":201,"./modes":206,"./modes/cbc":207,"./modes/cfb":208,"./modes/cfb1":209,"./modes/cfb8":210,"./modes/ctr":211,"./modes/ecb":212,"./modes/ofb":213,"./streamCipher":216,"buffer":27,"cipher-base":215,"dup":37,"evp_bytestokey":217,"inherits":225}],205:[function(require,module,exports){
 arguments[4][38][0].apply(exports,arguments)
-},{"./aes":201,"./authCipher":202,"./modes":207,"./modes/cbc":208,"./modes/cfb":209,"./modes/cfb1":210,"./modes/cfb8":211,"./modes/ctr":212,"./modes/ecb":213,"./modes/ofb":214,"./streamCipher":217,"buffer":28,"cipher-base":216,"dup":38,"evp_bytestokey":218,"inherits":226}],206:[function(require,module,exports){
+},{"buffer":27,"dup":38}],206:[function(require,module,exports){
 arguments[4][39][0].apply(exports,arguments)
-},{"buffer":28,"dup":39}],207:[function(require,module,exports){
+},{"dup":39}],207:[function(require,module,exports){
 arguments[4][40][0].apply(exports,arguments)
-},{"dup":40}],208:[function(require,module,exports){
+},{"buffer-xor":214,"dup":40}],208:[function(require,module,exports){
 arguments[4][41][0].apply(exports,arguments)
-},{"buffer-xor":215,"dup":41}],209:[function(require,module,exports){
+},{"buffer":27,"buffer-xor":214,"dup":41}],209:[function(require,module,exports){
 arguments[4][42][0].apply(exports,arguments)
-},{"buffer":28,"buffer-xor":215,"dup":42}],210:[function(require,module,exports){
+},{"buffer":27,"dup":42}],210:[function(require,module,exports){
 arguments[4][43][0].apply(exports,arguments)
-},{"buffer":28,"dup":43}],211:[function(require,module,exports){
+},{"buffer":27,"dup":43}],211:[function(require,module,exports){
 arguments[4][44][0].apply(exports,arguments)
-},{"buffer":28,"dup":44}],212:[function(require,module,exports){
+},{"buffer":27,"buffer-xor":214,"dup":44}],212:[function(require,module,exports){
 arguments[4][45][0].apply(exports,arguments)
-},{"buffer":28,"buffer-xor":215,"dup":45}],213:[function(require,module,exports){
+},{"dup":45}],213:[function(require,module,exports){
 arguments[4][46][0].apply(exports,arguments)
-},{"dup":46}],214:[function(require,module,exports){
+},{"buffer":27,"buffer-xor":214,"dup":46}],214:[function(require,module,exports){
 arguments[4][47][0].apply(exports,arguments)
-},{"buffer":28,"buffer-xor":215,"dup":47}],215:[function(require,module,exports){
+},{"buffer":27,"dup":47}],215:[function(require,module,exports){
 arguments[4][48][0].apply(exports,arguments)
-},{"buffer":28,"dup":48}],216:[function(require,module,exports){
+},{"buffer":27,"dup":48,"inherits":225,"stream":247,"string_decoder":257}],216:[function(require,module,exports){
 arguments[4][49][0].apply(exports,arguments)
-},{"buffer":28,"dup":49,"inherits":226,"stream":248,"string_decoder":258}],217:[function(require,module,exports){
-arguments[4][50][0].apply(exports,arguments)
-},{"./aes":201,"buffer":28,"cipher-base":216,"dup":50,"inherits":226}],218:[function(require,module,exports){
-arguments[4][61][0].apply(exports,arguments)
-},{"buffer":28,"create-hash/md5":158,"dup":61}],219:[function(require,module,exports){
+},{"./aes":200,"buffer":27,"cipher-base":215,"dup":49,"inherits":225}],217:[function(require,module,exports){
+arguments[4][60][0].apply(exports,arguments)
+},{"buffer":27,"create-hash/md5":157,"dup":60}],218:[function(require,module,exports){
 (function (Buffer){
 var parseKeys = require('parse-asn1');
 var mgf = require('./mgf');
@@ -30062,7 +30062,7 @@ function compare(a, b){
   return dif;
 }
 }).call(this,require("buffer").Buffer)
-},{"./mgf":179,"./withPublic":221,"./xor":222,"bn.js":180,"browserify-rsa":181,"buffer":28,"create-hash":156,"parse-asn1":185}],220:[function(require,module,exports){
+},{"./mgf":178,"./withPublic":220,"./xor":221,"bn.js":179,"browserify-rsa":180,"buffer":27,"create-hash":155,"parse-asn1":184}],219:[function(require,module,exports){
 (function (Buffer){
 var parseKeys = require('parse-asn1');
 var randomBytes = require('randombytes');
@@ -30160,7 +30160,7 @@ function nonZero(len, crypto) {
   return out;
 }
 }).call(this,require("buffer").Buffer)
-},{"./mgf":179,"./withPublic":221,"./xor":222,"bn.js":180,"browserify-rsa":181,"buffer":28,"create-hash":156,"parse-asn1":185,"randombytes":223}],221:[function(require,module,exports){
+},{"./mgf":178,"./withPublic":220,"./xor":221,"bn.js":179,"browserify-rsa":180,"buffer":27,"create-hash":155,"parse-asn1":184,"randombytes":222}],220:[function(require,module,exports){
 (function (Buffer){
 var bn = require('bn.js');
 function withPublic(paddedMsg, key) {
@@ -30173,7 +30173,7 @@ function withPublic(paddedMsg, key) {
 
 module.exports = withPublic;
 }).call(this,require("buffer").Buffer)
-},{"bn.js":180,"buffer":28}],222:[function(require,module,exports){
+},{"bn.js":179,"buffer":27}],221:[function(require,module,exports){
 module.exports = function xor(a, b) {
   var len = a.length;
   var i = -1;
@@ -30182,7 +30182,7 @@ module.exports = function xor(a, b) {
   }
   return a
 };
-},{}],223:[function(require,module,exports){
+},{}],222:[function(require,module,exports){
 (function (process,global,Buffer){
 'use strict';
 
@@ -30214,7 +30214,7 @@ function oldBrowser() {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"_process":230,"buffer":28}],224:[function(require,module,exports){
+},{"_process":229,"buffer":27}],223:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -30517,7 +30517,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],225:[function(require,module,exports){
+},{}],224:[function(require,module,exports){
 var http = require('http');
 
 var https = module.exports;
@@ -30533,7 +30533,7 @@ https.request = function (params, cb) {
     return http.request.call(this, params, cb);
 }
 
-},{"http":249}],226:[function(require,module,exports){
+},{"http":248}],225:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -30558,7 +30558,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],227:[function(require,module,exports){
+},{}],226:[function(require,module,exports){
 /**
  * Determine if an object is Buffer
  *
@@ -30577,12 +30577,12 @@ module.exports = function (obj) {
     ))
 }
 
-},{}],228:[function(require,module,exports){
+},{}],227:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],229:[function(require,module,exports){
+},{}],228:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -30810,7 +30810,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":230}],230:[function(require,module,exports){
+},{"_process":229}],229:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -30903,7 +30903,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],231:[function(require,module,exports){
+},{}],230:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.3.2 by @mathias */
 ;(function(root) {
@@ -31437,7 +31437,7 @@ process.umask = function() { return 0; };
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],232:[function(require,module,exports){
+},{}],231:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -31523,7 +31523,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],233:[function(require,module,exports){
+},{}],232:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -31610,16 +31610,16 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],234:[function(require,module,exports){
+},{}],233:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":232,"./encode":233}],235:[function(require,module,exports){
+},{"./decode":231,"./encode":232}],234:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":236}],236:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":235}],235:[function(require,module,exports){
 // a duplex stream is just a stream that is both readable and writable.
 // Since JS doesn't have multiple prototypal inheritance, this class
 // prototypally inherits from Readable, and then parasitically from
@@ -31703,7 +31703,7 @@ function forEach (xs, f) {
   }
 }
 
-},{"./_stream_readable":238,"./_stream_writable":240,"core-util-is":241,"inherits":226,"process-nextick-args":242}],237:[function(require,module,exports){
+},{"./_stream_readable":237,"./_stream_writable":239,"core-util-is":240,"inherits":225,"process-nextick-args":241}],236:[function(require,module,exports){
 // a passthrough stream.
 // basically just the most minimal sort of Transform stream.
 // Every written chunk gets output as-is.
@@ -31732,7 +31732,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./_stream_transform":239,"core-util-is":241,"inherits":226}],238:[function(require,module,exports){
+},{"./_stream_transform":238,"core-util-is":240,"inherits":225}],237:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -32709,7 +32709,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":236,"_process":230,"buffer":28,"core-util-is":241,"events":224,"inherits":226,"isarray":228,"process-nextick-args":242,"string_decoder/":258,"util":14}],239:[function(require,module,exports){
+},{"./_stream_duplex":235,"_process":229,"buffer":27,"core-util-is":240,"events":223,"inherits":225,"isarray":227,"process-nextick-args":241,"string_decoder/":257,"util":13}],238:[function(require,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -32908,7 +32908,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./_stream_duplex":236,"core-util-is":241,"inherits":226}],240:[function(require,module,exports){
+},{"./_stream_duplex":235,"core-util-is":240,"inherits":225}],239:[function(require,module,exports){
 // A bit simpler than readable streams.
 // Implement an async ._write(chunk, encoding, cb), and it'll handle all
 // the drain event emission and buffering.
@@ -33437,7 +33437,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./_stream_duplex":236,"buffer":28,"core-util-is":241,"events":224,"inherits":226,"process-nextick-args":242,"util-deprecate":243}],241:[function(require,module,exports){
+},{"./_stream_duplex":235,"buffer":27,"core-util-is":240,"events":223,"inherits":225,"process-nextick-args":241,"util-deprecate":242}],240:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -33547,7 +33547,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 }).call(this,{"isBuffer":require("../../../../insert-module-globals/node_modules/is-buffer/index.js")})
-},{"../../../../insert-module-globals/node_modules/is-buffer/index.js":227}],242:[function(require,module,exports){
+},{"../../../../insert-module-globals/node_modules/is-buffer/index.js":226}],241:[function(require,module,exports){
 (function (process){
 'use strict';
 module.exports = nextTick;
@@ -33564,7 +33564,7 @@ function nextTick(fn) {
 }
 
 }).call(this,require('_process'))
-},{"_process":230}],243:[function(require,module,exports){
+},{"_process":229}],242:[function(require,module,exports){
 (function (global){
 
 /**
@@ -33635,10 +33635,10 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],244:[function(require,module,exports){
+},{}],243:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":237}],245:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":236}],244:[function(require,module,exports){
 var Stream = (function (){
   try {
     return require('st' + 'ream'); // hack to fix a circular dependency issue when used with browserify
@@ -33652,13 +33652,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":236,"./lib/_stream_passthrough.js":237,"./lib/_stream_readable.js":238,"./lib/_stream_transform.js":239,"./lib/_stream_writable.js":240}],246:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":235,"./lib/_stream_passthrough.js":236,"./lib/_stream_readable.js":237,"./lib/_stream_transform.js":238,"./lib/_stream_writable.js":239}],245:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":239}],247:[function(require,module,exports){
+},{"./lib/_stream_transform.js":238}],246:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":240}],248:[function(require,module,exports){
+},{"./lib/_stream_writable.js":239}],247:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -33787,7 +33787,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":224,"inherits":226,"readable-stream/duplex.js":235,"readable-stream/passthrough.js":244,"readable-stream/readable.js":245,"readable-stream/transform.js":246,"readable-stream/writable.js":247}],249:[function(require,module,exports){
+},{"events":223,"inherits":225,"readable-stream/duplex.js":234,"readable-stream/passthrough.js":243,"readable-stream/readable.js":244,"readable-stream/transform.js":245,"readable-stream/writable.js":246}],248:[function(require,module,exports){
 var ClientRequest = require('./lib/request')
 var extend = require('xtend')
 var statusCodes = require('builtin-status-codes')
@@ -33862,7 +33862,7 @@ http.METHODS = [
 	'UNLOCK',
 	'UNSUBSCRIBE'
 ]
-},{"./lib/request":251,"builtin-status-codes":253,"url":259,"xtend":264}],250:[function(require,module,exports){
+},{"./lib/request":250,"builtin-status-codes":252,"url":258,"xtend":263}],249:[function(require,module,exports){
 (function (global){
 exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableByteStream)
 
@@ -33906,7 +33906,7 @@ function isFunction (value) {
 xhr = null // Help gc
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],251:[function(require,module,exports){
+},{}],250:[function(require,module,exports){
 (function (process,global,Buffer){
 // var Base64 = require('Base64')
 var capability = require('./capability')
@@ -34188,7 +34188,7 @@ var unsafeHeaders = [
 ]
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":250,"./response":252,"_process":230,"buffer":28,"foreach":254,"indexof":255,"inherits":226,"object-keys":256,"stream":248}],252:[function(require,module,exports){
+},{"./capability":249,"./response":251,"_process":229,"buffer":27,"foreach":253,"indexof":254,"inherits":225,"object-keys":255,"stream":247}],251:[function(require,module,exports){
 (function (process,global,Buffer){
 var capability = require('./capability')
 var foreach = require('foreach')
@@ -34365,7 +34365,7 @@ IncomingMessage.prototype._onXHRProgress = function () {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":250,"_process":230,"buffer":28,"foreach":254,"inherits":226,"stream":248}],253:[function(require,module,exports){
+},{"./capability":249,"_process":229,"buffer":27,"foreach":253,"inherits":225,"stream":247}],252:[function(require,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -34426,7 +34426,7 @@ module.exports = {
   "511": "Network Authentication Required"
 }
 
-},{}],254:[function(require,module,exports){
+},{}],253:[function(require,module,exports){
 
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
@@ -34450,7 +34450,7 @@ module.exports = function forEach (obj, fn, ctx) {
 };
 
 
-},{}],255:[function(require,module,exports){
+},{}],254:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -34461,7 +34461,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],256:[function(require,module,exports){
+},{}],255:[function(require,module,exports){
 'use strict';
 
 // modified from https://github.com/es-shims/es5-shim
@@ -34591,7 +34591,7 @@ keysShim.shim = function shimObjectKeys() {
 
 module.exports = keysShim;
 
-},{"./isArguments":257}],257:[function(require,module,exports){
+},{"./isArguments":256}],256:[function(require,module,exports){
 'use strict';
 
 var toStr = Object.prototype.toString;
@@ -34610,7 +34610,7 @@ module.exports = function isArguments(value) {
 	return isArgs;
 };
 
-},{}],258:[function(require,module,exports){
+},{}],257:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -34833,7 +34833,7 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":28}],259:[function(require,module,exports){
+},{"buffer":27}],258:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -35542,14 +35542,14 @@ function isNullOrUndefined(arg) {
   return  arg == null;
 }
 
-},{"punycode":231,"querystring":234}],260:[function(require,module,exports){
+},{"punycode":230,"querystring":233}],259:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],261:[function(require,module,exports){
+},{}],260:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -36139,7 +36139,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":260,"_process":230,"inherits":226}],262:[function(require,module,exports){
+},{"./support/isBuffer":259,"_process":229,"inherits":225}],261:[function(require,module,exports){
 var indexOf = require('indexof');
 
 var Object_keys = function (obj) {
@@ -36279,9 +36279,9 @@ exports.createContext = Script.createContext = function (context) {
     return copy;
 };
 
-},{"indexof":263}],263:[function(require,module,exports){
-arguments[4][255][0].apply(exports,arguments)
-},{"dup":255}],264:[function(require,module,exports){
+},{"indexof":262}],262:[function(require,module,exports){
+arguments[4][254][0].apply(exports,arguments)
+},{"dup":254}],263:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -36302,7 +36302,7 @@ function extend() {
     return target
 }
 
-},{}],265:[function(require,module,exports){
+},{}],264:[function(require,module,exports){
 // Copyright 2010-2012 Mikeal Rogers
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
@@ -36460,7 +36460,7 @@ Object.defineProperty(request, 'debug', {
   }
 })
 
-},{"./lib/cookies":267,"./lib/helpers":270,"./request":358,"extend":291}],266:[function(require,module,exports){
+},{"./lib/cookies":266,"./lib/helpers":269,"./request":357,"extend":290}],265:[function(require,module,exports){
 'use strict'
 
 var caseless = require('caseless')
@@ -36630,7 +36630,7 @@ Auth.prototype.onResponse = function (response) {
 
 exports.Auth = Auth
 
-},{"./helpers":270,"caseless":288,"node-uuid":343}],267:[function(require,module,exports){
+},{"./helpers":269,"caseless":287,"node-uuid":342}],266:[function(require,module,exports){
 'use strict'
 
 var tough = require('tough-cookie')
@@ -36671,7 +36671,7 @@ exports.jar = function(store) {
   return new RequestJar(store)
 }
 
-},{"tough-cookie":350}],268:[function(require,module,exports){
+},{"tough-cookie":349}],267:[function(require,module,exports){
 (function (process){
 'use strict'
 
@@ -36754,7 +36754,7 @@ function getProxyFromURI(uri) {
 module.exports = getProxyFromURI
 
 }).call(this,require('_process'))
-},{"_process":230}],269:[function(require,module,exports){
+},{"_process":229}],268:[function(require,module,exports){
 'use strict'
 
 var fs = require('fs')
@@ -36961,7 +36961,7 @@ Har.prototype.options = function (options) {
 
 exports.Har = Har
 
-},{"fs":12,"har-validator":295,"querystring":234,"util":261}],270:[function(require,module,exports){
+},{"fs":11,"har-validator":294,"querystring":233,"util":260}],269:[function(require,module,exports){
 (function (process,Buffer){
 'use strict'
 
@@ -37039,7 +37039,7 @@ exports.version               = version
 exports.defer                 = deferMethod()
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":230,"buffer":28,"crypto":32,"json-stringify-safe":339}],271:[function(require,module,exports){
+},{"_process":229,"buffer":27,"crypto":31,"json-stringify-safe":338}],270:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 
@@ -37152,7 +37152,7 @@ Multipart.prototype.onRequest = function (options) {
 exports.Multipart = Multipart
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"combined-stream":289,"isstream":338,"node-uuid":343}],272:[function(require,module,exports){
+},{"buffer":27,"combined-stream":288,"isstream":337,"node-uuid":342}],271:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 
@@ -37303,7 +37303,7 @@ OAuth.prototype.onRequest = function (_oauth) {
 exports.OAuth = OAuth
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"caseless":288,"crypto":32,"node-uuid":343,"oauth-sign":344,"qs":345,"url":259}],273:[function(require,module,exports){
+},{"buffer":27,"caseless":287,"crypto":31,"node-uuid":342,"oauth-sign":343,"qs":344,"url":258}],272:[function(require,module,exports){
 'use strict'
 
 var qs = require('qs')
@@ -37356,7 +37356,7 @@ Querystring.prototype.unescape = querystring.unescape
 
 exports.Querystring = Querystring
 
-},{"qs":345,"querystring":234}],274:[function(require,module,exports){
+},{"qs":344,"querystring":233}],273:[function(require,module,exports){
 'use strict'
 
 var url = require('url')
@@ -37512,7 +37512,7 @@ Redirect.prototype.onResponse = function (response) {
 
 exports.Redirect = Redirect
 
-},{"url":259}],275:[function(require,module,exports){
+},{"url":258}],274:[function(require,module,exports){
 'use strict'
 
 var url = require('url')
@@ -37697,7 +37697,7 @@ Tunnel.defaultProxyHeaderWhiteList = defaultProxyHeaderWhiteList
 Tunnel.defaultProxyHeaderExclusiveList = defaultProxyHeaderExclusiveList
 exports.Tunnel = Tunnel
 
-},{"tunnel-agent":357,"url":259}],276:[function(require,module,exports){
+},{"tunnel-agent":356,"url":258}],275:[function(require,module,exports){
 
 /*!
  *  Copyright 2010 LearnBoost <dev@learnboost.com>
@@ -37911,7 +37911,7 @@ function canonicalizeResource (resource) {
 }
 module.exports.canonicalizeResource = canonicalizeResource
 
-},{"crypto":32,"url":259}],277:[function(require,module,exports){
+},{"crypto":31,"url":258}],276:[function(require,module,exports){
 (function (Buffer){
 var DuplexStream = require('readable-stream/duplex')
   , util         = require('util')
@@ -38131,15 +38131,15 @@ BufferList.prototype.destroy = function () {
 module.exports = BufferList
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"readable-stream/duplex":278,"util":261}],278:[function(require,module,exports){
+},{"buffer":27,"readable-stream/duplex":277,"util":260}],277:[function(require,module,exports){
+arguments[4][234][0].apply(exports,arguments)
+},{"./lib/_stream_duplex.js":278,"dup":234}],278:[function(require,module,exports){
 arguments[4][235][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":279,"dup":235}],279:[function(require,module,exports){
-arguments[4][236][0].apply(exports,arguments)
-},{"./_stream_readable":280,"./_stream_writable":281,"core-util-is":282,"dup":236,"inherits":283,"process-nextick-args":285}],280:[function(require,module,exports){
-arguments[4][238][0].apply(exports,arguments)
-},{"./_stream_duplex":279,"_process":230,"buffer":28,"core-util-is":282,"dup":238,"events":224,"inherits":283,"isarray":284,"process-nextick-args":285,"string_decoder/":286,"util":14}],281:[function(require,module,exports){
-arguments[4][240][0].apply(exports,arguments)
-},{"./_stream_duplex":279,"buffer":28,"core-util-is":282,"dup":240,"events":224,"inherits":283,"process-nextick-args":285,"util-deprecate":287}],282:[function(require,module,exports){
+},{"./_stream_readable":279,"./_stream_writable":280,"core-util-is":281,"dup":235,"inherits":282,"process-nextick-args":284}],279:[function(require,module,exports){
+arguments[4][237][0].apply(exports,arguments)
+},{"./_stream_duplex":278,"_process":229,"buffer":27,"core-util-is":281,"dup":237,"events":223,"inherits":282,"isarray":283,"process-nextick-args":284,"string_decoder/":285,"util":13}],280:[function(require,module,exports){
+arguments[4][239][0].apply(exports,arguments)
+},{"./_stream_duplex":278,"buffer":27,"core-util-is":281,"dup":239,"events":223,"inherits":282,"process-nextick-args":284,"util-deprecate":286}],281:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -38249,17 +38249,17 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 }).call(this,{"isBuffer":require("../../../../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js")})
-},{"../../../../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":227}],283:[function(require,module,exports){
-arguments[4][226][0].apply(exports,arguments)
-},{"dup":226}],284:[function(require,module,exports){
-arguments[4][228][0].apply(exports,arguments)
-},{"dup":228}],285:[function(require,module,exports){
+},{"../../../../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":226}],282:[function(require,module,exports){
+arguments[4][225][0].apply(exports,arguments)
+},{"dup":225}],283:[function(require,module,exports){
+arguments[4][227][0].apply(exports,arguments)
+},{"dup":227}],284:[function(require,module,exports){
+arguments[4][241][0].apply(exports,arguments)
+},{"_process":229,"dup":241}],285:[function(require,module,exports){
+arguments[4][257][0].apply(exports,arguments)
+},{"buffer":27,"dup":257}],286:[function(require,module,exports){
 arguments[4][242][0].apply(exports,arguments)
-},{"_process":230,"dup":242}],286:[function(require,module,exports){
-arguments[4][258][0].apply(exports,arguments)
-},{"buffer":28,"dup":258}],287:[function(require,module,exports){
-arguments[4][243][0].apply(exports,arguments)
-},{"dup":243}],288:[function(require,module,exports){
+},{"dup":242}],287:[function(require,module,exports){
 function Caseless (dict) {
   this.dict = dict || {}
 }
@@ -38327,7 +38327,7 @@ module.exports.httpify = function (resp, headers) {
   return c
 }
 
-},{}],289:[function(require,module,exports){
+},{}],288:[function(require,module,exports){
 (function (Buffer){
 var util = require('util');
 var Stream = require('stream').Stream;
@@ -38519,7 +38519,7 @@ CombinedStream.prototype._emitError = function(err) {
 };
 
 }).call(this,{"isBuffer":require("../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js")})
-},{"../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":227,"delayed-stream":290,"stream":248,"util":261}],290:[function(require,module,exports){
+},{"../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":226,"delayed-stream":289,"stream":247,"util":260}],289:[function(require,module,exports){
 var Stream = require('stream').Stream;
 var util = require('util');
 
@@ -38628,7 +38628,7 @@ DelayedStream.prototype._checkIfMaxDataSizeExceeded = function() {
   this.emit('error', new Error(message));
 };
 
-},{"stream":248,"util":261}],291:[function(require,module,exports){
+},{"stream":247,"util":260}],290:[function(require,module,exports){
 'use strict';
 
 var hasOwn = Object.prototype.hasOwnProperty;
@@ -38716,7 +38716,7 @@ module.exports = function extend() {
 };
 
 
-},{}],292:[function(require,module,exports){
+},{}],291:[function(require,module,exports){
 module.exports = ForeverAgent
 ForeverAgent.SSL = ForeverAgentSSL
 
@@ -38856,9 +38856,9 @@ function createConnectionSSL (port, host, options) {
   return tls.connect(options);
 }
 
-},{"http":249,"https":225,"net":12,"tls":12,"util":261}],293:[function(require,module,exports){
+},{"http":248,"https":224,"net":11,"tls":11,"util":260}],292:[function(require,module,exports){
 module.exports = FormData;
-},{}],294:[function(require,module,exports){
+},{}],293:[function(require,module,exports){
 'use strict'
 
 function ValidationError (errors) {
@@ -38870,7 +38870,7 @@ ValidationError.prototype = Error.prototype
 
 module.exports = ValidationError
 
-},{}],295:[function(require,module,exports){
+},{}],294:[function(require,module,exports){
 'use strict'
 
 var Promise = require('pinkie-promise')
@@ -38894,7 +38894,7 @@ Object.keys(schemas).map(function (name) {
   module.exports[name] = promisify(schemas[name])
 })
 
-},{"./runner":296,"./schemas":304,"pinkie-promise":320}],296:[function(require,module,exports){
+},{"./runner":295,"./schemas":303,"pinkie-promise":319}],295:[function(require,module,exports){
 'use strict'
 
 var schemas = require('./schemas')
@@ -38925,7 +38925,7 @@ module.exports = function (schema, data, cb) {
   return valid
 }
 
-},{"./error":294,"./schemas":304,"is-my-json-valid":314}],297:[function(require,module,exports){
+},{"./error":293,"./schemas":303,"is-my-json-valid":313}],296:[function(require,module,exports){
 module.exports={
   "properties": {
     "beforeRequest": {
@@ -38940,7 +38940,7 @@ module.exports={
   }
 }
 
-},{}],298:[function(require,module,exports){
+},{}],297:[function(require,module,exports){
 module.exports={
   "oneOf": [{
     "type": "object",
@@ -38973,7 +38973,7 @@ module.exports={
   }]
 }
 
-},{}],299:[function(require,module,exports){
+},{}],298:[function(require,module,exports){
 module.exports={
   "type": "object",
   "required": [
@@ -39002,7 +39002,7 @@ module.exports={
   }
 }
 
-},{}],300:[function(require,module,exports){
+},{}],299:[function(require,module,exports){
 module.exports={
   "type": "object",
   "required": [
@@ -39038,7 +39038,7 @@ module.exports={
   }
 }
 
-},{}],301:[function(require,module,exports){
+},{}],300:[function(require,module,exports){
 module.exports={
   "type": "object",
   "required": [
@@ -39058,7 +39058,7 @@ module.exports={
   }
 }
 
-},{}],302:[function(require,module,exports){
+},{}],301:[function(require,module,exports){
 module.exports={
   "type": "object",
   "optional": true,
@@ -39111,7 +39111,7 @@ module.exports={
   }
 }
 
-},{}],303:[function(require,module,exports){
+},{}],302:[function(require,module,exports){
 module.exports={
   "type": "object",
   "required": [
@@ -39124,7 +39124,7 @@ module.exports={
   }
 }
 
-},{}],304:[function(require,module,exports){
+},{}],303:[function(require,module,exports){
 'use strict'
 
 var schemas = {
@@ -39175,7 +39175,7 @@ schemas.har.properties.log = schemas.log
 
 module.exports = schemas
 
-},{"./cache.json":297,"./cacheEntry.json":298,"./content.json":299,"./cookie.json":300,"./creator.json":301,"./entry.json":302,"./har.json":303,"./log.json":305,"./page.json":306,"./pageTimings.json":307,"./postData.json":308,"./record.json":309,"./request.json":310,"./response.json":311,"./timings.json":312}],305:[function(require,module,exports){
+},{"./cache.json":296,"./cacheEntry.json":297,"./content.json":298,"./cookie.json":299,"./creator.json":300,"./entry.json":301,"./har.json":302,"./log.json":304,"./page.json":305,"./pageTimings.json":306,"./postData.json":307,"./record.json":308,"./request.json":309,"./response.json":310,"./timings.json":311}],304:[function(require,module,exports){
 module.exports={
   "type": "object",
   "required": [
@@ -39211,7 +39211,7 @@ module.exports={
   }
 }
 
-},{}],306:[function(require,module,exports){
+},{}],305:[function(require,module,exports){
 module.exports={
   "type": "object",
   "optional": true,
@@ -39243,7 +39243,7 @@ module.exports={
   }
 }
 
-},{}],307:[function(require,module,exports){
+},{}],306:[function(require,module,exports){
 module.exports={
   "type": "object",
   "properties": {
@@ -39261,7 +39261,7 @@ module.exports={
   }
 }
 
-},{}],308:[function(require,module,exports){
+},{}],307:[function(require,module,exports){
 module.exports={
   "type": "object",
   "optional": true,
@@ -39304,7 +39304,7 @@ module.exports={
   }
 }
 
-},{}],309:[function(require,module,exports){
+},{}],308:[function(require,module,exports){
 module.exports={
   "type": "object",
   "required": [
@@ -39324,7 +39324,7 @@ module.exports={
   }
 }
 
-},{}],310:[function(require,module,exports){
+},{}],309:[function(require,module,exports){
 module.exports={
   "type": "object",
   "required": [
@@ -39381,7 +39381,7 @@ module.exports={
   }
 }
 
-},{}],311:[function(require,module,exports){
+},{}],310:[function(require,module,exports){
 module.exports={
   "type": "object",
   "required": [
@@ -39435,7 +39435,7 @@ module.exports={
   }
 }
 
-},{}],312:[function(require,module,exports){
+},{}],311:[function(require,module,exports){
 module.exports={
   "required": [
     "send",
@@ -39477,7 +39477,7 @@ module.exports={
   }
 }
 
-},{}],313:[function(require,module,exports){
+},{}],312:[function(require,module,exports){
 exports['date-time'] = /^\d{4}-(?:0[0-9]{1}|1[0-2]{1})-[0-9]{2}[tT ]\d{2}:\d{2}:\d{2}(\.\d+)?([zZ]|[+-]\d{2}:\d{2})$/
 exports['date'] = /^\d{4}-(?:0[0-9]{1}|1[0-2]{1})-[0-9]{2}$/
 exports['time'] = /^\d{2}:\d{2}:\d{2}$/
@@ -39493,7 +39493,7 @@ exports['style'] = /\s*(.+?):\s*([^;]+);?/g
 exports['phone'] = /^\+(?:[0-9] ?){6,14}[0-9]$/
 exports['utc-millisec'] = /^[0-9]+(\.?[0-9]+)?$/
 
-},{}],314:[function(require,module,exports){
+},{}],313:[function(require,module,exports){
 var genobj = require('generate-object-property')
 var genfun = require('generate-function')
 var jsonpointer = require('jsonpointer')
@@ -40070,7 +40070,7 @@ module.exports.filter = function(schema, opts) {
   }
 }
 
-},{"./formats":313,"generate-function":315,"generate-object-property":316,"jsonpointer":318,"xtend":319}],315:[function(require,module,exports){
+},{"./formats":312,"generate-function":314,"generate-object-property":315,"jsonpointer":317,"xtend":318}],314:[function(require,module,exports){
 var util = require('util')
 
 var INDENT_START = /[\{\[]/
@@ -40133,7 +40133,7 @@ module.exports = function() {
   return line
 }
 
-},{"util":261}],316:[function(require,module,exports){
+},{"util":260}],315:[function(require,module,exports){
 var isProperty = require('is-property')
 
 var gen = function(obj, prop) {
@@ -40147,13 +40147,13 @@ gen.property = function (prop) {
 
 module.exports = gen
 
-},{"is-property":317}],317:[function(require,module,exports){
+},{"is-property":316}],316:[function(require,module,exports){
 "use strict"
 function isProperty(str) {
   return /^[$A-Z\_a-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6\xf8-\u02c1\u02c6-\u02d1\u02e0-\u02e4\u02ec\u02ee\u0370-\u0374\u0376\u0377\u037a-\u037d\u0386\u0388-\u038a\u038c\u038e-\u03a1\u03a3-\u03f5\u03f7-\u0481\u048a-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05d0-\u05ea\u05f0-\u05f2\u0620-\u064a\u066e\u066f\u0671-\u06d3\u06d5\u06e5\u06e6\u06ee\u06ef\u06fa-\u06fc\u06ff\u0710\u0712-\u072f\u074d-\u07a5\u07b1\u07ca-\u07ea\u07f4\u07f5\u07fa\u0800-\u0815\u081a\u0824\u0828\u0840-\u0858\u08a0\u08a2-\u08ac\u0904-\u0939\u093d\u0950\u0958-\u0961\u0971-\u0977\u0979-\u097f\u0985-\u098c\u098f\u0990\u0993-\u09a8\u09aa-\u09b0\u09b2\u09b6-\u09b9\u09bd\u09ce\u09dc\u09dd\u09df-\u09e1\u09f0\u09f1\u0a05-\u0a0a\u0a0f\u0a10\u0a13-\u0a28\u0a2a-\u0a30\u0a32\u0a33\u0a35\u0a36\u0a38\u0a39\u0a59-\u0a5c\u0a5e\u0a72-\u0a74\u0a85-\u0a8d\u0a8f-\u0a91\u0a93-\u0aa8\u0aaa-\u0ab0\u0ab2\u0ab3\u0ab5-\u0ab9\u0abd\u0ad0\u0ae0\u0ae1\u0b05-\u0b0c\u0b0f\u0b10\u0b13-\u0b28\u0b2a-\u0b30\u0b32\u0b33\u0b35-\u0b39\u0b3d\u0b5c\u0b5d\u0b5f-\u0b61\u0b71\u0b83\u0b85-\u0b8a\u0b8e-\u0b90\u0b92-\u0b95\u0b99\u0b9a\u0b9c\u0b9e\u0b9f\u0ba3\u0ba4\u0ba8-\u0baa\u0bae-\u0bb9\u0bd0\u0c05-\u0c0c\u0c0e-\u0c10\u0c12-\u0c28\u0c2a-\u0c33\u0c35-\u0c39\u0c3d\u0c58\u0c59\u0c60\u0c61\u0c85-\u0c8c\u0c8e-\u0c90\u0c92-\u0ca8\u0caa-\u0cb3\u0cb5-\u0cb9\u0cbd\u0cde\u0ce0\u0ce1\u0cf1\u0cf2\u0d05-\u0d0c\u0d0e-\u0d10\u0d12-\u0d3a\u0d3d\u0d4e\u0d60\u0d61\u0d7a-\u0d7f\u0d85-\u0d96\u0d9a-\u0db1\u0db3-\u0dbb\u0dbd\u0dc0-\u0dc6\u0e01-\u0e30\u0e32\u0e33\u0e40-\u0e46\u0e81\u0e82\u0e84\u0e87\u0e88\u0e8a\u0e8d\u0e94-\u0e97\u0e99-\u0e9f\u0ea1-\u0ea3\u0ea5\u0ea7\u0eaa\u0eab\u0ead-\u0eb0\u0eb2\u0eb3\u0ebd\u0ec0-\u0ec4\u0ec6\u0edc-\u0edf\u0f00\u0f40-\u0f47\u0f49-\u0f6c\u0f88-\u0f8c\u1000-\u102a\u103f\u1050-\u1055\u105a-\u105d\u1061\u1065\u1066\u106e-\u1070\u1075-\u1081\u108e\u10a0-\u10c5\u10c7\u10cd\u10d0-\u10fa\u10fc-\u1248\u124a-\u124d\u1250-\u1256\u1258\u125a-\u125d\u1260-\u1288\u128a-\u128d\u1290-\u12b0\u12b2-\u12b5\u12b8-\u12be\u12c0\u12c2-\u12c5\u12c8-\u12d6\u12d8-\u1310\u1312-\u1315\u1318-\u135a\u1380-\u138f\u13a0-\u13f4\u1401-\u166c\u166f-\u167f\u1681-\u169a\u16a0-\u16ea\u16ee-\u16f0\u1700-\u170c\u170e-\u1711\u1720-\u1731\u1740-\u1751\u1760-\u176c\u176e-\u1770\u1780-\u17b3\u17d7\u17dc\u1820-\u1877\u1880-\u18a8\u18aa\u18b0-\u18f5\u1900-\u191c\u1950-\u196d\u1970-\u1974\u1980-\u19ab\u19c1-\u19c7\u1a00-\u1a16\u1a20-\u1a54\u1aa7\u1b05-\u1b33\u1b45-\u1b4b\u1b83-\u1ba0\u1bae\u1baf\u1bba-\u1be5\u1c00-\u1c23\u1c4d-\u1c4f\u1c5a-\u1c7d\u1ce9-\u1cec\u1cee-\u1cf1\u1cf5\u1cf6\u1d00-\u1dbf\u1e00-\u1f15\u1f18-\u1f1d\u1f20-\u1f45\u1f48-\u1f4d\u1f50-\u1f57\u1f59\u1f5b\u1f5d\u1f5f-\u1f7d\u1f80-\u1fb4\u1fb6-\u1fbc\u1fbe\u1fc2-\u1fc4\u1fc6-\u1fcc\u1fd0-\u1fd3\u1fd6-\u1fdb\u1fe0-\u1fec\u1ff2-\u1ff4\u1ff6-\u1ffc\u2071\u207f\u2090-\u209c\u2102\u2107\u210a-\u2113\u2115\u2119-\u211d\u2124\u2126\u2128\u212a-\u212d\u212f-\u2139\u213c-\u213f\u2145-\u2149\u214e\u2160-\u2188\u2c00-\u2c2e\u2c30-\u2c5e\u2c60-\u2ce4\u2ceb-\u2cee\u2cf2\u2cf3\u2d00-\u2d25\u2d27\u2d2d\u2d30-\u2d67\u2d6f\u2d80-\u2d96\u2da0-\u2da6\u2da8-\u2dae\u2db0-\u2db6\u2db8-\u2dbe\u2dc0-\u2dc6\u2dc8-\u2dce\u2dd0-\u2dd6\u2dd8-\u2dde\u2e2f\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303c\u3041-\u3096\u309d-\u309f\u30a1-\u30fa\u30fc-\u30ff\u3105-\u312d\u3131-\u318e\u31a0-\u31ba\u31f0-\u31ff\u3400-\u4db5\u4e00-\u9fcc\ua000-\ua48c\ua4d0-\ua4fd\ua500-\ua60c\ua610-\ua61f\ua62a\ua62b\ua640-\ua66e\ua67f-\ua697\ua6a0-\ua6ef\ua717-\ua71f\ua722-\ua788\ua78b-\ua78e\ua790-\ua793\ua7a0-\ua7aa\ua7f8-\ua801\ua803-\ua805\ua807-\ua80a\ua80c-\ua822\ua840-\ua873\ua882-\ua8b3\ua8f2-\ua8f7\ua8fb\ua90a-\ua925\ua930-\ua946\ua960-\ua97c\ua984-\ua9b2\ua9cf\uaa00-\uaa28\uaa40-\uaa42\uaa44-\uaa4b\uaa60-\uaa76\uaa7a\uaa80-\uaaaf\uaab1\uaab5\uaab6\uaab9-\uaabd\uaac0\uaac2\uaadb-\uaadd\uaae0-\uaaea\uaaf2-\uaaf4\uab01-\uab06\uab09-\uab0e\uab11-\uab16\uab20-\uab26\uab28-\uab2e\uabc0-\uabe2\uac00-\ud7a3\ud7b0-\ud7c6\ud7cb-\ud7fb\uf900-\ufa6d\ufa70-\ufad9\ufb00-\ufb06\ufb13-\ufb17\ufb1d\ufb1f-\ufb28\ufb2a-\ufb36\ufb38-\ufb3c\ufb3e\ufb40\ufb41\ufb43\ufb44\ufb46-\ufbb1\ufbd3-\ufd3d\ufd50-\ufd8f\ufd92-\ufdc7\ufdf0-\ufdfb\ufe70-\ufe74\ufe76-\ufefc\uff21-\uff3a\uff41-\uff5a\uff66-\uffbe\uffc2-\uffc7\uffca-\uffcf\uffd2-\uffd7\uffda-\uffdc][$A-Z\_a-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6\xf8-\u02c1\u02c6-\u02d1\u02e0-\u02e4\u02ec\u02ee\u0370-\u0374\u0376\u0377\u037a-\u037d\u0386\u0388-\u038a\u038c\u038e-\u03a1\u03a3-\u03f5\u03f7-\u0481\u048a-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05d0-\u05ea\u05f0-\u05f2\u0620-\u064a\u066e\u066f\u0671-\u06d3\u06d5\u06e5\u06e6\u06ee\u06ef\u06fa-\u06fc\u06ff\u0710\u0712-\u072f\u074d-\u07a5\u07b1\u07ca-\u07ea\u07f4\u07f5\u07fa\u0800-\u0815\u081a\u0824\u0828\u0840-\u0858\u08a0\u08a2-\u08ac\u0904-\u0939\u093d\u0950\u0958-\u0961\u0971-\u0977\u0979-\u097f\u0985-\u098c\u098f\u0990\u0993-\u09a8\u09aa-\u09b0\u09b2\u09b6-\u09b9\u09bd\u09ce\u09dc\u09dd\u09df-\u09e1\u09f0\u09f1\u0a05-\u0a0a\u0a0f\u0a10\u0a13-\u0a28\u0a2a-\u0a30\u0a32\u0a33\u0a35\u0a36\u0a38\u0a39\u0a59-\u0a5c\u0a5e\u0a72-\u0a74\u0a85-\u0a8d\u0a8f-\u0a91\u0a93-\u0aa8\u0aaa-\u0ab0\u0ab2\u0ab3\u0ab5-\u0ab9\u0abd\u0ad0\u0ae0\u0ae1\u0b05-\u0b0c\u0b0f\u0b10\u0b13-\u0b28\u0b2a-\u0b30\u0b32\u0b33\u0b35-\u0b39\u0b3d\u0b5c\u0b5d\u0b5f-\u0b61\u0b71\u0b83\u0b85-\u0b8a\u0b8e-\u0b90\u0b92-\u0b95\u0b99\u0b9a\u0b9c\u0b9e\u0b9f\u0ba3\u0ba4\u0ba8-\u0baa\u0bae-\u0bb9\u0bd0\u0c05-\u0c0c\u0c0e-\u0c10\u0c12-\u0c28\u0c2a-\u0c33\u0c35-\u0c39\u0c3d\u0c58\u0c59\u0c60\u0c61\u0c85-\u0c8c\u0c8e-\u0c90\u0c92-\u0ca8\u0caa-\u0cb3\u0cb5-\u0cb9\u0cbd\u0cde\u0ce0\u0ce1\u0cf1\u0cf2\u0d05-\u0d0c\u0d0e-\u0d10\u0d12-\u0d3a\u0d3d\u0d4e\u0d60\u0d61\u0d7a-\u0d7f\u0d85-\u0d96\u0d9a-\u0db1\u0db3-\u0dbb\u0dbd\u0dc0-\u0dc6\u0e01-\u0e30\u0e32\u0e33\u0e40-\u0e46\u0e81\u0e82\u0e84\u0e87\u0e88\u0e8a\u0e8d\u0e94-\u0e97\u0e99-\u0e9f\u0ea1-\u0ea3\u0ea5\u0ea7\u0eaa\u0eab\u0ead-\u0eb0\u0eb2\u0eb3\u0ebd\u0ec0-\u0ec4\u0ec6\u0edc-\u0edf\u0f00\u0f40-\u0f47\u0f49-\u0f6c\u0f88-\u0f8c\u1000-\u102a\u103f\u1050-\u1055\u105a-\u105d\u1061\u1065\u1066\u106e-\u1070\u1075-\u1081\u108e\u10a0-\u10c5\u10c7\u10cd\u10d0-\u10fa\u10fc-\u1248\u124a-\u124d\u1250-\u1256\u1258\u125a-\u125d\u1260-\u1288\u128a-\u128d\u1290-\u12b0\u12b2-\u12b5\u12b8-\u12be\u12c0\u12c2-\u12c5\u12c8-\u12d6\u12d8-\u1310\u1312-\u1315\u1318-\u135a\u1380-\u138f\u13a0-\u13f4\u1401-\u166c\u166f-\u167f\u1681-\u169a\u16a0-\u16ea\u16ee-\u16f0\u1700-\u170c\u170e-\u1711\u1720-\u1731\u1740-\u1751\u1760-\u176c\u176e-\u1770\u1780-\u17b3\u17d7\u17dc\u1820-\u1877\u1880-\u18a8\u18aa\u18b0-\u18f5\u1900-\u191c\u1950-\u196d\u1970-\u1974\u1980-\u19ab\u19c1-\u19c7\u1a00-\u1a16\u1a20-\u1a54\u1aa7\u1b05-\u1b33\u1b45-\u1b4b\u1b83-\u1ba0\u1bae\u1baf\u1bba-\u1be5\u1c00-\u1c23\u1c4d-\u1c4f\u1c5a-\u1c7d\u1ce9-\u1cec\u1cee-\u1cf1\u1cf5\u1cf6\u1d00-\u1dbf\u1e00-\u1f15\u1f18-\u1f1d\u1f20-\u1f45\u1f48-\u1f4d\u1f50-\u1f57\u1f59\u1f5b\u1f5d\u1f5f-\u1f7d\u1f80-\u1fb4\u1fb6-\u1fbc\u1fbe\u1fc2-\u1fc4\u1fc6-\u1fcc\u1fd0-\u1fd3\u1fd6-\u1fdb\u1fe0-\u1fec\u1ff2-\u1ff4\u1ff6-\u1ffc\u2071\u207f\u2090-\u209c\u2102\u2107\u210a-\u2113\u2115\u2119-\u211d\u2124\u2126\u2128\u212a-\u212d\u212f-\u2139\u213c-\u213f\u2145-\u2149\u214e\u2160-\u2188\u2c00-\u2c2e\u2c30-\u2c5e\u2c60-\u2ce4\u2ceb-\u2cee\u2cf2\u2cf3\u2d00-\u2d25\u2d27\u2d2d\u2d30-\u2d67\u2d6f\u2d80-\u2d96\u2da0-\u2da6\u2da8-\u2dae\u2db0-\u2db6\u2db8-\u2dbe\u2dc0-\u2dc6\u2dc8-\u2dce\u2dd0-\u2dd6\u2dd8-\u2dde\u2e2f\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303c\u3041-\u3096\u309d-\u309f\u30a1-\u30fa\u30fc-\u30ff\u3105-\u312d\u3131-\u318e\u31a0-\u31ba\u31f0-\u31ff\u3400-\u4db5\u4e00-\u9fcc\ua000-\ua48c\ua4d0-\ua4fd\ua500-\ua60c\ua610-\ua61f\ua62a\ua62b\ua640-\ua66e\ua67f-\ua697\ua6a0-\ua6ef\ua717-\ua71f\ua722-\ua788\ua78b-\ua78e\ua790-\ua793\ua7a0-\ua7aa\ua7f8-\ua801\ua803-\ua805\ua807-\ua80a\ua80c-\ua822\ua840-\ua873\ua882-\ua8b3\ua8f2-\ua8f7\ua8fb\ua90a-\ua925\ua930-\ua946\ua960-\ua97c\ua984-\ua9b2\ua9cf\uaa00-\uaa28\uaa40-\uaa42\uaa44-\uaa4b\uaa60-\uaa76\uaa7a\uaa80-\uaaaf\uaab1\uaab5\uaab6\uaab9-\uaabd\uaac0\uaac2\uaadb-\uaadd\uaae0-\uaaea\uaaf2-\uaaf4\uab01-\uab06\uab09-\uab0e\uab11-\uab16\uab20-\uab26\uab28-\uab2e\uabc0-\uabe2\uac00-\ud7a3\ud7b0-\ud7c6\ud7cb-\ud7fb\uf900-\ufa6d\ufa70-\ufad9\ufb00-\ufb06\ufb13-\ufb17\ufb1d\ufb1f-\ufb28\ufb2a-\ufb36\ufb38-\ufb3c\ufb3e\ufb40\ufb41\ufb43\ufb44\ufb46-\ufbb1\ufbd3-\ufd3d\ufd50-\ufd8f\ufd92-\ufdc7\ufdf0-\ufdfb\ufe70-\ufe74\ufe76-\ufefc\uff21-\uff3a\uff41-\uff5a\uff66-\uffbe\uffc2-\uffc7\uffca-\uffcf\uffd2-\uffd7\uffda-\uffdc0-9\u0300-\u036f\u0483-\u0487\u0591-\u05bd\u05bf\u05c1\u05c2\u05c4\u05c5\u05c7\u0610-\u061a\u064b-\u0669\u0670\u06d6-\u06dc\u06df-\u06e4\u06e7\u06e8\u06ea-\u06ed\u06f0-\u06f9\u0711\u0730-\u074a\u07a6-\u07b0\u07c0-\u07c9\u07eb-\u07f3\u0816-\u0819\u081b-\u0823\u0825-\u0827\u0829-\u082d\u0859-\u085b\u08e4-\u08fe\u0900-\u0903\u093a-\u093c\u093e-\u094f\u0951-\u0957\u0962\u0963\u0966-\u096f\u0981-\u0983\u09bc\u09be-\u09c4\u09c7\u09c8\u09cb-\u09cd\u09d7\u09e2\u09e3\u09e6-\u09ef\u0a01-\u0a03\u0a3c\u0a3e-\u0a42\u0a47\u0a48\u0a4b-\u0a4d\u0a51\u0a66-\u0a71\u0a75\u0a81-\u0a83\u0abc\u0abe-\u0ac5\u0ac7-\u0ac9\u0acb-\u0acd\u0ae2\u0ae3\u0ae6-\u0aef\u0b01-\u0b03\u0b3c\u0b3e-\u0b44\u0b47\u0b48\u0b4b-\u0b4d\u0b56\u0b57\u0b62\u0b63\u0b66-\u0b6f\u0b82\u0bbe-\u0bc2\u0bc6-\u0bc8\u0bca-\u0bcd\u0bd7\u0be6-\u0bef\u0c01-\u0c03\u0c3e-\u0c44\u0c46-\u0c48\u0c4a-\u0c4d\u0c55\u0c56\u0c62\u0c63\u0c66-\u0c6f\u0c82\u0c83\u0cbc\u0cbe-\u0cc4\u0cc6-\u0cc8\u0cca-\u0ccd\u0cd5\u0cd6\u0ce2\u0ce3\u0ce6-\u0cef\u0d02\u0d03\u0d3e-\u0d44\u0d46-\u0d48\u0d4a-\u0d4d\u0d57\u0d62\u0d63\u0d66-\u0d6f\u0d82\u0d83\u0dca\u0dcf-\u0dd4\u0dd6\u0dd8-\u0ddf\u0df2\u0df3\u0e31\u0e34-\u0e3a\u0e47-\u0e4e\u0e50-\u0e59\u0eb1\u0eb4-\u0eb9\u0ebb\u0ebc\u0ec8-\u0ecd\u0ed0-\u0ed9\u0f18\u0f19\u0f20-\u0f29\u0f35\u0f37\u0f39\u0f3e\u0f3f\u0f71-\u0f84\u0f86\u0f87\u0f8d-\u0f97\u0f99-\u0fbc\u0fc6\u102b-\u103e\u1040-\u1049\u1056-\u1059\u105e-\u1060\u1062-\u1064\u1067-\u106d\u1071-\u1074\u1082-\u108d\u108f-\u109d\u135d-\u135f\u1712-\u1714\u1732-\u1734\u1752\u1753\u1772\u1773\u17b4-\u17d3\u17dd\u17e0-\u17e9\u180b-\u180d\u1810-\u1819\u18a9\u1920-\u192b\u1930-\u193b\u1946-\u194f\u19b0-\u19c0\u19c8\u19c9\u19d0-\u19d9\u1a17-\u1a1b\u1a55-\u1a5e\u1a60-\u1a7c\u1a7f-\u1a89\u1a90-\u1a99\u1b00-\u1b04\u1b34-\u1b44\u1b50-\u1b59\u1b6b-\u1b73\u1b80-\u1b82\u1ba1-\u1bad\u1bb0-\u1bb9\u1be6-\u1bf3\u1c24-\u1c37\u1c40-\u1c49\u1c50-\u1c59\u1cd0-\u1cd2\u1cd4-\u1ce8\u1ced\u1cf2-\u1cf4\u1dc0-\u1de6\u1dfc-\u1dff\u200c\u200d\u203f\u2040\u2054\u20d0-\u20dc\u20e1\u20e5-\u20f0\u2cef-\u2cf1\u2d7f\u2de0-\u2dff\u302a-\u302f\u3099\u309a\ua620-\ua629\ua66f\ua674-\ua67d\ua69f\ua6f0\ua6f1\ua802\ua806\ua80b\ua823-\ua827\ua880\ua881\ua8b4-\ua8c4\ua8d0-\ua8d9\ua8e0-\ua8f1\ua900-\ua909\ua926-\ua92d\ua947-\ua953\ua980-\ua983\ua9b3-\ua9c0\ua9d0-\ua9d9\uaa29-\uaa36\uaa43\uaa4c\uaa4d\uaa50-\uaa59\uaa7b\uaab0\uaab2-\uaab4\uaab7\uaab8\uaabe\uaabf\uaac1\uaaeb-\uaaef\uaaf5\uaaf6\uabe3-\uabea\uabec\uabed\uabf0-\uabf9\ufb1e\ufe00-\ufe0f\ufe20-\ufe26\ufe33\ufe34\ufe4d-\ufe4f\uff10-\uff19\uff3f]*$/.test(str)
 }
 module.exports = isProperty
-},{}],318:[function(require,module,exports){
+},{}],317:[function(require,module,exports){
 var untilde = function(str) {
   return str.replace(/~./g, function(m) {
     switch (m) {
@@ -40231,16 +40231,16 @@ var set = function(obj, pointer, value) {
 exports.get = get
 exports.set = set
 
-},{}],319:[function(require,module,exports){
-arguments[4][264][0].apply(exports,arguments)
-},{"dup":264}],320:[function(require,module,exports){
+},{}],318:[function(require,module,exports){
+arguments[4][263][0].apply(exports,arguments)
+},{"dup":263}],319:[function(require,module,exports){
 (function (global){
 'use strict';
 
 module.exports = global.Promise || require('pinkie');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"pinkie":321}],321:[function(require,module,exports){
+},{"pinkie":320}],320:[function(require,module,exports){
 'use strict';
 
 var PENDING = 'pending';
@@ -40518,7 +40518,7 @@ Promise.reject = function (reason) {
 
 module.exports = Promise;
 
-},{}],322:[function(require,module,exports){
+},{}],321:[function(require,module,exports){
 /*
     HTTP Hawk Authentication Scheme
     Copyright (c) 2012-2014, Eran Hammer <eran@hammer.io>
@@ -41157,7 +41157,7 @@ if (typeof module !== 'undefined' && module.exports) {
 /* eslint-enable */
 // $lab:coverage:on$
 
-},{}],323:[function(require,module,exports){
+},{}],322:[function(require,module,exports){
 // Copyright 2015 Joyent, Inc.
 
 var parser = require('./parser');
@@ -41186,7 +41186,7 @@ module.exports = {
   verifyHMAC: verify.verifyHMAC
 };
 
-},{"./parser":324,"./signer":325,"./util":326,"./verify":327}],324:[function(require,module,exports){
+},{"./parser":323,"./signer":324,"./util":325,"./verify":326}],323:[function(require,module,exports){
 // Copyright 2012 Joyent, Inc.  All rights reserved.
 
 var assert = require('assert-plus');
@@ -41492,7 +41492,7 @@ module.exports = {
 
 };
 
-},{"assert-plus":334,"util":261}],325:[function(require,module,exports){
+},{"assert-plus":333,"util":260}],324:[function(require,module,exports){
 // Copyright 2012 Joyent, Inc.  All rights reserved.
 
 var assert = require('assert-plus');
@@ -41672,7 +41672,7 @@ module.exports = {
 
 };
 
-},{"assert-plus":334,"crypto":32,"http":249,"util":261}],326:[function(require,module,exports){
+},{"assert-plus":333,"crypto":31,"http":248,"util":260}],325:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2012 Joyent, Inc.  All rights reserved.
 
@@ -41982,7 +41982,7 @@ module.exports = {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"asn1":333,"assert-plus":334,"buffer":28,"crypto":32,"ctype":337}],327:[function(require,module,exports){
+},{"asn1":332,"assert-plus":333,"buffer":27,"crypto":31,"ctype":336}],326:[function(require,module,exports){
 // Copyright 2015 Joyent, Inc.
 
 var assert = require('assert-plus');
@@ -42040,7 +42040,7 @@ module.exports = {
   }
 };
 
-},{"assert-plus":334,"crypto":32}],328:[function(require,module,exports){
+},{"assert-plus":333,"crypto":31}],327:[function(require,module,exports){
 // Copyright 2011 Mark Cavage <mcavage@gmail.com> All rights reserved.
 
 
@@ -42055,7 +42055,7 @@ module.exports = {
 
 };
 
-},{}],329:[function(require,module,exports){
+},{}],328:[function(require,module,exports){
 // Copyright 2011 Mark Cavage <mcavage@gmail.com> All rights reserved.
 
 var errors = require('./errors');
@@ -42084,7 +42084,7 @@ for (var e in errors) {
     module.exports[e] = errors[e];
 }
 
-},{"./errors":328,"./reader":330,"./types":331,"./writer":332}],330:[function(require,module,exports){
+},{"./errors":327,"./reader":329,"./types":330,"./writer":331}],329:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2011 Mark Cavage <mcavage@gmail.com> All rights reserved.
 
@@ -42355,7 +42355,7 @@ Reader.prototype._readTag = function(tag) {
 module.exports = Reader;
 
 }).call(this,{"isBuffer":require("../../../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js")})
-},{"../../../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":227,"./errors":328,"./types":331,"assert":13}],331:[function(require,module,exports){
+},{"../../../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":226,"./errors":327,"./types":330,"assert":12}],330:[function(require,module,exports){
 // Copyright 2011 Mark Cavage <mcavage@gmail.com> All rights reserved.
 
 
@@ -42393,7 +42393,7 @@ module.exports = {
   Context: 128
 };
 
-},{}],332:[function(require,module,exports){
+},{}],331:[function(require,module,exports){
 (function (Buffer){
 // Copyright 2011 Mark Cavage <mcavage@gmail.com> All rights reserved.
 
@@ -42714,7 +42714,7 @@ Writer.prototype._ensure = function(len) {
 module.exports = Writer;
 
 }).call(this,require("buffer").Buffer)
-},{"./errors":328,"./types":331,"assert":13,"buffer":28}],333:[function(require,module,exports){
+},{"./errors":327,"./types":330,"assert":12,"buffer":27}],332:[function(require,module,exports){
 // Copyright 2011 Mark Cavage <mcavage@gmail.com> All rights reserved.
 
 // If you have no idea what ASN.1 or BER is, see this:
@@ -42736,7 +42736,7 @@ module.exports = {
 
 };
 
-},{"./ber/index":329}],334:[function(require,module,exports){
+},{"./ber/index":328}],333:[function(require,module,exports){
 (function (Buffer,process){
 // Copyright (c) 2012, Mark Cavage. All rights reserved.
 
@@ -42985,7 +42985,7 @@ Object.keys(assert).forEach(function (k) {
 });
 
 }).call(this,{"isBuffer":require("../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js")},require('_process'))
-},{"../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":227,"_process":230,"assert":13,"stream":248,"util":261}],335:[function(require,module,exports){
+},{"../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":226,"_process":229,"assert":12,"stream":247,"util":260}],334:[function(require,module,exports){
 /*
  * ctf.js
  *
@@ -43232,7 +43232,7 @@ function ctfParseJson(json, ctype)
 
 exports.ctfParseJson = ctfParseJson;
 
-},{"assert":13}],336:[function(require,module,exports){
+},{"assert":12}],335:[function(require,module,exports){
 /*
  * rm - Feb 2011
  * ctio.js:
@@ -44719,7 +44719,7 @@ exports.rdouble = rdouble;
 exports.wfloat = wfloat;
 exports.wdouble = wdouble;
 
-},{"assert":13}],337:[function(require,module,exports){
+},{"assert":12}],336:[function(require,module,exports){
 (function (Buffer){
 /*
  * rm - Feb 2011
@@ -45667,7 +45667,7 @@ exports.wfloat = mod_ctio.wfloat;
 exports.wdouble = mod_ctio.wdouble;
 
 }).call(this,require("buffer").Buffer)
-},{"./ctf.js":335,"./ctio.js":336,"assert":13,"buffer":28}],338:[function(require,module,exports){
+},{"./ctf.js":334,"./ctio.js":335,"assert":12,"buffer":27}],337:[function(require,module,exports){
 var stream = require('stream')
 
 
@@ -45696,7 +45696,7 @@ module.exports.isReadable = isReadable
 module.exports.isWritable = isWritable
 module.exports.isDuplex   = isDuplex
 
-},{"stream":248}],339:[function(require,module,exports){
+},{"stream":247}],338:[function(require,module,exports){
 exports = module.exports = stringify
 exports.getSerialize = serializer
 
@@ -45725,7 +45725,7 @@ function serializer(replacer, cycleReplacer) {
   }
 }
 
-},{}],340:[function(require,module,exports){
+},{}],339:[function(require,module,exports){
 /*!
  * mime-types
  * Copyright(c) 2014 Jonathan Ong
@@ -45915,7 +45915,7 @@ function populateMaps(extensions, types) {
   })
 }
 
-},{"mime-db":342,"path":229}],341:[function(require,module,exports){
+},{"mime-db":341,"path":228}],340:[function(require,module,exports){
 module.exports={
   "application/1d-interleaved-parityfec": {
     "source": "iana"
@@ -52391,7 +52391,7 @@ module.exports={
   }
 }
 
-},{}],342:[function(require,module,exports){
+},{}],341:[function(require,module,exports){
 /*!
  * mime-db
  * Copyright(c) 2014 Jonathan Ong
@@ -52404,7 +52404,7 @@ module.exports={
 
 module.exports = require('./db.json')
 
-},{"./db.json":341}],343:[function(require,module,exports){
+},{"./db.json":340}],342:[function(require,module,exports){
 //     uuid.js
 //
 //     Copyright (c) 2010-2012 Robert Kieffer
@@ -52653,7 +52653,7 @@ module.exports = require('./db.json')
   }
 }).call(this);
 
-},{}],344:[function(require,module,exports){
+},{}],343:[function(require,module,exports){
 var crypto = require('crypto')
   , qs = require('querystring')
   ;
@@ -52789,7 +52789,7 @@ exports.plaintext = plaintext
 exports.sign = sign
 exports.rfc3986 = rfc3986
 
-},{"crypto":32,"querystring":234}],345:[function(require,module,exports){
+},{"crypto":31,"querystring":233}],344:[function(require,module,exports){
 // Load modules
 
 var Stringify = require('./stringify');
@@ -52806,7 +52806,7 @@ module.exports = {
     parse: Parse
 };
 
-},{"./parse":346,"./stringify":347}],346:[function(require,module,exports){
+},{"./parse":345,"./stringify":346}],345:[function(require,module,exports){
 // Load modules
 
 var Utils = require('./utils');
@@ -52995,7 +52995,7 @@ module.exports = function (str, options) {
     return Utils.compact(obj);
 };
 
-},{"./utils":348}],347:[function(require,module,exports){
+},{"./utils":347}],346:[function(require,module,exports){
 // Load modules
 
 var Utils = require('./utils');
@@ -53151,7 +53151,7 @@ module.exports = function (obj, options) {
     return keys.join(delimiter);
 };
 
-},{"./utils":348}],348:[function(require,module,exports){
+},{"./utils":347}],347:[function(require,module,exports){
 // Load modules
 
 
@@ -53343,7 +53343,7 @@ exports.isBuffer = function (obj) {
               obj.constructor.isBuffer(obj));
 };
 
-},{}],349:[function(require,module,exports){
+},{}],348:[function(require,module,exports){
 (function (Buffer){
 var util = require('util')
 var Stream = require('stream')
@@ -53449,7 +53449,7 @@ function alignedWrite(buffer) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":28,"stream":248,"string_decoder":258,"util":261}],350:[function(require,module,exports){
+},{"buffer":27,"stream":247,"string_decoder":257,"util":260}],349:[function(require,module,exports){
 /*!
  * Copyright (c) 2015, Salesforce.com, Inc.
  * All rights reserved.
@@ -54793,7 +54793,7 @@ module.exports = {
   canonicalDomain: canonicalDomain
 };
 
-},{"../package.json":356,"./memstore":351,"./pathMatch":352,"./permuteDomain":353,"./pubsuffix":354,"./store":355,"net":12,"punycode":231,"url":259}],351:[function(require,module,exports){
+},{"../package.json":355,"./memstore":350,"./pathMatch":351,"./permuteDomain":352,"./pubsuffix":353,"./store":354,"net":11,"punycode":230,"url":258}],350:[function(require,module,exports){
 /*!
  * Copyright (c) 2015, Salesforce.com, Inc.
  * All rights reserved.
@@ -54965,7 +54965,7 @@ MemoryCookieStore.prototype.getAllCookies = function(cb) {
   cb(null, cookies);
 };
 
-},{"./pathMatch":352,"./permuteDomain":353,"./store":355,"util":261}],352:[function(require,module,exports){
+},{"./pathMatch":351,"./permuteDomain":352,"./store":354,"util":260}],351:[function(require,module,exports){
 /*!
  * Copyright (c) 2015, Salesforce.com, Inc.
  * All rights reserved.
@@ -55028,7 +55028,7 @@ function pathMatch (reqPath, cookiePath) {
 
 exports.pathMatch = pathMatch;
 
-},{}],353:[function(require,module,exports){
+},{}],352:[function(require,module,exports){
 /*!
  * Copyright (c) 2015, Salesforce.com, Inc.
  * All rights reserved.
@@ -55086,7 +55086,7 @@ function permuteDomain (domain) {
 
 exports.permuteDomain = permuteDomain;
 
-},{"./pubsuffix":354}],354:[function(require,module,exports){
+},{"./pubsuffix":353}],353:[function(require,module,exports){
 /****************************************************
  * AUTOMATICALLY GENERATED by generate-pubsuffix.js *
  *                  DO NOT EDIT!                    *
@@ -55186,7 +55186,7 @@ var index = module.exports.index = Object.freeze(
 
 // END of automatically generated file
 
-},{"punycode":231}],355:[function(require,module,exports){
+},{"punycode":230}],354:[function(require,module,exports){
 /*!
  * Copyright (c) 2015, Salesforce.com, Inc.
  * All rights reserved.
@@ -55259,7 +55259,7 @@ Store.prototype.getAllCookies = function(cb) {
   throw new Error('getAllCookies is not implemented (therefore jar cannot be serialized)');
 };
 
-},{}],356:[function(require,module,exports){
+},{}],355:[function(require,module,exports){
 module.exports={
   "author": {
     "name": "Jeremy Stashewsky",
@@ -55351,7 +55351,7 @@ module.exports={
   "readme": "ERROR: No README data found!"
 }
 
-},{}],357:[function(require,module,exports){
+},{}],356:[function(require,module,exports){
 (function (process,Buffer){
 'use strict'
 
@@ -55596,7 +55596,7 @@ if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
 exports.debug = debug // for test
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":230,"assert":13,"buffer":28,"events":224,"http":249,"https":225,"net":12,"tls":12,"util":261}],358:[function(require,module,exports){
+},{"_process":229,"assert":12,"buffer":27,"events":223,"http":248,"https":224,"net":11,"tls":11,"util":260}],357:[function(require,module,exports){
 (function (process,Buffer){
 'use strict'
 
@@ -57038,4 +57038,4 @@ Request.prototype.toJSON = requestToJSON
 module.exports = Request
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"./lib/auth":266,"./lib/cookies":267,"./lib/getProxyFromURI":268,"./lib/har":269,"./lib/helpers":270,"./lib/multipart":271,"./lib/oauth":272,"./lib/querystring":273,"./lib/redirect":274,"./lib/tunnel":275,"_process":230,"aws-sign2":276,"bl":277,"buffer":28,"caseless":288,"forever-agent":292,"form-data":293,"hawk":322,"http":249,"http-signature":323,"https":225,"mime-types":340,"stream":248,"stringstream":349,"url":259,"util":261,"zlib":27}]},{},[7]);
+},{"./lib/auth":265,"./lib/cookies":266,"./lib/getProxyFromURI":267,"./lib/har":268,"./lib/helpers":269,"./lib/multipart":270,"./lib/oauth":271,"./lib/querystring":272,"./lib/redirect":273,"./lib/tunnel":274,"_process":229,"aws-sign2":275,"bl":276,"buffer":27,"caseless":287,"forever-agent":291,"form-data":292,"hawk":321,"http":248,"http-signature":322,"https":224,"mime-types":339,"stream":247,"stringstream":348,"url":258,"util":260,"zlib":26}]},{},[4]);

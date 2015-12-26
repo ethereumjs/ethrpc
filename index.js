@@ -55,10 +55,10 @@ module.exports = {
     ipcpath: null,
 
     // Maximum number of transaction verification attempts
-    TX_POLL_MAX: 36,
+    TX_POLL_MAX: 72,
 
     // Transaction polling interval
-    TX_POLL_INTERVAL: 12000,
+    TX_POLL_INTERVAL: 3000,
 
     POST_TIMEOUT: 180000,
 
@@ -897,7 +897,7 @@ module.exports = {
      * }
      */
     invoke: function (itx, f) {
-        var tx, data_abi, packaged, invocation, invoked;
+        var tx, dataAbi, packaged, invocation, invoked;
         try {
             if (itx) {
                 if (itx.send && itx.invocation && itx.invocation.invoke &&
@@ -915,17 +915,19 @@ module.exports = {
                                 }
                             }
                         } else if (tx.params.constructor === BigNumber) {
-                            tx.params = abi.hex(tx.params);
+                            tx.params = [abi.hex(tx.params)];
+                        } else {
+                            tx.params = [tx.params];
                         }
                     }
                     if (tx.to) tx.to = abi.prefix_hex(tx.to);
                     if (tx.from) tx.from = abi.prefix_hex(tx.from);
-                    data_abi = abi.encode(tx);
-                    if (data_abi) {
+                    dataAbi = abi.encode(tx);
+                    if (dataAbi) {
                         packaged = {
                             from: tx.from,
                             to: tx.to,
-                            data: data_abi,
+                            data: dataAbi,
                             gas: tx.gas || this.DEFAULT_GAS,
                             gasPrice: tx.gasPrice
                         };
@@ -955,7 +957,7 @@ module.exports = {
      * Batched RPC commands
      */
     batch: function (txlist, f) {
-        var numCommands, rpclist, callbacks, tx, data_abi, packaged, invocation;
+        var numCommands, rpclist, callbacks, tx, dataAbi, packaged, invocation;
         if (txlist.constructor === Array) {
             numCommands = txlist.length;
             rpclist = new Array(numCommands);
@@ -977,8 +979,8 @@ module.exports = {
                 }
                 if (tx.from) tx.from = abi.prefix_hex(tx.from);
                 tx.to = abi.prefix_hex(tx.to);
-                data_abi = abi.encode(tx);
-                if (data_abi) {
+                dataAbi = abi.encode(tx);
+                if (dataAbi) {
                     if (tx.callback && tx.callback.constructor === Function) {
                         callbacks[i] = tx.callback;
                         delete tx.callback;
@@ -986,7 +988,7 @@ module.exports = {
                     packaged = {
                         from: tx.from,
                         to: tx.to,
-                        data: data_abi,
+                        data: dataAbi,
                         gas: tx.gas || this.DEFAULT_GAS,
                         gasPrice: tx.gasPrice
                     };
