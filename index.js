@@ -54,6 +54,9 @@ module.exports = {
     // use IPC (only available on Node + Linux/OSX)
     ipcpath: null,
 
+    // local ethereum node address
+    localnode: "http://127.0.0.1:8545",
+
     // Maximum number of transaction verification attempts
     TX_POLL_MAX: 72,
 
@@ -214,7 +217,6 @@ module.exports = {
             var err = e;
             if (e && e.name === "SyntaxError") {
                 err = errors.INVALID_RESPONSE;
-                // err.bubble = response;
             }
             if (callback) return callback(err);
             throw new this.Error(err);
@@ -575,7 +577,7 @@ module.exports = {
     },
 
     setLocalNode: function (urlstr) {
-        this.nodes.local = urlstr;
+        this.nodes.local = urlstr || this.localnode;
     },
 
     useHostedNode: function () {
@@ -598,10 +600,7 @@ module.exports = {
 
     // reset to default Ethereum nodes
     reset: function (deleteData) {
-        this.nodes = {
-            hosted: HOSTED_NODES.slice(),
-            local: null
-        };
+        this.nodes.hosted = HOSTED_NODES.slice();
         if (deleteData) this.clear();
     },
 

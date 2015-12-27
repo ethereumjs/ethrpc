@@ -26,29 +26,21 @@ var options = {
         etherbase: COINBASE,
         bootnodes: [
             "enode://"+
-                "70eb80f63946c2b3f65e68311b4419a80c78271c099a7d1f3d8df8cdd8e37493"+
-                "4c795d8bc9f204dda21eb9a318d30197ba7593494eb27ceb52663c8339e9cb70"+
-                "@[::]:30303",
-            "enode://"+
-                "405e781c84b570f02cb2e4ebb18c60528aba5a08ccd72d4ebd7aeabc09208ef2"+
-                "4fa54e20ff3b10e478c203dd481f3820242e51fe72770a207a798eadfe8e7e6e"+
-                "@[::]:30303",
-            "enode://"+
                 "d4f4e7fd3954718562544dbf322c0c84d2c87f154dd66a39ea0787a6f74930c4"+
                 "2f5d13ba2cfef481b66a6f002bc3915f94964f67251524696a448ba40d1e2b12"+
-                "@[::]:30303",
+                "@45.33.59.27:30303",
             "enode://"+
-                "8f3c33294774dc266446e9c8483fa1a21a49b157d2066717fd52e76d00fb4ed7"+
-                "71ad215631f9306db2e5a711884fe436bc0ca082684067836b3b54730a6c3995"+
-                "@[::]:30303",
+                "a9f34ea3de79cd75ba49c37603d28a7c494f32604b4ad6e3415b4c6020ff5bf3"+
+                "8f9772d69362c024355245fe839dd397ff9ec04db70b3258d92259323cb792ae"+
+                "@69.164.196.239:30303",
             "enode://"+
                 "4f23a991ea8739bcc5ab52625407fcfddb03ac31a36141184cf9072ff8bf3999"+
                 "54bb94ec47e1f653a0b0fea8d88a67fa3147dbe5c56067f39e0bd5125ae0d1f1"+
-                "@[::]:30303",
+                "@139.162.5.153:30303",
             "enode://"+
                 "bafc7bbaebf6452dcbf9522a2af30f586b38c72c84922616eacad686ab6aaed2"+
                 "b50f808b3f91dba6a546474fe96b5bff97d51c9b062b4a2e8bc9339d9bb8e186"+
-                "@[::]:30303"
+                "@106.184.4.123:30303"
         ]
     }
 };
@@ -448,11 +440,11 @@ describe("IPC", function () {
         case "10101":
             test({
                 blockNumber: "0x1",
-                blockHash: "0xfd3a6dcaec75065cefd21b7c2d48294f3239d533ed125de6b7f2bdec1b77f986"
+                blockHash: "0xd3bd016400ea626e8b1b8068bcc11cc47edd05b3d34724a993cf831cd313dccc"
             });
             test({
                 blockNumber: "0x1b4",
-                blockHash: "0x4221319f188e70d30aa46ee06b6cce9f2d4859d2e2708abaafcb722b93666917"
+                blockHash: "0xd3911b4b876e0b3acc8329f090cd91abe8e4fef9f0bb24ab5160aead991bc614"
             });
             break;
         case "7":
@@ -523,11 +515,11 @@ describe("IPC", function () {
         switch (options.flags.networkid) {
         case "10101":
             test({
-                blockHash: "0xfd3a6dcaec75065cefd21b7c2d48294f3239d533ed125de6b7f2bdec1b77f986",
+                blockHash: "0xd3bd016400ea626e8b1b8068bcc11cc47edd05b3d34724a993cf831cd313dccc",
                 blockNumber: "0x1"
             });
             test({
-                blockHash: "0x4221319f188e70d30aa46ee06b6cce9f2d4859d2e2708abaafcb722b93666917",
+                blockHash: "0xd3911b4b876e0b3acc8329f090cd91abe8e4fef9f0bb24ab5160aead991bc614",
                 blockNumber: "0x1b4"
             });
             break;
@@ -540,6 +532,11 @@ describe("IPC", function () {
                 blockHash: "0x721a93982fbbe858aa190476be937ea2052408d7f8ff6fb415cc969aaacaa045",
                 blockNumber: "0x1b4"
             });
+            test({
+                blockHash: "0x9272764416f772a63b945e1c1c6ca449f8d07dc4378f6b589244b1f48fef86bf",
+                blockNumber: "0x24f2"
+            });
+
             break;
         default:
             throw new Error("contracts not on the Frontier main net yet :(");
@@ -549,18 +546,12 @@ describe("IPC", function () {
     describe("Calls", function () {
 
         describe("invoke", function () {
-            var encodedParams, returns, cashFaucet;
+            var encodedParams, returns;
 
             before(function () {
                 encodedParams = "0x7a66d7ca"+
                 "00000000000000000000000000000000000000000000000000000000000f69b5";
                 returns = "number";
-                cashFaucet = {
-                    to: contracts.faucets,
-                    from: COINBASE,
-                    method: "cashFaucet",
-                    send: false
-                };
             });
 
             it("invoke == call == broadcast", function (done) {
@@ -596,24 +587,6 @@ describe("IPC", function () {
                         }); // broadcast
                     }); // call
                 }); // invoke
-            });
-
-            it("cashFaucet -> raw", function (done) {
-                ethrpc.invoke(cashFaucet, function (res) {
-                    assert.include([
-                        "0x01",
-                        "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-                    ], res);
-                    done();
-                });
-            });
-
-            it("cashFaucet -> number", function (done) {
-                cashFaucet.returns = "number";
-                ethrpc.invoke(cashFaucet, function (res) {
-                    assert.include(["1", "-1"], res);
-                    done();
-                });
             });
 
             it("getMarkets(1010101) -> hash[]", function (done) {

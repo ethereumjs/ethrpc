@@ -34,6 +34,7 @@ describe("RPC", function () {
         rpc.ipcpath = null;
         rpc.excision = true;
         HOSTED_NODES = rpc.nodes.hosted.slice();
+        rpc.useHostedNode();
     });
 
     describe("marshal", function () {
@@ -420,7 +421,9 @@ describe("RPC", function () {
 
         var txList = [{
             to: contracts.faucets,
-            method: "cashFaucet",
+            method: "reputationFaucet",
+            signature: "i",
+            params: "0xf69b5",
             returns: "number",
             send: false
         }, {
@@ -942,18 +945,12 @@ describe("RPC", function () {
     });
 
     describe("invoke", function () {
-        var encodedParams, returns, cashFaucet;
+        var encodedParams, returns;
 
         before(function () {
             encodedParams = "0x7a66d7ca"+
             "00000000000000000000000000000000000000000000000000000000000f69b5";
             returns = "number";
-            cashFaucet = {
-                to: contracts.faucets,
-                from: COINBASE,
-                method: "cashFaucet",
-                send: false
-            };
         });
 
         it("[sync] invoke == call == broadcast", function () {
@@ -1020,30 +1017,6 @@ describe("RPC", function () {
                     }); // broadcast
                 }); // call
             }); // invoke
-        });
-
-        it("cashFaucet -> raw", function (done) {
-            assert.include([
-                "0x01",
-                "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-            ], rpc.invoke(cashFaucet));
-            rpc.invoke(cashFaucet, function (res) {
-                assert.include([
-                    "0x01",
-                    "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-                ], res);
-                done();
-            });
-        });
-
-        it("cashFaucet -> number", function (done) {
-            cashFaucet.returns = "number";
-            assert.include(["1", "-1"], rpc.invoke(cashFaucet));
-            cashFaucet.returns = "number";
-            rpc.invoke(cashFaucet, function (res) {
-                assert.include(["1", "-1"], res);
-                done();
-            });
         });
 
         it("getMarkets(1010101) -> hash[]", function (done) {

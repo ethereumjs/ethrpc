@@ -44,74 +44,74 @@ module.exports={
     },
     "7": {
         "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
-        "buyAndSellShares": "0x222be5d1b153b7f04189b2f591166665a885aaf5",
-        "checkQuorum": "0x7a38967fab965444182e48fca12d63c62ceb3d96",
-        "closeMarket": "0xdb45fd72e0f88393c872c0387ad7a4c9e9df4296",
-        "closeMarketEight": "0xe327c3128520eeacfb1da6091149344a34457f99",
-        "closeMarketFour": "0x1d6c3999f23692326cf590addb050b482cdf79ba",
-        "closeMarketOne": "0x9e049aef53bf7d56caa398b6437218ebc548b9c7",
-        "closeMarketTwo": "0xf9ed008f6b3b5ec95fce763f3c738c32db17c2e0",
-        "comments": "0x853cb123de348769d17108f505d6c3081fde2275",
-        "createBranch": "0x7bf8e4f9e3183867f2ad8c8e61d7b4df3a9204a8",
-        "createEvent": "0xf21d1dc93739dddb2ff15db191d7922fe8a4e196",
-        "createMarket": "0x344b7273d6ba3ae6464de981e3f8f21de20eb429",
-        "dispatch": "0x4b22c2f46045f8eb791e9c31b3d17dc41ea33cb4",
-        "faucets": "0x1f7a7eb8bdf2690bd815c24a16f3301706005f42",
-        "makeReports": "0x66be17e5b82a1080dae93bbd65935516182ca20c",
-        "p2pWagers": "0x5637e628e8557528fcaa732380d471fecde52168",
-        "sendReputation": "0x9dce0b045622fd1536f0f49e3d7c5b4ffaf01bf7",
-        "transferShares": "0x615b1bbfd690a24cbf5679e7b326aab0227c492e",
-        "accounts": "0x4fc79e76158c6f347195a4a5564893e0f55f0ebf",
-        "branches": "0x6304d620fbdaf2d473079e44fe13d376fefe6164",
-        "cash": "0xa36a4f0bd323f15d6ebe04810dcb770d33f3466e",
-        "events": "0x435cb3ba15fbda3c466dc527f1b9cc78f5114d4f",
-        "expiringEvents": "0x27f07adb9921e7f69462e3e285d43c6c25768058",
-        "fxpFunctions": "0x1fa4745bcd612d19c698aad79c9ceee079cf65b6",
-        "info": "0x3c5062d58be6ce59534e8a2d10f1d533c1a0206e",
-        "ipfs": "0x0dc961533e26dccb673ccbaa93d8e8fd96b41765",
-        "markets": "0x44a270caf86e229f188b340994fa8671ae94450a",
-        "reporting": "0x1c6e0e4cd3980a458a6d7af1e98ba85bb67e5875",
-        "adjust": "0x360f45231a8f6f192dece487e30b51e8f9fca081",
-        "center": "0x8a0cf0b390a9acbaed8abe1df64e4a1eb7fde454",
-        "payout": "0x9a051313590855995a93b41ef3fd5c29ec52a120",
-        "redeem_adjust": "0xb5c5b32e285ba059cd5c79560885ac6448ecfc36",
-        "redeem_center": "0x608fa0fbee213d5ca2032fc30b50c16bc852b7da",
-        "redeem_interpolate": "0x9194647074999cc5792164fdebd1f653aa99397c",
-        "redeem_payout": "0xa4f49043cabb4c514eb8d7425932b982dd65c74c",
-        "redeem_resolve": "0x7368ad231be18e0c6859e6ec776c3c8e2857b747",
-        "redeem_score": "0x652b9c2095f2e244b7ca144237ff6b2ff2f32d67",
-        "resolve": "0xca39ef3752a20837ece0911c1f758ba8b621a33b",
-        "score": "0xa8347d21ff9dc37c8c087a665cbcb69d8f9fee4c",
-        "statistics": "0x29c1d95256f9090130e99dd9cab154ac3d3e060f"
+        "buyAndSellShares": "0xc4f6793f600edcf7c8ae16b0709bdeab2c368fde",
+        "checkQuorum": "0xdccd54564e1c4a140e5e546e000b1b47c4c6d880",
+        "closeMarket": "0x78a01aeb9f0d074c1dd589bb251533e6998f0817",
+        "closeMarketEight": "0x28059ecbf6aee59f318e21e9db8678cfdcdfaa56",
+        "closeMarketFour": "0xc15b4cc5c2c1ba9e2acccbe70be99b543870db1f",
+        "closeMarketOne": "0xaedb8c8025d29ebb57bfbe0ae29cc92c16bb4b3e",
+        "closeMarketTwo": "0xf199fcfdf2bb5b580b7a790fd0733de14b8bdb31",
+        "comments": "0x02613aa7a2ac54a5ee4fca6e77c6d55625189a75",
+        "createBranch": "0x418b2c90b7f4641f573c56361dcd74cb4f0c1037",
+        "createEvent": "0x2f3ee74691a161ac3647be05f7ad4dd18e9bbcbf",
+        "createMarket": "0xf208b76857e1f988280c826dc83197124ead7f3f",
+        "dispatch": "0x0d411457890a43ba80c076ca5752321da5b8e6a8",
+        "faucets": "0xfce5df0aeb2efaa611a0210b3faab8116405d374",
+        "makeReports": "0x340510ba7b0d7f65efcd7384077115165d1c9eaf",
+        "p2pWagers": "0x98d81ce830bbee5a5280551564e5fb92857a2810",
+        "sendReputation": "0xbd6fb11a900f6ab2eae54a301f1a81da0cb083ef",
+        "transferShares": "0x87c4c3529304af41331470dcbd0a643e29e3c2ff",
+        "accounts": "0xcfe5b5e339cac57940c83d9c63a3c1703830ef21",
+        "branches": "0x03fccd1ed6561ae26dc4c8dab3d84cc1e82b8e18",
+        "cash": "0xe7d7352e5adfec7e31748fc96ca032e1e091b1fe",
+        "events": "0xb3b476db70034c7d6ac3168ef428aea3adfdff82",
+        "expiringEvents": "0x0959d450128d5d4240c8bfa5b0dff17ab742a8d7",
+        "fxpFunctions": "0x5bfe33b44617fbdd318f853433a33cd98dec0c3d",
+        "info": "0x682fe02ec352ee038c603aecc4d22dc500ef493d",
+        "ipfs": "0x46df2dc8e95d947845e768bc8cb2b2227ee762fa",
+        "markets": "0x76e02a9d75e82be68bb91c80d39215c47d84b37d",
+        "reporting": "0xf061169967b5b2aa750f68fc434c585f22e8327e",
+        "adjust": "0x930f890a1a7ba7a5fd96f8e09583d397bad51dbc",
+        "center": "0x2da746821eb27f4d21531cf63b4ed60ed537ec66",
+        "payout": "0xb32c8d049349233e34d2488533d5e0a48b804eac",
+        "redeem_adjust": "0x7152ecb3f254e125009b81e40a809ac3e4f7e14e",
+        "redeem_center": "0x6edd63da02674913650aa2a5d5eb51d615a7fa08",
+        "redeem_interpolate": "0x7ff944bbb5be0422a9d55bbbed52ba37c3b6404f",
+        "redeem_payout": "0x5d73df46d5aa5cdfb4813d714857c7bf81629a3a",
+        "redeem_resolve": "0x4786c39201f4ce0572181c0ab1a3627701a21b91",
+        "redeem_score": "0xd935f40ae3999a2b333a58a3c82aa1dbbb38b659",
+        "resolve": "0x4f8e3f3de8dbb4ac0a824087db2f38d33f6c15f4",
+        "score": "0x1359bf73a734c70c3636e6fa19d58ca093c7a8ee",
+        "statistics": "0xba5fda6dc4758f9fdfcf402133ec8d7a44286112"
     },
     "10101": {
         "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
-        "buyAndSellShares": "0xb1546e2f7aadb1281b8a67cf8c1ba7cd1c464890",
+        "buyAndSellShares": "0x0ebc0f4193d04d7f9711a6e6b00590d51944aa75",
         "checkQuorum": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d",
-        "closeMarket": "0xa27a12aa6701b0b7f1d2adfdaaed9b642d547b78",
-        "closeMarketEight": "0x7783fffea0e0e5634c469464c49ece7c4ed59cda",
-        "closeMarketFour": "0xd6e133db8628adba58d0ed91bb73b4ce290cde2a",
-        "closeMarketOne": "0xb556df7538fdbf10a89cc0f14c0556bf2fbfb74a",
-        "closeMarketTwo": "0xf1f207defe0d68873d9ff717ed68169e4d66af5e",
+        "closeMarket": "0xd9cbf7eac82423b4cc4722f9d90cb293da757eb3",
+        "closeMarketEight": "0x00148bf7514d240be4319b3c9b1b68024ff17eb6",
+        "closeMarketFour": "0xac4d7a1c9525345ef9aca017f6737ec087bcd8c7",
+        "closeMarketOne": "0x509eb67acb27a35987ade6d8ea95e2b70b8ecb8b",
+        "closeMarketTwo": "0x55ced6f7475f3bab39ac35f68b2008bc35461f2e",
         "comments": "0x014b14d07e5afb2f30eb6ebf81d927563f0f1238",
-        "createBranch": "0x606b26ba8b3c8e2550a709bbb152ca56d196cee7",
-        "createEvent": "0x77a53a8f3d6871754db8c51c657f9bfe9f4bd770",
-        "createMarket": "0xa53e3d24e013573445e174f4a0e20a7d29b7dd56",
-        "dispatch": "0xf26707c1f3b94d80611c5373013098ccd2d4ea9d",
-        "faucets": "0xb95d33d0f9cce6006d208b52d09ff7a0d66b9c2f",
-        "makeReports": "0x49ced69ae40d1f534c1b49aa15d7364bc9ceac19",
-        "p2pWagers": "0x26a988c7b7cfb92e5b297e87c76aff0cf694066f",
-        "sendReputation": "0x5ae1eecc678fcc8cc7b68ba44690928724fe6916",
-        "transferShares": "0x99b7265c85f7e3d8a26726d6897068eea615ce87",
+        "createBranch": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df",
+        "createEvent": "0x9fe69262bbaa47f013b7dbd6ca5f01e17446c645",
+        "createMarket": "0xdfea50bda81fc05e860c4783791a9281ec49beb3",
+        "dispatch": "0x70a893eb9569041e97a3787f0c76a1eb6378d8b2",
+        "faucets": "0x509592c96eee7e19f6a34772fd8783cb072ca3c6",
+        "makeReports": "0x3f3276849a878a176b2f02dd48a483e8182a49e4",
+        "p2pWagers": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6",
+        "sendReputation": "0x35152caa07026203a1add680771afb690d872d7d",
+        "transferShares": "0xe96fd0ebd2a6f3f96277df217f0b77c653bbe674",
         "accounts": "0x77ae4a8fa5c2775e618fcb40b0598f80a3b846f1",
         "branches": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd",
-        "cash": "0x7e685b235d6ef3f9ec84f1862d86e272f7d14dc1",
+        "cash": "0xe4714fcbdcdba49629bc408183ef40d120700b8d",
         "events": "0x4a61f3db785f1e2a23ffefeafaceeef2df551667",
         "expiringEvents": "0xd15a6cfc462ae76b9ec590cab8b34bfa8e1302d7",
         "fxpFunctions": "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
         "info": "0x5069d883e31429c6dd1325d961f443007747c7a2",
         "ipfs": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e",
-        "markets": "0x9308cf21b5a11f182f9707ca284bbb71bb84f893",
+        "markets": "0x7811bbaeb91d3f0de807de75383ad2ec7183a07c",
         "reporting": "0x81a7621e9a286d061b3dea040888a51c96693b1c",
         "adjust": "0xbd19195b9e8a2d8ed14fc3a2823856b5c16f7f55",
         "center": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c",
@@ -119,7 +119,7 @@ module.exports={
         "redeem_adjust": "0x8c19616de17acdfbc933b99d9f529a689d22098f",
         "redeem_center": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79",
         "redeem_interpolate": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea",
-        "redeem_payout": "0x93d878e28a64cf76f3b550ba286ad30a608b5d4b",
+        "redeem_payout": "0xe5b327630cfa7f4b2324f9066c897dceecfd88a3",
         "redeem_resolve": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68",
         "redeem_score": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7",
         "resolve": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2",
@@ -304,6 +304,9 @@ module.exports = {
     // use IPC (only available on Node + Linux/OSX)
     ipcpath: null,
 
+    // local ethereum node address
+    localnode: "http://127.0.0.1:8545",
+
     // Maximum number of transaction verification attempts
     TX_POLL_MAX: 72,
 
@@ -464,7 +467,6 @@ module.exports = {
             var err = e;
             if (e && e.name === "SyntaxError") {
                 err = errors.INVALID_RESPONSE;
-                // err.bubble = response;
             }
             if (callback) return callback(err);
             throw new this.Error(err);
@@ -825,7 +827,7 @@ module.exports = {
     },
 
     setLocalNode: function (urlstr) {
-        this.nodes.local = urlstr;
+        this.nodes.local = urlstr || this.localnode;
     },
 
     useHostedNode: function () {
@@ -848,10 +850,7 @@ module.exports = {
 
     // reset to default Ethereum nodes
     reset: function (deleteData) {
-        this.nodes = {
-            hosted: HOSTED_NODES.slice(),
-            local: null
-        };
+        this.nodes.hosted = HOSTED_NODES.slice();
         if (deleteData) this.clear();
     },
 
