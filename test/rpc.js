@@ -525,13 +525,11 @@ describe("RPC", function () {
             assert.isArray(rpc.nodes.hosted);
             assert.strictEqual(rpc.nodes.hosted.length, 1);
             assert.strictEqual(rpc.nodes.hosted[0], "https://eth0.augur.net");
-            assert.strictEqual(rpc.nodes.local, "http://127.0.0.1:8545");
             assert.isNull(rpc.nodes.local);
             assert.isArray(rpc.nodes.hosted);
             assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
             assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
             rpc.reset();
-            rpc.useHostedNode();
             assert.isNull(rpc.nodes.local);
             assert.isArray(rpc.nodes.hosted);
             assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
