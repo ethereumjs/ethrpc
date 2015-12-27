@@ -280,10 +280,10 @@ function RPCError(err) {
 RPCError.prototype = new Error();
 
 var HOSTED_NODES = [
-    "https://eth5.augur.net",
-    "https://eth4.augur.net",
+    "https://eth1.augur.net",
     "https://eth3.augur.net",
-    "https://eth1.augur.net"
+    "https://eth4.augur.net",
+    "https://eth5.augur.net"
 ];
 
 module.exports = {
@@ -535,6 +535,9 @@ module.exports = {
         }, function (err, response, body) {
             if (err) {
                 if (self.nodes.local) {
+                    if (self.nodes.local === self.localnode) {
+                        self.nodes.local = null;
+                    }
                     var e = errors.LOCAL_NODE_FAILURE;
                     e.bubble = err;
                     return callback(e);
