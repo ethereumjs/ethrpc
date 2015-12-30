@@ -29,6 +29,10 @@ function RPCError(err) {
 
 RPCError.prototype = new Error();
 
+function isFunction(f) {
+    return Object.prototype.toString.call(f) === "[object Function]";
+}
+
 var HOSTED_NODES = [
     "https://eth1.augur.net",
     "https://eth3.augur.net",
@@ -188,7 +192,7 @@ module.exports = {
                         results[i] = response[i].result;
                         if (response.error || (response[i] && response[i].error)) {
                             if (this.debug.broadcast) {
-                                if (callback) return callback(response.error);
+                                if (isFunction(callback)) return callback(response.error);
                                 throw new this.Error(response.error);
                             }
                         } else if (response[i].result !== undefined) {
@@ -202,14 +206,14 @@ module.exports = {
                             }
                         }
                     }
-                    if (!callback) return results;
+                    if (!isFunction(callback)) return results;
                     callback(results);
 
                 // no result or error field
                 } else {
                     var err = errors.NO_RESPONSE;
                     err.bubble = response;
-                    if (callback) return callback(err);
+                    if (isFunction(callback)) return callback(err);
                     throw new this.Error(err);
                 }
             }
@@ -218,7 +222,7 @@ module.exports = {
             if (e && e.name === "SyntaxError") {
                 err = errors.INVALID_RESPONSE;
             }
-            if (callback) return callback(err);
+            if (isFunction(callback)) return callback(err);
             throw new this.Error(err);
         }
     },
@@ -246,13 +250,13 @@ module.exports = {
             if (deadIndex > -1) {
                 this.nodes.hosted.splice(deadIndex, 1);
                 if (!this.nodes.hosted.length) {
-                    if (callback) {
+                    if (isFunction(callback)) {
                         return callback(errors.HOSTED_NODE_FAILURE);
                     }
                     throw new this.Error(errors.HOSTED_NODE_FAILURE);
                 }
             }
-            if (callback) callback();
+            if (isFunction(callback)) callback();
         }
     },
 
@@ -453,10 +457,10 @@ module.exports = {
                 (this.nodes.local.indexOf("127.0.0.1") > -1 ||
                 this.nodes.local.indexOf("localhost") > -1)
             );
-            if (!callback && !loopback) {
+            if (!isFunction(callback) && !loopback) {
                 throw new this.Error(errors.LOOPBACK_NOT_FOUND);
             }
-            if (callback && command.constructor !== Array) {
+            if (isFunction(callback) && command.constructor !== Array) {
                 var received = '';
                 var socket = new net.Socket();
                 socket.setEncoding("utf8");
@@ -481,7 +485,7 @@ module.exports = {
 
         // make sure the ethereum node list isn't empty
         if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath) {
-            if (callback) return callback(errors.ETHEREUM_NOT_FOUND);
+            if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
             throw new this.Error(errors.ETHEREUM_NOT_FOUND);
         }
 
@@ -489,7 +493,7 @@ module.exports = {
         nodes = this.selectNodes();
 
         // asynchronous request if callback exists
-        if (callback && callback.constructor === Function) {
+        if (isFunction(callback)) {
             async.eachSeries(nodes, function (node, nextNode) {
                 if (!completed) {
                     if (self.debug.logs) {
@@ -647,7 +651,7 @@ module.exports = {
     },
 
     blockNumber: function (f) {
-        if (f) {
+        if (isFunction(f)) {
             this.broadcast(this.marshal("blockNumber"), f);
         } else {
             return parseInt(this.broadcast(this.marshal("blockNumber")));
@@ -717,7 +721,7 @@ module.exports = {
     },
 
     peerCount: function (f) {
-        if (f) {
+        if (isFunction(f)) {
             this.broadcast(this.marshal("peerCount", [], "net_"), f);
         } else {
             return parseInt(this.broadcast(this.marshal("peerCount", [], "net_")));
@@ -733,7 +737,7 @@ module.exports = {
     },
 
     hashrate: function (f) {
-        if (f) {
+        if (isFunction(f)) {
             this.broadcast(this.marshal("hashrate"), f);
         } else {
             return parseInt(this.broadcast(this.marshal("hashrate")));
@@ -834,7 +838,7 @@ module.exports = {
             if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
                 throw new this.Error(errors.ETHEREUM_NOT_FOUND);
             }
-            if (f && f.constructor === Function) {
+            if (isFunction(f)) {
                 var timeout = setTimeout(function () {
                     if (!response) f(false);
                 }, 2500);
@@ -848,9 +852,7 @@ module.exports = {
                 return !!this.net("listening");
             }
         } catch (e) {
-            if (f && f.constructor === Function) {
-                return f(false);
-            }
+            if (isFunction(f)) return f(false);
             return false;
         }
     },
@@ -860,7 +862,7 @@ module.exports = {
             throw new this.Error(errors.ETHEREUM_NOT_FOUND);
         }
         try {
-            if (f && f.constructor === Function) {
+            if (isFunction(f)) {
                 this.sign(account, "1010101", function (res) {
                     if (res) {
                         if (res.error) return f(false);
@@ -879,7 +881,7 @@ module.exports = {
                 return false;
             }
         } catch (e) {
-            if (f && f.constructor === Function) return f(false);
+            if (isFunction(f)) return f(false);
             return false;
         }
     },
@@ -946,12 +948,18 @@ module.exports = {
                 }
             }
         } catch (exc) {
-            if (f) return f(errors.TRANSACTION_FAILED);
-            return errors.TRANSACTION_FAILED;
+            var err = abi.copy(errors.TRANSACTION_FAILED);
+            err.bubble = exc;
+            err.tx = itx;
+            if (isFunction(f)) return f(err);
+            return err;
         }
         if (!invoked) {
-            if (f) return f(errors.TRANSACTION_FAILED);
-            return errors.TRANSACTION_FAILED;
+            var err = abi.copy(errors.TRANSACTION_FAILED);
+            err.bubble = "!invoked";
+            err.tx = itx;
+            if (isFunction(f)) return f(err);
+            return err;
         }
     },
 
@@ -960,80 +968,78 @@ module.exports = {
      */
     batch: function (txlist, f) {
         var numCommands, rpclist, callbacks, tx, dataAbi, packaged, invocation;
-        if (txlist.constructor === Array) {
-            numCommands = txlist.length;
-            rpclist = new Array(numCommands);
-            callbacks = new Array(numCommands);
-            for (var i = 0; i < numCommands; ++i) {
-                tx = abi.copy(txlist[i]);
-                if (tx.params !== undefined) {
-                    if (tx.params.constructor === Array) {
-                        for (var j = 0, len = tx.params.length; j < len; ++j) {
-                            if (tx.params[j] !== undefined &&
-                                tx.params[j] !== null &&
-                                tx.params[j].constructor === BigNumber) {
-                                tx.params[j] = abi.hex(tx.params[j]);
-                            }
-                        }
-                    } else if (tx.params.constructor === BigNumber) {
-                        tx.params = abi.hex(tx.params);
-                    }
-                }
-                if (tx.from) tx.from = abi.prefix_hex(tx.from);
-                tx.to = abi.prefix_hex(tx.to);
-                dataAbi = abi.encode(tx);
-                if (dataAbi) {
-                    if (tx.callback && tx.callback.constructor === Function) {
-                        callbacks[i] = tx.callback;
-                        delete tx.callback;
-                    }
-                    packaged = {
-                        from: tx.from,
-                        to: tx.to,
-                        data: dataAbi,
-                        gas: tx.gas || this.DEFAULT_GAS,
-                        gasPrice: tx.gasPrice
-                    };
-                    if (tx.value) packaged.value = tx.value;
-                    if (tx.returns) packaged.returns = tx.returns;
-                    if (this.debug.broadcast) {
-                        packaged.debug = abi.copy(tx);
-                        packaged.debug.batch = true;
-                    }
-                    invocation = (tx.send) ? "sendTransaction" : "call";
-                    rpclist[i] = this.marshal(invocation, packaged);
-                } else {
-                    console.log("unable to package commands for batch RPC");
-                    return rpclist;
-                }
+        if (txlist.constructor !== Array) {
+            if (this.debug.logs) {
+                console.log("warning: expected array for batch RPC, invoking instead");
             }
-            if (f) {
-                if (f.constructor === Function) { // callback on whole array
-                    this.broadcast(rpclist, f);
-                } else if (f === true) {
-                    this.broadcast(rpclist, function (res) {
-                        if (res) {
-                            if (res.constructor === Array && res.length) {
-                                for (j = 0; j < numCommands; ++j) {
-                                    if (res[j] && callbacks[j]) {
-                                        callbacks[j](res[j]);
-                                    }
-                                }
-                            } else {
-                                if (callbacks.length && callbacks[0]) {
-                                    callbacks[0](res);
-                                }
-                            }
-                        }
-                    });
-                }
-            } else {
-                return this.broadcast(rpclist, f);
-            }
-        } else {
-            console.log("expected array for batch RPC, invoking instead");
             return this.invoke(txlist, f);
         }
+        numCommands = txlist.length;
+        rpclist = new Array(numCommands);
+        callbacks = new Array(numCommands);
+        for (var i = 0; i < numCommands; ++i) {
+            tx = abi.copy(txlist[i]);
+            if (tx.params !== undefined) {
+                if (tx.params.constructor === Array) {
+                    for (var j = 0, len = tx.params.length; j < len; ++j) {
+                        if (tx.params[j] !== undefined &&
+                            tx.params[j] !== null &&
+                            tx.params[j].constructor === BigNumber) {
+                            tx.params[j] = abi.hex(tx.params[j]);
+                        }
+                    }
+                } else if (tx.params.constructor === BigNumber) {
+                    tx.params = abi.hex(tx.params);
+                }
+            }
+            if (tx.from) tx.from = abi.prefix_hex(tx.from);
+            tx.to = abi.prefix_hex(tx.to);
+            dataAbi = abi.encode(tx);
+            if (dataAbi) {
+                if (tx.callback && tx.callback.constructor === Function) {
+                    callbacks[i] = tx.callback;
+                    delete tx.callback;
+                }
+                packaged = {
+                    from: tx.from,
+                    to: tx.to,
+                    data: dataAbi,
+                    gas: tx.gas || this.DEFAULT_GAS,
+                    gasPrice: tx.gasPrice
+                };
+                if (tx.value) packaged.value = tx.value;
+                if (tx.returns) packaged.returns = tx.returns;
+                if (this.debug.broadcast) {
+                    packaged.debug = abi.copy(tx);
+                    packaged.debug.batch = true;
+                }
+                invocation = (tx.send) ? "sendTransaction" : "call";
+                rpclist[i] = this.marshal(invocation, packaged);
+            } else {
+                console.log("unable to package commands for batch RPC");
+                return rpclist;
+            }
+        }
+        if (!f) return this.broadcast(rpclist, f);
+
+        // callback on whole array
+        if (isFunction(f)) return this.broadcast(rpclist, f);
+
+        // callback on each element
+        this.broadcast(rpclist, function (res) {
+            if (!res) return console.error(errors.TRANSACTION_FAILED);
+            if (res.constructor === Array && res.length) {
+                for (j = 0; j < numCommands; ++j) {
+                    if (res[j] && callbacks[j]) {
+                        callbacks[j](res[j]);
+                    }
+                }
+            } else {
+                if (callbacks.length && isFunction(callbacks[0])) {
+                    callbacks[0](res);
+                }
+            }
+        });
     },
 
     encodeResult: function (result, returns) {
@@ -1092,16 +1098,7 @@ module.exports = {
     fire: function (itx, callback) {
         var self = this;
         var tx = abi.copy(itx);
-        if (callback) {
-            this.invoke(tx, function (res) {
-                res = self.errorCodes(tx, res);
-                if (res) {
-                    if (res.error) return callback(res);
-                    return callback(self.encodeResult(res, itx.returns));
-                }
-                callback(errors.NO_RESPONSE);
-            });
-        } else {
+        if (!isFunction(callback)) {
             var res = this.errorCodes(tx, this.invoke(tx));
             if (res) {
                 if (res.error) return res;
@@ -1109,6 +1106,14 @@ module.exports = {
             }
             throw new this.Error(errors.NO_RESPONSE);
         }
+        this.invoke(tx, function (res) {
+            res = self.errorCodes(tx, res);
+            if (res) {
+                if (res.error) return callback(res);
+                return callback(self.encodeResult(res, itx.returns));
+            }
+            callback(errors.NO_RESPONSE);
+        });
     },
 
     /***************************************

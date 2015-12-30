@@ -44,65 +44,65 @@ module.exports={
     },
     "7": {
         "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
-        "buyAndSellShares": "0xc4f6793f600edcf7c8ae16b0709bdeab2c368fde",
-        "checkQuorum": "0xdccd54564e1c4a140e5e546e000b1b47c4c6d880",
-        "closeMarket": "0x78a01aeb9f0d074c1dd589bb251533e6998f0817",
-        "closeMarketEight": "0x28059ecbf6aee59f318e21e9db8678cfdcdfaa56",
-        "closeMarketFour": "0xc15b4cc5c2c1ba9e2acccbe70be99b543870db1f",
-        "closeMarketOne": "0xaedb8c8025d29ebb57bfbe0ae29cc92c16bb4b3e",
-        "closeMarketTwo": "0xf199fcfdf2bb5b580b7a790fd0733de14b8bdb31",
-        "comments": "0x02613aa7a2ac54a5ee4fca6e77c6d55625189a75",
-        "createBranch": "0x418b2c90b7f4641f573c56361dcd74cb4f0c1037",
-        "createEvent": "0x2f3ee74691a161ac3647be05f7ad4dd18e9bbcbf",
-        "createMarket": "0xf208b76857e1f988280c826dc83197124ead7f3f",
-        "dispatch": "0x0d411457890a43ba80c076ca5752321da5b8e6a8",
-        "faucets": "0xfce5df0aeb2efaa611a0210b3faab8116405d374",
-        "makeReports": "0x340510ba7b0d7f65efcd7384077115165d1c9eaf",
-        "p2pWagers": "0x98d81ce830bbee5a5280551564e5fb92857a2810",
-        "sendReputation": "0xbd6fb11a900f6ab2eae54a301f1a81da0cb083ef",
-        "transferShares": "0x87c4c3529304af41331470dcbd0a643e29e3c2ff",
-        "accounts": "0xcfe5b5e339cac57940c83d9c63a3c1703830ef21",
-        "branches": "0x03fccd1ed6561ae26dc4c8dab3d84cc1e82b8e18",
-        "cash": "0xe7d7352e5adfec7e31748fc96ca032e1e091b1fe",
-        "events": "0xb3b476db70034c7d6ac3168ef428aea3adfdff82",
-        "expiringEvents": "0x0959d450128d5d4240c8bfa5b0dff17ab742a8d7",
-        "fxpFunctions": "0x5bfe33b44617fbdd318f853433a33cd98dec0c3d",
-        "info": "0x682fe02ec352ee038c603aecc4d22dc500ef493d",
-        "ipfs": "0x46df2dc8e95d947845e768bc8cb2b2227ee762fa",
-        "markets": "0x76e02a9d75e82be68bb91c80d39215c47d84b37d",
-        "reporting": "0xf061169967b5b2aa750f68fc434c585f22e8327e",
-        "adjust": "0x930f890a1a7ba7a5fd96f8e09583d397bad51dbc",
-        "center": "0x2da746821eb27f4d21531cf63b4ed60ed537ec66",
-        "payout": "0xb32c8d049349233e34d2488533d5e0a48b804eac",
-        "redeem_adjust": "0x7152ecb3f254e125009b81e40a809ac3e4f7e14e",
-        "redeem_center": "0x6edd63da02674913650aa2a5d5eb51d615a7fa08",
-        "redeem_interpolate": "0x7ff944bbb5be0422a9d55bbbed52ba37c3b6404f",
-        "redeem_payout": "0x5d73df46d5aa5cdfb4813d714857c7bf81629a3a",
-        "redeem_resolve": "0x4786c39201f4ce0572181c0ab1a3627701a21b91",
-        "redeem_score": "0xd935f40ae3999a2b333a58a3c82aa1dbbb38b659",
-        "resolve": "0x4f8e3f3de8dbb4ac0a824087db2f38d33f6c15f4",
-        "score": "0x1359bf73a734c70c3636e6fa19d58ca093c7a8ee",
-        "statistics": "0xba5fda6dc4758f9fdfcf402133ec8d7a44286112"
+        "buyAndSellShares": "0xbe4ee6fec0988e5be8dafd38d9c0f8d6f9e5cbec",
+        "checkQuorum": "0x0602dfd8e341d2fbcf3625455fb756af998857a1",
+        "closeMarket": "0x288a972a5d2df198090c62aff28d752aa844462a",
+        "closeMarketEight": "0xdcf05b01d814507f93911aa1817a461e0b93cc15",
+        "closeMarketFour": "0xc048752bef846584750f426dfa853310e8b2692e",
+        "closeMarketOne": "0x8bc5fe35449908da4c436c135e7146d7516e9f19",
+        "closeMarketTwo": "0x647d9a245d1dfea6d6ad105b67189d1978428fe2",
+        "comments": "0xbd46ac9cbceebe6d8f33366df7e3bb1faa46c97f",
+        "createBranch": "0x79c536d060a2b420eef3f0b43f3b94453b674f2c",
+        "createEvent": "0x46b9460e82b44eb315b07ddd681563860837eb28",
+        "createMarket": "0x49c63c69bce199e2a53d265857849d0b8c3f7167",
+        "dispatch": "0x332df78758caafadbcecb8a33a86f0a3311b5617",
+        "faucets": "0xa105994eb344fcc492a90e43609e5078e958a777",
+        "makeReports": "0x705ade91ba95f82bfd0851d65e4e4f1b26d8a78f",
+        "p2pWagers": "0xa98080fda696c11af2cb9a90b1899d914436e4ba",
+        "sendReputation": "0xd3f5b1d3cbf338394fbbbab45174329ef62e59d8",
+        "transferShares": "0x05a0c629185abf6fbf189e985a7e739f54939237",
+        "accounts": "0x4b4248f78b2a4aaa51e242b6f35b8dd4276451da",
+        "branches": "0x7a07e396f3691831bf2caa85bdfaa611d77e8ef2",
+        "cash": "0xca401c5c89b7188629fcb8e006165a4bc1aaeaa6",
+        "events": "0x61097e73dd210af08d73bebdf1608d504c137566",
+        "expiringEvents": "0xc7717a4a53a6b3ed63d1b6da807f51fd8e916f64",
+        "fxpFunctions": "0xd8e126fab75ecfba100910d9e6bb39b4eadfaeee",
+        "info": "0x4cc834408dee680b256a307727b63b27bc5abfcb",
+        "ipfs": "0x03377d7fb9147e6123aea28973a195b1eee2a61c",
+        "markets": "0x04124f1643372564aded7c1f215709bf49929b2d",
+        "reporting": "0xcff90d34101456788b37199d1ee13b68ad47e8c7",
+        "adjust": "0x8ded14b321b658551970bb0a6b0401b4b008019a",
+        "center": "0x6796b0cae4636faf82501f441135ac0b96b84b91",
+        "payout": "0x249ef04ea9054d3002b95ce6189ff8358677eda4",
+        "redeem_adjust": "0x93ea5a64a68014f769ef7003c9bdf2a726626cc2",
+        "redeem_center": "0xc149bbab0707d6455d54ac2cf681b9bb64b5d639",
+        "redeem_interpolate": "0x29f97d471eedeeded58f34ce3863c7a92f3072e7",
+        "redeem_payout": "0xda15cf68e108c72eaea338890fc3edc39af5f25f",
+        "redeem_resolve": "0x5eb5686b101a8901a1e10e17a58b2fc0c95802c7",
+        "redeem_score": "0x50060e47a13b69e9c2d03b564e08e20cbfc14957",
+        "resolve": "0xf8bfa1b49b66ba3a6e52f5265e22375145306527",
+        "score": "0x4ee6fd8192a3ba884b89ac69e12a76c4bcd8f5ec",
+        "statistics": "0x4d5c089204374a962e17ce5e716d42e1e67db432"
     },
     "10101": {
         "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
-        "buyAndSellShares": "0x0ebc0f4193d04d7f9711a6e6b00590d51944aa75",
+        "buyAndSellShares": "0x2e5a882aa53805f1a9da3cf18f73673bca98fa0f",
         "checkQuorum": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d",
-        "closeMarket": "0xd9cbf7eac82423b4cc4722f9d90cb293da757eb3",
-        "closeMarketEight": "0x00148bf7514d240be4319b3c9b1b68024ff17eb6",
-        "closeMarketFour": "0xac4d7a1c9525345ef9aca017f6737ec087bcd8c7",
-        "closeMarketOne": "0x509eb67acb27a35987ade6d8ea95e2b70b8ecb8b",
-        "closeMarketTwo": "0x55ced6f7475f3bab39ac35f68b2008bc35461f2e",
+        "closeMarket": "0xcece47d6c0a6a1c90521f38ec5bf7550df983804",
+        "closeMarketEight": "0x031d9d02520cc708ea3c865278508c9cdb92bd51",
+        "closeMarketFour": "0xcd6c7bc634257f82903b182142aae7156d72a200",
+        "closeMarketOne": "0xd2e9f7c2fd4635199b8cc9e8128fc4d27c693945",
+        "closeMarketTwo": "0x7d4b581a0868204b7481c316b430a97fd292a2fb",
         "comments": "0x014b14d07e5afb2f30eb6ebf81d927563f0f1238",
         "createBranch": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df",
         "createEvent": "0x9fe69262bbaa47f013b7dbd6ca5f01e17446c645",
-        "createMarket": "0xdfea50bda81fc05e860c4783791a9281ec49beb3",
+        "createMarket": "0x448c01a2e1fd6c2ef133402c403d2f48c99993e7",
         "dispatch": "0x70a893eb9569041e97a3787f0c76a1eb6378d8b2",
         "faucets": "0x509592c96eee7e19f6a34772fd8783cb072ca3c6",
         "makeReports": "0x3f3276849a878a176b2f02dd48a483e8182a49e4",
         "p2pWagers": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6",
         "sendReputation": "0x35152caa07026203a1add680771afb690d872d7d",
-        "transferShares": "0xe96fd0ebd2a6f3f96277df217f0b77c653bbe674",
+        "transferShares": "0xd70c6e1f3857d23bd96c3e4d2ec346fa7c3931f3",
         "accounts": "0x77ae4a8fa5c2775e618fcb40b0598f80a3b846f1",
         "branches": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd",
         "cash": "0xe4714fcbdcdba49629bc408183ef40d120700b8d",
@@ -111,7 +111,7 @@ module.exports={
         "fxpFunctions": "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
         "info": "0x5069d883e31429c6dd1325d961f443007747c7a2",
         "ipfs": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e",
-        "markets": "0x7811bbaeb91d3f0de807de75383ad2ec7183a07c",
+        "markets": "0x9308cf21b5a11f182f9707ca284bbb71bb84f893",
         "reporting": "0x81a7621e9a286d061b3dea040888a51c96693b1c",
         "adjust": "0xbd19195b9e8a2d8ed14fc3a2823856b5c16f7f55",
         "center": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c",
@@ -279,6 +279,10 @@ function RPCError(err) {
 
 RPCError.prototype = new Error();
 
+function isFunction(f) {
+    return Object.prototype.toString.call(f) === "[object Function]";
+}
+
 var HOSTED_NODES = [
     "https://eth1.augur.net",
     "https://eth3.augur.net",
@@ -438,7 +442,7 @@ module.exports = {
                         results[i] = response[i].result;
                         if (response.error || (response[i] && response[i].error)) {
                             if (this.debug.broadcast) {
-                                if (callback) return callback(response.error);
+                                if (isFunction(callback)) return callback(response.error);
                                 throw new this.Error(response.error);
                             }
                         } else if (response[i].result !== undefined) {
@@ -452,14 +456,14 @@ module.exports = {
                             }
                         }
                     }
-                    if (!callback) return results;
+                    if (!isFunction(callback)) return results;
                     callback(results);
 
                 // no result or error field
                 } else {
                     var err = errors.NO_RESPONSE;
                     err.bubble = response;
-                    if (callback) return callback(err);
+                    if (isFunction(callback)) return callback(err);
                     throw new this.Error(err);
                 }
             }
@@ -468,7 +472,7 @@ module.exports = {
             if (e && e.name === "SyntaxError") {
                 err = errors.INVALID_RESPONSE;
             }
-            if (callback) return callback(err);
+            if (isFunction(callback)) return callback(err);
             throw new this.Error(err);
         }
     },
@@ -496,13 +500,13 @@ module.exports = {
             if (deadIndex > -1) {
                 this.nodes.hosted.splice(deadIndex, 1);
                 if (!this.nodes.hosted.length) {
-                    if (callback) {
+                    if (isFunction(callback)) {
                         return callback(errors.HOSTED_NODE_FAILURE);
                     }
                     throw new this.Error(errors.HOSTED_NODE_FAILURE);
                 }
             }
-            if (callback) callback();
+            if (isFunction(callback)) callback();
         }
     },
 
@@ -703,10 +707,10 @@ module.exports = {
                 (this.nodes.local.indexOf("127.0.0.1") > -1 ||
                 this.nodes.local.indexOf("localhost") > -1)
             );
-            if (!callback && !loopback) {
+            if (!isFunction(callback) && !loopback) {
                 throw new this.Error(errors.LOOPBACK_NOT_FOUND);
             }
-            if (callback && command.constructor !== Array) {
+            if (isFunction(callback) && command.constructor !== Array) {
                 var received = '';
                 var socket = new net.Socket();
                 socket.setEncoding("utf8");
@@ -731,7 +735,7 @@ module.exports = {
 
         // make sure the ethereum node list isn't empty
         if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath) {
-            if (callback) return callback(errors.ETHEREUM_NOT_FOUND);
+            if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
             throw new this.Error(errors.ETHEREUM_NOT_FOUND);
         }
 
@@ -739,7 +743,7 @@ module.exports = {
         nodes = this.selectNodes();
 
         // asynchronous request if callback exists
-        if (callback && callback.constructor === Function) {
+        if (isFunction(callback)) {
             async.eachSeries(nodes, function (node, nextNode) {
                 if (!completed) {
                     if (self.debug.logs) {
@@ -897,7 +901,7 @@ module.exports = {
     },
 
     blockNumber: function (f) {
-        if (f) {
+        if (isFunction(f)) {
             this.broadcast(this.marshal("blockNumber"), f);
         } else {
             return parseInt(this.broadcast(this.marshal("blockNumber")));
@@ -967,7 +971,7 @@ module.exports = {
     },
 
     peerCount: function (f) {
-        if (f) {
+        if (isFunction(f)) {
             this.broadcast(this.marshal("peerCount", [], "net_"), f);
         } else {
             return parseInt(this.broadcast(this.marshal("peerCount", [], "net_")));
@@ -983,7 +987,7 @@ module.exports = {
     },
 
     hashrate: function (f) {
-        if (f) {
+        if (isFunction(f)) {
             this.broadcast(this.marshal("hashrate"), f);
         } else {
             return parseInt(this.broadcast(this.marshal("hashrate")));
@@ -1084,7 +1088,7 @@ module.exports = {
             if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
                 throw new this.Error(errors.ETHEREUM_NOT_FOUND);
             }
-            if (f && f.constructor === Function) {
+            if (isFunction(f)) {
                 var timeout = setTimeout(function () {
                     if (!response) f(false);
                 }, 2500);
@@ -1098,9 +1102,7 @@ module.exports = {
                 return !!this.net("listening");
             }
         } catch (e) {
-            if (f && f.constructor === Function) {
-                return f(false);
-            }
+            if (isFunction(f)) return f(false);
             return false;
         }
     },
@@ -1110,7 +1112,7 @@ module.exports = {
             throw new this.Error(errors.ETHEREUM_NOT_FOUND);
         }
         try {
-            if (f && f.constructor === Function) {
+            if (isFunction(f)) {
                 this.sign(account, "1010101", function (res) {
                     if (res) {
                         if (res.error) return f(false);
@@ -1129,7 +1131,7 @@ module.exports = {
                 return false;
             }
         } catch (e) {
-            if (f && f.constructor === Function) return f(false);
+            if (isFunction(f)) return f(false);
             return false;
         }
     },
@@ -1196,12 +1198,18 @@ module.exports = {
                 }
             }
         } catch (exc) {
-            if (f) return f(errors.TRANSACTION_FAILED);
-            return errors.TRANSACTION_FAILED;
+            var err = abi.copy(errors.TRANSACTION_FAILED);
+            err.bubble = exc;
+            err.tx = itx;
+            if (isFunction(f)) return f(err);
+            return err;
         }
         if (!invoked) {
-            if (f) return f(errors.TRANSACTION_FAILED);
-            return errors.TRANSACTION_FAILED;
+            var err = abi.copy(errors.TRANSACTION_FAILED);
+            err.bubble = "!invoked";
+            err.tx = itx;
+            if (isFunction(f)) return f(err);
+            return err;
         }
     },
 
@@ -1210,80 +1218,78 @@ module.exports = {
      */
     batch: function (txlist, f) {
         var numCommands, rpclist, callbacks, tx, dataAbi, packaged, invocation;
-        if (txlist.constructor === Array) {
-            numCommands = txlist.length;
-            rpclist = new Array(numCommands);
-            callbacks = new Array(numCommands);
-            for (var i = 0; i < numCommands; ++i) {
-                tx = abi.copy(txlist[i]);
-                if (tx.params !== undefined) {
-                    if (tx.params.constructor === Array) {
-                        for (var j = 0, len = tx.params.length; j < len; ++j) {
-                            if (tx.params[j] !== undefined &&
-                                tx.params[j] !== null &&
-                                tx.params[j].constructor === BigNumber) {
-                                tx.params[j] = abi.hex(tx.params[j]);
-                            }
-                        }
-                    } else if (tx.params.constructor === BigNumber) {
-                        tx.params = abi.hex(tx.params);
-                    }
-                }
-                if (tx.from) tx.from = abi.prefix_hex(tx.from);
-                tx.to = abi.prefix_hex(tx.to);
-                dataAbi = abi.encode(tx);
-                if (dataAbi) {
-                    if (tx.callback && tx.callback.constructor === Function) {
-                        callbacks[i] = tx.callback;
-                        delete tx.callback;
-                    }
-                    packaged = {
-                        from: tx.from,
-                        to: tx.to,
-                        data: dataAbi,
-                        gas: tx.gas || this.DEFAULT_GAS,
-                        gasPrice: tx.gasPrice
-                    };
-                    if (tx.value) packaged.value = tx.value;
-                    if (tx.returns) packaged.returns = tx.returns;
-                    if (this.debug.broadcast) {
-                        packaged.debug = abi.copy(tx);
-                        packaged.debug.batch = true;
-                    }
-                    invocation = (tx.send) ? "sendTransaction" : "call";
-                    rpclist[i] = this.marshal(invocation, packaged);
-                } else {
-                    console.log("unable to package commands for batch RPC");
-                    return rpclist;
-                }
+        if (txlist.constructor !== Array) {
+            if (this.debug.logs) {
+                console.log("warning: expected array for batch RPC, invoking instead");
             }
-            if (f) {
-                if (f.constructor === Function) { // callback on whole array
-                    this.broadcast(rpclist, f);
-                } else if (f === true) {
-                    this.broadcast(rpclist, function (res) {
-                        if (res) {
-                            if (res.constructor === Array && res.length) {
-                                for (j = 0; j < numCommands; ++j) {
-                                    if (res[j] && callbacks[j]) {
-                                        callbacks[j](res[j]);
-                                    }
-                                }
-                            } else {
-                                if (callbacks.length && callbacks[0]) {
-                                    callbacks[0](res);
-                                }
-                            }
-                        }
-                    });
-                }
-            } else {
-                return this.broadcast(rpclist, f);
-            }
-        } else {
-            console.log("expected array for batch RPC, invoking instead");
             return this.invoke(txlist, f);
         }
+        numCommands = txlist.length;
+        rpclist = new Array(numCommands);
+        callbacks = new Array(numCommands);
+        for (var i = 0; i < numCommands; ++i) {
+            tx = abi.copy(txlist[i]);
+            if (tx.params !== undefined) {
+                if (tx.params.constructor === Array) {
+                    for (var j = 0, len = tx.params.length; j < len; ++j) {
+                        if (tx.params[j] !== undefined &&
+                            tx.params[j] !== null &&
+                            tx.params[j].constructor === BigNumber) {
+                            tx.params[j] = abi.hex(tx.params[j]);
+                        }
+                    }
+                } else if (tx.params.constructor === BigNumber) {
+                    tx.params = abi.hex(tx.params);
+                }
+            }
+            if (tx.from) tx.from = abi.prefix_hex(tx.from);
+            tx.to = abi.prefix_hex(tx.to);
+            dataAbi = abi.encode(tx);
+            if (dataAbi) {
+                if (tx.callback && tx.callback.constructor === Function) {
+                    callbacks[i] = tx.callback;
+                    delete tx.callback;
+                }
+                packaged = {
+                    from: tx.from,
+                    to: tx.to,
+                    data: dataAbi,
+                    gas: tx.gas || this.DEFAULT_GAS,
+                    gasPrice: tx.gasPrice
+                };
+                if (tx.value) packaged.value = tx.value;
+                if (tx.returns) packaged.returns = tx.returns;
+                if (this.debug.broadcast) {
+                    packaged.debug = abi.copy(tx);
+                    packaged.debug.batch = true;
+                }
+                invocation = (tx.send) ? "sendTransaction" : "call";
+                rpclist[i] = this.marshal(invocation, packaged);
+            } else {
+                console.log("unable to package commands for batch RPC");
+                return rpclist;
+            }
+        }
+        if (!f) return this.broadcast(rpclist, f);
+
+        // callback on whole array
+        if (isFunction(f)) return this.broadcast(rpclist, f);
+
+        // callback on each element
+        this.broadcast(rpclist, function (res) {
+            if (!res) return console.error(errors.TRANSACTION_FAILED);
+            if (res.constructor === Array && res.length) {
+                for (j = 0; j < numCommands; ++j) {
+                    if (res[j] && callbacks[j]) {
+                        callbacks[j](res[j]);
+                    }
+                }
+            } else {
+                if (callbacks.length && isFunction(callbacks[0])) {
+                    callbacks[0](res);
+                }
+            }
+        });
     },
 
     encodeResult: function (result, returns) {
@@ -1342,16 +1348,7 @@ module.exports = {
     fire: function (itx, callback) {
         var self = this;
         var tx = abi.copy(itx);
-        if (callback) {
-            this.invoke(tx, function (res) {
-                res = self.errorCodes(tx, res);
-                if (res) {
-                    if (res.error) return callback(res);
-                    return callback(self.encodeResult(res, itx.returns));
-                }
-                callback(errors.NO_RESPONSE);
-            });
-        } else {
+        if (!isFunction(callback)) {
             var res = this.errorCodes(tx, this.invoke(tx));
             if (res) {
                 if (res.error) return res;
@@ -1359,6 +1356,14 @@ module.exports = {
             }
             throw new this.Error(errors.NO_RESPONSE);
         }
+        this.invoke(tx, function (res) {
+            res = self.errorCodes(tx, res);
+            if (res) {
+                if (res.error) return callback(res);
+                return callback(self.encodeResult(res, itx.returns));
+            }
+            callback(errors.NO_RESPONSE);
+        });
     },
 
     /***************************************
