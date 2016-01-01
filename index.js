@@ -43,6 +43,8 @@ var HOSTED_NODES = [
 module.exports = {
 
     debug: {
+        sync: true,
+        tx: false,
         broadcast: false,
         fallback: false,
         latency: true,
@@ -266,17 +268,19 @@ module.exports = {
             req = syncRequest('POST', rpcUrl, { json: command });
             var response = req.getBody().toString();
             return this.parse(response, returns);
-        } else {
-            if (window.XMLHttpRequest) {
-                req = new window.XMLHttpRequest();
-            } else {
-                req = new window.ActiveXObject("Microsoft.XMLHTTP");
-            }
-            req.open("POST", rpcUrl, false);
-            req.setRequestHeader("Content-type", "application/json");
-            req.send(JSON.stringify(command));
-            return this.parse(req.responseText, returns);
         }
+        if (this.debug.sync) {
+            console.warn("synchronous RPC request to", rpcUrl, ":", command);
+        }
+        if (window.XMLHttpRequest) {
+            req = new window.XMLHttpRequest();
+        } else {
+            req = new window.ActiveXObject("Microsoft.XMLHTTP");
+        }
+        req.open("POST", rpcUrl, false);
+        req.setRequestHeader("Content-type", "application/json");
+        req.send(JSON.stringify(command));
+        return this.parse(req.responseText, returns);
     },
 
     post: function (rpcUrl, command, returns, callback) {
@@ -1124,13 +1128,15 @@ module.exports = {
         if (!this.txs[txhash]) this.txs[txhash] = {};
         if (this.txs[txhash].count === undefined) this.txs[txhash].count = 0;
         ++this.txs[txhash].count;
+        if (this.debug.tx) console.log("checkBlockHash:", tx, callreturn, itx);
         if (tx && tx.blockHash && abi.number(tx.blockHash) !== 0) {
             tx.callReturn = this.encodeResult(callreturn, returns);
             tx.txHash = tx.hash;
             delete tx.hash;
             this.txs[txhash].status = "confirmed";
             clearTimeout(this.notifications[txhash]);
-            if (onSuccess && onSuccess.constructor === Function) onSuccess(tx);
+            delete this.notifications[txhash];
+            if (isFunction(onSuccess)) onSuccess(tx);
         } else {
             var self = this;
             if (this.txs[txhash].count < this.TX_POLL_MAX) {
@@ -1141,9 +1147,7 @@ module.exports = {
                 }, this.TX_POLL_INTERVAL);
             } else {
                 self.txs[txhash].status = "unconfirmed";
-                if (onFailed && onFailed.constructor === Function) {
-                    onFailed(errors.TRANSACTION_NOT_CONFIRMED);
-                }
+                if (isFunction(onFailed)) onFailed(errors.TRANSACTION_NOT_CONFIRMED);
             }
         }
     },
@@ -1151,6 +1155,7 @@ module.exports = {
     txNotify: function (callreturn, itx, txhash, returns, onSent, onSuccess, onFailed) {
         var self = this;
         this.getTx(txhash, function (tx) {
+            if (self.debug.tx) console.log("txNofity.getTx:", tx);
             if (tx) {
                 return self.checkBlockHash(tx, callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
             }
@@ -1171,10 +1176,10 @@ module.exports = {
                     self.txs[txhash].status = "resubmitted";
                     return self.transact(itx, onSent, onSuccess, onFailed);
                 } else {
-                    if (onFailed) onFailed(errors.TRANSACTION_NOT_FOUND);
+                    if (isFunction(onFailed)) onFailed(errors.TRANSACTION_NOT_FOUND);
                 }
             } else {
-                if (onFailed) onFailed(errors.TRANSACTION_NOT_FOUND);
+                if (isFunction(onFailed)) onFailed(errors.TRANSACTION_NOT_FOUND);
             }
         });
     },
@@ -1183,18 +1188,19 @@ module.exports = {
         var self = this;
         if (tx && txhash) {
             if (errors[txhash]) {
-                if (onFailed) onFailed({
+                if (isFunction(onFailed)) onFailed({
                     error: txhash,
                     message: errors[txhash],
                     tx: tx
                 });
             } else {
                 if (this.txs[txhash]) {
-                    if (onFailed) onFailed(errors.DUPLICATE_TRANSACTION);
+                    if (isFunction(onFailed)) onFailed(errors.DUPLICATE_TRANSACTION);
                 } else {
                     this.txs[txhash] = { hash: txhash, tx: tx, count: 0, status: "pending" };
                     this.txs[txhash].tx.returns = returns;
                     return this.getTx(txhash, function (sent) {
+                        if (self.debug.tx) console.log("sent:", sent);
                         if (returns !== "null") {
                             return self.call({
                                 from: sent.from,
@@ -1205,7 +1211,7 @@ module.exports = {
                                 if (callReturn) {
                                     if (errors[callReturn]) {
                                         self.txs[txhash].status = "failed";
-                                        if (onFailed) onFailed({
+                                        if (isFunction(onFailed)) onFailed({
                                             error: callReturn,
                                             message: errors[callReturn],
                                             tx: tx
@@ -1219,10 +1225,10 @@ module.exports = {
                                         // check if numReturn is an error object
                                         if (numReturn.constructor === Object && numReturn.error) {
                                             self.txs[txhash].status = "failed";
-                                            if (onFailed) onFailed(numReturn);
+                                            if (isFunction(onFailed)) onFailed(numReturn);
                                         } else if (errors[numReturn]) {
                                             self.txs[txhash].status = "failed";
-                                            if (onFailed) onFailed({
+                                            if (isFunction(onFailed)) onFailed({
                                                 error: numReturn,
                                                 message: errors[numReturn],
                                                 tx: tx
@@ -1236,7 +1242,7 @@ module.exports = {
                                                 }
                                                 if (numReturn && errors[tx.method] && errors[tx.method][numReturn]) {
                                                     self.txs[txhash].status = "failed";
-                                                    if (onFailed) onFailed({
+                                                    if (isFunction(onFailed)) onFailed({
                                                         error: numReturn,
                                                         message: errors[tx.method][numReturn],
                                                         tx: tx
@@ -1259,7 +1265,7 @@ module.exports = {
                                                     // poll the network until the transaction is
                                                     // included in a block (i.e., has a non-null
                                                     // blockHash field)
-                                                    if (onSuccess && onSuccess.constructor === Function) {
+                                                    if (isFunction(onSuccess)) {
                                                         self.txNotify(
                                                             callReturn,
                                                             tx,
@@ -1275,7 +1281,7 @@ module.exports = {
                                             // something went wrong :(
                                             } catch (e) {
                                                 self.txs[txhash].status = "failed";
-                                                if (onFailed) onFailed(e);
+                                                if (isFunction(onFailed)) onFailed(e);
                                             }
                                         }
                                     }
@@ -1283,14 +1289,14 @@ module.exports = {
                                 // no return value for call
                                 } else {
                                     self.txs[txhash].status = "failed";
-                                    if (onFailed) onFailed(errors.NULL_CALL_RETURN);
+                                    if (isFunction(onFailed)) onFailed(errors.NULL_CALL_RETURN);
                                 }
                             });
                         }
 
                         // if returns type is null, skip the intermediate call
                         onSent({ txHash: txhash, callReturn: null });
-                        if (onSuccess && onSuccess.constructor === Function) {
+                        if (isFunction(onSuccess)) {
                             self.txNotify(null, tx, txhash, returns, onSent, onSuccess, onFailed);
                         }
                     });
@@ -1304,21 +1310,19 @@ module.exports = {
         var returns = tx.returns;
         tx.send = true;
         delete tx.returns;
-        if (onSent && onSent.constructor === Function) {
-            return this.invoke(tx, function (txhash) {
-                if (txhash) {
-                    if (txhash.error) {
-                        if (onFailed) onFailed(txhash);
-                    } else {
-                        txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
-                        self.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
-                    }
+        if (!isFunction(onSent)) return this.invoke(tx);
+        this.invoke(tx, function (txhash) {
+            if (self.debug.tx) console.log("txhash:", txhash);
+            if (txhash) {
+                if (txhash.error) {
+                    if (isFunction(onFailed)) onFailed(txhash);
                 } else {
-                    if (onFailed) onFailed(errors.NULL_RESPONSE);
+                    txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
+                    self.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
                 }
-            });
-        }
-        return this.invoke(tx);
+            } else {
+                if (isFunction(onFailed)) onFailed(errors.NULL_RESPONSE);
+            }
+        });
     }
-
 };
