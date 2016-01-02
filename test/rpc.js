@@ -1257,7 +1257,6 @@ describe("RPC", function () {
             ], function (node, nextNode) {
                 rpc.nodes.hosted = [node];
                 rpc.version(function (version) {
-                    console.log("version:", version);
                     assert.strictEqual(version, "7");
                     assert.property(rpc.latency, node);
                     assert.property(rpc.samples, node);
