@@ -538,7 +538,7 @@ module.exports = {
             var response = req.getBody().toString();
             return this.parse(response, returns);
         }
-        console.warn("[ethrpc] synchronous RPC request:", rpcUrl, command);
+        console.warn("[ethrpc] synchronous RPC request to", rpcUrl, command);
         if (window.XMLHttpRequest) {
             req = new window.XMLHttpRequest();
         } else {
@@ -625,6 +625,7 @@ module.exports = {
         } else {
             select = (cdf[low] >= rand) ? low : low + 1;
         }
+        console.log("[ethrpc] primary node:", nodes[select]);
         return [nodes[select]].concat(nodes);
     },
 
