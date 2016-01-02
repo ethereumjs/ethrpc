@@ -11,6 +11,7 @@ if (NODE_JS) {
     net = require("net");
     request = require("request");
     syncRequest = require("sync-request");
+    console.debug = console.log;
 } else {
     request = require("browser-request");
 }
@@ -249,7 +250,7 @@ module.exports = {
     exciseNode: function (err, deadNode, callback) {
         if (deadNode && !this.nodes.local && !this.ipcpath) {
             if (this.debug.logs) {
-                console.log("[ethrpc] request to", deadNode, "failed:", err);
+                console.warn("[ethrpc] request to", deadNode, "failed:", err);
             }
             var deadIndex = this.nodes.hosted.indexOf(deadNode);
             if (deadIndex > -1) {
@@ -288,7 +289,10 @@ module.exports = {
         req.open("POST", rpcUrl, false);
         req.setRequestHeader("Content-type", "application/json");
         req.timeout = timeout;
-        req.ontimeout = function () { self.primaryNode = null; };
+        req.ontimeout = function () {
+            console.error("[ethrpc] synchronous RPC timed out", rpcUrl, command);
+            self.primaryNode = null;
+        };
         req.send(JSON.stringify(command));
         return this.parse(req.responseText, returns);
     },
@@ -321,10 +325,10 @@ module.exports = {
                 } else if (self.excision) {
                     return self.exciseNode(err.code, rpcUrl, callback);
                 }
+                console.warn("[ethrpc] asynchronous RPC timed out", rpcUrl, command);
                 e = errors.RPC_TIMEOUT;
                 e.bubble = err;
                 e.command = command;
-                console.log(e);
                 callback(e);
             } else if (response.statusCode === 200) {
                 self.parse(body, returns, callback);
@@ -368,7 +372,7 @@ module.exports = {
         } else {
             select = (cdf[low] >= rand) ? low : low + 1;
         }
-        console.log("[ethrpc] primary node:", nodes[select]);
+        console.info("[ethrpc] primary node:", nodes[select]);
         return [nodes[select]].concat(nodes);
     },
 
@@ -1013,7 +1017,7 @@ module.exports = {
         var numCommands, rpclist, callbacks, tx, dataAbi, packaged, invocation;
         if (txlist.constructor !== Array) {
             if (this.debug.logs) {
-                console.log("warning: expected array for batch RPC, invoking instead");
+                console.warn("expected array for batch RPC, invoking instead");
             }
             return this.invoke(txlist, f);
         }
@@ -1060,7 +1064,7 @@ module.exports = {
                 invocation = (tx.send) ? "sendTransaction" : "call";
                 rpclist[i] = this.marshal(invocation, packaged);
             } else {
-                console.log("unable to package commands for batch RPC");
+                console.error("unable to package commands for batch RPC");
                 return rpclist;
             }
         }
@@ -1168,7 +1172,7 @@ module.exports = {
         if (!this.txs[txhash]) this.txs[txhash] = {};
         if (this.txs[txhash].count === undefined) this.txs[txhash].count = 0;
         ++this.txs[txhash].count;
-        if (this.debug.tx) console.log("checkBlockHash:", tx, callreturn, itx);
+        if (this.debug.tx) console.debug("checkBlockHash:", tx, callreturn, itx);
         if (tx && tx.blockHash && abi.number(tx.blockHash) !== 0) {
             tx.callReturn = this.encodeResult(callreturn, returns);
             tx.txHash = tx.hash;
@@ -1195,7 +1199,7 @@ module.exports = {
     txNotify: function (callreturn, itx, txhash, returns, onSent, onSuccess, onFailed) {
         var self = this;
         this.getTx(txhash, function (tx) {
-            if (self.debug.tx) console.log("txNofity.getTx:", tx);
+            if (self.debug.tx) console.debug("txNofity.getTx:", tx);
             if (tx) {
                 return self.checkBlockHash(tx, callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
             }
@@ -1240,7 +1244,7 @@ module.exports = {
                     this.txs[txhash] = { hash: txhash, tx: tx, count: 0, status: "pending" };
                     this.txs[txhash].tx.returns = returns;
                     return this.getTx(txhash, function (sent) {
-                        if (self.debug.tx) console.log("sent:", sent);
+                        if (self.debug.tx) console.debug("sent:", sent);
                         if (returns !== "null") {
                             return self.call({
                                 from: sent.from,
@@ -1352,7 +1356,7 @@ module.exports = {
         delete tx.returns;
         if (!isFunction(onSent)) return this.invoke(tx);
         this.invoke(tx, function (txhash) {
-            if (self.debug.tx) console.log("txhash:", txhash);
+            if (self.debug.tx) console.debug("txhash:", txhash);
             if (txhash) {
                 if (txhash.error) {
                     if (isFunction(onFailed)) onFailed(txhash);
