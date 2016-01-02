@@ -347,6 +347,8 @@ module.exports = {
         local: null
     },
 
+    primaryNode: null,
+
     // Mean network latency for each node
     latency: {},
 
@@ -526,6 +528,7 @@ module.exports = {
     },
 
     postSync: function (rpcUrl, command, returns) {
+        var self = this;
         var timeout, req = null;
         if (command.timeout) {
             timeout = command.timeout;
@@ -547,6 +550,7 @@ module.exports = {
         req.open("POST", rpcUrl, false);
         req.setRequestHeader("Content-type", "application/json");
         req.timeout = timeout;
+        req.ontimeout = function () { self.primaryNode = null; };
         req.send(JSON.stringify(command));
         return this.parse(req.responseText, returns);
     },
@@ -567,6 +571,7 @@ module.exports = {
         }, function (err, response, body) {
             var e;
             if (err) {
+                self.primaryNode = null;
                 if (self.nodes.local) {
                     if (self.nodes.local === self.localnode) {
                         self.nodes.local = null;
@@ -642,7 +647,10 @@ module.exports = {
 
         // if we have sufficient data, select a primary node
         } else {
-            return this.selectPrimaryNode(this.nodes.hosted);
+            if (this.primaryNode === null) {
+                this.primaryNode = this.selectPrimaryNode(this.nodes.hosted);
+            }
+            return this.primaryNode;
         }
     },
 
