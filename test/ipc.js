@@ -440,11 +440,11 @@ describe("IPC", function () {
         case "10101":
             test({
                 blockNumber: "0x1",
-                blockHash: "0xd3bd016400ea626e8b1b8068bcc11cc47edd05b3d34724a993cf831cd313dccc"
+                blockHash: "0x400a9075ca88174b07063b8a6e0d54ced4939dc7d486e7829739a3f29f2eefd7"
             });
             test({
                 blockNumber: "0x1b4",
-                blockHash: "0xd3911b4b876e0b3acc8329f090cd91abe8e4fef9f0bb24ab5160aead991bc614"
+                blockHash: "0x081962450ffdfd2221cafee8ae7d9893d032d6b3fba1d91a246e52119018dcf2"
             });
             break;
         case "7":
@@ -515,11 +515,11 @@ describe("IPC", function () {
         switch (options.flags.networkid) {
         case "10101":
             test({
-                blockHash: "0xd3bd016400ea626e8b1b8068bcc11cc47edd05b3d34724a993cf831cd313dccc",
+                blockHash: "0x400a9075ca88174b07063b8a6e0d54ced4939dc7d486e7829739a3f29f2eefd7",
                 blockNumber: "0x1"
             });
             test({
-                blockHash: "0xd3911b4b876e0b3acc8329f090cd91abe8e4fef9f0bb24ab5160aead991bc614",
+                blockHash: "0x081962450ffdfd2221cafee8ae7d9893d032d6b3fba1d91a246e52119018dcf2",
                 blockNumber: "0x1b4"
             });
             break;
