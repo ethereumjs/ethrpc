@@ -238,6 +238,10 @@ module.exports={
         "error": 504,
         "message": "RLP encoding error"
     },
+    "RPC_TIMEOUT": {
+        "error": 599,
+        "message": "timed out while waiting for Ethereum network response"
+    },
     "LOOPBACK_NOT_FOUND": {
         "error": 650,
         "message": "loopback interface required for synchronous local commands"
@@ -327,7 +331,8 @@ module.exports = {
     // Transaction polling interval
     TX_POLL_INTERVAL: 3000,
 
-    POST_TIMEOUT: 180000,
+    // Default timeout for asynchronous POST
+    POST_TIMEOUT: 20000,
 
     DEFAULT_GAS: "0x2fd618",
 
@@ -521,9 +526,15 @@ module.exports = {
     },
 
     postSync: function (rpcUrl, command, returns) {
-        var req = null;
+        var timeout, req = null;
+        if (command.timeout) {
+            timeout = command.timeout;
+            delete command.timeout;
+        } else {
+            timeout = this.POST_TIMEOUT;
+        }
         if (NODE_JS) {
-            req = syncRequest('POST', rpcUrl, { json: command });
+            req = syncRequest('POST', rpcUrl, {json: command, timeout: timeout});
             var response = req.getBody().toString();
             return this.parse(response, returns);
         }
@@ -537,29 +548,43 @@ module.exports = {
         }
         req.open("POST", rpcUrl, false);
         req.setRequestHeader("Content-type", "application/json");
+        req.timeout = timeout;
         req.send(JSON.stringify(command));
         return this.parse(req.responseText, returns);
     },
 
     post: function (rpcUrl, command, returns, callback) {
-        var self = this;
+        var timeout, self = this;
+        if (command.timeout) {
+            timeout = command.timeout;
+            delete command.timeout;
+        } else {
+            timeout = this.POST_TIMEOUT;
+        }
         request({
             url: rpcUrl,
             method: 'POST',
             json: command,
-            timeout: this.POST_TIMEOUT
+            timeout: timeout
         }, function (err, response, body) {
+            var e;
             if (err) {
                 if (self.nodes.local) {
                     if (self.nodes.local === self.localnode) {
                         self.nodes.local = null;
                     }
-                    var e = errors.LOCAL_NODE_FAILURE;
+                    e = errors.LOCAL_NODE_FAILURE;
                     e.bubble = err;
+                    e.command = command;
                     return callback(e);
                 } else if (self.excision) {
-                    self.exciseNode(err.code, rpcUrl, callback);
+                    return self.exciseNode(err.code, rpcUrl, callback);
                 }
+                e = errors.RPC_TIMEOUT;
+                e.bubble = err;
+                e.command = command;
+                console.log(e);
+                callback(e);
             } else if (response.statusCode === 200) {
                 self.parse(body, returns, callback);
             }
@@ -830,9 +855,18 @@ module.exports = {
             payload.method = (prefix || "eth_") + command.toString();
         }
         if (params !== undefined && params !== null) {
-            if (this.debug.broadcast && params.debug) {
-                payload.debug = abi.copy(params.debug);
-                delete params.debug;
+            if (params.constructor === Object) {
+                if (this.debug.broadcast && params.debug) {
+                    payload.debug = abi.copy(params.debug);
+                    delete params.debug;
+                }
+                if (params.timeout) {
+                    payload.timeout = params.timeout;
+                    delete params.timeout;
+                }
+                if (JSON.stringify(params) === "{}") {
+                    params = [];
+                }
             }
             if (params.constructor === Array) {
                 payload.params = params;
@@ -849,8 +883,9 @@ module.exports = {
         this.nodes.local = urlstr || this.localnode;
     },
 
-    useHostedNode: function () {
+    useHostedNode: function (urlstr) {
         this.nodes.local = null;
+        if (urlstr) this.nodes.hosted = [urlstr];
     },
 
     // delete cached network, notification, and transaction data
@@ -1197,6 +1232,7 @@ module.exports = {
                             gas: tx.gas || this.DEFAULT_GAS,
                             gasPrice: tx.gasPrice
                         };
+                        if (tx.timeout) packaged.timeout = tx.timeout;
                         if (tx.value) packaged.value = tx.value;
                         if (tx.returns) packaged.returns = tx.returns;
                         if (this.debug.broadcast) {
@@ -1269,6 +1305,7 @@ module.exports = {
                     gas: tx.gas || this.DEFAULT_GAS,
                     gasPrice: tx.gasPrice
                 };
+                if (tx.timeout) packaged.timeout = tx.timeout;
                 if (tx.value) packaged.value = tx.value;
                 if (tx.returns) packaged.returns = tx.returns;
                 if (this.debug.broadcast) {
