@@ -1302,7 +1302,7 @@ describe("RPC", function () {
         });
 
         it("mean latency profile: " + SAMPLES*10 + " samples", function (done) {
-            this.timeout(TIMEOUT*10);
+            this.timeout(TIMEOUT*15);
             rpc.balancer = true;
             rpc.excision = false;
             rpc.reset(true);
