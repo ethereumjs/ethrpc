@@ -73,6 +73,8 @@ module.exports = {
     // Default timeout for asynchronous POST
     POST_TIMEOUT: 20000,
 
+    BALANCER_SAMPLES: 20,
+
     DEFAULT_GAS: "0x2fd618",
 
     ETHER: new BigNumber(10).toPower(18),
@@ -383,7 +385,8 @@ module.exports = {
         }
 
         // rotate nodes until we have enough samples to weight them
-        if (!this.samples[HOSTED_NODES[0]] || this.samples[HOSTED_NODES[0]] < 5) {
+        if (!this.samples[HOSTED_NODES[0]] ||
+            this.samples[HOSTED_NODES[0]] < this.BALANCER_SAMPLES) {
             this.nodes.hosted.unshift(this.nodes.hosted.pop());
             return this.nodes.hosted.slice();
 
