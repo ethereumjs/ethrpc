@@ -10,7 +10,7 @@ var assert = require("chai").assert;
 var abi = require("augur-abi");
 var geth = require("geth");
 var ethrpc = require("../");
-var errors = require("../errors");
+var errors = require("augur-contracts").errors;
 
 var COINBASE = "0x05ae1d0ca6206c6168b42efcd1fbe0ed144e821b";
 

@@ -8,9 +8,9 @@
 var assert = require("chai").assert;
 var async = require("async");
 var contracts = require("augur-contracts");
+var errors = contracts.errors;
 var abi = require("augur-abi");
 var rpc = require("../");
-var errors = require("../errors");
 
 require('it-each')({ testPerIteration: true });
 

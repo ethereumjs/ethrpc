@@ -1,264 +1,10 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports={
-    "0": {
-        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
-        "buyAndSellShares": "0xcb41186d3fa3eae83aa828eb776a913ffe94bcb7",
-        "checkQuorum": "0x7ad6e15cedf2a82651b5b407d1e98cbdf7c9e0e4",
-        "closeMarket": "0xfb8f4d790665457dcac8cbfa03965d1671d9e6a2",
-        "closeMarketEight": "0x3c348ffa3c66a7968110f64ae0a3d730cf20b670",
-        "closeMarketFour": "0x8cb16b2af081bf8a9cf06a5d8ae00a8f0d3a991f",
-        "closeMarketOne": "0x3aa010724da6a6d10d830905f6c83e31bfe47084",
-        "closeMarketTwo": "0xe4288ab0c0d886af4d5db6aa320c630c31a24b96",
-        "comments": "0x853cb123de348769d17108f505d6c3081fde2275",
-        "createBranch": "0x97aa6fe95e117a2c5c2e4f1419f5712d0ecfb66d",
-        "createEvent": "0xe3d1eef1fa0dba41796f08784033a32c3c2efd28",
-        "createMarket": "0x242219e309914836840a0ca0a55009478c5ba3d6",
-        "dispatch": "0x36004227035b544b981657d2736dd7de2ad1d30a",
-        "faucets": "0xd403f1657106c138843ea831bd99cbd2a4b8d648",
-        "makeReports": "0x9eed4f95d3bdc11775d7356709a8ae51f13f9bba",
-        "p2pWagers": "0x1c0e5ba6a9ba14420656be68657954917258eda6",
-        "sendReputation": "0xe5a16f3eef2158a63abd55c89474aef9ced7c82a",
-        "transferShares": "0x1743b8bd782221de0ad7c3ec010afc20da4c0d4f",
-        "accounts": "0x77ae4a8fa5c2775e618fcb40b0598f80a3b846f1",
-        "branches": "0x3a52e33bda40cb220cca98407bb332ec7579499b",
-        "cash": "0x25957529618e670165d49700c7d3f4ce4e2e00b9",
-        "events": "0x05b052da4cd80512f6a0837c72f7a4c3a591cbf6",
-        "expiringEvents": "0x554c2e7b73e62604e9d9f2e439b5a611da88fc87",
-        "fxpFunctions": "0x4abb75045783a639383aace45622ce97dec3b110",
-        "info": "0xe6e87575230b8e9315027c30648868e9ea80161c",
-        "ipfs": "0xbcfe600f4420d3db214bb2e7861b9c1c59ae2573",
-        "markets": "0x847adbfda58ca76ce0f5ff9952838a86192f510a",
-        "reporting": "0x772c698ff3121fde846002bae4d6828a39911fdb",
-        "adjust": "0x8fd78c97952f8bdd4351e8694e24c77f921446dd",
-        "center": "0x9c92cb96d4141204e2dc6e36b64192e4b6b1d29b",
-        "payout": "0x306973dc029f74fbfc83d9200e49b6c6978e77e9",
-        "redeem_adjust": "0xcfa0f80de838466d2605d7878f2ebb879e2aae60",
-        "redeem_center": "0x54d6594d3dc7d5af46f5bff12646d5f4ad152176",
-        "redeem_interpolate": "0xe8ff6008f6981d27f90cc6499d0f46546e6d8da7",
-        "redeem_payout": "0x701201acf46b40f449a815967fe0607a12645cd4",
-        "redeem_resolve": "0x46967961e529aaf9642742e08d27db1c8d33ba0d",
-        "redeem_score": "0x79988cdd607ef793f279d59d2686df2711c5b3a7",
-        "resolve": "0x145faea6f94952d73b54b2f85262ad8d8d474466",
-        "score": "0xe7fd9f29b2fbd3623574f303bee4355ca4645d62",
-        "statistics": "0xb44c5dffcb5092c06e8240b1d300b3287b0ca279"
-    },
-    "7": {
-        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
-        "buyAndSellShares": "0xbe4ee6fec0988e5be8dafd38d9c0f8d6f9e5cbec",
-        "checkQuorum": "0x0602dfd8e341d2fbcf3625455fb756af998857a1",
-        "closeMarket": "0x288a972a5d2df198090c62aff28d752aa844462a",
-        "closeMarketEight": "0xdcf05b01d814507f93911aa1817a461e0b93cc15",
-        "closeMarketFour": "0xc048752bef846584750f426dfa853310e8b2692e",
-        "closeMarketOne": "0x8bc5fe35449908da4c436c135e7146d7516e9f19",
-        "closeMarketTwo": "0x647d9a245d1dfea6d6ad105b67189d1978428fe2",
-        "comments": "0xbd46ac9cbceebe6d8f33366df7e3bb1faa46c97f",
-        "createBranch": "0x79c536d060a2b420eef3f0b43f3b94453b674f2c",
-        "createEvent": "0x46b9460e82b44eb315b07ddd681563860837eb28",
-        "createMarket": "0x49c63c69bce199e2a53d265857849d0b8c3f7167",
-        "dispatch": "0x332df78758caafadbcecb8a33a86f0a3311b5617",
-        "faucets": "0xa105994eb344fcc492a90e43609e5078e958a777",
-        "makeReports": "0x705ade91ba95f82bfd0851d65e4e4f1b26d8a78f",
-        "p2pWagers": "0xa98080fda696c11af2cb9a90b1899d914436e4ba",
-        "sendReputation": "0xd3f5b1d3cbf338394fbbbab45174329ef62e59d8",
-        "transferShares": "0x05a0c629185abf6fbf189e985a7e739f54939237",
-        "accounts": "0x4b4248f78b2a4aaa51e242b6f35b8dd4276451da",
-        "branches": "0x7a07e396f3691831bf2caa85bdfaa611d77e8ef2",
-        "cash": "0xca401c5c89b7188629fcb8e006165a4bc1aaeaa6",
-        "events": "0x61097e73dd210af08d73bebdf1608d504c137566",
-        "expiringEvents": "0xc7717a4a53a6b3ed63d1b6da807f51fd8e916f64",
-        "fxpFunctions": "0xd8e126fab75ecfba100910d9e6bb39b4eadfaeee",
-        "info": "0x4cc834408dee680b256a307727b63b27bc5abfcb",
-        "ipfs": "0x03377d7fb9147e6123aea28973a195b1eee2a61c",
-        "markets": "0x04124f1643372564aded7c1f215709bf49929b2d",
-        "reporting": "0xcff90d34101456788b37199d1ee13b68ad47e8c7",
-        "adjust": "0x8ded14b321b658551970bb0a6b0401b4b008019a",
-        "center": "0x6796b0cae4636faf82501f441135ac0b96b84b91",
-        "payout": "0x249ef04ea9054d3002b95ce6189ff8358677eda4",
-        "redeem_adjust": "0x93ea5a64a68014f769ef7003c9bdf2a726626cc2",
-        "redeem_center": "0xc149bbab0707d6455d54ac2cf681b9bb64b5d639",
-        "redeem_interpolate": "0x29f97d471eedeeded58f34ce3863c7a92f3072e7",
-        "redeem_payout": "0xda15cf68e108c72eaea338890fc3edc39af5f25f",
-        "redeem_resolve": "0x5eb5686b101a8901a1e10e17a58b2fc0c95802c7",
-        "redeem_score": "0x50060e47a13b69e9c2d03b564e08e20cbfc14957",
-        "resolve": "0xf8bfa1b49b66ba3a6e52f5265e22375145306527",
-        "score": "0x4ee6fd8192a3ba884b89ac69e12a76c4bcd8f5ec",
-        "statistics": "0x4d5c089204374a962e17ce5e716d42e1e67db432"
-    },
-    "10101": {
-        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
-        "buyAndSellShares": "0x2e5a882aa53805f1a9da3cf18f73673bca98fa0f",
-        "checkQuorum": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d",
-        "closeMarket": "0xcece47d6c0a6a1c90521f38ec5bf7550df983804",
-        "closeMarketEight": "0x031d9d02520cc708ea3c865278508c9cdb92bd51",
-        "closeMarketFour": "0xcd6c7bc634257f82903b182142aae7156d72a200",
-        "closeMarketOne": "0xd2e9f7c2fd4635199b8cc9e8128fc4d27c693945",
-        "closeMarketTwo": "0x7d4b581a0868204b7481c316b430a97fd292a2fb",
-        "comments": "0x014b14d07e5afb2f30eb6ebf81d927563f0f1238",
-        "createBranch": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df",
-        "createEvent": "0x9fe69262bbaa47f013b7dbd6ca5f01e17446c645",
-        "createMarket": "0x448c01a2e1fd6c2ef133402c403d2f48c99993e7",
-        "dispatch": "0x70a893eb9569041e97a3787f0c76a1eb6378d8b2",
-        "faucets": "0x509592c96eee7e19f6a34772fd8783cb072ca3c6",
-        "makeReports": "0x3f3276849a878a176b2f02dd48a483e8182a49e4",
-        "p2pWagers": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6",
-        "sendReputation": "0x35152caa07026203a1add680771afb690d872d7d",
-        "transferShares": "0xd70c6e1f3857d23bd96c3e4d2ec346fa7c3931f3",
-        "accounts": "0x77ae4a8fa5c2775e618fcb40b0598f80a3b846f1",
-        "branches": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd",
-        "cash": "0xe4714fcbdcdba49629bc408183ef40d120700b8d",
-        "events": "0x4a61f3db785f1e2a23ffefeafaceeef2df551667",
-        "expiringEvents": "0xd15a6cfc462ae76b9ec590cab8b34bfa8e1302d7",
-        "fxpFunctions": "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
-        "info": "0x5069d883e31429c6dd1325d961f443007747c7a2",
-        "ipfs": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e",
-        "markets": "0x9308cf21b5a11f182f9707ca284bbb71bb84f893",
-        "reporting": "0x81a7621e9a286d061b3dea040888a51c96693b1c",
-        "adjust": "0xbd19195b9e8a2d8ed14fc3a2823856b5c16f7f55",
-        "center": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c",
-        "payout": "0x8a4e2993a9972ee035453bb5674816fc3a698718",
-        "redeem_adjust": "0x8c19616de17acdfbc933b99d9f529a689d22098f",
-        "redeem_center": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79",
-        "redeem_interpolate": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea",
-        "redeem_payout": "0xe5b327630cfa7f4b2324f9066c897dceecfd88a3",
-        "redeem_resolve": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68",
-        "redeem_score": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7",
-        "resolve": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2",
-        "score": "0x708fdfe18bf28afe861a69e95419d183ace003eb",
-        "statistics": "0x8f2c2267687cb0f047b28a1b6f945da6e101a0d7"
-    }
-}
-},{}],2:[function(require,module,exports){
-module.exports = require("./contracts");
-
-},{"./contracts":1}],3:[function(require,module,exports){
-module.exports={
-    "0x": "no response or bad input",
-    "getSimulatedBuy": {
-        "-2": "cost updating error (did you enter a valid quantity?)"
-    },
-    "getSimulatedSell": {
-        "-2": "cost updating error (did you enter a valid quantity?)"
-    },
-    "closeMarket": {
-        "-1": "market has no cash",
-        "-2": "0 outcome",
-        "-3": "outcome indeterminable"
-    },
-    "report": {
-        "0": "could not set reporter ballot",
-        "-1": "report length does not match number of expiring events",
-        "-2": "voting period expired",
-        "-3": "incorrect hash"
-    },
-    "submitReportHash": {
-        "0": "could not set report hash",
-        "-1": "reporter doesn't exist, voting period is over, or voting period hasn't started yet",
-        "-2": "not in hash submitting timeframe"
-    },
-    "checkReportValidity": {
-        "-1": "report isn't long enough",
-        "-2": "reporter doesn't exist, voting period is over, or voting period hasn't started yet"
-    },
-    "slashRep": {
-        "0": "incorrect hash",
-        "-2": "incorrect reporter ID"
-    },
-    "createEvent": {
-        "0": "not enough money to pay fees or event already exists",
-        "-1": "we're either already past that date, branch doesn't exist, or description is bad"
-    },
-    "createMarket": {
-        "-1": "bad input or parent doesn't exist",
-        "-2": "too many events",
-        "-3": "too many outcomes",
-        "-4": "not enough money or market already exists"
-    },
-    "sendReputation": {
-        "0": "not enough reputation",
-        "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
-        "-2": "Receiving address doesn't exist"
-    },
-    "buyShares": {
-        "-1": "invalid outcome or trading closed",
-        "-2": "entered a negative number of shares",
-        "-3": "not enough money",
-        "-4": "bad nonce/hash"
-    },
-    "sellShares": {
-        "-1": "invalid outcome or trading closed",
-        "-2": "entered a negative number of shares",
-        "-3": "not enough money",
-        "-4": "bad nonce/hash"
-    },
-    "TRANSACTION_NOT_FOUND": {
-        "error": 404,
-        "message": "transaction not found"
-    },
-    "NULL_CALL_RETURN": {
-        "error": 406,
-        "message": "expected contract call to return value, received null"
-    },
-    "NULL_RESPONSE": {
-        "error": 407,
-        "message": "expected transaction hash from Ethereum node, received null"
-    },
-    "NO_RESPONSE": {
-        "error": 408,
-        "message": "no response"
-    },
-    "INVALID_RESPONSE": {
-        "error": 409,
-        "message": "could not parse response from Ethereum node"
-    },
-    "LOCAL_NODE_FAILURE": {
-        "error": 410,
-        "message": "RPC request to local Ethereum node failed"
-    },
-    "HOSTED_NODE_FAILURE": {
-        "error": 411,
-        "message": "RPC request to hosted nodes failed"
-    },
-    "TRANSACTION_FAILED": {
-        "error": 500,
-        "message": "transaction failed"
-    },
-    "TRANSACTION_NOT_CONFIRMED": {
-        "error": 501,
-        "message": "polled network but could not confirm transaction"
-    },
-    "DUPLICATE_TRANSACTION": {
-        "error": 502,
-        "message": "duplicate transaction"
-    },
-    "RAW_TRANSACTION_ERROR": {
-        "error": 503,
-        "message": "error sending client-side transaction"
-    },
-    "RLP_ENCODING_ERROR": {
-        "error": 504,
-        "message": "RLP encoding error"
-    },
-    "RPC_TIMEOUT": {
-        "error": 599,
-        "message": "timed out while waiting for Ethereum network response"
-    },
-    "LOOPBACK_NOT_FOUND": {
-        "error": 650,
-        "message": "loopback interface required for synchronous local commands"
-    },
-    "ETHEREUM_NOT_FOUND": {
-        "error": 651,
-        "message": "no active ethereum node(s) found"
-    }
-}
-
-},{}],4:[function(require,module,exports){
 (function (global){
 var ethrpc = global.ethrpc || require("./");
 global.ethrpc = ethrpc;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./":5}],5:[function(require,module,exports){
+},{"./":2}],2:[function(require,module,exports){
 (function (process){
 /**
  * JSON RPC methods for Ethereum
@@ -281,7 +27,7 @@ var async = require("async");
 var BigNumber = require("bignumber.js");
 var contracts = require("augur-contracts");
 var abi = require("augur-abi");
-var errors = require("./errors");
+var errors = contracts.errors;
 
 BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
 
@@ -306,7 +52,6 @@ var HOSTED_NODES = [
 module.exports = {
 
     debug: {
-        sync: true,
         tx: false,
         broadcast: false,
         fallback: false,
@@ -1637,7 +1382,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./errors":3,"_process":229,"async":6,"augur-abi":7,"augur-contracts":2,"bignumber.js":9,"browser-request":10,"net":11,"request":264,"sync-request":13}],6:[function(require,module,exports){
+},{"_process":229,"async":3,"augur-abi":4,"augur-contracts":8,"bignumber.js":9,"browser-request":10,"net":11,"request":264,"sync-request":13}],3:[function(require,module,exports){
 (function (process,global){
 /*!
  * async
@@ -2151,7 +1896,7 @@ module.exports = {
     };
 
     async.auto = function (tasks, concurrency, callback) {
-        if (!callback) {
+        if (typeof arguments[1] === 'function') {
             // concurrency is optional, shift the args.
             callback = concurrency;
             concurrency = null;
@@ -2168,6 +1913,8 @@ module.exports = {
 
         var results = {};
         var runningTasks = 0;
+
+        var hasError = false;
 
         var listeners = [];
         function addListener(fn) {
@@ -2191,6 +1938,7 @@ module.exports = {
         });
 
         _arrayEach(keys, function (k) {
+            if (hasError) return;
             var task = _isArray(tasks[k]) ? tasks[k]: [tasks[k]];
             var taskCallback = _restParam(function(err, args) {
                 runningTasks--;
@@ -2203,6 +1951,8 @@ module.exports = {
                         safeResults[rkey] = val;
                     });
                     safeResults[k] = args;
+                    hasError = true;
+
                     callback(err, safeResults);
                 }
                 else {
@@ -2422,7 +2172,7 @@ module.exports = {
                 } else if (test.apply(this, args)) {
                     iterator(next);
                 } else {
-                    callback(null);
+                    callback.apply(null, [null].concat(args));
                 }
             });
             iterator(next);
@@ -2570,24 +2320,23 @@ module.exports = {
                 _insert(q, data, true, callback);
             },
             process: function () {
-                if (!q.paused && workers < q.concurrency && q.tasks.length) {
-                    while(workers < q.concurrency && q.tasks.length){
-                        var tasks = q.payload ?
-                            q.tasks.splice(0, q.payload) :
-                            q.tasks.splice(0, q.tasks.length);
+                while(!q.paused && workers < q.concurrency && q.tasks.length){
 
-                        var data = _map(tasks, function (task) {
-                            return task.data;
-                        });
+                    var tasks = q.payload ?
+                        q.tasks.splice(0, q.payload) :
+                        q.tasks.splice(0, q.tasks.length);
 
-                        if (q.tasks.length === 0) {
-                            q.empty();
-                        }
-                        workers += 1;
-                        workersList.push(tasks[0]);
-                        var cb = only_once(_next(q, tasks));
-                        worker(data, cb);
+                    var data = _map(tasks, function (task) {
+                        return task.data;
+                    });
+
+                    if (q.tasks.length === 0) {
+                        q.empty();
                     }
+                    workers += 1;
+                    workersList.push(tasks[0]);
+                    var cb = only_once(_next(q, tasks));
+                    worker(data, cb);
                 }
             },
             length: function () {
@@ -2901,7 +2650,7 @@ module.exports = {
 }());
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":229}],7:[function(require,module,exports){
+},{"_process":229}],4:[function(require,module,exports){
 (function (Buffer){
 /**
  * Ethereum contract ABI data serialization.
@@ -3510,7 +3259,7 @@ module.exports = {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"bignumber.js":9,"buffer":27,"js-sha3":8}],8:[function(require,module,exports){
+},{"bignumber.js":9,"buffer":27,"js-sha3":5}],5:[function(require,module,exports){
 (function (global){
 /*
  * js-sha3 v0.3.1
@@ -3946,7 +3695,308 @@ module.exports = {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],9:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
+module.exports={
+    "0": {
+        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
+        "buyAndSellShares": "0xcb41186d3fa3eae83aa828eb776a913ffe94bcb7",
+        "checkQuorum": "0x7ad6e15cedf2a82651b5b407d1e98cbdf7c9e0e4",
+        "closeMarket": "0xfb8f4d790665457dcac8cbfa03965d1671d9e6a2",
+        "closeMarketEight": "0x3c348ffa3c66a7968110f64ae0a3d730cf20b670",
+        "closeMarketFour": "0x8cb16b2af081bf8a9cf06a5d8ae00a8f0d3a991f",
+        "closeMarketOne": "0x3aa010724da6a6d10d830905f6c83e31bfe47084",
+        "closeMarketTwo": "0xe4288ab0c0d886af4d5db6aa320c630c31a24b96",
+        "comments": "0x853cb123de348769d17108f505d6c3081fde2275",
+        "createBranch": "0x97aa6fe95e117a2c5c2e4f1419f5712d0ecfb66d",
+        "createEvent": "0xe3d1eef1fa0dba41796f08784033a32c3c2efd28",
+        "createMarket": "0x242219e309914836840a0ca0a55009478c5ba3d6",
+        "dispatch": "0x36004227035b544b981657d2736dd7de2ad1d30a",
+        "faucets": "0xd403f1657106c138843ea831bd99cbd2a4b8d648",
+        "makeReports": "0x9eed4f95d3bdc11775d7356709a8ae51f13f9bba",
+        "p2pWagers": "0x1c0e5ba6a9ba14420656be68657954917258eda6",
+        "sendReputation": "0xe5a16f3eef2158a63abd55c89474aef9ced7c82a",
+        "transferShares": "0x1743b8bd782221de0ad7c3ec010afc20da4c0d4f",
+        "accounts": "0x77ae4a8fa5c2775e618fcb40b0598f80a3b846f1",
+        "branches": "0x3a52e33bda40cb220cca98407bb332ec7579499b",
+        "cash": "0x25957529618e670165d49700c7d3f4ce4e2e00b9",
+        "events": "0x05b052da4cd80512f6a0837c72f7a4c3a591cbf6",
+        "expiringEvents": "0x554c2e7b73e62604e9d9f2e439b5a611da88fc87",
+        "fxpFunctions": "0x4abb75045783a639383aace45622ce97dec3b110",
+        "info": "0xe6e87575230b8e9315027c30648868e9ea80161c",
+        "ipfs": "0xbcfe600f4420d3db214bb2e7861b9c1c59ae2573",
+        "markets": "0x847adbfda58ca76ce0f5ff9952838a86192f510a",
+        "reporting": "0x772c698ff3121fde846002bae4d6828a39911fdb",
+        "adjust": "0x8fd78c97952f8bdd4351e8694e24c77f921446dd",
+        "center": "0x9c92cb96d4141204e2dc6e36b64192e4b6b1d29b",
+        "payout": "0x306973dc029f74fbfc83d9200e49b6c6978e77e9",
+        "redeem_adjust": "0xcfa0f80de838466d2605d7878f2ebb879e2aae60",
+        "redeem_center": "0x54d6594d3dc7d5af46f5bff12646d5f4ad152176",
+        "redeem_interpolate": "0xe8ff6008f6981d27f90cc6499d0f46546e6d8da7",
+        "redeem_payout": "0x701201acf46b40f449a815967fe0607a12645cd4",
+        "redeem_resolve": "0x46967961e529aaf9642742e08d27db1c8d33ba0d",
+        "redeem_score": "0x79988cdd607ef793f279d59d2686df2711c5b3a7",
+        "resolve": "0x145faea6f94952d73b54b2f85262ad8d8d474466",
+        "score": "0xe7fd9f29b2fbd3623574f303bee4355ca4645d62",
+        "statistics": "0xb44c5dffcb5092c06e8240b1d300b3287b0ca279"
+    },
+    "7": {
+        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
+        "buyAndSellShares": "0xbe4ee6fec0988e5be8dafd38d9c0f8d6f9e5cbec",
+        "checkQuorum": "0x0602dfd8e341d2fbcf3625455fb756af998857a1",
+        "closeMarket": "0x288a972a5d2df198090c62aff28d752aa844462a",
+        "closeMarketEight": "0xdcf05b01d814507f93911aa1817a461e0b93cc15",
+        "closeMarketFour": "0xc048752bef846584750f426dfa853310e8b2692e",
+        "closeMarketOne": "0x8bc5fe35449908da4c436c135e7146d7516e9f19",
+        "closeMarketTwo": "0x647d9a245d1dfea6d6ad105b67189d1978428fe2",
+        "comments": "0xbd46ac9cbceebe6d8f33366df7e3bb1faa46c97f",
+        "createBranch": "0x79c536d060a2b420eef3f0b43f3b94453b674f2c",
+        "createEvent": "0x46b9460e82b44eb315b07ddd681563860837eb28",
+        "createMarket": "0x49c63c69bce199e2a53d265857849d0b8c3f7167",
+        "dispatch": "0x332df78758caafadbcecb8a33a86f0a3311b5617",
+        "faucets": "0xa105994eb344fcc492a90e43609e5078e958a777",
+        "makeReports": "0x705ade91ba95f82bfd0851d65e4e4f1b26d8a78f",
+        "p2pWagers": "0xa98080fda696c11af2cb9a90b1899d914436e4ba",
+        "sendReputation": "0xd3f5b1d3cbf338394fbbbab45174329ef62e59d8",
+        "transferShares": "0x05a0c629185abf6fbf189e985a7e739f54939237",
+        "accounts": "0x4b4248f78b2a4aaa51e242b6f35b8dd4276451da",
+        "branches": "0x7a07e396f3691831bf2caa85bdfaa611d77e8ef2",
+        "cash": "0xca401c5c89b7188629fcb8e006165a4bc1aaeaa6",
+        "events": "0x61097e73dd210af08d73bebdf1608d504c137566",
+        "expiringEvents": "0xc7717a4a53a6b3ed63d1b6da807f51fd8e916f64",
+        "fxpFunctions": "0xd8e126fab75ecfba100910d9e6bb39b4eadfaeee",
+        "info": "0x4cc834408dee680b256a307727b63b27bc5abfcb",
+        "ipfs": "0x03377d7fb9147e6123aea28973a195b1eee2a61c",
+        "markets": "0x04124f1643372564aded7c1f215709bf49929b2d",
+        "reporting": "0xcff90d34101456788b37199d1ee13b68ad47e8c7",
+        "adjust": "0x8ded14b321b658551970bb0a6b0401b4b008019a",
+        "center": "0x6796b0cae4636faf82501f441135ac0b96b84b91",
+        "payout": "0x249ef04ea9054d3002b95ce6189ff8358677eda4",
+        "redeem_adjust": "0x93ea5a64a68014f769ef7003c9bdf2a726626cc2",
+        "redeem_center": "0xc149bbab0707d6455d54ac2cf681b9bb64b5d639",
+        "redeem_interpolate": "0x29f97d471eedeeded58f34ce3863c7a92f3072e7",
+        "redeem_payout": "0xda15cf68e108c72eaea338890fc3edc39af5f25f",
+        "redeem_resolve": "0x5eb5686b101a8901a1e10e17a58b2fc0c95802c7",
+        "redeem_score": "0x50060e47a13b69e9c2d03b564e08e20cbfc14957",
+        "resolve": "0xf8bfa1b49b66ba3a6e52f5265e22375145306527",
+        "score": "0x4ee6fd8192a3ba884b89ac69e12a76c4bcd8f5ec",
+        "statistics": "0x4d5c089204374a962e17ce5e716d42e1e67db432"
+    },
+    "10101": {
+        "namereg": "0xc6d9d2cd449a754c494264e1809c50e34d64562b",
+        "buyAndSellShares": "0x2e5a882aa53805f1a9da3cf18f73673bca98fa0f",
+        "checkQuorum": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d",
+        "closeMarket": "0xcece47d6c0a6a1c90521f38ec5bf7550df983804",
+        "closeMarketEight": "0x031d9d02520cc708ea3c865278508c9cdb92bd51",
+        "closeMarketFour": "0xcd6c7bc634257f82903b182142aae7156d72a200",
+        "closeMarketOne": "0xd2e9f7c2fd4635199b8cc9e8128fc4d27c693945",
+        "closeMarketTwo": "0x7d4b581a0868204b7481c316b430a97fd292a2fb",
+        "comments": "0x014b14d07e5afb2f30eb6ebf81d927563f0f1238",
+        "createBranch": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df",
+        "createEvent": "0x9fe69262bbaa47f013b7dbd6ca5f01e17446c645",
+        "createMarket": "0x448c01a2e1fd6c2ef133402c403d2f48c99993e7",
+        "dispatch": "0x70a893eb9569041e97a3787f0c76a1eb6378d8b2",
+        "faucets": "0x509592c96eee7e19f6a34772fd8783cb072ca3c6",
+        "makeReports": "0x3f3276849a878a176b2f02dd48a483e8182a49e4",
+        "p2pWagers": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6",
+        "sendReputation": "0x35152caa07026203a1add680771afb690d872d7d",
+        "transferShares": "0xd70c6e1f3857d23bd96c3e4d2ec346fa7c3931f3",
+        "accounts": "0x77ae4a8fa5c2775e618fcb40b0598f80a3b846f1",
+        "branches": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd",
+        "cash": "0xe4714fcbdcdba49629bc408183ef40d120700b8d",
+        "events": "0x4a61f3db785f1e2a23ffefeafaceeef2df551667",
+        "expiringEvents": "0xd15a6cfc462ae76b9ec590cab8b34bfa8e1302d7",
+        "fxpFunctions": "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
+        "info": "0x5069d883e31429c6dd1325d961f443007747c7a2",
+        "ipfs": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e",
+        "markets": "0x9308cf21b5a11f182f9707ca284bbb71bb84f893",
+        "reporting": "0x81a7621e9a286d061b3dea040888a51c96693b1c",
+        "adjust": "0xbd19195b9e8a2d8ed14fc3a2823856b5c16f7f55",
+        "center": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c",
+        "payout": "0x8a4e2993a9972ee035453bb5674816fc3a698718",
+        "redeem_adjust": "0x8c19616de17acdfbc933b99d9f529a689d22098f",
+        "redeem_center": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79",
+        "redeem_interpolate": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea",
+        "redeem_payout": "0xe5b327630cfa7f4b2324f9066c897dceecfd88a3",
+        "redeem_resolve": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68",
+        "redeem_score": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7",
+        "resolve": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2",
+        "score": "0x708fdfe18bf28afe861a69e95419d183ace003eb",
+        "statistics": "0x8f2c2267687cb0f047b28a1b6f945da6e101a0d7"
+    }
+}
+},{}],7:[function(require,module,exports){
+module.exports={
+    "0x": "no response or bad input",
+    "getSimulatedBuy": {
+        "-2": "cost updating error (did you enter a valid quantity?)"
+    },
+    "getSimulatedSell": {
+        "-2": "cost updating error (did you enter a valid quantity?)"
+    },
+    "closeMarket": {
+        "-1": "market has no cash",
+        "-2": "0 outcome",
+        "-3": "outcome indeterminable"
+    },
+    "report": {
+        "0": "could not set reporter ballot",
+        "-1": "report length does not match number of expiring events",
+        "-2": "voting period expired",
+        "-3": "incorrect hash"
+    },
+    "submitReportHash": {
+        "0": "could not set report hash",
+        "-1": "reporter doesn't exist, voting period is over, or voting period hasn't started yet",
+        "-2": "not in hash submitting timeframe"
+    },
+    "checkReportValidity": {
+        "-1": "report isn't long enough",
+        "-2": "reporter doesn't exist, voting period is over, or voting period hasn't started yet"
+    },
+    "slashRep": {
+        "0": "incorrect hash",
+        "-2": "incorrect reporter ID"
+    },
+    "createEvent": {
+        "0": "not enough money to pay fees or event already exists",
+        "-1": "we're either already past that date, branch doesn't exist, or description is bad"
+    },
+    "createMarket": {
+        "-1": "bad input or parent doesn't exist",
+        "-2": "too many events",
+        "-3": "too many outcomes",
+        "-4": "not enough money or market already exists"
+    },
+    "sendReputation": {
+        "0": "not enough reputation",
+        "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
+        "-2": "Receiving address doesn't exist"
+    },
+    "buyShares": {
+        "-1": "invalid outcome or trading closed",
+        "-2": "entered a negative number of shares",
+        "-3": "not enough money",
+        "-4": "bad nonce/hash"
+    },
+    "sellShares": {
+        "-1": "invalid outcome or trading closed",
+        "-2": "entered a negative number of shares",
+        "-3": "not enough money",
+        "-4": "bad nonce/hash"
+    },
+    "WHISPER_POST_FAILED": {
+        "error": 65,
+        "message": "could not post message to whisper"
+    },
+    "DB_WRITE_FAILED": {
+        "error": 98,
+        "message": "database write failed"
+    },
+    "DB_READ_FAILED": {
+        "error": 99,
+        "message": "database read failed"
+    },
+    "INVALID_CONTRACT_PARAMETER": {
+        "error": 400,
+        "message": "cannot send object parameter to contract"
+    },
+    "NOT_LOGGED_IN": {
+        "error": 401,
+        "message": "not logged in"
+    },
+    "PARAMETER_NUMBER_ERROR": {
+        "error": 402,
+        "message": "wrong number of parameters"
+    },
+    "BAD_CREDENTIALS": {
+        "error": 403,
+        "message": "incorrect handle or password"
+    },
+    "TRANSACTION_NOT_FOUND": {
+        "error": 404,
+        "message": "transaction not found"
+    },
+    "PASSWORD_TOO_SHORT": {
+        "error": 405,
+        "message": "password must be at least 6 characters long"
+    },
+    "NULL_CALL_RETURN": {
+        "error": 406,
+        "message": "expected contract call to return value, received null"
+    },
+    "NULL_RESPONSE": {
+        "error": 407,
+        "message": "expected transaction hash from Ethereum node, received null"
+    },
+    "NO_RESPONSE": {
+        "error": 408,
+        "message": "no response"
+    },
+    "INVALID_RESPONSE": {
+        "error": 409,
+        "message": "could not parse response from Ethereum node"
+    },
+    "LOCAL_NODE_FAILURE": {
+        "error": 410,
+        "message": "RPC request to local Ethereum node failed"
+    },
+    "HOSTED_NODE_FAILURE": {
+        "error": 411,
+        "message": "RPC request to hosted nodes failed"
+    },
+    "HANDLE_TAKEN": {
+        "error": 422,
+        "message": "handle already taken"
+    },
+    "FILTER_NOT_CREATED": {
+        "error": 450,
+        "message": "filter could not be created"
+    },
+    "TRANSACTION_FAILED": {
+        "error": 500,
+        "message": "transaction failed"
+    },
+    "TRANSACTION_NOT_CONFIRMED": {
+        "error": 501,
+        "message": "polled network but could not confirm transaction"
+    },
+    "DUPLICATE_TRANSACTION": {
+        "error": 502,
+        "message": "duplicate transaction"
+    },
+    "RAW_TRANSACTION_ERROR": {
+        "error": 503,
+        "message": "error sending client-side transaction"
+    },
+    "RLP_ENCODING_ERROR": {
+        "error": 504,
+        "message": "RLP encoding error"
+    },
+    "NO_MARKET_INFO": {
+        "error": 505,
+        "message": "could not retrieve market data"
+    },
+    "RPC_TIMEOUT": {
+        "error": 599,
+        "message": "timed out while waiting for Ethereum network response"
+    },
+    "LOOPBACK_NOT_FOUND": {
+        "error": 650,
+        "message": "loopback interface required for synchronous local commands"
+    },
+    "ETHEREUM_NOT_FOUND": {
+        "error": 651,
+        "message": "no active ethereum node(s) found"
+    }
+}
+
+},{}],8:[function(require,module,exports){
+var contracts = require("./contracts");
+contracts.errors = require("./errors");
+
+module.exports = contracts;
+
+},{"./contracts":6,"./errors":7}],9:[function(require,module,exports){
 /*! bignumber.js v2.1.3 https://github.com/MikeMcl/bignumber.js/LICENCE */
 
 ;(function (globalObj) {
@@ -66897,4 +66947,4 @@ Request.prototype.toJSON = requestToJSON
 module.exports = Request
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"./lib/auth":265,"./lib/cookies":266,"./lib/getProxyFromURI":267,"./lib/har":268,"./lib/helpers":269,"./lib/multipart":270,"./lib/oauth":271,"./lib/querystring":272,"./lib/redirect":273,"./lib/tunnel":274,"_process":229,"aws-sign2":275,"bl":276,"buffer":27,"caseless":287,"forever-agent":291,"form-data":292,"hawk":321,"http":248,"http-signature":322,"https":224,"is-typedarray":368,"mime-types":371,"stream":247,"stringstream":380,"url":258,"util":260,"zlib":26}]},{},[4]);
+},{"./lib/auth":265,"./lib/cookies":266,"./lib/getProxyFromURI":267,"./lib/har":268,"./lib/helpers":269,"./lib/multipart":270,"./lib/oauth":271,"./lib/querystring":272,"./lib/redirect":273,"./lib/tunnel":274,"_process":229,"aws-sign2":275,"bl":276,"buffer":27,"caseless":287,"forever-agent":291,"form-data":292,"hawk":321,"http":248,"http-signature":322,"https":224,"is-typedarray":368,"mime-types":371,"stream":247,"stringstream":380,"url":258,"util":260,"zlib":26}]},{},[1]);

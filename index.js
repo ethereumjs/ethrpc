@@ -19,7 +19,7 @@ var async = require("async");
 var BigNumber = require("bignumber.js");
 var contracts = require("augur-contracts");
 var abi = require("augur-abi");
-var errors = require("./errors");
+var errors = contracts.errors;
 
 BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
 
@@ -44,7 +44,6 @@ var HOSTED_NODES = [
 module.exports = {
 
     debug: {
-        sync: true,
         tx: false,
         broadcast: false,
         fallback: false,
