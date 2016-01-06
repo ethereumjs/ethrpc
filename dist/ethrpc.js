@@ -381,7 +381,7 @@ module.exports = {
         } else {
             select = (cdf[low] >= rand) ? low : low + 1;
         }
-        console.info("[ethrpc] primary node:", nodes[select]);
+        console.debug("[ethrpc] primary node:", nodes[select]);
         return [nodes[select]].concat(nodes);
     },
 
