@@ -299,7 +299,7 @@ module.exports = {
         req.setRequestHeader("Content-type", "application/json");
         req.timeout = timeout;
         req.ontimeout = function () {
-            console.error("[ethrpc] synchronous RPC timed out", rpcUrl, command);
+            console.error("[ethrpc] synchronous RPC timed out", rpcUrl, command.method);
             self.primaryNode = null;
         };
         req.send(JSON.stringify(command));
