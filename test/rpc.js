@@ -586,39 +586,6 @@ describe("RPC", function () {
             });
         });
 
-        it("leveldb('putString')", function (done) {
-            this.timeout(TIMEOUT);
-            rpc.leveldb("putString", [
-                "augur_test_DB",
-                "testkey",
-                "test!"
-            ], function (res) {
-                if (res.error) return done(res);
-                assert.isTrue(res);
-                done();
-            });
-        });
-
-        it("leveldb('getString')", function (done) {
-            this.timeout(TIMEOUT);
-            rpc.leveldb("putString", [
-                "augur_test_DB",
-                "testkey",
-                "test!"
-            ], function (res) {
-                if (res.error) return done(res);
-                rpc.leveldb(
-                    "getString",
-                    ["augur_test_DB", "testkey"],
-                    function (res) {
-                        if (res.error) return done(res);
-                        assert.strictEqual(res, "test!");
-                        done();
-                    }
-                );
-            });
-        });
-
         it("gasPrice", function (done) {
             this.timeout(TIMEOUT);
             assert.isAbove(parseInt(rpc.gasPrice()), 0);

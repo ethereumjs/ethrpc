@@ -676,10 +676,6 @@ module.exports = {
         return this.broadcast(this.marshal(command, params, "web3_"), f);
     },
 
-    leveldb: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "db_"), f);
-    },
-
     shh: function (command, params, f) {
         return this.broadcast(this.marshal(command, params, "shh_"), f);
     },
