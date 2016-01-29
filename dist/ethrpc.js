@@ -43,7 +43,10 @@ function isFunction(f) {
 }
 
 var HOSTED_NODES = [
-    "https://eth1.augur.net"
+    "https://eth1.augur.net",
+    "https://eth3.augur.net",
+    "https://eth4.augur.net",
+    "https://eth5.augur.net"
 ];
 
 module.exports = {
@@ -57,7 +60,7 @@ module.exports = {
     },
 
     // network load balancer
-    balancer: false,
+    balancer: true,
 
     // remove unresponsive nodes
     excision: false,
@@ -1207,6 +1210,8 @@ module.exports = {
                 return self.checkBlockHash(tx, callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
             }
             self.txs[txhash].status = "failed";
+            if (self.debug.tx)
+                console.log("raw transactions:", self.rawTxs);
 
             // resubmit if this is a raw transaction and has a duplicate nonce
             if (self.rawTxs[txhash] && self.rawTxs[txhash].tx) {

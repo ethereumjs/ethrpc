@@ -238,37 +238,6 @@ describe("IPC", function () {
             });
         });
 
-        it("leveldb('putString')", function (done) {
-            ethrpc.leveldb("putString", [
-                "augur_test_DB",
-                "testkey",
-                "test!"
-            ], function (res) {
-                if (res.error) return done(res);
-                assert.isTrue(res);
-                done();
-            });
-        });
-
-        it("leveldb('getString')", function (done) {
-            ethrpc.leveldb("putString", [
-                "augur_test_DB",
-                "testkey",
-                "test!"
-            ], function (res) {
-                if (res.error) return done(res);
-                ethrpc.leveldb(
-                    "getString",
-                    ["augur_test_DB", "testkey"],
-                    function (res) {
-                        if (res.error) return done(res);
-                        assert.strictEqual(res, "test!");
-                        done();
-                    }
-                );
-            });
-        });
-
         it("gasPrice", function (done) {
             ethrpc.gasPrice(function (res) {
                 if (res.error) return done(res);
