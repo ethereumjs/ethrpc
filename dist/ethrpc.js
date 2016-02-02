@@ -720,7 +720,7 @@ module.exports = {
             block = null;
         }
         block = block || "latest";
-        return this.broadcast(this.marshal("getBalance", [ address, block ]), f);
+        return this.broadcast(this.marshal("getBalance", [address, block]), f);
     },
     getBalance: function (address, block, f) {
         if (block && block.constructor === Function) {
@@ -728,7 +728,7 @@ module.exports = {
             block = null;
         }
         block = block || "latest";
-        return this.broadcast(this.marshal("getBalance", [ address, block ]), f);
+        return this.broadcast(this.marshal("getBalance", [address, block]), f);
     },
 
     txCount: function (address, f) {
@@ -739,7 +739,7 @@ module.exports = {
     },
     pendingTxCount: function (address, f) {
         return this.broadcast(
-            this.marshal("getTransactionCount", [ address, "pending" ]), f
+            this.marshal("getTransactionCount", [address, "pending"]), f
         );
     },
 
@@ -755,7 +755,7 @@ module.exports = {
         return this.transact({
             from: from,
             to: to,
-            invocation: { invoke: this.sendTx, context: this },
+            invocation: {invoke: this.sendTx, context: this},
             value: abi.bignum(value).mul(this.ETHER).toFixed(),
             returns: "null"
         }, onSent, onSuccess, onFailed);
