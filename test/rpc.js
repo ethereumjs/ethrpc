@@ -970,11 +970,11 @@ describe("RPC", function () {
             }); // invoke
         });
 
-        it("getMarkets(1010101) -> hash[]", function (done) {
+        it("getMarketsInBranch(1010101) -> hash[]", function (done) {
             var markets = rpc.invoke({
                 to: contracts.branches,
                 from: COINBASE,
-                method: "getMarkets",
+                method: "getMarketsInBranch",
                 signature: "i",
                 returns: "hash[]",
                 params: 1010101
@@ -985,7 +985,7 @@ describe("RPC", function () {
             rpc.invoke({
                 to: contracts.branches,
                 from: COINBASE,
-                method: "getMarkets",
+                method: "getMarketsInBranch",
                 signature: "i",
                 returns: "hash[]",
                 params: 1010101
