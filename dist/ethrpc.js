@@ -172,7 +172,7 @@ module.exports = {
     },
 
     parse: function (response, returns, callback) {
-        var results, len;
+        var results, len, err;
         try {
             if (response && typeof response === "string") {
                 response = JSON.parse(response);
@@ -226,14 +226,14 @@ module.exports = {
 
                 // no result or error field
                 } else {
-                    var err = errors.NO_RESPONSE;
+                    err = errors.NO_RESPONSE;
                     err.bubble = response;
                     if (isFunction(callback)) return callback(err);
                     throw new this.Error(err);
                 }
             }
         } catch (e) {
-            var err = e;
+            err = e;
             if (e && e.name === "SyntaxError") {
                 err = errors.INVALID_RESPONSE;
             }
