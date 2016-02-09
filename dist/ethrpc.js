@@ -953,7 +953,7 @@ module.exports = {
      * }
      */
     invoke: function (itx, f) {
-        var tx, dataAbi, packaged, invocation, invoked;
+        var tx, dataAbi, packaged, invocation, invoked, err;
         try {
             if (itx) {
                 if (itx.send && itx.invocation && itx.invocation.invoke &&
@@ -1001,14 +1001,14 @@ module.exports = {
                 }
             }
         } catch (exc) {
-            var err = abi.copy(errors.TRANSACTION_FAILED);
+            err = abi.copy(errors.TRANSACTION_FAILED);
             err.bubble = exc;
             err.tx = itx;
             if (isFunction(f)) return f(err);
             return err;
         }
         if (!invoked) {
-            var err = abi.copy(errors.TRANSACTION_FAILED);
+            err = abi.copy(errors.TRANSACTION_FAILED);
             err.bubble = "!invoked";
             err.tx = itx;
             if (isFunction(f)) return f(err);
