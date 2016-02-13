@@ -723,6 +723,31 @@ describe("RPC", function () {
 
     });
 
+    describe("fastforward", function () {
+        var test = function (blocks) {
+            it("blocks=" + blocks, function (done) {
+                this.timeout(TIMEOUT*blocks);
+                // rpc.debug.logs = true;
+                rpc.blockNumber(function (startBlock) {
+                    assert.notProperty(startBlock, "error");
+                    startBlock = parseInt(startBlock);
+                    assert.isAbove(startBlock, 0);
+                    rpc.fastforward(blocks, function (endBlock) {
+                        assert.notProperty(endBlock, "error");
+                        endBlock = parseInt(endBlock);
+                        assert.strictEqual(endBlock - startBlock, blocks);
+                        // rpc.debug.logs = false;
+                        done();
+                    });
+                });
+            });
+        };
+        test(0);
+        test(1);
+        test(2);
+        test(3);
+    });
+
     describe("getBlock", function () {
 
         var asserts = function (t, block) {

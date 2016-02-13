@@ -874,6 +874,27 @@ module.exports = {
         return this.broadcast(this.marshal("getCode", [address, block || "latest"]), f);
     },
 
+    // Fast-forward a specified number of blocks
+    fastforward: function (blocks, callback) {
+        var startBlock, endBlock, self = this;
+        (function fastforward() {
+            self.blockNumber(function (blockNumber) {
+                blockNumber = parseInt(blockNumber);
+                if (startBlock === undefined) {
+                    startBlock = blockNumber;
+                    endBlock = blockNumber + parseInt(blocks);
+                }
+                if (self.debug.logs) {
+                    console.log("fastforward:",
+                        startBlock, "--", blockNumber, "-->", endBlock,
+                        "(" + (endBlock - blockNumber) + " blocks to go)");
+                }
+                if (blockNumber >= endBlock) return callback(endBlock);
+                setTimeout(fastforward, 2500);
+            });
+        })();
+    },
+
     // Ethereum node status checks
 
     listening: function (f) {
