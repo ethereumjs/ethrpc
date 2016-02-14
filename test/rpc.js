@@ -727,7 +727,6 @@ describe("RPC", function () {
         var test = function (blocks) {
             it("blocks=" + blocks, function (done) {
                 this.timeout(TIMEOUT*blocks);
-                // rpc.debug.logs = true;
                 rpc.blockNumber(function (startBlock) {
                     assert.notProperty(startBlock, "error");
                     startBlock = parseInt(startBlock);
@@ -736,7 +735,6 @@ describe("RPC", function () {
                         assert.notProperty(endBlock, "error");
                         endBlock = parseInt(endBlock);
                         assert.strictEqual(endBlock - startBlock, blocks);
-                        // rpc.debug.logs = false;
                         done();
                     });
                 });

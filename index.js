@@ -884,13 +884,8 @@ module.exports = {
                     startBlock = blockNumber;
                     endBlock = blockNumber + parseInt(blocks);
                 }
-                if (self.debug.logs) {
-                    console.log("fastforward:",
-                        startBlock, "--", blockNumber, "-->", endBlock,
-                        "(" + (endBlock - blockNumber) + " blocks to go)");
-                }
                 if (blockNumber >= endBlock) return callback(endBlock);
-                setTimeout(fastforward, 2500);
+                setTimeout(fastforward, 500);
             });
         })();
     },
