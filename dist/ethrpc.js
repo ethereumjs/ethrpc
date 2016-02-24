@@ -1,33 +1,58 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports={
+    "2": {
+        "buyAndSellShares": "0xf5210713da9674da9f693713c00e79bcc3e79bc9",
+        "closeMarket": "0x0b4cd632d6816134738a0e5dff9739388185f281",
+        "closeMarketEight": "0x0aa0e4ae2919ed0e338ee61c793015d5366bb9c3",
+        "closeMarketFour": "0xff43d071e047ccfb4083dfa869e91aa9e43caac0",
+        "closeMarketOne": "0xf31dd48db77b291d03442cc6fe994d94df0ee3bd",
+        "closeMarketTwo": "0x4c0cd836927f0d9073a6b2ca8da86c80d33bc237",
+        "consensus": "0x588a6241592fb4097eeebccb2be5d922a7dd9acd",
+        "createBranch": "0x696a9fd06c41c64c5c3d5ac9441e671cc84e5ec8",
+        "createEvent": "0xb816283697f6a525b9cd499b2540ad9e0613b244",
+        "createMarket": "0x39dd6083c5bd3e004c0438efc5fc69c87ab04c37",
+        "eventResolution": "0xb46dbfa128ddc19ad188923cc564f7643667afd4",
+        "faucets": "0x9a065435e1ee34365fec4b71691230421cc3ea94",
+        "makeReports": "0xd81c5e42133d9901aa7493495dc297acc39b7c2d",
+        "orderBook": "0x7321ed33b9a7acf5794237e3c98892d3fc761dea",
+        "ramble": "0x132bf71d9aa4ef112a23106a28f7c32e0403717f",
+        "sendReputation": "0x1df4fc815ab7f970d8ae9079f684f3623407cc00",
+        "transferShares": "0x2ecdddf028c2186ba48a5623fba4d269d4c4c5be",
+        "branches": "0xb33543c4b11bb8a4f7a457855c786b9460693ea5",
+        "cash": "0xdb7bf3cd90cd2998edcf5ce534b98811d27c08b0",
+        "events": "0x7e4b372a66af47673b3a3fad65f12919ab91ca01",
+        "expiringEvents": "0xe7c0b33ce872bb8dfb1824b26e4ca0b641bfebec",
+        "fxpFunctions": "0x6a26ca406d6251de60f9ab4a41648e67ba94a05b",
+        "info": "0x175dd846b58dee3f63335b6e6462b0f40bfb1a7f",
+        "markets": "0x097f4d6e230f7afc561bad55cb91ed04c14a6aa6",
+        "reporting": "0x9cda2847e8b5a271601be07f4135b669953828d0"
+    },
     "7": {
-        "buyAndSellShares": "0xea9cb33592fb7b5c2b730fb4696b108f0ab3b6de",
-        "closeMarket": "0x0d7e621a192a10c3333a54ce916bdc8e0244c29d",
-        "closeMarketEight": "0xa85e41e0d2efe7d9c3df9ff01ce42cd2182e9a21",
-        "closeMarketFour": "0x3522016cab0793ebfd005c1808b23fba7fc1a0ac",
-        "closeMarketOne": "0xb15baeac7c5c18a4ae1b8dcd24b349b18888d5ca",
-        "closeMarketTwo": "0x1ebe7f6f3bf5ed9276373ecbef5a09cb11af2f0f",
-        "consensus": "0xc59537470f1cf45ca1725fac10d389ea9a739885",
-        "createBranch": "0x3bf0139b2281c5f13b6a43b3a3c020934ceb0897",
-        "createEvent": "0x4ff5e87b13be9df2cf83a81aa971797f8f50f278",
-        "createMarket": "0xb8c2e4ba3971463a93b068e8b70285d3a5185796",
-        "eventResolution": "0xca1b25164975d13fc0acb721f0bd88f51675a0a4",
-        "faucets": "0x072fbf825698f67eff41d145fab695f88272ad8f",
-        "insertionsort": "0x79fdce9ece6665c3b65d981772a9406a385fe4cf",
-        "makeReports": "0x33ee3ef2acb6c0aee2b2377ff70afff871555b1a",
-        "orderBook": "0xbb2fcf76c09c07caa55eb9d4d96729e17b66395d",
-        "quicksort": "0x99952d75c52b3bfd5ff961ecebd34bd4477f7d6b",
-        "ramble": "0xcce881fc29629e655df467f2ab55b4daa7c0785c",
-        "sendReputation": "0x378524f700f69ddf709a5fdb32d62ae9bd8f3100",
-        "transferShares": "0x12bd588d040fbaaf40a8a4aec30f07a74a8aa55b",
-        "branches": "0x6e099c37d8d538243ad64c829f895483f378d740",
-        "cash": "0x7863b30f2eaa3bd304dd6d3be014c77d7f9cd8c9",
-        "events": "0x8e884f6dd75c696024dd9739b9b6c5b6e5d0f01c",
-        "expiringEvents": "0xfe81801638055a798a5951561f568f7b4821fc04",
-        "fxpFunctions": "0x07cc411f282b977f2109df7087f4efd5286c5153",
-        "info": "0x76d8477190c55b4a504531c0413a001e2356437c",
-        "markets": "0x9ea3e29dc2f202f59a8b4c2964e851358c0f1569",
-        "reporting": "0xb707b070a020fdc959496dd9e598d9f03cc2d02f"
+        "buyAndSellShares": "0x271ee62a8577a97d648c4b4eb3a0e56306f711c1",
+        "closeMarket": "0x7a2e05c795fbf585af34cebe760602b8425846dd",
+        "closeMarketEight": "0x66021d8b17cd9b90dc53012ba6c8cec8aaef2d1b",
+        "closeMarketFour": "0xfb5c088e0d2b8400800c61ac0d69cfd11261401c",
+        "closeMarketOne": "0xbfaa24839dec3961c010c4831709bdecbac382f5",
+        "closeMarketTwo": "0x8bb3073196dbdbf425157b3d83156f18c5c0e776",
+        "consensus": "0xc4d92584ea34be5dd2b916c464e55ec9b4bd1f8f",
+        "createBranch": "0xb005839c49a328850bb22359bb66f9ba1a0f9994",
+        "createEvent": "0x0c532debb932ddb5d07eb957bf8ff5975e932ca3",
+        "createMarket": "0x26ff0f6452673ff11dd8497491b271a18c76990e",
+        "eventResolution": "0xd399af9820be7ddda37c7d85e701bf8ee2337739",
+        "faucets": "0x94bab6be74df76e996b20329dff2ec39d3013dc3",
+        "makeReports": "0x0b7c36b76208e2c968b04dce0658c03c27bfdc00",
+        "orderBook": "0xf86bbf277ae88a8b50ae90d97e1aafb1390e2984",
+        "ramble": "0x2258a25e503b19dc3d2c2fdc9ca57a1d5985e30c",
+        "sendReputation": "0x7e049a60e0106d263ffd0a60bcfbf4f63dd1f2a4",
+        "transferShares": "0x40343b107ef5dee9c240ff5f1f87f0afb6f709dc",
+        "branches": "0x44cecf2528fbc502f31a58cfce99b8bae992b9c4",
+        "cash": "0x9ef25450d88c82118a3395f57e7a29931305ac6d",
+        "events": "0xa95fa8fe1f544d80afa29ffb0a959116c842e110",
+        "expiringEvents": "0xad225235b9da03bbfda4fb79bf4e2356296e7d7f",
+        "fxpFunctions": "0xa1a240f9f505aa06e9eabe405ffab14689dfdda3",
+        "info": "0x087785682381a1316303efb19d1d450562603fca",
+        "markets": "0xfd0f6987c7042e867db9c1dae6e681b2c3648de2",
+        "reporting": "0x9d358fee98edb880e6a4549e21f4ab66dfcadfa7"
     },
     "10101": {
         "buyAndSellShares": "0xd15a6cfc462ae76b9ec590cab8b34bfa8e1302d7",
@@ -511,6 +536,12 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
+        cashFaucet: {
+            to: contracts.faucets,
+            method: "cashFaucet",
+            returns: "number",
+            send: true
+        },
 
         // cash.se
         initiateOwner: {
@@ -719,7 +750,8 @@ module.exports = function (network) {
             to: contracts.branches,
             method: "incrementPeriod",
             signature: "i",
-            send: true
+            send: true,
+            returns: "number"
         },
         addMarket: {
             to: contracts.branches,
@@ -730,7 +762,6 @@ module.exports = function (network) {
         },
 
         // consensus.se
-
         incrementPeriodAfterReporting: {
             to: contracts.consensus,
             method: "incrementPeriodAfterReporting",
@@ -1511,10 +1542,10 @@ module.exports = {
     localnode: "http://127.0.0.1:8545",
 
     // Maximum number of transaction verification attempts
-    TX_POLL_MAX: 72,
+    TX_POLL_MAX: 128,
 
     // Transaction polling interval
-    TX_POLL_INTERVAL: 3000,
+    TX_POLL_INTERVAL: 5000,
 
     // Default timeout for asynchronous POST
     POST_TIMEOUT: 30000,

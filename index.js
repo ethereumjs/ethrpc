@@ -64,10 +64,10 @@ module.exports = {
     localnode: "http://127.0.0.1:8545",
 
     // Maximum number of transaction verification attempts
-    TX_POLL_MAX: 72,
+    TX_POLL_MAX: 128,
 
     // Transaction polling interval
-    TX_POLL_INTERVAL: 3000,
+    TX_POLL_INTERVAL: 5000,
 
     // Default timeout for asynchronous POST
     POST_TIMEOUT: 30000,
