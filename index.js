@@ -1226,7 +1226,8 @@ module.exports = {
                 var duplicateNonce;
                 for (var hash in self.rawTxs) {
                     if (!self.rawTxs.hasOwnProperty(hash)) continue;
-                    if (self.rawTxs[hash].tx.nonce === self.rawTxs[txhash].tx.nonce) {
+                    if (self.rawTxs[hash].tx.nonce === self.rawTxs[txhash].tx.nonce &&
+                        JSON.stringify(self.rawTxs[hash].tx) !== JSON.stringify(self.rawTxs[txhash].tx)) {
                         duplicateNonce = true;
                         break;
                     }

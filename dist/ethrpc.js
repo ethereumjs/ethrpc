@@ -544,6 +544,20 @@ module.exports = function (network) {
         },
 
         // cash.se
+        addCash: {
+            to: contracts.cash,
+            method: "addCash",
+            signature: "ii",
+            send: true,
+            returns: "number"
+        },
+        setCash: {
+            to: contracts.cash,
+            method: "setCash",
+            signature: "ii",
+            send: true,
+            returns: "number"
+        },
         initiateOwner: {
             to: contracts.cash,
             method: "initiateOwner",
@@ -2704,7 +2718,8 @@ module.exports = {
                 var duplicateNonce;
                 for (var hash in self.rawTxs) {
                     if (!self.rawTxs.hasOwnProperty(hash)) continue;
-                    if (self.rawTxs[hash].tx.nonce === self.rawTxs[txhash].tx.nonce) {
+                    if (self.rawTxs[hash].tx.nonce === self.rawTxs[txhash].tx.nonce &&
+                        JSON.stringify(self.rawTxs[hash].tx) !== JSON.stringify(self.rawTxs[txhash].tx)) {
                         duplicateNonce = true;
                         break;
                     }

@@ -800,18 +800,18 @@ describe("RPC", function () {
             });
         };
 
-        // expected block hashes for network 7
+        // expected block hashes for network 2
         test({
             blockNumber: "0x1",
-            blockHash: "0x74aa258b2f71168b97d7d0c72ec8ff501ec15e4e2adc8c663a0f7b01a1025d88"
+            blockHash: "0xad47413137a753b2061ad9b484bf7b0fc061f654b951b562218e9f66505be6ce"
         });
         test({
             blockNumber: "0x1b4",
-            blockHash: "0x721a93982fbbe858aa190476be937ea2052408d7f8ff6fb415cc969aaacaa045"
+            blockHash: "0xcc69010c942bb0d8232024dc32aa4404a1173da56c1b6abdead40a2bd8930d34"
         });
         test({
             blockNumber: "0x24f2",
-            blockHash: "0x9272764416f772a63b945e1c1c6ca449f8d07dc4378f6b589244b1f48fef86bf"
+            blockHash: "0x4d5d0d6ce0073cbe085589827152a83e4d54365d15eb4c0ae29118fc21f02d92"
         });
     });
 
@@ -870,16 +870,16 @@ describe("RPC", function () {
         };
 
         test({
-            blockHash: "0x74aa258b2f71168b97d7d0c72ec8ff501ec15e4e2adc8c663a0f7b01a1025d88",
-            blockNumber: "0x1"
+            blockNumber: "0x1",
+            blockHash: "0xad47413137a753b2061ad9b484bf7b0fc061f654b951b562218e9f66505be6ce"
         });
         test({
-            blockHash: "0x721a93982fbbe858aa190476be937ea2052408d7f8ff6fb415cc969aaacaa045",
-            blockNumber: "0x1b4"
+            blockNumber: "0x1b4",
+            blockHash: "0xcc69010c942bb0d8232024dc32aa4404a1173da56c1b6abdead40a2bd8930d34"
         });
         test({
-            blockHash: "0x9272764416f772a63b945e1c1c6ca449f8d07dc4378f6b589244b1f48fef86bf",
-            blockNumber: "0x24f2"
+            blockNumber: "0x24f2",
+            blockHash: "0x4d5d0d6ce0073cbe085589827152a83e4d54365d15eb4c0ae29118fc21f02d92"
         });
     });
 

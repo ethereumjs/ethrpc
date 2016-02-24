@@ -416,6 +416,16 @@ describe("IPC", function () {
                 blockHash: "0x081962450ffdfd2221cafee8ae7d9893d032d6b3fba1d91a246e52119018dcf2"
             });
             break;
+        case "2":
+            test({
+                blockNumber: "0x1",
+                blockHash: "0xad47413137a753b2061ad9b484bf7b0fc061f654b951b562218e9f66505be6ce"
+            });
+            test({
+                blockNumber: "0x1b4",
+                blockHash: "0xcc69010c942bb0d8232024dc32aa4404a1173da56c1b6abdead40a2bd8930d34"
+            });
+            break;
         case "7":
             test({
                 blockNumber: "0x1",
@@ -489,6 +499,16 @@ describe("IPC", function () {
             });
             test({
                 blockHash: "0x081962450ffdfd2221cafee8ae7d9893d032d6b3fba1d91a246e52119018dcf2",
+                blockNumber: "0x1b4"
+            });
+            break;
+        case "2":
+            test({
+                blockHash: "0xad47413137a753b2061ad9b484bf7b0fc061f654b951b562218e9f66505be6ce",
+                blockNumber: "0x1"
+            });
+            test({
+                blockHash: "0xcc69010c942bb0d8232024dc32aa4404a1173da56c1b6abdead40a2bd8930d34",
                 blockNumber: "0x1b4"
             });
             break;
