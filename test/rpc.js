@@ -339,19 +339,19 @@ describe("RPC", function () {
 
         test({
             node: "https://eth1.augur.net",
-            version: "2"
+            version: NETWORK_ID
         });
         test({
             node: "https://eth3.augur.net",
-            version: "2"
+            version: NETWORK_ID
         });
         test({
             node: "https://eth4.augur.net",
-            version: "2"
+            version: NETWORK_ID
         });
         test({
             node: "https://eth5.augur.net",
-            version: "2"
+            version: NETWORK_ID
         });
 
     });
@@ -1083,7 +1083,7 @@ describe("RPC", function () {
             this.timeout(TIMEOUT);
             rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth1.augur.net"];
             assert.strictEqual(rpc.nodes.hosted.length, 2);
-            assert.strictEqual(rpc.version(), "2");
+            assert.strictEqual(rpc.version(), NETWORK_ID);
             assert.strictEqual(rpc.nodes.hosted.length, 1);
             assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
         });
@@ -1093,7 +1093,7 @@ describe("RPC", function () {
             rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth1.augur.net"];
             assert.strictEqual(rpc.nodes.hosted.length, 2);
             rpc.version(function (version) {
-                assert.strictEqual(version, "2");
+                assert.strictEqual(version, NETWORK_ID);
                 assert.strictEqual(rpc.nodes.hosted.length, 1);
                 assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
                 done();
@@ -1109,7 +1109,7 @@ describe("RPC", function () {
                 "https://eth4.augur.net"
             ];
             assert.strictEqual(rpc.nodes.hosted.length, 4);
-            assert.strictEqual(rpc.version(), "2");
+            assert.strictEqual(rpc.version(), NETWORK_ID);
             assert.strictEqual(rpc.nodes.hosted.length, 3);
             assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
             assert.strictEqual(rpc.nodes.hosted[1], "https://eth3.augur.net");
@@ -1126,7 +1126,7 @@ describe("RPC", function () {
             ];
             assert.strictEqual(rpc.nodes.hosted.length, 4);
             rpc.version(function (version) {
-                assert.strictEqual(version, "7");
+                assert.strictEqual(version, NETWORK_ID);
                 assert.strictEqual(rpc.nodes.hosted.length, 3);
                 assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
                 assert.strictEqual(rpc.nodes.hosted[1], "https://eth3.augur.net");
@@ -1247,7 +1247,7 @@ describe("RPC", function () {
             ], function (node, nextNode) {
                 rpc.nodes.hosted = [node];
                 rpc.version(function (version) {
-                    assert.strictEqual(version, "7");
+                    assert.strictEqual(version, NETWORK_ID);
                     assert.property(rpc.latency, node);
                     assert.property(rpc.samples, node);
                     assert.isAbove(rpc.latency[node], 0);
@@ -1275,7 +1275,7 @@ describe("RPC", function () {
             }, function (callback) {
                 rpc.version(function (version) {
                     if (version.error) return done(version);
-                    assert.strictEqual(version, "7");
+                    assert.strictEqual(version, NETWORK_ID);
                     assert.property(rpc.latency, node);
                     assert.property(rpc.samples, node);
                     assert.isAbove(rpc.latency[node], 0);
@@ -1301,7 +1301,7 @@ describe("RPC", function () {
                 return ++count < SAMPLES*10;
             }, function (callback) {
                 rpc.version(function (version) {
-                    assert.strictEqual(version, "7");
+                    assert.strictEqual(version, NETWORK_ID);
                     callback();
                 });
             }, function (err) {
