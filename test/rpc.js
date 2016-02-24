@@ -339,19 +339,19 @@ describe("RPC", function () {
 
         test({
             node: "https://eth1.augur.net",
-            version: "7"
+            version: "2"
         });
         test({
             node: "https://eth3.augur.net",
-            version: "7"
+            version: "2"
         });
         test({
             node: "https://eth4.augur.net",
-            version: "7"
+            version: "2"
         });
         test({
             node: "https://eth5.augur.net",
-            version: "7"
+            version: "2"
         });
 
     });
@@ -1083,7 +1083,7 @@ describe("RPC", function () {
             this.timeout(TIMEOUT);
             rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth1.augur.net"];
             assert.strictEqual(rpc.nodes.hosted.length, 2);
-            assert.strictEqual(rpc.version(), "7");
+            assert.strictEqual(rpc.version(), "2");
             assert.strictEqual(rpc.nodes.hosted.length, 1);
             assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
         });
@@ -1093,7 +1093,7 @@ describe("RPC", function () {
             rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth1.augur.net"];
             assert.strictEqual(rpc.nodes.hosted.length, 2);
             rpc.version(function (version) {
-                assert.strictEqual(version, "7");
+                assert.strictEqual(version, "2");
                 assert.strictEqual(rpc.nodes.hosted.length, 1);
                 assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
                 done();
@@ -1109,7 +1109,7 @@ describe("RPC", function () {
                 "https://eth4.augur.net"
             ];
             assert.strictEqual(rpc.nodes.hosted.length, 4);
-            assert.strictEqual(rpc.version(), "7");
+            assert.strictEqual(rpc.version(), "2");
             assert.strictEqual(rpc.nodes.hosted.length, 3);
             assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
             assert.strictEqual(rpc.nodes.hosted[1], "https://eth3.augur.net");
