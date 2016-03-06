@@ -268,7 +268,6 @@ module.exports = {
     },
 
     postSync: function (rpcUrl, command, returns) {
-        var self = this;
         var timeout, req = null;
         if (command.timeout) {
             timeout = command.timeout;
@@ -277,11 +276,11 @@ module.exports = {
             timeout = this.POST_TIMEOUT;
         }
         if (NODE_JS) {
-            req = syncRequest('POST', rpcUrl, {json: command, timeout: timeout});
+            req = syncRequest("POST", rpcUrl, {json: command, timeout: timeout});
             var response = req.getBody().toString();
             return this.parse(response, returns);
         }
-        console.warn("[ethrpc] synchronous RPC request to", rpcUrl, command);
+        console.warn("[ethrpc] synchronous RPC request to " + rpcUrl + ":", command);
         if (window.XMLHttpRequest) {
             req = new window.XMLHttpRequest();
         } else {
@@ -289,11 +288,6 @@ module.exports = {
         }
         req.open("POST", rpcUrl, false);
         req.setRequestHeader("Content-type", "application/json");
-        req.timeout = timeout;
-        req.ontimeout = function () {
-            console.error("[ethrpc] synchronous RPC timed out", rpcUrl, command.method);
-            self.primaryNode = null;
-        };
         req.send(JSON.stringify(command));
         return this.parse(req.responseText, returns);
     },

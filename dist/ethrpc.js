@@ -1,31 +1,32 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports={
     "2": {
-        "buyAndSellShares": "0xf5210713da9674da9f693713c00e79bcc3e79bc9",
-        "closeMarket": "0x0b4cd632d6816134738a0e5dff9739388185f281",
-        "closeMarketEight": "0x0aa0e4ae2919ed0e338ee61c793015d5366bb9c3",
-        "closeMarketFour": "0xff43d071e047ccfb4083dfa869e91aa9e43caac0",
-        "closeMarketOne": "0xf31dd48db77b291d03442cc6fe994d94df0ee3bd",
-        "closeMarketTwo": "0x4c0cd836927f0d9073a6b2ca8da86c80d33bc237",
-        "consensus": "0x588a6241592fb4097eeebccb2be5d922a7dd9acd",
-        "createBranch": "0x696a9fd06c41c64c5c3d5ac9441e671cc84e5ec8",
-        "createEvent": "0xb816283697f6a525b9cd499b2540ad9e0613b244",
-        "createMarket": "0x39dd6083c5bd3e004c0438efc5fc69c87ab04c37",
-        "eventResolution": "0xb46dbfa128ddc19ad188923cc564f7643667afd4",
-        "faucets": "0x9a065435e1ee34365fec4b71691230421cc3ea94",
-        "makeReports": "0xd81c5e42133d9901aa7493495dc297acc39b7c2d",
-        "orderBook": "0x7321ed33b9a7acf5794237e3c98892d3fc761dea",
-        "ramble": "0x132bf71d9aa4ef112a23106a28f7c32e0403717f",
-        "sendReputation": "0x1df4fc815ab7f970d8ae9079f684f3623407cc00",
-        "transferShares": "0x2ecdddf028c2186ba48a5623fba4d269d4c4c5be",
-        "branches": "0xb33543c4b11bb8a4f7a457855c786b9460693ea5",
-        "cash": "0xdb7bf3cd90cd2998edcf5ce534b98811d27c08b0",
-        "events": "0x7e4b372a66af47673b3a3fad65f12919ab91ca01",
-        "expiringEvents": "0xe7c0b33ce872bb8dfb1824b26e4ca0b641bfebec",
-        "fxpFunctions": "0x6a26ca406d6251de60f9ab4a41648e67ba94a05b",
-        "info": "0x175dd846b58dee3f63335b6e6462b0f40bfb1a7f",
-        "markets": "0x097f4d6e230f7afc561bad55cb91ed04c14a6aa6",
-        "reporting": "0x9cda2847e8b5a271601be07f4135b669953828d0"
+        "buyAndSellShares": "0x0747a91108ac052a0ed88ca7b21f447b5431d0da",
+        "closeMarket": "0x5b109439001464cf02ceb7d57b453df277aa5e8b",
+        "closeMarketEight": "0x2da0721e7cf4e713efa7c3253fd8994193d4c6d7",
+        "closeMarketFour": "0xde57efcde7e9be460796c631e8295f96ae0b9fa0",
+        "closeMarketOne": "0x185234d6c3ab999231f2507856f3eb329e9a886a",
+        "closeMarketTwo": "0xe5c4f716be9d973b8d2bba67b4379a88bbf33054",
+        "consensus": "0xdcc31bd45eb3cec9897175a3b2995ac9a16cc037",
+        "createBranch": "0xb93a72e5cdbcbf1955c1e77f3aa2d96b6ab33a37",
+        "createEvent": "0x5da3af9186a32e17f8e217407db6313986442054",
+        "createMarket": "0x7285f1ca78d50ceed5449aa4b88aae119997ff65",
+        "createSingleEventMarket": "0x4bfe640479d8a8bf3e4f2b14a8f08d362a6f8c92",
+        "eventResolution": "0x9a87a84662629ba3d2314f8e1396aee95346acc0",
+        "faucets": "0x0975b96375e27a8ddb8856d04f7f7f635fb194a8",
+        "makeReports": "0xe2223191e67b2d3595e9fa6d8cbdfcd9f8affc81",
+        "orderBook": "0xf0f34588f127657646907e5848a9585b5bccfe93",
+        "ramble": "0x3881d38ff80f125793d856fd1a0b0440dc78927d",
+        "sendReputation": "0xd25cd9d49fd95746d5a9f67806ace77a0c0ee396",
+        "transferShares": "0x9b0e15de811cb8a0c1e81ada8c2c2287c3a89c38",
+        "branches": "0x61048e74feb663c667ab64f3f74031cb6b8603b2",
+        "cash": "0x8bb3c2d46642afd004d49041e8b09d24099c3abd",
+        "events": "0x618a2c90aa9ea8eb8eb45b3a2690e30539e18939",
+        "expiringEvents": "0xa5f5921abbdc9fd1f04d14cf93b38620c0d0ec0e",
+        "fxpFunctions": "0x6cfbb1879374737aeaf8e3b390bca2fae492dcf8",
+        "info": "0xa62edbc5f5cb14451156f5de34a989d2b64ab299",
+        "markets": "0x30cc3eb5159ec66f8a896ceb6ad3b9a0cbdbda22",
+        "reporting": "0x955206a8a895fa7c505472c96c68f393b5c542db"
     },
     "7": {
         "buyAndSellShares": "0x271ee62a8577a97d648c4b4eb3a0e56306f711c1",
@@ -38,6 +39,7 @@ module.exports={
         "createBranch": "0xb005839c49a328850bb22359bb66f9ba1a0f9994",
         "createEvent": "0x0c532debb932ddb5d07eb957bf8ff5975e932ca3",
         "createMarket": "0x26ff0f6452673ff11dd8497491b271a18c76990e",
+        "createSingleEventMarket": "0x6f5452dca9bbfe8ac9151dd0e67c8dde8b1c6572",
         "eventResolution": "0xd399af9820be7ddda37c7d85e701bf8ee2337739",
         "faucets": "0x94bab6be74df76e996b20329dff2ec39d3013dc3",
         "makeReports": "0x0b7c36b76208e2c968b04dce0658c03c27bfdc00",
@@ -61,16 +63,17 @@ module.exports={
         "closeMarketFour": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd",
         "closeMarketOne": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d",
         "closeMarketTwo": "0x81a7621e9a286d061b3dea040888a51c96693b1c",
-        "consensus": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79",
-        "createBranch": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df",
+        "consensus": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68",
+        "createBranch": "0x8c19616de17acdfbc933b99d9f529a689d22098f",
         "createEvent": "0x5069d883e31429c6dd1325d961f443007747c7a2",
         "createMarket": "0x3f3276849a878a176b2f02dd48a483e8182a49e4",
+        "createSingleEventMarket": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79",
         "eventResolution": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7",
         "faucets": "0x4a61f3db785f1e2a23ffefeafaceeef2df551667",
         "makeReports": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea",
         "orderBook": "0x8a4e2993a9972ee035453bb5674816fc3a698718",
         "ramble": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c",
-        "sendReputation": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68",
+        "sendReputation": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df",
         "transferShares": "0xe5b327630cfa7f4b2324f9066c897dceecfd88a3",
         "branches": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2",
         "cash": "0x8f2c2267687cb0f047b28a1b6f945da6e101a0d7",
@@ -130,9 +133,21 @@ module.exports={
             "-1": "report isn't long enough",
             "-2": "reporter doesn't exist, voting period is over, or voting period hasn't started yet"
         },
+        "penalizeNotEnoughReports": {
+            "-1": "already done",
+            "-2": "hasn't reported this period"
+        },
+        "penalizeWrong": {
+            "-1": "pushed back event already resolved, so can't redistribute rep based off of its original expected expiration period",
+            "-2": "already past first half of new period and needed to penalize before then",
+            "-3": "need to do not enough reports penalization [or lackthereof]"
+        },
+        "collectFees": {
+            "-2": "needs to be second half of reporting period to claim rep [1st half is when redistribution is done]"
+        },
         "slashRep": {
-            "0": "incorrect hash",
-            "-2": "incorrect reporter ID"
+            "0": "not a valid claim",
+            "-2": "reporter doesn't exist"
         },
         "createSubbranch": {
             "-1": "bad input or parent doesn't exist",
@@ -291,6 +306,10 @@ module.exports={
         "ROOT_NOT_FOUND": {
             "error": 700,
             "message": "no LS-LMSR objectve function solution found"
+        },
+        "CHECK_ORDER_BOOK_FAILED": {
+            "error": 710,
+            "message": "could not check order book using current prices"
         }
     }
 }
@@ -344,9 +363,25 @@ module.exports={
         "-1": "report isn't long enough",
         "-2": "reporter doesn't exist, voting period is over, or voting period hasn't started yet"
     },
+    "penalizeNotEnoughReports": {
+        "-1": "already done",
+        "-2": "hasn't reported this period"
+    },
+    "penalizationCatchup": {
+        "0": "already caught up on this branch",
+        "-2": "can only be called during the first half of the reporting period"
+    },
+    "penalizeWrong": {
+        "-1": "pushed back event already resolved, so can't redistribute rep based off of its original expected expiration period",
+        "-2": "already past first half of new period and needed to penalize before then",
+        "-3": "need to do not enough reports penalization [or lackthereof]"
+    },
+    "collectFees": {
+        "-2": "needs to be second half of reporting period to claim rep [1st half is when redistribution is done]"
+    },
     "slashRep": {
-        "0": "incorrect hash",
-        "-2": "incorrect reporter ID"
+        "0": "not a valid claim",
+        "-2": "reporter doesn't exist"
     },
     "createSubbranch": {
         "-1": "bad input or parent doesn't exist",
@@ -505,6 +540,10 @@ module.exports={
     "ROOT_NOT_FOUND": {
         "error": 700,
         "message": "no LS-LMSR objectve function solution found"
+    },
+    "CHECK_ORDER_BOOK_FAILED": {
+        "error": 710,
+        "message": "could not check order book using current prices"
     }
 }
 
@@ -540,6 +579,22 @@ module.exports = function (network) {
             to: contracts.faucets,
             method: "cashFaucet",
             returns: "number",
+            send: true
+        },
+        fundNewAccount: {
+            to: contracts.faucets,
+            method: "fundNewAccount",
+            signature: "i",
+            returns: "number",
+            send: true
+        },
+
+        // createSingleEventMarket.se
+        createSingleEventMarket: {
+            to: contracts.createSingleEventMarket,
+            method: "createSingleEventMarket",
+            signature: "isiiiiiiii",
+            returns: "hash",
             send: true
         },
 
@@ -644,69 +699,6 @@ module.exports = function (network) {
             signature: "iiiii"
         },
 
-        // center.se
-        center: {
-            to: contracts.center,
-            method: "center",
-            signature: "aaaaaii"
-        },
-
-        // redeem_center.se
-        redeem_center: {
-            to: contracts.redeem_center,
-            method: "center",
-            signature: "iiiii",
-            returns: "number"
-        },
-        redeem_covariance: {
-            to: contracts.redeem_center,
-            method: "covariance",
-            signature: "iiiii"
-        },
-
-        // redeem_score.se
-        redeem_blank: {
-            to: contracts.redeem_score,
-            method: "blank",
-            signature: "iiiii"
-        },
-        redeem_loadings: {
-            to: contracts.redeem_score,
-            method: "loadings",
-            signature: "iiiii",
-            returns: "number"
-        },
-
-        // score.se
-        blank: {
-            to: contracts.score,
-            method: "blank",
-            signature: "iii",
-            returns: "number[]"
-        },
-        loadings: {
-            to: contracts.score,
-            method: "loadings",
-            signature: "aaaii",
-            returns: "number[]"
-        },
-
-        // resolve.se
-        resolve: {
-            to: contracts.resolve,
-            method: "resolve",
-            signature: "aaaaaii",
-            returns: "number[]"
-        },
-
-        // redeem_resolve.se
-        redeem_resolve: {
-            to: contracts.redeem_resolve,
-            method: "resolve",
-            signature: "iiiii",
-            returns: "number"
-        },
-
         // branches.se
         initDefaultBranch: {
             to: contracts.branches,
@@ -780,6 +772,41 @@ module.exports = function (network) {
             to: contracts.consensus,
             method: "incrementPeriodAfterReporting",
             signature: "i",
+            returns: "number",
+            send: true
+        },
+        penalizeNotEnoughReports: {
+            to: contracts.consensus,
+            method: "penalizeNotEnoughReports",
+            signature: "i",
+            returns: "number",
+            send: true
+        },
+        collectFees: {
+            to: contracts.consensus,
+            method: "collectFees",
+            signature: "i",
+            returns: "number",
+            send: true
+        },
+        penalizeWrong: {
+            to: contracts.consensus,
+            method: "penalizeWrong",
+            signature: "ii",
+            returns: "number",
+            send: true
+        },
+        penalizationCatchup: {
+            to: contracts.consensus,
+            method: "penalizationCatchup",
+            signature: "i",
+            returns: "number",
+            send: true
+        },
+        slashRep: {
+            to: contracts.consensus,
+            method: "slashRep",
+            signature: "iiiii",
             returns: "number",
             send: true
         },
@@ -878,131 +905,11 @@ module.exports = function (network) {
             signature: "ii",
             returns: "number"
         },
-        getReporterBallot: {
-            to: contracts.expiringEvents,
-            method: "getReporterBallot",
-            signature: "iii",
-            returns: "unfix[]"
-        },
-        getReport: {
-            to: contracts.expiringEvents,
-            method: "getReport",
-            signature: "iiii",
-            returns: "unfix"
-        },
         getReportHash: {
             to: contracts.expiringEvents,
             method: "getReportHash",
-            signature: "iii",
+            signature: "iiii",
             returns: "hash"
-        },
-        getVSize: {
-            to: contracts.expiringEvents,
-            method: "getVSize",
-            signature: "ii",
-            returns: "number"
-        },
-        getReportsFilled: {
-            to: contracts.expiringEvents,
-            method: "getReportsFilled",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getReportsMask: {
-            to: contracts.expiringEvents,
-            method: "getReportsMask",
-            signature: "ii",
-            returns: "number[]"
-        },
-        getWeightedCenteredData: {
-            to: contracts.expiringEvents,
-            method: "getWeightedCenteredData",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getCovarianceMatrixRow: {
-            to: contracts.expiringEvents,
-            method: "getCovarianceMatrixRow",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getDeflated: {
-            to: contracts.expiringEvents,
-            method: "getDeflated",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getLoadingVector: {
-            to: contracts.expiringEvents,
-            method: "getLoadingVector",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getLatent: {
-            to: contracts.expiringEvents,
-            method: "getLatent",
-            signature: "ii",
-            returns: "unfix"
-        },
-        getScores: {
-            to: contracts.expiringEvents,
-            method: "getScores",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getSetOne: {
-            to: contracts.expiringEvents,
-            method: "getSetOne",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getSetTwo: {
-            to: contracts.expiringEvents,
-            method: "getSetTwo",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        returnOld: {
-            to: contracts.expiringEvents,
-            method: "returnOld",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getNewOne: {
-            to: contracts.expiringEvents,
-            method: "getNewOne",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getNewTwo: {
-            to: contracts.expiringEvents,
-            method: "getNewTwo",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getAdjPrinComp: {
-            to: contracts.expiringEvents,
-            method: "getAdjPrinComp",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getSmoothRep: {
-            to: contracts.expiringEvents,
-            method: "getSmoothRep",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getOutcomesFinal: {
-            to: contracts.expiringEvents,
-            method: "getOutcomesFinal",
-            signature: "ii",
-            returns: "unfix[]"
-        },
-        getReporterPayouts: {
-            to: contracts.expiringEvents,
-            method: "getReporterPayouts",
-            signature: "ii",
-            returns: "unfix[]"
         },
         moveEventsToCurrentPeriod: {
             to: contracts.expiringEvents,
@@ -1029,108 +936,6 @@ module.exports = function (network) {
             send: true,
             returns: "number"
         },
-        setVSize: {
-            to: contracts.expiringEvents,
-            method: "setVSize",
-            signature: "iii",
-            send: true
-        },
-        setReportsFilled: {
-            to: contracts.expiringEvents,
-            method: "setReportsFilled",
-            signature: "iia",
-            send: true
-        },
-        setReportsMask: {
-            to: contracts.expiringEvents,
-            method: "setReportsMask",
-            signature: "iia",
-            send: true
-        },
-        setWeightedCenteredData: {
-            to: contracts.expiringEvents,
-            method: "setWeightedCenteredData",
-            signature: "iia",
-            send: true
-        },
-        setCovarianceMatrixRow: {
-            to: contracts.expiringEvents,
-            method: "setCovarianceMatrixRow",
-            signature: "iia",
-            send: true
-        },
-        setDeflated: {
-            to: contracts.expiringEvents,
-            method: "setDeflated",
-            signature: "iia",
-            send: true
-        },
-        setLoadingVector: {
-            to: contracts.expiringEvents,
-            method: "setLoadingVector",
-            signature: "iia",
-            send: true
-        },
-        setScores: {
-            to: contracts.expiringEvents,
-            method: "setScores",
-            signature: "iia",
-            send: true
-        },
-        setSetOne: {
-            to: contracts.expiringEvents,
-            method: "setSetOne",
-            signature: "iia",
-            send: true
-        },
-        setSetTwo: {
-            to: contracts.expiringEvents,
-            method: "setSetTwo",
-            signature: "iia",
-            send: true
-        },
-        setOld: {
-            to: contracts.expiringEvents,
-            method: "setOld",
-            signature: "iia",
-            send: true
-        },
-        setNewOne: {
-            to: contracts.expiringEvents,
-            method: "setNewOne",
-            signature: "iia",
-            send: true
-        },
-        setNewTwo: {
-            to: contracts.expiringEvents,
-            method: "setNewTwo",
-            signature: "iia",
-            send: true
-        },
-        setAdjPrinComp: {
-            to: contracts.expiringEvents,
-            method: "setAdjPrinComp",
-            signature: "iia",
-            send: true
-        },
-        setSmoothRep: {
-            to: contracts.expiringEvents,
-            method: "setSmoothRep",
-            signature: "iia",
-            send: true
-        },
-        setOutcomesFinal: {
-            to: contracts.expiringEvents,
-            method: "setOutcomesFinal",
-            signature: "iia",
-            send: true
-        },
-        setReportHash: {
-            to: contracts.expiringEvents,
-            method: "setReportHash",
-            signature: "iii",
-            send: true
-        },
         getTotalReputation: {
             to: contracts.expiringEvents,
             method: "getTotalReputation",
@@ -1142,12 +947,6 @@ module.exports = function (network) {
             method: "setTotalReputation",
             signature: "iii",
             returns: "number"
-        },
-        makeBallot: {
-            to: contracts.expiringEvents,
-            method: "makeBallot",
-            signature: "ii",
-            returns: "hash[]"
         },
 
         // markets.se
@@ -1392,6 +1191,71 @@ module.exports = function (network) {
         },
 
         // makeReports.se
+        getNumEventsToReport: {
+            to: contracts.makeReports,
+            method: "getNumEventsToReport",
+            signature: "ii",
+            returns: "number"
+        },
+        getReportedPeriod: {
+            to: contracts.makeReports,
+            method: "getReportedPeriod",
+            signature: "iii",
+            returns: "number"
+        },
+        getReportable: {
+            to: contracts.makeReports,
+            method: "getReportable",
+            signature: "ii",
+            returns: "number"
+        },
+        getNumReportsActual: {
+            to: contracts.makeReports,
+            method: "getNumReportsActual",
+            signature: "ii",
+            returns: "number"
+        },
+        getSubmittedHash: {
+            to: contracts.makeReports,
+            method: "getSubmittedHash",
+            signature: "iii",
+            returns: "hash"
+        },
+        getBeforeRep: {
+            to: contracts.makeReports,
+            method: "getBeforeRep",
+            signature: "ii",
+            returns: "unfix"
+        },
+        getAfterRep: {
+            to: contracts.makeReports,
+            method: "getAfterRep",
+            signature: "ii",
+            returns: "unfix"
+        },
+        getReport: {
+            to: contracts.makeReports,
+            method: "getReport",
+            signature: "iii",
+            returns: "unfix"
+        },
+        getRRUpToDate: {
+            to: contracts.makeReports,
+            method: "getRRUpToDate",
+            returns: "number"
+        },
+        getNumReportsExpectedEvent: {
+            to: contracts.makeReports,
+            method: "getNumReportsExpectedEvent",
+            signature: "iii",
+            returns: "hash"
+        },
+        getNumReportsEvent: {
+            to: contracts.makeReports,
+            method: "getNumReportsEvent",
+            signature: "iii",
+            returns: "hash"
+        },
         makeHash: {
             to: contracts.makeReports,
             method: "makeHash",
@@ -1430,13 +1294,6 @@ module.exports = function (network) {
             method: "checkReportValidity",
             signature: "iai",
             returns: "number"
-        },
-        slashRep: {
-            to: contracts.makeReports,
-            method: "slashRep",
-            signature: "iiiai",
-            returns: "number",
-            send: true
         },
 
         // createEvent.se
@@ -1760,7 +1617,6 @@ module.exports = {
     },
 
     postSync: function (rpcUrl, command, returns) {
-        var self = this;
         var timeout, req = null;
         if (command.timeout) {
             timeout = command.timeout;
@@ -1769,11 +1625,11 @@ module.exports = {
             timeout = this.POST_TIMEOUT;
         }
         if (NODE_JS) {
-            req = syncRequest('POST', rpcUrl, {json: command, timeout: timeout});
+            req = syncRequest("POST", rpcUrl, {json: command, timeout: timeout});
             var response = req.getBody().toString();
             return this.parse(response, returns);
         }
-        console.warn("[ethrpc] synchronous RPC request to", rpcUrl, command);
+        console.warn("[ethrpc] synchronous RPC request to " + rpcUrl + ":", command);
         if (window.XMLHttpRequest) {
             req = new window.XMLHttpRequest();
         } else {
@@ -1781,11 +1637,6 @@ module.exports = {
         }
         req.open("POST", rpcUrl, false);
         req.setRequestHeader("Content-type", "application/json");
-        req.timeout = timeout;
-        req.ontimeout = function () {
-            console.error("[ethrpc] synchronous RPC timed out", rpcUrl, command.method);
-            self.primaryNode = null;
-        };
         req.send(JSON.stringify(command));
         return this.parse(req.responseText, returns);
     },
