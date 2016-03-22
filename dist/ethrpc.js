@@ -1,32 +1,32 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports={
     "2": {
-        "buyAndSellShares": "0xe01c1e301f0094e6f6c11646efe3f70319e3b62c",
-        "closeMarket": "0x5b7312a9247e875ba8f88f3e374e0508202ab2e2",
-        "closeMarketEight": "0x5e6e26e2139f30ddde876abb81adb7de1253ce87",
-        "closeMarketFour": "0x909015a28b126af0d9e4bc35d1fb996a133536ae",
-        "closeMarketOne": "0x3c4e17247e20b9f9a61808a20c6ebe0ff50d25b3",
-        "closeMarketTwo": "0x1806b1d1be57dff0f31833090874813ce86ef82a",
-        "consensus": "0x10c70c9b01b857099828502730ab185739db6482",
-        "createBranch": "0x1387e2f94459d56df6a40b2525dddb36ec4f1184",
-        "createEvent": "0x2814d7e544c9f0928327c2ed00849b3a84f69f62",
-        "createMarket": "0xd3419fa6598a1f88ac418e26adb7f8a7a3f423b9",
-        "createSingleEventMarket": "0x0f87644d8961b6b22d822573dc68daae11018e87",
-        "eventResolution": "0x049a2aa122cb008cb4db3ae256fa3837762ee1e8",
-        "faucets": "0x0ce0e292a609572d3207a3643172766baae2eb90",
-        "makeReports": "0x3cada685e9a2a1b3dba8b4170fe3b156cdcc83cb",
-        "orderBook": "0xd7c6ad685f259415fb6afa7a179f790bd9ea03e5",
-        "ramble": "0x93c239b1a0c28e13dcf1ec6e5232fa115c15d710",
-        "sendReputation": "0x589ff08141e0102902f6d57398dd4fa35a2cc4b8",
-        "transferShares": "0x9307926684a113c3b28085189a116047d89218e0",
-        "branches": "0xbf226ae95cdb19d52368ad9fba062d3053492491",
-        "cash": "0x17b310eba5f3dcee0209ee96e1b227db864ff2c3",
-        "events": "0xc9bc14844eb76825d0a4b1fdaf4f1ca46b3a8c71",
-        "expiringEvents": "0xaa5316c7fa44ef5ac8f9c1f82a532d95178703d4",
-        "fxpFunctions": "0x394e89d62bb50568088e959c775dadbbf4e95ca7",
-        "info": "0x296e00c49370904479682b8720dac99a229cfa98",
-        "markets": "0xc624994b6704afd3b70e5f462359d5561f62520a",
-        "reporting": "0xdaa02f8291445751117cf5e9d4ac08ece1fbbdb5"
+        "buyAndSellShares": "0xf37626aa99f29a4afe7406e386f68cc77be2cb6e",
+        "closeMarket": "0x9973183349c7fc536041d65108431e736cbb6f7e",
+        "closeMarketEight": "0xb6e28762fef57f336014643741544d4f197cc494",
+        "closeMarketFour": "0x1665ee14c0b07448c3d758c2792d2a328acd98c5",
+        "closeMarketOne": "0x8b4cd6f60de0362237dc0c5b22be15273b099b7e",
+        "closeMarketTwo": "0x0774e46e0cbddb58f09f2d8d53d4aa8bc53df714",
+        "consensus": "0xb816c3abdbb9967485f8645bc83143bb749572e0",
+        "createBranch": "0x21b87e562066e36da0bc599b3d016efb6fe80913",
+        "createEvent": "0xfab258ae92a2fe25ae4e4ddb9e63fb1c691cc2aa",
+        "createMarket": "0x8a1bbe841ceef103221ebcb7fc50bf3e0edc7773",
+        "createSingleEventMarket": "0xd5283e4f818de5c984f2221a421983f6040961c1",
+        "eventResolution": "0x2fac411c69994858409c24ed2a5567da29c61bca",
+        "faucets": "0x895d32f2db7d01ebb50053f9e48aacf26584fe40",
+        "makeReports": "0x79a406da9ea815fd8cbe75ba8a4cb6d493dbf9b4",
+        "orderBook": "0xc8bdc68526a959fcb932b57063c97b1fc6176709",
+        "ramble": "0x42a77acc59bb566aa670d6e7639b99efa235e6f7",
+        "sendReputation": "0x6b969e428c58d81429ef13240c0ecb3529aa91bb",
+        "transferShares": "0x95ecfe0ebd855931faec81cbb671e61bfe56082e",
+        "branches": "0x513087e06ea1a05b858f6da58befb0012c775e63",
+        "cash": "0x154edcf6418038f863c6cd3b395a16a02c037ae3",
+        "events": "0x2d446b3950fc5ea3cf18804b9ab8f79357978ab9",
+        "expiringEvents": "0x0ed2d24d31ed33b658aa2f1108698d5bc3a8b622",
+        "fxpFunctions": "0xe85133772801961725debe87ace3cefaffb01533",
+        "info": "0xf68dab896ca313cbd8946aecfdb965662a61aa3c",
+        "markets": "0x4b2a8b1cc3a2f686d835bfc2ca0c20671676efb0",
+        "reporting": "0x2828a20e3ce771571177928077bfbbcdd16df764"
     },
     "7": {
         "buyAndSellShares": "0x271ee62a8577a97d648c4b4eb3a0e56306f711c1",
@@ -162,6 +162,15 @@ module.exports={
             "-2": "max value < min value"
         },
         "createMarket": {
+            "-1": "bad input or parent doesn't exist",
+            "-2": "too many events",
+            "-3": "too many outcomes",
+            "-4": "not enough money or market already exists",
+            "-5": "fee too low",
+            "-6": "duplicate events",
+            "-7": "event already expired"
+        },
+        "createSingleEventMarket": {
             "-1": "bad input or parent doesn't exist",
             "-2": "too many events",
             "-3": "too many outcomes",
@@ -395,6 +404,15 @@ module.exports={
         "-2": "max value < min value"
     },
     "createMarket": {
+        "-1": "bad input or parent doesn't exist",
+        "-2": "too many events",
+        "-3": "too many outcomes",
+        "-4": "not enough money or market already exists",
+        "-5": "fee too low",
+        "-6": "duplicate events",
+        "-7": "event already expired"
+    },
+    "createSingleEventMarket": {
         "-1": "bad input or parent doesn't exist",
         "-2": "too many events",
         "-3": "too many outcomes",
@@ -1451,6 +1469,8 @@ module.exports = {
 
     errors: errors,
 
+    etherscan: true,
+
     nodes: {
         hosted: HOSTED_NODES.slice(),
         local: null
@@ -2179,7 +2199,40 @@ module.exports = {
     call: function (tx, f) {
         tx.to = tx.to || "";
         tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
-        return this.broadcast(this.marshal("call", tx), f);
+        if (!this.etherscan) return this.broadcast(this.marshal("call", tx), f);
+        var self = this;
+        var returns, timeout;
+        if (tx.returns) {
+            returns = tx.returns;
+            delete tx.returns;
+        }
+        if (tx.timeout) {
+            timeout = tx.timeout;
+            delete tx.timeout;
+        } else {
+            timeout = this.POST_TIMEOUT;
+        }
+        var rpcUrl = "http://testnet.etherscan.io/api?module=proxy&action=eth_call&" + Object.keys(tx).map(function (k) {
+            return encodeURIComponent(k) + '=' + encodeURIComponent(tx[k]);
+        }).join('&');
+        if (!f) {
+            var req = syncRequest("GET", rpcUrl, {timeout: timeout});
+            var response = req.getBody().toString();
+            return this.parse(response, returns);
+        }
+        request({
+            url: rpcUrl,
+            method: "GET",
+            timeout: timeout
+        }, function (e, response, body) {
+            if (e) {
+                console.error("etherscan eth_call error:", e);
+                self.etherscan = false;
+                f(e);
+            } else if (response.statusCode === 200) {
+                self.parse(body, returns, f);
+            }
+        });
     },
 
     sendTx: function (tx, f) {

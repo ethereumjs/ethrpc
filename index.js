@@ -82,6 +82,8 @@ module.exports = {
 
     errors: errors,
 
+    etherscan: true,
+
     nodes: {
         hosted: HOSTED_NODES.slice(),
         local: null
@@ -810,7 +812,40 @@ module.exports = {
     call: function (tx, f) {
         tx.to = tx.to || "";
         tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
-        return this.broadcast(this.marshal("call", tx), f);
+        if (!this.etherscan) return this.broadcast(this.marshal("call", tx), f);
+        var self = this;
+        var returns, timeout;
+        if (tx.returns) {
+            returns = tx.returns;
+            delete tx.returns;
+        }
+        if (tx.timeout) {
+            timeout = tx.timeout;
+            delete tx.timeout;
+        } else {
+            timeout = this.POST_TIMEOUT;
+        }
+        var rpcUrl = "http://testnet.etherscan.io/api?module=proxy&action=eth_call&" + Object.keys(tx).map(function (k) {
+            return encodeURIComponent(k) + '=' + encodeURIComponent(tx[k]);
+        }).join('&');
+        if (!f) {
+            var req = syncRequest("GET", rpcUrl, {timeout: timeout});
+            var response = req.getBody().toString();
+            return this.parse(response, returns);
+        }
+        request({
+            url: rpcUrl,
+            method: "GET",
+            timeout: timeout
+        }, function (e, response, body) {
+            if (e) {
+                console.error("etherscan eth_call error:", e);
+                self.etherscan = false;
+                f(e);
+            } else if (response.statusCode === 200) {
+                self.parse(body, returns, f);
+            }
+        });
     },
 
     sendTx: function (tx, f) {
