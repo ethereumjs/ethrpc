@@ -1469,6 +1469,8 @@ module.exports = {
 
     errors: errors,
 
+    etherscanApi: "https://testnet.etherscan.io/api?module=proxy",
+
     etherscan: true,
 
     nodes: {
@@ -2212,7 +2214,7 @@ module.exports = {
         } else {
             timeout = this.POST_TIMEOUT;
         }
-        var rpcUrl = "http://testnet.etherscan.io/api?module=proxy&action=eth_call&" + Object.keys(tx).map(function (k) {
+        var rpcUrl = this.etherscanApi + "&action=eth_call&" + Object.keys(tx).map(function (k) {
             return encodeURIComponent(k) + '=' + encodeURIComponent(tx[k]);
         }).join('&');
         if (!f) {
