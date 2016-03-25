@@ -1469,9 +1469,9 @@ module.exports = {
 
     errors: errors,
 
-    etherscanApi: "https://testnet.etherscan.io/api?module=proxy",
+    etherscanApi: "https://testnet.etherscan.io/api",
 
-    etherscan: true,
+    etherscan: false,
 
     nodes: {
         hosted: HOSTED_NODES.slice(),
@@ -1817,203 +1817,334 @@ module.exports = {
         return contracts[network || this.version()];
     },
 
+    etherscannable: function (action) {
+        return [
+                // "eth_blockNumber",
+                // "eth_getBlockByNumber",
+                // "eth_getBlockTransactionCountByNumber",
+                "eth_call",
+                // "eth_sendRawTransaction",
+                // "eth_getTransactionByHash",
+                // "eth_getTransactionByBlockNumberAndIndex",
+                // "eth_getTransactionCount",
+                // "eth_getTransactionReceipt",
+                // "eth_getCode",
+                "eth_getStorageAt"].indexOf(action) > -1;
+    },
+
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
         var start, nodes, numCommands, returns, result, completed, self = this;
+        var action = command.action || command.method;
 
-        if (!command || (command.constructor === Object && !command.method) ||
-            (command.constructor === Array && !command.length))
-        {
-            if (!callback) return null;
-            return callback(null);
-        }
-        if (this.debug.logs) {
-            if (command.method === "eth_call" || command.method === "eth_sendTransaction") {
-                if (command.params && (!command.params.length || !command.params[0].from)) {
-                    console.log(
-                        "**************************\n"+
-                        "* OH GOD WHAT DID YOU DO *\n"+
-                        "**************************"
-                    );
-                    var network = this.version();
-                    var contracts = this.contracts(network);
-                    var contract;
-                    for (var address in contracts) {
-                        if (!contracts.hasOwnProperty(address)) continue;
-                        if (contracts[address] === command.params[0].to) {
-                            contract = address;
-                            break;
+        if (!this.etherscan || !this.etherscannable(action)) {
+            if (!command || (command.constructor === Object && !command.method) ||
+                (command.constructor === Array && !command.length))
+            {
+                if (!callback) return null;
+                return callback(null);
+            }
+            if (this.debug.logs) {
+                if (command.method === "eth_call" || command.method === "eth_sendTransaction") {
+                    if (command.params && (!command.params.length || !command.params[0].from)) {
+                        console.log(
+                            "**************************\n"+
+                            "* OH GOD WHAT DID YOU DO *\n"+
+                            "**************************"
+                        );
+                        var network = this.version();
+                        var contracts = this.contracts(network);
+                        var contract;
+                        for (var address in contracts) {
+                            if (!contracts.hasOwnProperty(address)) continue;
+                            if (contracts[address] === command.params[0].to) {
+                                contract = address;
+                                break;
+                            }
                         }
-                    }
-                    console.log(
-                        "network:", network, "\n"+
-                        "contract:", contract, "[" + command.params[0].to + "]\n"+
-                        "method:", command.method, "\n"+
-                        "params:", JSON.stringify(command.params, null, 2)
-                    );
-                    if (command.debug) {
-                        console.log("tx:", JSON.stringify(command.debug, null, 2));
-                        delete command.debug;
+                        console.log(
+                            "network:", network, "\n"+
+                            "contract:", contract, "[" + command.params[0].to + "]\n"+
+                            "method:", command.method, "\n"+
+                            "params:", JSON.stringify(command.params, null, 2)
+                        );
+                        if (command.debug) {
+                            console.log("tx:", JSON.stringify(command.debug, null, 2));
+                            delete command.debug;
+                        }
                     }
                 }
             }
-        }
 
-        // parse batched commands and strip "returns" and "invocation" fields
-        if (command.constructor === Array) {
-            numCommands = command.length;
-            returns = new Array(numCommands);
-            for (var i = 0; i < numCommands; ++i) {
-                returns[i] = this.strip(command[i]);
+            // parse batched commands and strip "returns" and "invocation" fields
+            if (command.constructor === Array) {
+                numCommands = command.length;
+                returns = new Array(numCommands);
+                for (var i = 0; i < numCommands; ++i) {
+                    returns[i] = this.strip(command[i]);
+                }
+
+            // parse commands and strip "returns" and "invocation" fields
+            } else {
+                returns = this.strip(command);
             }
 
-        // parse commands and strip "returns" and "invocation" fields
-        } else {
-            returns = this.strip(command);
-        }
-
-        // if we're on Node, use IPC if available and ipcpath is specified
-        if (NODE_JS && this.ipcpath && command.method &&
-            command.method.indexOf("Filter") === -1)
-        {
-            var loopback = this.nodes.local && (
-                (this.nodes.local.indexOf("127.0.0.1") > -1 ||
-                this.nodes.local.indexOf("localhost") > -1)
-            );
-            if (!isFunction(callback) && !loopback) {
-                throw new this.Error(errors.LOOPBACK_NOT_FOUND);
-            }
-            if (isFunction(callback) && command.constructor !== Array) {
-                var received = '';
-                var socket = new net.Socket();
-                socket.setEncoding("utf8");
-                socket.connect({ path: this.ipcpath }, function () {
-                    socket.write(JSON.stringify(command));
-                });
-                socket.on("data", function (data) {
-                    received += data;
-                    self.parse(received, returns, function (parsed) {
-                        if (parsed && parsed.error === 409) return;
+            // if we're on Node, use IPC if available and ipcpath is specified
+            if (NODE_JS && this.ipcpath && command.method &&
+                command.method.indexOf("Filter") === -1)
+            {
+                var loopback = this.nodes.local && (
+                    (this.nodes.local.indexOf("127.0.0.1") > -1 ||
+                    this.nodes.local.indexOf("localhost") > -1)
+                );
+                if (!isFunction(callback) && !loopback) {
+                    throw new this.Error(errors.LOOPBACK_NOT_FOUND);
+                }
+                if (isFunction(callback) && command.constructor !== Array) {
+                    var received = '';
+                    var socket = new net.Socket();
+                    socket.setEncoding("utf8");
+                    socket.connect({path: this.ipcpath}, function () {
+                        socket.write(JSON.stringify(command));
+                    });
+                    socket.on("data", function (data) {
+                        received += data;
+                        self.parse(received, returns, function (parsed) {
+                            if (parsed && parsed.error === 409) return;
+                            socket.destroy();
+                            callback(parsed);
+                        });
+                    });
+                    socket.on("error", function (err) {
                         socket.destroy();
-                        callback(parsed);
+                        callback(err);
                     });
-                });
-                socket.on("error", function (err) {
-                    socket.destroy();
-                    callback(err);
-                });
-                return;
+                    return;
+                }
             }
-        }
 
-        // make sure the ethereum node list isn't empty
-        if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath) {
-            if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
-            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
-        }
+            // make sure the ethereum node list isn't empty
+            if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath) {
+                if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
+                throw new this.Error(errors.ETHEREUM_NOT_FOUND);
+            }
 
-        // select local / hosted node(s) to receive RPC
-        nodes = this.selectNodes();
+            // select local / hosted node(s) to receive RPC
+            nodes = this.selectNodes();
 
-        // asynchronous request if callback exists
-        if (isFunction(callback)) {
-            async.eachSeries(nodes, function (node, nextNode) {
-                if (!completed) {
-                    if (self.debug.logs) {
-                        console.log("nodes:", JSON.stringify(nodes));
-                        console.log("post", command.method, "to:", node);
-                    }
-                    if (self.balancer) {
-                        start = new Date().getTime();
-                    }
-                    self.post(node, command, returns, function (res) {
+            // asynchronous request if callback exists
+            if (isFunction(callback)) {
+                async.eachSeries(nodes, function (node, nextNode) {
+                    if (!completed) {
                         if (self.debug.logs) {
-                            if (res && res.constructor === BigNumber) {
-                                console.log(node, "response:", abi.string(res));
-                            } else {
-                                console.log(node, "response:", res);
-                            }
+                            console.log("nodes:", JSON.stringify(nodes));
+                            console.log("post", command.method, "to:", node);
                         }
-                        if (node === nodes[nodes.length - 1] ||
-                            (res !== undefined && res !== null &&
-                            !res.error && res !== "0x"))
-                        {
-                            completed = true;
-                            if (self.balancer) {
-                                self.updateMeanLatency(node, new Date().getTime() - start);
-                            }
-                            return nextNode({ output: res });
+                        if (self.balancer) {
+                            start = new Date().getTime();
                         }
-                        nextNode();
-                    });
-                }
-            }, function (res) {
-                if (!res && res.output === undefined) return callback();
-                callback(res.output);
-            });
+                        self.post(node, command, returns, function (res) {
+                            if (self.debug.logs) {
+                                if (res && res.constructor === BigNumber) {
+                                    console.log(node, "response:", abi.string(res));
+                                } else {
+                                    console.log(node, "response:", res);
+                                }
+                            }
+                            if (node === nodes[nodes.length - 1] ||
+                                (res !== undefined && res !== null &&
+                                !res.error && res !== "0x"))
+                            {
+                                completed = true;
+                                if (self.balancer) {
+                                    self.updateMeanLatency(node, new Date().getTime() - start);
+                                }
+                                return nextNode({ output: res });
+                            }
+                            nextNode();
+                        });
+                    }
+                }, function (res) {
+                    if (!res && res.output === undefined) return callback();
+                    callback(res.output);
+                });
 
-        // use synchronous http if no callback provided
-        } else {
-            for (var j = 0, len = nodes.length; j < len; ++j) {
-                try {
-                    if (this.debug.logs) {
-                        console.log("nodes:", JSON.stringify(nodes));
-                        console.log("synchronous post", command.method, "to:", nodes[j]);
+            // use synchronous http if no callback provided
+            } else {
+                for (var j = 0, len = nodes.length; j < len; ++j) {
+                    try {
+                        if (this.debug.logs) {
+                            console.log("nodes:", JSON.stringify(nodes));
+                            console.log("synchronous post", command.method, "to:", nodes[j]);
+                        }
+                        if (this.balancer) {
+                            start = new Date().getTime();
+                        }
+                        result = this.postSync(nodes[j], command, returns);
+                        if (this.balancer) {
+                            this.updateMeanLatency(nodes[j], new Date().getTime() - start);
+                        }
+                    } catch (e) {
+                        if (this.nodes.local) {
+                            throw new this.Error(errors.LOCAL_NODE_FAILURE);
+                        } else if (this.excision) {
+                            this.exciseNode(e, nodes[j]);
+                        }
                     }
-                    if (this.balancer) {
-                        start = new Date().getTime();
-                    }
-                    result = this.postSync(nodes[j], command, returns);
-                    if (this.balancer) {
-                        this.updateMeanLatency(nodes[j], new Date().getTime() - start);
-                    }
-                } catch (e) {
-                    if (this.nodes.local) {
-                        throw new this.Error(errors.LOCAL_NODE_FAILURE);
-                    } else if (this.excision) {
-                        this.exciseNode(e, nodes[j]);
-                    }
+                    if (result) return result;
                 }
-                if (result) return result;
+                throw new this.Error(errors.NO_RESPONSE);
             }
-            throw new this.Error(errors.NO_RESPONSE);
+
+        // etherscan API
+        } else {
+            var timeout;
+            if (command.returns) {
+                returns = command.returns;
+                delete command.returns;
+            }
+            if (command.timeout) {
+                timeout = command.timeout;
+                delete command.timeout;
+            } else {
+                timeout = this.POST_TIMEOUT;
+            }
+            var rpcUrl = this.etherscanApi + "?" + Object.keys(command).map(function (k) {
+                return encodeURIComponent(k) + '=' + encodeURIComponent(command[k]);
+            }).join('&');
+            console.log("[ethrpc] url:", rpcUrl);
+            if (!isFunction(callback)) {
+                var req;
+                if (NODE_JS) {
+                    req = syncRequest("GET", rpcUrl, {timeout: timeout});
+                    var response = req.getBody().toString();
+                    return this.parse(response, returns);
+                }
+                console.warn("[ethrpc] synchronous RPC request to " + rpcUrl + ":", command);
+                if (window.XMLHttpRequest) {
+                    req = new window.XMLHttpRequest();
+                } else {
+                    req = new window.ActiveXObject("Microsoft.XMLHTTP");
+                }
+                req.open("GET", rpcUrl, false);
+                req.setRequestHeader("Content-type", "application/json");
+                // req.send();
+                return this.parse(req.responseText, returns);
+            }
+            request({
+                url: rpcUrl,
+                method: "GET",
+                timeout: timeout
+            }, function (e, response, body) {
+                if (e) {
+                    console.error("etherscan eth_call error:", e);
+                    self.etherscan = false;
+                    callback(e);
+                } else if (response.statusCode === 200) {
+                    self.parse(body, returns, callback);
+                }
+            });
         }
     },
 
     marshal: function (command, params, prefix) {
-        var payload = {
-            id: this.requests++,
-            jsonrpc: "2.0"
-        };
+        var payload, action;
         if (prefix === "null") {
-            payload.method = command.toString();
+            action = command.toString();
         } else {
-            payload.method = (prefix || "eth_") + command.toString();
+            action = (prefix || "eth_") + command.toString();
         }
-        if (params !== undefined && params !== null) {
-            if (params.constructor === Object) {
-                if (this.debug.broadcast && params.debug) {
-                    payload.debug = abi.copy(params.debug);
-                    delete params.debug;
+
+        // direct-to-geth
+        if (!this.etherscan || !this.etherscannable(action)) {
+            payload = {
+                id: this.requests++,
+                jsonrpc: "2.0",
+                method: action
+            };
+            if (params !== undefined && params !== null) {
+                if (params.constructor === Object) {
+                    if (this.debug.broadcast && params.debug) {
+                        payload.debug = abi.copy(params.debug);
+                        delete params.debug;
+                    }
+                    if (params.timeout) {
+                        payload.timeout = params.timeout;
+                        delete params.timeout;
+                    }
+                    if (JSON.stringify(params) === "{}") {
+                        params = [];
+                    }
                 }
-                if (params.timeout) {
-                    payload.timeout = params.timeout;
-                    delete params.timeout;
+                if (params.constructor === Array) {
+                    payload.params = params;
+                } else {
+                    payload.params = [params];
                 }
-                if (JSON.stringify(params) === "{}") {
-                    params = [];
-                }
-            }
-            if (params.constructor === Array) {
-                payload.params = params;
             } else {
-                payload.params = [params];
+                payload.params = [];
             }
-        } else {
-            payload.params = [];
+            return payload;
         }
-        return payload;
+
+        // use etherscan geth proxy
+        params.module = "proxy";
+        params.action = action;
+        return params;
     },
+
+    // // send RPC requests to etherscan's geth proxy
+    // etherscanify: function (tx, action, f) {
+    //     var self = this;
+    //     var returns, timeout;
+    //     if (tx.returns) {
+    //         returns = tx.returns;
+    //         delete tx.returns;
+    //     }
+    //     if (tx.timeout) {
+    //         timeout = tx.timeout;
+    //         delete tx.timeout;
+    //     } else {
+    //         timeout = this.POST_TIMEOUT;
+    //     }
+    //     tx.module = "proxy";
+    //     tx.action = action;
+    //     var rpcUrl = this.etherscanApi + "?" + Object.keys(tx).map(function (k) {
+    //         return encodeURIComponent(k) + '=' + encodeURIComponent(tx[k]);
+    //     }).join('&');
+    //     if (!f) {
+    //         var req;
+    //         if (NODE_JS) {
+    //             req = syncRequest("GET", rpcUrl, {timeout: timeout});
+    //             var response = req.getBody().toString();
+    //             return this.parse(response, returns);
+    //         }
+    //         console.warn("[ethrpc] synchronous RPC request to " + rpcUrl + ":", command);
+    //         if (window.XMLHttpRequest) {
+    //             req = new window.XMLHttpRequest();
+    //         } else {
+    //             req = new window.ActiveXObject("Microsoft.XMLHTTP");
+    //         }
+    //         req.open("GET", rpcUrl, false);
+    //         req.setRequestHeader("Content-type", "application/json");
+    //         // req.send(JSON.stringify(command));
+    //         req.send();
+    //         return this.parse(req.responseText, returns);
+    //     }
+    //     request({
+    //         url: rpcUrl,
+    //         method: "GET",
+    //         timeout: timeout
+    //     }, function (e, response, body) {
+    //         if (e) {
+    //             console.error("etherscan eth_call error:", e);
+    //             self.etherscan = false;
+    //             f(e);
+    //         } else if (response.statusCode === 200) {
+    //             self.parse(body, returns, f);
+    //         }
+    //     });
+    // },
 
     setLocalNode: function (urlstr) {
         this.nodes.local = urlstr || this.localnode;
@@ -2201,40 +2332,7 @@ module.exports = {
     call: function (tx, f) {
         tx.to = tx.to || "";
         tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
-        if (!this.etherscan) return this.broadcast(this.marshal("call", tx), f);
-        var self = this;
-        var returns, timeout;
-        if (tx.returns) {
-            returns = tx.returns;
-            delete tx.returns;
-        }
-        if (tx.timeout) {
-            timeout = tx.timeout;
-            delete tx.timeout;
-        } else {
-            timeout = this.POST_TIMEOUT;
-        }
-        var rpcUrl = this.etherscanApi + "&action=eth_call&" + Object.keys(tx).map(function (k) {
-            return encodeURIComponent(k) + '=' + encodeURIComponent(tx[k]);
-        }).join('&');
-        if (!f) {
-            var req = syncRequest("GET", rpcUrl, {timeout: timeout});
-            var response = req.getBody().toString();
-            return this.parse(response, returns);
-        }
-        request({
-            url: rpcUrl,
-            method: "GET",
-            timeout: timeout
-        }, function (e, response, body) {
-            if (e) {
-                console.error("etherscan eth_call error:", e);
-                self.etherscan = false;
-                f(e);
-            } else if (response.statusCode === 200) {
-                self.parse(body, returns, f);
-            }
-        });
+        return this.broadcast(this.marshal("call", tx), f);
     },
 
     sendTx: function (tx, f) {
