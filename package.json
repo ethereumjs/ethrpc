@@ -23,8 +23,7 @@
     "augur-abi": "^0.2.7",
     "augur-contracts": "AugurProject/augur-contracts",
     "bignumber.js": "^2.0.7",
-    "browser-request": "^0.3.3",
-    "request": "^2.61.0"
+    "browser-request": "^0.3.3"
   },
   "devDependencies": {
     "browserify": "^11.0.1",
@@ -41,9 +40,11 @@
     "uglify-js": "^2.4.24"
   },
   "optionalDependencies": {
-    "sync-request": "^2.0.1"
+    "sync-request": "^2.0.1",
+    "request": "^2.61.0"
   },
   "browser": {
-    "sync-request": false
+    "sync-request": false,
+    "request": false
   }
 }
