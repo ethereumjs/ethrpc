@@ -1005,14 +1005,14 @@ module.exports = function (network) {
             method: "getMarketInfo",
             signature: "i",
             returns: "hash[]",
-            gas: 9999999999999
+            gas: "0x9184e729fff"
         },
         getMarketsInfo: {
             to: contracts.markets,
             method: "getMarketsInfo",
             signature: "iii",
             returns: "hash[]",
-            gas: 9999999999999
+            gas: "0x9184e729fff"
         },
         getMarketEvents: {
             to: contracts.markets,
@@ -1300,13 +1300,6 @@ module.exports = function (network) {
             signature: "iii",
             returns: "hash"
         },
-        report: {
-            to: contracts.makeReports,
-            method: "report",
-            signature: "iaii",
-            returns: "number",
-            send: true
-        },
         calculateReportingThreshold: {
             to: contracts.makeReports,
             method: "calculateReportingThreshold",
@@ -1330,7 +1323,7 @@ module.exports = function (network) {
         checkReportValidity: {
             to: contracts.makeReports,
             method: "checkReportValidity",
-            signature: "iai",
+            signature: "iii",
             returns: "number"
         },
 
@@ -1556,6 +1549,7 @@ module.exports = {
 
     parse: function (response, returns, callback) {
         var results, len, err;
+        // console.log(response);
         try {
             if (response && typeof response === "string") {
                 response = JSON.parse(response);
@@ -1691,6 +1685,9 @@ module.exports = {
         } else {
             timeout = this.POST_TIMEOUT;
         }
+        // if (command.method === "eth_getLogs") {
+        //     console.log(JSON.stringify(command, null, 2), timeout);
+        // }
         request({
             url: rpcUrl,
             method: 'POST',
@@ -1698,7 +1695,12 @@ module.exports = {
             timeout: timeout
         }, function (err, response, body) {
             var e;
+            // console.log("err:", err);
+            // console.log("body:", body);
+            // console.log("response.statusCode:", response.statusCode);
             if (err) {
+                // console.log("post error:", err, response, body);
+                // console.log(JSON.stringify(command, null, 2), timeout);
                 self.primaryNode = null;
                 if (self.nodes.local) {
                     if (self.nodes.local === self.localnode) {
@@ -1817,27 +1819,11 @@ module.exports = {
         return contracts[network || this.version()];
     },
 
-    etherscannable: function (action) {
-        return [
-                // "eth_blockNumber",
-                // "eth_getBlockByNumber",
-                // "eth_getBlockTransactionCountByNumber",
-                "eth_call",
-                // "eth_sendRawTransaction",
-                // "eth_getTransactionByHash",
-                // "eth_getTransactionByBlockNumberAndIndex",
-                // "eth_getTransactionCount",
-                // "eth_getTransactionReceipt",
-                // "eth_getCode",
-                "eth_getStorageAt"].indexOf(action) > -1;
-    },
-
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
         var start, nodes, numCommands, returns, result, completed, self = this;
-        var action = command.action || command.method;
 
-        if (!this.etherscan || !this.etherscannable(action)) {
+        if (!this.etherscan) {
             if (!command || (command.constructor === Object && !command.method) ||
                 (command.constructor === Array && !command.length))
             {
@@ -2077,6 +2063,11 @@ module.exports = {
                     }
                 }
                 if (params.constructor === Array) {
+                    for (var i = 0, len = params.length; i < len; ++i) {
+                        if (params[i].constructor === Number) {
+                            params[i] = params[i].toString();
+                        }
+                    }
                     payload.params = params;
                 } else {
                     payload.params = [params];
@@ -2092,59 +2083,6 @@ module.exports = {
         params.action = action;
         return params;
     },
-
-    // // send RPC requests to etherscan's geth proxy
-    // etherscanify: function (tx, action, f) {
-    //     var self = this;
-    //     var returns, timeout;
-    //     if (tx.returns) {
-    //         returns = tx.returns;
-    //         delete tx.returns;
-    //     }
-    //     if (tx.timeout) {
-    //         timeout = tx.timeout;
-    //         delete tx.timeout;
-    //     } else {
-    //         timeout = this.POST_TIMEOUT;
-    //     }
-    //     tx.module = "proxy";
-    //     tx.action = action;
-    //     var rpcUrl = this.etherscanApi + "?" + Object.keys(tx).map(function (k) {
-    //         return encodeURIComponent(k) + '=' + encodeURIComponent(tx[k]);
-    //     }).join('&');
-    //     if (!f) {
-    //         var req;
-    //         if (NODE_JS) {
-    //             req = syncRequest("GET", rpcUrl, {timeout: timeout});
-    //             var response = req.getBody().toString();
-    //             return this.parse(response, returns);
-    //         }
-    //         console.warn("[ethrpc] synchronous RPC request to " + rpcUrl + ":", command);
-    //         if (window.XMLHttpRequest) {
-    //             req = new window.XMLHttpRequest();
-    //         } else {
-    //             req = new window.ActiveXObject("Microsoft.XMLHTTP");
-    //         }
-    //         req.open("GET", rpcUrl, false);
-    //         req.setRequestHeader("Content-type", "application/json");
-    //         // req.send(JSON.stringify(command));
-    //         req.send();
-    //         return this.parse(req.responseText, returns);
-    //     }
-    //     request({
-    //         url: rpcUrl,
-    //         method: "GET",
-    //         timeout: timeout
-    //     }, function (e, response, body) {
-    //         if (e) {
-    //             console.error("etherscan eth_call error:", e);
-    //             self.etherscan = false;
-    //             f(e);
-    //         } else if (response.statusCode === 200) {
-    //             self.parse(body, returns, f);
-    //         }
-    //     });
-    // },
 
     setLocalNode: function (urlstr) {
         this.nodes.local = urlstr || this.localnode;
@@ -2332,17 +2270,17 @@ module.exports = {
     call: function (tx, f) {
         tx.to = tx.to || "";
         tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
-        return this.broadcast(this.marshal("call", tx), f);
+        return this.broadcast(this.marshal("call", [tx, "latest"]), f);
     },
 
     sendTx: function (tx, f) {
         tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
+        tx.gas = tx.gas || this.DEFAULT_GAS;
         return this.broadcast(this.marshal("sendTransaction", tx), f);
     },
     sendTransaction: function (tx, f) {
         tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
+        tx.gas = tx.gas || this.DEFAULT_GAS;
         return this.broadcast(this.marshal("sendTransaction", tx), f);
     },
 
