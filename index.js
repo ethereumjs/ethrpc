@@ -35,7 +35,6 @@ function isFunction(f) {
 }
 
 var HOSTED_NODES = [
-    "https://eth1.augur.net",
     "https://eth3.augur.net",
     "https://eth4.augur.net",
     "https://eth5.augur.net"
@@ -305,9 +304,6 @@ module.exports = {
         } else {
             timeout = this.POST_TIMEOUT;
         }
-        // if (command.method === "eth_getLogs") {
-        //     console.log(JSON.stringify(command, null, 2), timeout);
-        // }
         request({
             url: rpcUrl,
             method: 'POST',
@@ -315,12 +311,7 @@ module.exports = {
             timeout: timeout
         }, function (err, response, body) {
             var e;
-            // console.log("err:", err);
-            // console.log("body:", body);
-            // console.log("response.statusCode:", response.statusCode);
             if (err) {
-                // console.log("post error:", err, response, body);
-                // console.log(JSON.stringify(command, null, 2), timeout);
                 self.primaryNode = null;
                 if (self.nodes.local) {
                     if (self.nodes.local === self.localnode) {
