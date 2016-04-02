@@ -18,10 +18,10 @@ describe("RPC", function () {
 
     var TIMEOUT = 360000;
     var SAMPLES = 25;
-    var COINBASE = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
+    var COINBASE = "0x00bae5113ee9f252cceb0001205b88fad175461a";
     var SHA3_INPUT = "boom!";
     var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
-    var PROTOCOL_VERSION = "63";
+    var PROTOCOL_VERSION = "0x3f";
     var TXHASH = "0xc52b258dec9e8374880b346f93669d7699d7e64d46c8b6072b19122ca9406461";
     var NETWORK_ID = "2";
     contracts = contracts[NETWORK_ID];
@@ -172,17 +172,18 @@ describe("RPC", function () {
         };
 
         test({
-            node: "https://eth1.augur.net",
+            node: "https://eth3.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
                 method: "eth_coinbase",
                 params: []
             },
+            returns: "address",
             expected: COINBASE
         });
         test({
-            node: "https://eth1.augur.net",
+            node: "https://eth3.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -192,7 +193,7 @@ describe("RPC", function () {
             expected: SHA3_DIGEST
         });
         test({
-            node: "https://eth1.augur.net",
+            node: "https://eth3.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -202,7 +203,7 @@ describe("RPC", function () {
             expected: true
         });
         test({
-            node: "https://eth1.augur.net",
+            node: "https://eth3.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -230,17 +231,18 @@ describe("RPC", function () {
         };
 
         test({
-            node: "https://eth1.augur.net",
+            node: "https://eth3.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
                 method: "eth_coinbase",
                 params: []
             },
+            returns: "address",
             expected: COINBASE
         });
         test({
-            node: "https://eth1.augur.net",
+            node: "https://eth3.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -250,7 +252,7 @@ describe("RPC", function () {
             expected: SHA3_DIGEST
         });
         test({
-            node: "https://eth1.augur.net",
+            node: "https://eth3.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -260,7 +262,7 @@ describe("RPC", function () {
             expected: true
         });
         test({
-            node: "https://eth1.augur.net",
+            node: "https://eth3.augur.net",
             command: {
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -287,10 +289,6 @@ describe("RPC", function () {
             });
         };
 
-        test({
-            node: "https://eth1.augur.net",
-            listening: true
-        });
         test({
             node: "https://eth3.augur.net",
             listening: true
@@ -338,10 +336,6 @@ describe("RPC", function () {
         };
 
         test({
-            node: "https://eth1.augur.net",
-            version: NETWORK_ID
-        });
-        test({
             node: "https://eth3.augur.net",
             version: NETWORK_ID
         });
@@ -368,28 +362,28 @@ describe("RPC", function () {
         };
 
         test({
-            node: "https://eth1.augur.net",
-            account: COINBASE,
-            unlocked: true
-        });
-        test({
             node: "https://eth3.augur.net",
-            account: COINBASE,
-            unlocked: true
-        });
-        test({
-            node: "https://eth3.augur.net",
-            account: COINBASE,
+            account: "0x00bae5113ee9f252cceb0001205b88fad175461a",
             unlocked: true
         });
         test({
             node: "https://eth4.augur.net",
-            account: COINBASE,
+            account: "0x8296eb59079f435275b76058c08b47c4f8965b78",
             unlocked: true
         });
         test({
             node: "https://eth5.augur.net",
-            account: COINBASE,
+            account: "0xe434ed7f4684e3d2db25c4937c9e0b7b1faf54c6",
+            unlocked: true
+        });
+        test({
+            node: "https://faucet.augur.net",
+            account: "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec",
+            unlocked: false
+        });
+        test({
+            node: "https://report.augur.net",
+            account: "0xcb42ebea8dff08f64480309ea3b0c1f45e4a378c",
             unlocked: true
         });
         test({
@@ -414,9 +408,10 @@ describe("RPC", function () {
 
         var test = function (res) {
             assert.isArray(res);
-            assert.strictEqual(res.length, 2);
-            assert(parseInt(res[0]) === 1 || parseInt(res[0]) === -1);
-            assert(parseInt(res[1]) === 1 || parseInt(res[1]) === -1);
+            assert.strictEqual(res.length, txList.length);
+            for (var i = 0; i < txList.length; ++i) {
+                assert.strictEqual(parseInt(res[i]), parseInt(rpc.invoke(txList[i])));
+            }
         };
 
         var txList = [{
@@ -424,15 +419,15 @@ describe("RPC", function () {
             method: "reputationFaucet",
             signature: "i",
             params: "0xf69b5",
-            returns: "number",
-            send: false
+            send: false,
+            gasPrice: "0x4a817c800"
         }, {
             to: contracts.faucets,
             method: "reputationFaucet",
             signature: "i",
             params: "0xf69b5",
-            returns: "number",
-            send: false
+            send: false,
+            gasPrice: "0x4a817c800"
         }];
 
         it("sync: return and match separate calls", function () {
@@ -541,22 +536,12 @@ describe("RPC", function () {
 
     describe("Ethereum bindings", function () {
 
-        it("raw('eth_coinbase')", function (done) {
+        it("raw('eth_protocolVersion')", function (done) {
             this.timeout(TIMEOUT);
-            assert.strictEqual(rpc.raw("eth_coinbase"), COINBASE);
-            rpc.raw("eth_coinbase", COINBASE, function (res) {
+            assert.strictEqual(rpc.raw("eth_protocolVersion"), PROTOCOL_VERSION);
+            rpc.raw("eth_protocolVersion", PROTOCOL_VERSION, function (res) {
                 if (res.error) return done(res);
-                assert.strictEqual(res, COINBASE);
-                done();
-            });
-        });
-
-        it("eth('coinbase')", function (done) {
-            this.timeout(TIMEOUT);
-            assert.strictEqual(rpc.eth("coinbase"), COINBASE);
-            rpc.eth("coinbase", null, function (res) {
-                if (res.error) return done(res);
-                assert.strictEqual(res, COINBASE);
+                assert.strictEqual(res, PROTOCOL_VERSION);
                 done();
             });
         });
@@ -608,27 +593,28 @@ describe("RPC", function () {
 
         it("balance/getBalance", function (done) {
             this.timeout(TIMEOUT);
-            assert.isAbove(parseInt(rpc.balance(COINBASE)), 0);
-            rpc.balance(COINBASE, function (res) {
+            var coinbase = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
+            assert.isAbove(parseInt(rpc.balance(coinbase)), 0);
+            rpc.balance(coinbase, function (res) {
                 if (res.error) return done(res);
                 assert.isAbove(parseInt(res), 0);
-                rpc.getBalance(COINBASE, function (r) {
+                rpc.getBalance(coinbase, function (r) {
                     if (r.error) return done(r);
                     assert.isAbove(parseInt(r), 0);
                     assert.strictEqual(r, res);
-                    rpc.balance(COINBASE, "latest", function (r) {
+                    rpc.balance(coinbase, "latest", function (r) {
                         if (r.error) return done(r);
                         assert.isAbove(parseInt(r), 0);
                         assert.strictEqual(r, res);
-                        rpc.getBalance(COINBASE, "latest", function (r) {
+                        rpc.getBalance(coinbase, "latest", function (r) {
                             if (r.error) return done(r);
                             assert.isAbove(parseInt(r), 0);
                             assert.strictEqual(r, res);
-                            rpc.balance(COINBASE, null, function (r) {
+                            rpc.balance(coinbase, null, function (r) {
                                 if (r.error) return done(r);
                                 assert.isAbove(parseInt(r), 0);
                                 assert.strictEqual(r, res);
-                                rpc.getBalance(COINBASE, null, function (r) {
+                                rpc.getBalance(coinbase, null, function (r) {
                                     if (r.error) return done(r);
                                     assert.isAbove(parseInt(r), 0);
                                     assert.strictEqual(r, res);
@@ -643,12 +629,13 @@ describe("RPC", function () {
 
         it("txCount/getTransactionCount", function (done) {
             this.timeout(TIMEOUT);
-            assert(parseInt(rpc.txCount(COINBASE)) >= 0);
-            assert(parseInt(rpc.pendingTxCount(COINBASE)) >= 0);
-            rpc.txCount(COINBASE, function (res) {
+            var coinbase = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
+            assert(parseInt(rpc.txCount(coinbase)) >= 0);
+            assert(parseInt(rpc.pendingTxCount(coinbase)) >= 0);
+            rpc.txCount(coinbase, function (res) {
                 if (res.error) return done(res);
                 assert(parseInt(res) >= 0);
-                rpc.pendingTxCount(COINBASE, function (res) {
+                rpc.pendingTxCount(coinbase, function (res) {
                     if (res.error) return done(res);
                     assert(parseInt(res) >= 0);
                     done();
@@ -689,7 +676,7 @@ describe("RPC", function () {
 
         it("mining", function (done) {
             this.timeout(TIMEOUT);
-            switch (NETWORK_ID) {
+            switch (rpc.version()) {
             case "10101":
                 assert.isTrue(rpc.mining());
                 rpc.mining(function (res) {
@@ -883,41 +870,6 @@ describe("RPC", function () {
         });
     });
 
-    describe("sendEther", function () {
-
-        var etherValue = "1";
-        var recipient = "0x639b41c4d3d399894f2a57894278e1653e7cd24c";
-
-        it("send " + etherValue + " ether to " + recipient, function (done) {
-            this.timeout(TIMEOUT*4);
-            var start_balance = abi.bignum(rpc.balance(recipient)).dividedBy(rpc.ETHER);
-            rpc.reset();
-            rpc.sendEther({
-                to: recipient,
-                value: etherValue,
-                from: COINBASE,
-                onSent: function (res) {
-                    assert.isNotNull(res);
-                    assert.property(res, "txHash");
-                    assert.property(res, "callReturn");
-                    assert.isNotNull(res.txHash);
-                    assert.strictEqual(res.txHash.length, 66);
-                    assert.isNull(res.callReturn);
-                },
-                onSuccess: function (res) {
-                    assert.strictEqual(res.from, COINBASE);
-                    assert.strictEqual(res.to, recipient);
-                    assert.strictEqual(abi.bignum(res.value).dividedBy(rpc.ETHER).toFixed(), etherValue);
-                    var final_balance = rpc.balance(recipient);
-                    final_balance = abi.bignum(final_balance).dividedBy(rpc.ETHER);
-                    assert.strictEqual(final_balance.sub(start_balance).toFixed(), etherValue);
-                    done();
-                },
-                onFailed: done
-            });
-        });
-    });
-
     describe("invoke", function () {
         var encodedParams, returns;
 
@@ -952,7 +904,7 @@ describe("RPC", function () {
                     to: contracts.branches,
                     data: encodedParams,
                     returns: returns
-                }]
+                }, "latest"]
             });
             assert.strictEqual(invokeResult, callResult);
             assert.strictEqual(invokeResult, broadcastResult);
@@ -983,7 +935,7 @@ describe("RPC", function () {
                             to: contracts.branches,
                             data: encodedParams,
                             returns: returns
-                        }]
+                        }, "latest"]
                     }, function (broadcastResult) {
                         assert.strictEqual(invokeResult, callResult);
                         assert.strictEqual(invokeResult, broadcastResult);
@@ -1035,31 +987,16 @@ describe("RPC", function () {
             assert.deepEqual(rpc.nodes.hosted, nodes);
         });
 
-        it("remove nodes 1 and 3", function () {
+        it("remove nodes 0 and 2", function () {
             var nodes = HOSTED_NODES.slice();
             rpc.reset();
             assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
             assert.deepEqual(rpc.nodes.hosted, nodes);
-            rpc.exciseNode(null, nodes[1]);
-            rpc.exciseNode(null, nodes[3]);
-            nodes.splice(3, 1);
-            nodes.splice(1, 1);
-            assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length - 2);
-            assert.deepEqual(rpc.nodes.hosted, nodes);
-        });
-
-        it("remove nodes 1, 2 and 3", function () {
-            var nodes = HOSTED_NODES.slice();
-            rpc.reset();
-            assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
-            assert.deepEqual(rpc.nodes.hosted, nodes);
-            rpc.exciseNode(null, nodes[1]);
+            rpc.exciseNode(null, nodes[0]);
             rpc.exciseNode(null, nodes[2]);
-            rpc.exciseNode(null, nodes[3]);
-            nodes.splice(3, 1);
             nodes.splice(2, 1);
-            nodes.splice(1, 1);
-            assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length - 3);
+            nodes.splice(0, 1);
+            assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length - 2);
             assert.deepEqual(rpc.nodes.hosted, nodes);
         });
 
@@ -1069,9 +1006,8 @@ describe("RPC", function () {
             assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
             rpc.exciseNode(null, HOSTED_NODES[0]);
             rpc.exciseNode(null, HOSTED_NODES[1]);
-            rpc.exciseNode(null, HOSTED_NODES[2]);
             assert.throws(function () {
-                rpc.exciseNode(null, HOSTED_NODES[3]);
+                rpc.exciseNode(null, HOSTED_NODES[2]);
             }, Error, /411/);
         });
 
@@ -1079,58 +1015,58 @@ describe("RPC", function () {
 
     describe("Backup nodes", function () {
 
-        it("[sync] graceful failover to eth1.augur.net", function () {
+        it("[sync] graceful failover to eth3.augur.net", function () {
             this.timeout(TIMEOUT);
-            rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth1.augur.net"];
+            rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth3.augur.net"];
             assert.strictEqual(rpc.nodes.hosted.length, 2);
             assert.strictEqual(rpc.version(), NETWORK_ID);
             assert.strictEqual(rpc.nodes.hosted.length, 1);
-            assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
+            assert.strictEqual(rpc.nodes.hosted[0], "https://eth3.augur.net");
         });
 
-        it("[async] graceful failover to eth1.augur.net", function (done) {
+        it("[async] graceful failover to eth3.augur.net", function (done) {
             this.timeout(TIMEOUT);
-            rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth1.augur.net"];
+            rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth3.augur.net"];
             assert.strictEqual(rpc.nodes.hosted.length, 2);
             rpc.version(function (version) {
                 assert.strictEqual(version, NETWORK_ID);
                 assert.strictEqual(rpc.nodes.hosted.length, 1);
-                assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
+                assert.strictEqual(rpc.nodes.hosted[0], "https://eth3.augur.net");
                 done();
             });
         });
 
-        it("[sync] graceful failover to eth[1,3,4].augur.net", function () {
+        it("[sync] graceful failover to eth[3,4,5].augur.net", function () {
             this.timeout(TIMEOUT);
             rpc.nodes.hosted = [
                 "https://lol.lol.lol",
-                "https://eth1.augur.net",
                 "https://eth3.augur.net",
-                "https://eth4.augur.net"
+                "https://eth4.augur.net",
+                "https://eth5.augur.net"
             ];
             assert.strictEqual(rpc.nodes.hosted.length, 4);
             assert.strictEqual(rpc.version(), NETWORK_ID);
             assert.strictEqual(rpc.nodes.hosted.length, 3);
-            assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
-            assert.strictEqual(rpc.nodes.hosted[1], "https://eth3.augur.net");
-            assert.strictEqual(rpc.nodes.hosted[2], "https://eth4.augur.net");
+            assert.strictEqual(rpc.nodes.hosted[0], "https://eth3.augur.net");
+            assert.strictEqual(rpc.nodes.hosted[1], "https://eth4.augur.net");
+            assert.strictEqual(rpc.nodes.hosted[2], "https://eth5.augur.net");
         });
 
         it("[async] graceful failover to eth[1,3,4].augur.net", function (done) {
             this.timeout(TIMEOUT);
             rpc.nodes.hosted = [
                 "https://lol.lol.lol",
-                "https://eth1.augur.net",
                 "https://eth3.augur.net",
-                "https://eth4.augur.net"
+                "https://eth4.augur.net",
+                "https://eth5.augur.net"
             ];
             assert.strictEqual(rpc.nodes.hosted.length, 4);
             rpc.version(function (version) {
                 assert.strictEqual(version, NETWORK_ID);
                 assert.strictEqual(rpc.nodes.hosted.length, 3);
-                assert.strictEqual(rpc.nodes.hosted[0], "https://eth1.augur.net");
-                assert.strictEqual(rpc.nodes.hosted[1], "https://eth3.augur.net");
-                assert.strictEqual(rpc.nodes.hosted[2], "https://eth4.augur.net");
+                assert.strictEqual(rpc.nodes.hosted[0], "https://eth3.augur.net");
+                assert.strictEqual(rpc.nodes.hosted[1], "https://eth4.augur.net");
+                assert.strictEqual(rpc.nodes.hosted[2], "https://eth5.augur.net");
                 done();
             });
         });
@@ -1240,7 +1176,6 @@ describe("RPC", function () {
             rpc.balancer = true;
             rpc.reset(true);
             async.each([
-                "https://eth1.augur.net",
                 "https://eth3.augur.net",
                 "https://eth4.augur.net",
                 "https://eth5.augur.net"
@@ -1256,8 +1191,8 @@ describe("RPC", function () {
                 });
             }, function (err) {
                 assert.isNull(err);
-                assert.strictEqual(Object.keys(rpc.latency).length, 4);
-                assert.strictEqual(Object.keys(rpc.samples).length, 4);
+                assert.strictEqual(Object.keys(rpc.latency).length, 3);
+                assert.strictEqual(Object.keys(rpc.samples).length, 3);
                 done();
             });
         });
@@ -1306,8 +1241,8 @@ describe("RPC", function () {
                 });
             }, function (err) {
                 assert.isNull(err);
-                assert.strictEqual(Object.keys(rpc.latency).length, 4);
-                assert.strictEqual(Object.keys(rpc.samples).length, 4);
+                assert.strictEqual(Object.keys(rpc.latency).length, 3);
+                assert.strictEqual(Object.keys(rpc.samples).length, 3);
                 var total = 0;
                 for (var node in rpc.samples) {
                     if (!rpc.samples.hasOwnProperty(node)) continue;

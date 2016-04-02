@@ -81,10 +81,6 @@ module.exports = {
 
     errors: errors,
 
-    etherscanApi: "https://testnet.etherscan.io/api",
-
-    etherscan: false,
-
     nodes: {
         hosted: HOSTED_NODES.slice(),
         local: null
@@ -168,12 +164,11 @@ module.exports = {
 
     parse: function (response, returns, callback) {
         var results, len, err;
-        // console.log(response);
         try {
             if (response && typeof response === "string") {
                 response = JSON.parse(response);
             }
-            if (response && typeof response === "object" && response !== null) {
+            if (response !== undefined && typeof response === "object" && response !== null) {
                 if (response.error) {
                     response = {
                         error: response.error.code,
@@ -187,8 +182,7 @@ module.exports = {
                             response.result = this.applyReturns(returns, response.result);
                         } else {
                             if (response.result && response.result.length > 2 &&
-                                response.result.slice(0,2) === "0x")
-                            {
+                                response.result.slice(0,2) === "0x") {
                                 response.result = abi.remove_leading_zeros(response.result);
                                 response.result = abi.prefix_hex(response.result);
                             }
@@ -240,6 +234,7 @@ module.exports = {
 
     strip: function (tx) {
         var returns;
+        if (tx.method === "eth_coinbase") return "address";
         if (tx.params !== undefined && tx.params.length && tx.params[0]) {
             if (tx.params[0].returns) {
                 returns = tx.params[0].returns;
@@ -434,213 +429,161 @@ module.exports = {
     broadcast: function (command, callback) {
         var start, nodes, numCommands, returns, result, completed, self = this;
 
-        if (!this.etherscan) {
-            if (!command || (command.constructor === Object && !command.method) ||
-                (command.constructor === Array && !command.length))
-            {
-                if (!callback) return null;
-                return callback(null);
-            }
-            if (this.debug.logs) {
-                if (command.method === "eth_call" || command.method === "eth_sendTransaction") {
-                    if (command.params && (!command.params.length || !command.params[0].from)) {
-                        console.log(
-                            "**************************\n"+
-                            "* OH GOD WHAT DID YOU DO *\n"+
-                            "**************************"
-                        );
-                        var network = this.version();
-                        var contracts = this.contracts(network);
-                        var contract;
-                        for (var address in contracts) {
-                            if (!contracts.hasOwnProperty(address)) continue;
-                            if (contracts[address] === command.params[0].to) {
-                                contract = address;
-                                break;
-                            }
+        if (!command || (command.constructor === Object && !command.method) ||
+            (command.constructor === Array && !command.length)) {
+            if (!callback) return null;
+            return callback(null);
+        }
+        if (this.debug.logs) {
+            if (command.method === "eth_call" || command.method === "eth_sendTransaction") {
+                if (command.params && (!command.params.length || !command.params[0].from)) {
+                    console.log(
+                        "**************************\n"+
+                        "* OH GOD WHAT DID YOU DO *\n"+
+                        "**************************"
+                    );
+                    var network = this.version();
+                    var contracts = this.contracts(network);
+                    var contract;
+                    for (var address in contracts) {
+                        if (!contracts.hasOwnProperty(address)) continue;
+                        if (contracts[address] === command.params[0].to) {
+                            contract = address;
+                            break;
                         }
-                        console.log(
-                            "network:", network, "\n"+
-                            "contract:", contract, "[" + command.params[0].to + "]\n"+
-                            "method:", command.method, "\n"+
-                            "params:", JSON.stringify(command.params, null, 2)
-                        );
-                        if (command.debug) {
-                            console.log("tx:", JSON.stringify(command.debug, null, 2));
-                            delete command.debug;
-                        }
+                    }
+                    console.log(
+                        "network:", network, "\n"+
+                        "contract:", contract, "[" + command.params[0].to + "]\n"+
+                        "method:", command.method, "\n"+
+                        "params:", JSON.stringify(command.params, null, 2)
+                    );
+                    if (command.debug) {
+                        console.log("tx:", JSON.stringify(command.debug, null, 2));
+                        delete command.debug;
                     }
                 }
             }
+        }
 
-            // parse batched commands and strip "returns" and "invocation" fields
-            if (command.constructor === Array) {
-                numCommands = command.length;
-                returns = new Array(numCommands);
-                for (var i = 0; i < numCommands; ++i) {
-                    returns[i] = this.strip(command[i]);
-                }
-
-            // parse commands and strip "returns" and "invocation" fields
-            } else {
-                returns = this.strip(command);
+        // parse batched commands and strip "returns" and "invocation" fields
+        if (command.constructor === Array) {
+            numCommands = command.length;
+            returns = new Array(numCommands);
+            for (var i = 0; i < numCommands; ++i) {
+                returns[i] = this.strip(command[i]);
             }
 
-            // if we're on Node, use IPC if available and ipcpath is specified
-            if (NODE_JS && this.ipcpath && command.method &&
-                command.method.indexOf("Filter") === -1)
-            {
-                var loopback = this.nodes.local && (
-                    (this.nodes.local.indexOf("127.0.0.1") > -1 ||
-                    this.nodes.local.indexOf("localhost") > -1)
-                );
-                if (!isFunction(callback) && !loopback) {
-                    throw new this.Error(errors.LOOPBACK_NOT_FOUND);
-                }
-                if (isFunction(callback) && command.constructor !== Array) {
-                    var received = '';
-                    var socket = new net.Socket();
-                    socket.setEncoding("utf8");
-                    socket.connect({path: this.ipcpath}, function () {
-                        socket.write(JSON.stringify(command));
-                    });
-                    socket.on("data", function (data) {
-                        received += data;
-                        self.parse(received, returns, function (parsed) {
-                            if (parsed && parsed.error === 409) return;
-                            socket.destroy();
-                            callback(parsed);
-                        });
-                    });
-                    socket.on("error", function (err) {
-                        socket.destroy();
-                        callback(err);
-                    });
-                    return;
-                }
-            }
-
-            // make sure the ethereum node list isn't empty
-            if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath) {
-                if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
-                throw new this.Error(errors.ETHEREUM_NOT_FOUND);
-            }
-
-            // select local / hosted node(s) to receive RPC
-            nodes = this.selectNodes();
-
-            // asynchronous request if callback exists
-            if (isFunction(callback)) {
-                async.eachSeries(nodes, function (node, nextNode) {
-                    if (!completed) {
-                        if (self.debug.logs) {
-                            console.log("nodes:", JSON.stringify(nodes));
-                            console.log("post", command.method, "to:", node);
-                        }
-                        if (self.balancer) {
-                            start = new Date().getTime();
-                        }
-                        self.post(node, command, returns, function (res) {
-                            if (self.debug.logs) {
-                                if (res && res.constructor === BigNumber) {
-                                    console.log(node, "response:", abi.string(res));
-                                } else {
-                                    console.log(node, "response:", res);
-                                }
-                            }
-                            if (node === nodes[nodes.length - 1] ||
-                                (res !== undefined && res !== null &&
-                                !res.error && res !== "0x"))
-                            {
-                                completed = true;
-                                if (self.balancer) {
-                                    self.updateMeanLatency(node, new Date().getTime() - start);
-                                }
-                                return nextNode({ output: res });
-                            }
-                            nextNode();
-                        });
-                    }
-                }, function (res) {
-                    if (!res && res.output === undefined) return callback();
-                    callback(res.output);
-                });
-
-            // use synchronous http if no callback provided
-            } else {
-                for (var j = 0, len = nodes.length; j < len; ++j) {
-                    try {
-                        if (this.debug.logs) {
-                            console.log("nodes:", JSON.stringify(nodes));
-                            console.log("synchronous post", command.method, "to:", nodes[j]);
-                        }
-                        if (this.balancer) {
-                            start = new Date().getTime();
-                        }
-                        result = this.postSync(nodes[j], command, returns);
-                        if (this.balancer) {
-                            this.updateMeanLatency(nodes[j], new Date().getTime() - start);
-                        }
-                    } catch (e) {
-                        if (this.nodes.local) {
-                            throw new this.Error(errors.LOCAL_NODE_FAILURE);
-                        } else if (this.excision) {
-                            this.exciseNode(e, nodes[j]);
-                        }
-                    }
-                    if (result) return result;
-                }
-                throw new this.Error(errors.NO_RESPONSE);
-            }
-
-        // etherscan API
+        // parse commands and strip "returns" and "invocation" fields
         } else {
-            var timeout;
-            if (command.returns) {
-                returns = command.returns;
-                delete command.returns;
+            returns = this.strip(command);
+        }
+
+        // if we're on Node, use IPC if available and ipcpath is specified
+        if (NODE_JS && this.ipcpath && command.method &&
+            command.method.indexOf("Filter") === -1)
+        {
+            var loopback = this.nodes.local && (
+                (this.nodes.local.indexOf("127.0.0.1") > -1 ||
+                this.nodes.local.indexOf("localhost") > -1)
+            );
+            if (!isFunction(callback) && !loopback) {
+                throw new this.Error(errors.LOOPBACK_NOT_FOUND);
             }
-            if (command.timeout) {
-                timeout = command.timeout;
-                delete command.timeout;
-            } else {
-                timeout = this.POST_TIMEOUT;
+            if (isFunction(callback) && command.constructor !== Array) {
+                var received = '';
+                var socket = new net.Socket();
+                socket.setEncoding("utf8");
+                socket.connect({path: this.ipcpath}, function () {
+                    socket.write(JSON.stringify(command));
+                });
+                socket.on("data", function (data) {
+                    received += data;
+                    self.parse(received, returns, function (parsed) {
+                        if (parsed && parsed.error === 409) return;
+                        socket.destroy();
+                        callback(parsed);
+                    });
+                });
+                socket.on("error", function (err) {
+                    socket.destroy();
+                    callback(err);
+                });
+                return;
             }
-            var rpcUrl = this.etherscanApi + "?" + Object.keys(command).map(function (k) {
-                return encodeURIComponent(k) + '=' + encodeURIComponent(command[k]);
-            }).join('&');
-            console.log("[ethrpc] url:", rpcUrl);
-            if (!isFunction(callback)) {
-                var req;
-                if (NODE_JS) {
-                    req = syncRequest("GET", rpcUrl, {timeout: timeout});
-                    var response = req.getBody().toString();
-                    return this.parse(response, returns);
+        }
+
+        // make sure the ethereum node list isn't empty
+        if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath) {
+            if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
+            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
+        }
+
+        // select local / hosted node(s) to receive RPC
+        nodes = this.selectNodes();
+
+        // asynchronous request if callback exists
+        if (isFunction(callback)) {
+            async.eachSeries(nodes, function (node, nextNode) {
+                if (!completed) {
+                    if (self.debug.logs) {
+                        console.log("nodes:", JSON.stringify(nodes));
+                        console.log("post", command.method, "to:", node);
+                    }
+                    if (self.balancer) {
+                        start = new Date().getTime();
+                    }
+                    self.post(node, command, returns, function (res) {
+                        if (self.debug.logs) {
+                            if (res && res.constructor === BigNumber) {
+                                console.log(node, "response:", abi.string(res));
+                            } else {
+                                console.log(node, "response:", res);
+                            }
+                        }
+                        if (node === nodes[nodes.length - 1] ||
+                            (res !== undefined && res !== null &&
+                            !res.error && res !== "0x"))
+                        {
+                            completed = true;
+                            if (self.balancer) {
+                                self.updateMeanLatency(node, new Date().getTime() - start);
+                            }
+                            return nextNode({ output: res });
+                        }
+                        nextNode();
+                    });
                 }
-                console.warn("[ethrpc] synchronous RPC request to " + rpcUrl + ":", command);
-                if (window.XMLHttpRequest) {
-                    req = new window.XMLHttpRequest();
-                } else {
-                    req = new window.ActiveXObject("Microsoft.XMLHTTP");
-                }
-                req.open("GET", rpcUrl, false);
-                req.setRequestHeader("Content-type", "application/json");
-                // req.send();
-                return this.parse(req.responseText, returns);
-            }
-            request({
-                url: rpcUrl,
-                method: "GET",
-                timeout: timeout
-            }, function (e, response, body) {
-                if (e) {
-                    console.error("etherscan eth_call error:", e);
-                    self.etherscan = false;
-                    callback(e);
-                } else if (response.statusCode === 200) {
-                    self.parse(body, returns, callback);
-                }
+            }, function (res) {
+                if (!res && res.output === undefined) return callback();
+                callback(res.output);
             });
+
+        // use synchronous http if no callback provided
+        } else {
+            for (var j = 0, len = nodes.length; j < len; ++j) {
+                try {
+                    if (this.debug.logs) {
+                        console.log("nodes:", JSON.stringify(nodes));
+                        console.log("synchronous post", command.method, "to:", nodes[j]);
+                    }
+                    if (this.balancer) {
+                        start = new Date().getTime();
+                    }
+                    result = this.postSync(nodes[j], command, returns);
+                    if (this.balancer) {
+                        this.updateMeanLatency(nodes[j], new Date().getTime() - start);
+                    }
+                } catch (e) {
+                    if (this.nodes.local) {
+                        throw new this.Error(errors.LOCAL_NODE_FAILURE);
+                    } else if (this.excision) {
+                        this.exciseNode(e, nodes[j]);
+                    }
+                }
+                if (result !== undefined) return result;
+            }
+            throw new this.Error(errors.NO_RESPONSE);
         }
     },
 
@@ -653,46 +596,39 @@ module.exports = {
         }
 
         // direct-to-geth
-        if (!this.etherscan || !this.etherscannable(action)) {
-            payload = {
-                id: this.requests++,
-                jsonrpc: "2.0",
-                method: action
-            };
-            if (params !== undefined && params !== null) {
-                if (params.constructor === Object) {
-                    if (this.debug.broadcast && params.debug) {
-                        payload.debug = abi.copy(params.debug);
-                        delete params.debug;
-                    }
-                    if (params.timeout) {
-                        payload.timeout = params.timeout;
-                        delete params.timeout;
-                    }
-                    if (JSON.stringify(params) === "{}") {
-                        params = [];
-                    }
+        payload = {
+            id: this.requests++,
+            jsonrpc: "2.0",
+            method: action
+        };
+        if (params !== undefined && params !== null) {
+            if (params.constructor === Object) {
+                if (this.debug.broadcast && params.debug) {
+                    payload.debug = abi.copy(params.debug);
+                    delete params.debug;
                 }
-                if (params.constructor === Array) {
-                    for (var i = 0, len = params.length; i < len; ++i) {
-                        if (params[i].constructor === Number) {
-                            params[i] = params[i].toString();
-                        }
-                    }
-                    payload.params = params;
-                } else {
-                    payload.params = [params];
+                if (params.timeout) {
+                    payload.timeout = params.timeout;
+                    delete params.timeout;
                 }
-            } else {
-                payload.params = [];
+                if (JSON.stringify(params) === "{}") {
+                    params = [];
+                }
             }
-            return payload;
+            if (params.constructor === Array) {
+                for (var i = 0, len = params.length; i < len; ++i) {
+                    if (params[i].constructor === Number) {
+                        params[i] = abi.prefix_hex(params[i].toString(16));
+                    }
+                }
+                payload.params = params;
+            } else {
+                payload.params = [params];
+            }
+        } else {
+            payload.params = [];
         }
-
-        // use etherscan geth proxy
-        params.module = "proxy";
-        params.action = action;
-        return params;
+        return payload;
     },
 
     setLocalNode: function (urlstr) {
@@ -789,10 +725,10 @@ module.exports = {
     },
 
     txCount: function (address, f) {
-        return this.broadcast(this.marshal("getTransactionCount", address), f);
+        return this.broadcast(this.marshal("getTransactionCount", [address, "latest"]), f);
     },
     getTransactionCount: function (address, f) {
-        return this.broadcast(this.marshal("getTransactionCount", address), f);
+        return this.broadcast(this.marshal("getTransactionCount", [address, "latest"]), f);
     },
     pendingTxCount: function (address, f) {
         return this.broadcast(
@@ -880,7 +816,7 @@ module.exports = {
     // execute functions on contracts on the blockchain
     call: function (tx, f) {
         tx.to = tx.to || "";
-        tx.gas = (tx.gas) ? tx.gas : this.DEFAULT_GAS;
+        tx.gas = tx.gas || this.DEFAULT_GAS;
         return this.broadcast(this.marshal("call", [tx, "latest"]), f);
     },
 
@@ -1049,8 +985,8 @@ module.exports = {
                             tx.params = [tx.params];
                         }
                     }
-                    if (tx.to) tx.to = abi.prefix_hex(tx.to);
-                    if (tx.from) tx.from = abi.prefix_hex(tx.from);
+                    if (tx.to) tx.to = abi.format_address(tx.to);
+                    if (tx.from) tx.from = abi.format_address(tx.from);
                     dataAbi = abi.encode(tx);
                     if (dataAbi) {
                         packaged = {
@@ -1118,8 +1054,8 @@ module.exports = {
                     tx.params = abi.hex(tx.params);
                 }
             }
-            if (tx.from) tx.from = abi.prefix_hex(tx.from);
-            tx.to = abi.prefix_hex(tx.to);
+            if (tx.from) tx.from = abi.format_address(tx.from);
+            tx.to = abi.format_address(tx.to);
             dataAbi = abi.encode(tx);
             if (dataAbi) {
                 if (tx.callback && tx.callback.constructor === Function) {
@@ -1141,7 +1077,7 @@ module.exports = {
                     packaged.debug.batch = true;
                 }
                 invocation = (tx.send) ? "sendTransaction" : "call";
-                rpclist[i] = this.marshal(invocation, packaged);
+                rpclist[i] = this.marshal(invocation, [packaged, "latest"]);
             } else {
                 console.error("unable to package commands for batch RPC");
                 return rpclist;
