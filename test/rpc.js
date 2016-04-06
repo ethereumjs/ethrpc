@@ -1357,246 +1357,249 @@ describe("RPC", function () {
 
     });
 
-    describe("call-send-confirm sequence", function () {
+    if (!process.env.CONTINUOUS_INTEGRATION) {
 
-        before(function (done) {
-            this.timeout(TIMEOUT);
-            rpc.TX_POLL_MAX = 64;
-            rpc.TX_POLL_INTERVAL = 12000;
-            var tx = {
-                to: contracts.faucets,
-                from: COINBASE,
-                method: "reputationFaucet",
-                signature: "i",
-                params: "0xf69b5",
-                returns: "number"
-            };
-            rpc.transact(tx,
-                function (res) {
-                    callbacks.onSent(res);
-                    TXHASH = res.txHash;
-                },
-                function (res) {
-                    callbacks.onSuccess(res);
-                    assert.strictEqual(abi.encode(tx), res.input);
-                    done();
-                },
-                done
-            );
-        });
+        describe("call-send-confirm sequence", function () {
 
-        describe("checkBlockHash", function () {
-
-            var test = function (t) {
-                it(t.itx.method, function (done) {
-                    this.timeout(TIMEOUT);
-                    rpc.txs[t.txhash] = {
-                        hash: t.txhash,
-                        tx: t.tx,
-                        count: 0,
-                        status: "pending"
-                    };
-                    rpc.checkBlockHash(
-                        t.tx,
-                        t.callreturn,
-                        t.itx,
-                        t.txhash,
-                        t.returns,
-                        function (res) {
-                            callbacks.onSent(res);
-                            assert.strictEqual(res.callReturn, t.callreturn);
-                        },
-                        function (res) {
-                            callbacks.onSuccess(res);
-                            assert.strictEqual(abi.encode(t.itx), res.input);
-                            assert.strictEqual(rpc.txs[t.txhash].status, "confirmed");
-                            assert.strictEqual(rpc.txs[t.txhash].count, 1);
-                            done();
-                        },
-                        done
-                    );
-                });
-            };
-
-            test({
-                tx: {
-                    nonce: "0xf22",
-                    blockHash: "0x043d7f980beb3c59b3335d90c4b14794f4577a71ff591c80858fac8a2f99dc39",
-                    blockNumber: "0x2f336",
-                    transactionIndex: "0x0",
-                    from: COINBASE,
-                    to: contracts.faucets,
-                    value: "0x0",
-                    gas: "0x2fd618",
-                    gasPrice: "0xba43b7400",
-                    input: "0x988445fe00000000000000000000000000000000000000000000000000000000000f69b5",
-                    callReturn: "1",
-                    hash: TXHASH
-                },
-                callreturn: "1",
-                itx: {
-                    to: contracts.faucets,
-                    from: COINBASE,
-                    method: "reputationFaucet",
-                    signature: "i",
-                    params: "0xf69b5"
-                },
-                txhash: TXHASH,
-                returns: "number"
-            });
-        });
-
-        describe("txNotify", function () {
-
-            var test = function (t) {
-                it(t.itx.method, function (done) {
-                    this.timeout(TIMEOUT);
-                    rpc.txs[TXHASH] = {
-                        hash: TXHASH,
-                        tx: t.itx,
-                        count: 0,
-                        status: "pending"
-                    };
-                    rpc.txNotify(
-                        t.callreturn,
-                        t.itx,
-                        TXHASH,
-                        t.returns,
-                        function (res) {
-                            callbacks.onSent(res);
-                            assert.strictEqual(res.callReturn, t.callreturn);
-                        },
-                        function (res) {
-                            callbacks.onSuccess(res);
-                            assert.notProperty(rpc.notifications, TXHASH);
-                            assert.strictEqual(abi.encode(t.itx), res.input);
-                            assert.strictEqual(rpc.txs[TXHASH].status, "confirmed");
-                            assert.strictEqual(rpc.txs[TXHASH].count, 1);
-                            done();
-                        },
-                        done
-                    );
-                });
-                it("trailing timeout check", function (done) {
-                    this.timeout(TIMEOUT);
-                    rpc.TX_POLL_MAX = 2;
-                    rpc.TX_POLL_INTERVAL = 1;
-                    rpc.txs[TXHASH] = {
-                        hash: TXHASH,
-                        tx: t.itx,
-                        count: 0,
-                        status: "pending"
-                    };
-                    rpc.txNotify(
-                        t.callreturn,
-                        t.itx,
-                        TXHASH,
-                        t.returns,
-                        function (res) {
-                            callbacks.onSent(res);
-                            assert.strictEqual(res.callReturn, t.callreturn);
-                        },
-                        function (res) {
-                            callbacks.onSuccess(res);
-                            assert.notProperty(rpc.notifications, TXHASH);
-                            assert.strictEqual(abi.encode(t.itx), res.input);
-                            assert.strictEqual(rpc.txs[TXHASH].status, "confirmed");
-                            assert.isTrue(false);
-                        },
-                        function (res) {
-                            assert.strictEqual(rpc.txs[TXHASH].count, rpc.TX_POLL_MAX);
-                            assert.strictEqual(rpc.txs[TXHASH].status, "unconfirmed");
-                            assert.deepEqual(res, errors.TRANSACTION_NOT_CONFIRMED);
-                            done();
-                        }
-                    );
-                });
-            };
-
-            test({
-                callreturn: "1",
-                itx: {
-                    to: contracts.faucets,
-                    from: COINBASE,
-                    method: "reputationFaucet",
-                    signature: "i",
-                    params: "0xf69b5"
-                },
-                returns: "number"
-            });
-
-        });
-
-        describe("confirmTx", function () {
-
-            var test = function (t) {
-                it(t.tx.method, function (done) {
-                    this.timeout(TIMEOUT);
-                    delete rpc.txs[TXHASH];
-                    rpc.confirmTx(
-                        t.tx,
-                        TXHASH,
-                        t.returns,
-                        function (res) {
-                            callbacks.onSent(res);
-                            assert.strictEqual(res.callReturn, t.expected);
-                        },
-                        function (res) {
-                            callbacks.onSuccess(res);
-                            assert.strictEqual(abi.encode(t.tx), res.input);
-                            done();
-                        },
-                        done
-                    );
-                });
-            };
-
-            test({
-                tx: {
+            before(function (done) {
+                this.timeout(TIMEOUT);
+                rpc.TX_POLL_MAX = 64;
+                rpc.TX_POLL_INTERVAL = 12000;
+                var tx = {
                     to: contracts.faucets,
                     from: COINBASE,
                     method: "reputationFaucet",
                     signature: "i",
                     params: "0xf69b5",
                     returns: "number"
-                },
-                returns: "number",
-                expected: "1"
+                };
+                rpc.transact(tx,
+                    function (res) {
+                        callbacks.onSent(res);
+                        TXHASH = res.txHash;
+                    },
+                    function (res) {
+                        callbacks.onSuccess(res);
+                        assert.strictEqual(abi.encode(tx), res.input);
+                        done();
+                    },
+                    done
+                );
             });
 
-        });
+            describe("checkBlockHash", function () {
 
-        describe("transact", function () {
+                var test = function (t) {
+                    it(t.itx.method, function (done) {
+                        this.timeout(TIMEOUT);
+                        rpc.txs[t.txhash] = {
+                            hash: t.txhash,
+                            tx: t.tx,
+                            count: 0,
+                            status: "pending"
+                        };
+                        rpc.checkBlockHash(
+                            t.tx,
+                            t.callreturn,
+                            t.itx,
+                            t.txhash,
+                            t.returns,
+                            function (res) {
+                                callbacks.onSent(res);
+                                assert.strictEqual(res.callReturn, t.callreturn);
+                            },
+                            function (res) {
+                                callbacks.onSuccess(res);
+                                assert.strictEqual(abi.encode(t.itx), res.input);
+                                assert.strictEqual(rpc.txs[t.txhash].status, "confirmed");
+                                assert.strictEqual(rpc.txs[t.txhash].count, 1);
+                                done();
+                            },
+                            done
+                        );
+                    });
+                };
 
-            var test = function (t) {
-                it(t.tx.method, function (done) {
-                    this.timeout(TIMEOUT);
-                    rpc.TX_POLL_MAX = 64;
-                    rpc.TX_POLL_INTERVAL = 12000;
-                    rpc.transact(
-                        t.tx,
-                        callbacks.onSent,
-                        function (res) {
-                            callbacks.onSuccess(res);
-                            assert.strictEqual(abi.encode(t.tx), res.input);
-                            done();
-                        },
-                        done
-                    );
-                });
-            };
-
-            test({
-                tx: {
-                    to: contracts.faucets,
-                    from: COINBASE,
-                    method: "reputationFaucet",
-                    signature: "i",
-                    params: "0xf69b5",
+                test({
+                    tx: {
+                        nonce: "0xf22",
+                        blockHash: "0x043d7f980beb3c59b3335d90c4b14794f4577a71ff591c80858fac8a2f99dc39",
+                        blockNumber: "0x2f336",
+                        transactionIndex: "0x0",
+                        from: COINBASE,
+                        to: contracts.faucets,
+                        value: "0x0",
+                        gas: "0x2fd618",
+                        gasPrice: "0xba43b7400",
+                        input: "0x988445fe00000000000000000000000000000000000000000000000000000000000f69b5",
+                        callReturn: "1",
+                        hash: TXHASH
+                    },
+                    callreturn: "1",
+                    itx: {
+                        to: contracts.faucets,
+                        from: COINBASE,
+                        method: "reputationFaucet",
+                        signature: "i",
+                        params: "0xf69b5"
+                    },
+                    txhash: TXHASH,
                     returns: "number"
-                }
+                });
             });
 
+            describe("txNotify", function () {
+
+                var test = function (t) {
+                    it(t.itx.method, function (done) {
+                        this.timeout(TIMEOUT);
+                        rpc.txs[TXHASH] = {
+                            hash: TXHASH,
+                            tx: t.itx,
+                            count: 0,
+                            status: "pending"
+                        };
+                        rpc.txNotify(
+                            t.callreturn,
+                            t.itx,
+                            TXHASH,
+                            t.returns,
+                            function (res) {
+                                callbacks.onSent(res);
+                                assert.strictEqual(res.callReturn, t.callreturn);
+                            },
+                            function (res) {
+                                callbacks.onSuccess(res);
+                                assert.notProperty(rpc.notifications, TXHASH);
+                                assert.strictEqual(abi.encode(t.itx), res.input);
+                                assert.strictEqual(rpc.txs[TXHASH].status, "confirmed");
+                                assert.strictEqual(rpc.txs[TXHASH].count, 1);
+                                done();
+                            },
+                            done
+                        );
+                    });
+                    it("trailing timeout check", function (done) {
+                        this.timeout(TIMEOUT);
+                        rpc.TX_POLL_MAX = 2;
+                        rpc.TX_POLL_INTERVAL = 1;
+                        rpc.txs[TXHASH] = {
+                            hash: TXHASH,
+                            tx: t.itx,
+                            count: 0,
+                            status: "pending"
+                        };
+                        rpc.txNotify(
+                            t.callreturn,
+                            t.itx,
+                            TXHASH,
+                            t.returns,
+                            function (res) {
+                                callbacks.onSent(res);
+                                assert.strictEqual(res.callReturn, t.callreturn);
+                            },
+                            function (res) {
+                                callbacks.onSuccess(res);
+                                assert.notProperty(rpc.notifications, TXHASH);
+                                assert.strictEqual(abi.encode(t.itx), res.input);
+                                assert.strictEqual(rpc.txs[TXHASH].status, "confirmed");
+                                assert.isTrue(false);
+                            },
+                            function (res) {
+                                assert.strictEqual(rpc.txs[TXHASH].count, rpc.TX_POLL_MAX);
+                                assert.strictEqual(rpc.txs[TXHASH].status, "unconfirmed");
+                                assert.deepEqual(res, errors.TRANSACTION_NOT_CONFIRMED);
+                                done();
+                            }
+                        );
+                    });
+                };
+
+                test({
+                    callreturn: "1",
+                    itx: {
+                        to: contracts.faucets,
+                        from: COINBASE,
+                        method: "reputationFaucet",
+                        signature: "i",
+                        params: "0xf69b5"
+                    },
+                    returns: "number"
+                });
+
+            });
+
+            describe("confirmTx", function () {
+
+                var test = function (t) {
+                    it(t.tx.method, function (done) {
+                        this.timeout(TIMEOUT);
+                        delete rpc.txs[TXHASH];
+                        rpc.confirmTx(
+                            t.tx,
+                            TXHASH,
+                            t.returns,
+                            function (res) {
+                                callbacks.onSent(res);
+                                assert.strictEqual(res.callReturn, t.expected);
+                            },
+                            function (res) {
+                                callbacks.onSuccess(res);
+                                assert.strictEqual(abi.encode(t.tx), res.input);
+                                done();
+                            },
+                            done
+                        );
+                    });
+                };
+
+                test({
+                    tx: {
+                        to: contracts.faucets,
+                        from: COINBASE,
+                        method: "reputationFaucet",
+                        signature: "i",
+                        params: "0xf69b5",
+                        returns: "number"
+                    },
+                    returns: "number",
+                    expected: "1"
+                });
+
+            });
+
+            describe("transact", function () {
+
+                var test = function (t) {
+                    it(t.tx.method, function (done) {
+                        this.timeout(TIMEOUT);
+                        rpc.TX_POLL_MAX = 64;
+                        rpc.TX_POLL_INTERVAL = 12000;
+                        rpc.transact(
+                            t.tx,
+                            callbacks.onSent,
+                            function (res) {
+                                callbacks.onSuccess(res);
+                                assert.strictEqual(abi.encode(t.tx), res.input);
+                                done();
+                            },
+                            done
+                        );
+                    });
+                };
+
+                test({
+                    tx: {
+                        to: contracts.faucets,
+                        from: COINBASE,
+                        method: "reputationFaucet",
+                        signature: "i",
+                        params: "0xf69b5",
+                        returns: "number"
+                    }
+                });
+
+            });
         });
-    });
+    }
 });
