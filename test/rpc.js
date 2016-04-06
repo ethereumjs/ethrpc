@@ -556,19 +556,26 @@ describe("RPC", function () {
             });
         });
 
-        it("web3_sha3('" + SHA3_INPUT + "')", function (done) {
+        it("sha3/keccak-256", function () {
             this.timeout(TIMEOUT);
-            assert.strictEqual(rpc.web3("sha3", SHA3_INPUT), SHA3_DIGEST);
-            assert.strictEqual(rpc.sha3(SHA3_INPUT), SHA3_DIGEST);
-            rpc.web3("sha3", SHA3_INPUT, function (res) {
-                if (res.error) return done(res);
-                assert.strictEqual(res, SHA3_DIGEST);
-                rpc.sha3(SHA3_INPUT, function (res) {
-                    if (res.error) return done(res);
-                    assert.strictEqual(res, SHA3_DIGEST);
-                    done();
-                });
-            });
+            var data = {
+                hex: "0x68656c6c6f20776f726c64",
+                ascii: "Deposit(address,hash256,uint256)"
+            };
+            var expected = {
+                hex: "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad",
+                ascii: "0x50cb9fe53daa9737b786ab3646f04d0150dc50ef4e75f59509d83667ad5adb20"
+            };
+
+            // hex input
+            assert.strictEqual(rpc.web3("sha3", data.hex), expected.hex);
+            assert.strictEqual(rpc.sha3(data.hex, true), expected.hex)
+            assert.strictEqual(rpc.web3("sha3", data.hex), rpc.sha3(data.hex, true));
+
+            // ASCII input
+            assert.strictEqual(rpc.web3("sha3", abi.encode_hex(data.ascii)), expected.ascii);
+            assert.strictEqual(rpc.sha3(data.ascii), expected.ascii);
+            assert.strictEqual(rpc.web3("sha3", abi.encode_hex(data.ascii)), rpc.sha3(data.ascii));
         });
 
         it("gasPrice", function (done) {

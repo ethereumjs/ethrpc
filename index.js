@@ -17,6 +17,7 @@ if (NODE_JS) {
 }
 var async = require("async");
 var BigNumber = require("bignumber.js");
+var keccak_256 = require("js-sha3").keccak_256;
 var contracts = require("augur-contracts");
 var abi = require("augur-abi");
 var errors = contracts.errors;
@@ -164,6 +165,7 @@ module.exports = {
 
     parse: function (response, returns, callback) {
         var results, len, err;
+        // console.log("parse:", response);
         try {
             if (response && typeof response === "string") {
                 response = JSON.parse(response);
@@ -522,6 +524,10 @@ module.exports = {
         // select local / hosted node(s) to receive RPC
         nodes = this.selectNodes();
 
+        if (command.method === "eth_newFilter") {
+            console.log(JSON.stringify(command));
+        }
+
         // asynchronous request if callback exists
         if (isFunction(callback)) {
             async.eachSeries(nodes, function (node, nextNode) {
@@ -684,11 +690,9 @@ module.exports = {
         return this.broadcast(this.marshal(command, params, "shh_"), f);
     },
 
-    sha3: function (data, f) {
-        return this.broadcast(this.marshal("sha3", data.toString(), "web3_"), f);
-    },
-    hash: function (data, f) {
-        return this.broadcast(this.marshal("sha3", data.toString(), "web3_"), f);
+    sha3: function (data, isHex) {
+        if (isHex) data = abi.decode_hex(data);
+        return abi.prefix_hex(keccak_256(data));
     },
 
     gasPrice: function (f) {
@@ -987,7 +991,9 @@ module.exports = {
                     }
                     if (tx.to) tx.to = abi.format_address(tx.to);
                     if (tx.from) tx.from = abi.format_address(tx.from);
+                    // console.log("tx:", JSON.stringify(tx, null, 2));
                     dataAbi = abi.encode(tx);
+                    // console.log("dataAbi:", dataAbi);
                     if (dataAbi) {
                         packaged = {
                             from: tx.from,
