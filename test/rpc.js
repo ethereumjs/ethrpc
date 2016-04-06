@@ -364,17 +364,17 @@ describe("RPC", function () {
         test({
             node: "https://eth3.augur.net",
             account: "0x00bae5113ee9f252cceb0001205b88fad175461a",
-            unlocked: true
+            unlocked: false
         });
         test({
             node: "https://eth4.augur.net",
             account: "0x8296eb59079f435275b76058c08b47c4f8965b78",
-            unlocked: true
+            unlocked: false
         });
         test({
             node: "https://eth5.augur.net",
             account: "0xe434ed7f4684e3d2db25c4937c9e0b7b1faf54c6",
-            unlocked: true
+            unlocked: false
         });
         test({
             node: "https://faucet.augur.net",
