@@ -384,7 +384,7 @@ describe("RPC", function () {
         test({
             node: "https://report.augur.net",
             account: "0xcb42ebea8dff08f64480309ea3b0c1f45e4a378c",
-            unlocked: true
+            unlocked: false
         });
         test({
             node: null,
