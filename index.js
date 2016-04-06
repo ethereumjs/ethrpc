@@ -165,7 +165,6 @@ module.exports = {
 
     parse: function (response, returns, callback) {
         var results, len, err;
-        // console.log("parse:", response);
         try {
             if (response && typeof response === "string") {
                 response = JSON.parse(response);
@@ -523,10 +522,6 @@ module.exports = {
 
         // select local / hosted node(s) to receive RPC
         nodes = this.selectNodes();
-
-        if (command.method === "eth_newFilter") {
-            console.log(JSON.stringify(command));
-        }
 
         // asynchronous request if callback exists
         if (isFunction(callback)) {
@@ -991,9 +986,7 @@ module.exports = {
                     }
                     if (tx.to) tx.to = abi.format_address(tx.to);
                     if (tx.from) tx.from = abi.format_address(tx.from);
-                    // console.log("tx:", JSON.stringify(tx, null, 2));
                     dataAbi = abi.encode(tx);
-                    // console.log("dataAbi:", dataAbi);
                     if (dataAbi) {
                         packaged = {
                             from: tx.from,
