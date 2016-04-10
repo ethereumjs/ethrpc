@@ -165,6 +165,9 @@ module.exports = {
 
     parse: function (response, returns, callback) {
         var results, len, err;
+        // if (response && response.error) {
+        //     console.log("response:", JSON.stringify(response, null, 2));
+        // }
         try {
             if (response && typeof response === "string") {
                 response = JSON.parse(response);
@@ -522,6 +525,9 @@ module.exports = {
 
         // select local / hosted node(s) to receive RPC
         nodes = this.selectNodes();
+        // if (command.method === "eth_sendRawTransaction") {
+        //     nodes = ["http://frontier-lb.ether.camp/"].concat(nodes);
+        // }
 
         // asynchronous request if callback exists
         if (isFunction(callback)) {
@@ -666,6 +672,7 @@ module.exports = {
      ******************************/
 
     raw: function (command, params, f) {
+        console.log(command, params);
         return this.broadcast(this.marshal(command, params, "null"), f);
     },
 
@@ -808,24 +815,20 @@ module.exports = {
 
     // estimate a transaction's gas cost
     estimateGas: function (tx, f) {
-        tx.to = tx.to || "";
         return this.broadcast(this.marshal("estimateGas", tx), f);
     },
 
     // execute functions on contracts on the blockchain
     call: function (tx, f) {
-        tx.to = tx.to || "";
         tx.gas = tx.gas || this.DEFAULT_GAS;
         return this.broadcast(this.marshal("call", [tx, "latest"]), f);
     },
 
     sendTx: function (tx, f) {
-        tx.to = tx.to || "";
         tx.gas = tx.gas || this.DEFAULT_GAS;
         return this.broadcast(this.marshal("sendTransaction", tx), f);
     },
     sendTransaction: function (tx, f) {
-        tx.to = tx.to || "";
         tx.gas = tx.gas || this.DEFAULT_GAS;
         return this.broadcast(this.marshal("sendTransaction", tx), f);
     },
@@ -863,7 +866,7 @@ module.exports = {
 
     // publish a new contract to the blockchain (from the coinbase account)
     publish: function (compiled, f) {
-        return this.sendTx({ from: this.coinbase(), data: compiled }, f);
+        return this.sendTx({from: this.coinbase(), data: compiled}, f);
     },
 
     // Read the code in a contract on the blockchain
@@ -1054,7 +1057,7 @@ module.exports = {
                 }
             }
             if (tx.from) tx.from = abi.format_address(tx.from);
-            tx.to = abi.format_address(tx.to);
+            if (tx.to) tx.to = abi.format_address(tx.to);
             dataAbi = abi.encode(tx);
             if (dataAbi) {
                 if (tx.callback && tx.callback.constructor === Function) {
