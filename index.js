@@ -36,9 +36,8 @@ function isFunction(f) {
 }
 
 var HOSTED_NODES = [
-    "https://eth3.augur.net",
-    "https://eth4.augur.net",
-    "https://eth5.augur.net"
+    // "https://morden-state.ether.camp/api/v1/transaction/submit"
+    "https://eth3.augur.net"
 ];
 
 module.exports = {
@@ -165,9 +164,9 @@ module.exports = {
 
     parse: function (response, returns, callback) {
         var results, len, err;
-        // if (response && response.error) {
-        //     console.log("response:", JSON.stringify(response, null, 2));
-        // }
+        if (response && response.error) {
+            console.log("response:", JSON.stringify(response, null, 2));
+        }
         try {
             if (response && typeof response === "string") {
                 response = JSON.parse(response);
@@ -526,7 +525,8 @@ module.exports = {
         // select local / hosted node(s) to receive RPC
         nodes = this.selectNodes();
         // if (command.method === "eth_sendRawTransaction") {
-        //     nodes = ["http://frontier-lb.ether.camp/"].concat(nodes);
+        //     console.log("command:", JSON.stringify(command));
+        //     nodes = ["https://morden-state.ether.camp/api/v1/transaction/submit"].concat(nodes);
         // }
 
         // asynchronous request if callback exists
@@ -835,10 +835,10 @@ module.exports = {
 
     // sendRawTx(RLP(tx.signed(privateKey))) -> txhash
     sendRawTx: function (rawTx, f) {
-        return this.broadcast(this.marshal("sendRawTransaction", rawTx), f);
+        return this.broadcast(this.marshal("sendRawTransaction", abi.prefix_hex(rawTx)), f);
     },
     sendRawTransaction: function (rawTx, f) {
-        return this.broadcast(this.marshal("sendRawTransaction", rawTx), f);
+        return this.broadcast(this.marshal("sendRawTransaction", abi.prefix_hex(rawTx)), f);
     },
 
     receipt: function (txhash, f) {

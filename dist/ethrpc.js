@@ -7,7 +7,6 @@ module.exports={
         "closeMarketFour": "0x1665ee14c0b07448c3d758c2792d2a328acd98c5",
         "closeMarketOne": "0x8b4cd6f60de0362237dc0c5b22be15273b099b7e",
         "closeMarketTwo": "0x0774e46e0cbddb58f09f2d8d53d4aa8bc53df714",
-        "comments": "0x0facc48ccda4b24df47bb10ccfde54b6d6194a2e",
         "consensus": "0xb816c3abdbb9967485f8645bc83143bb749572e0",
         "createBranch": "0x21b87e562066e36da0bc599b3d016efb6fe80913",
         "createEvent": "0xfab258ae92a2fe25ae4e4ddb9e63fb1c691cc2aa",
@@ -16,7 +15,7 @@ module.exports={
         "eventResolution": "0x2fac411c69994858409c24ed2a5567da29c61bca",
         "faucets": "0x895d32f2db7d01ebb50053f9e48aacf26584fe40",
         "makeReports": "0x79a406da9ea815fd8cbe75ba8a4cb6d493dbf9b4",
-        "metadata": "0xb95ccd57fd8dfe0c9805419fd85e1de9518ec835",
+        "metadata": "0x5cf043ea28e287e818e15181485b3d5d61474126",
         "orderBook": "0xc8bdc68526a959fcb932b57063c97b1fc6176709",
         "ramble": "0x42a77acc59bb566aa670d6e7639b99efa235e6f7",
         "sendReputation": "0x6b969e428c58d81429ef13240c0ecb3529aa91bb",
@@ -37,7 +36,6 @@ module.exports={
         "closeMarketFour": "0xfb5c088e0d2b8400800c61ac0d69cfd11261401c",
         "closeMarketOne": "0xbfaa24839dec3961c010c4831709bdecbac382f5",
         "closeMarketTwo": "0x8bb3073196dbdbf425157b3d83156f18c5c0e776",
-        "comments": "0x0facc48ccda4b24df47bb10ccfde54b6d6194a2e",
         "consensus": "0xc4d92584ea34be5dd2b916c464e55ec9b4bd1f8f",
         "createBranch": "0xb005839c49a328850bb22359bb66f9ba1a0f9994",
         "createEvent": "0x0c532debb932ddb5d07eb957bf8ff5975e932ca3",
@@ -46,7 +44,7 @@ module.exports={
         "eventResolution": "0xd399af9820be7ddda37c7d85e701bf8ee2337739",
         "faucets": "0x94bab6be74df76e996b20329dff2ec39d3013dc3",
         "makeReports": "0x0b7c36b76208e2c968b04dce0658c03c27bfdc00",
-        "metadata": "0xb95ccd57fd8dfe0c9805419fd85e1de9518ec835",
+        "metadata": "0x5cf043ea28e287e818e15181485b3d5d61474126",
         "orderBook": "0xf86bbf277ae88a8b50ae90d97e1aafb1390e2984",
         "ramble": "0x2258a25e503b19dc3d2c2fdc9ca57a1d5985e30c",
         "sendReputation": "0x7e049a60e0106d263ffd0a60bcfbf4f63dd1f2a4",
@@ -67,7 +65,6 @@ module.exports={
         "closeMarketFour": "0x81a7621e9a286d061b3dea040888a51c96693b1c",
         "closeMarketOne": "0xe5b327630cfa7f4b2324f9066c897dceecfd88a3",
         "closeMarketTwo": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e",
-        "comments": "0x0facc48ccda4b24df47bb10ccfde54b6d6194a2e",
         "consensus": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79",
         "createBranch": "0x8c19616de17acdfbc933b99d9f529a689d22098f",
         "createEvent": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6",
@@ -76,7 +73,7 @@ module.exports={
         "eventResolution": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea",
         "faucets": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df",
         "makeReports": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d",
-        "metadata": "0xb95ccd57fd8dfe0c9805419fd85e1de9518ec835",
+        "metadata": "0x5cf043ea28e287e818e15181485b3d5d61474126",
         "orderBook": "0x8a4e2993a9972ee035453bb5674816fc3a698718",
         "ramble": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c",
         "sendReputation": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68",
@@ -593,33 +590,11 @@ module.exports = function (network) {
 
     return {
 
-        // comments.se
-        hash: {
-            to: contracts.comments,
-            method: "hash",
-            signature: "iiis",
-            returns: "hash"
-        },
-        speak: {
-            to: contracts.comments,
-            method: "speak",
-            signature: "iis",
-            returns: "number",
-            send: true
-        },
-        reply: {
-            to: contracts.comments,
-            method: "reply",
-            signature: "iiis",
-            returns: "number",
-            send: true
-        },
-
         // metadata.se
         setMetadata: {
             to: contracts.metadata,
             method: "setMetadata",
-            signature: "iiiisssss",
+            signature: "iiiiss",
             returns: "number",
             send: true
         },
@@ -1212,11 +1187,6 @@ module.exports = function (network) {
             signature: "i",
             returns: "unfix"
         },
-        hashReport: {
-            to: contracts.reporting,
-            method: "hashReport",
-            signature: "ai"
-        },
 
         // buy&sellShares.se
         commitTrade: {
@@ -1447,9 +1417,8 @@ function isFunction(f) {
 }
 
 var HOSTED_NODES = [
-    "https://eth3.augur.net",
-    "https://eth4.augur.net",
-    "https://eth5.augur.net"
+    // "https://morden-state.ether.camp/api/v1/transaction/submit"
+    "https://eth3.augur.net"
 ];
 
 module.exports = {
@@ -1576,9 +1545,9 @@ module.exports = {
 
     parse: function (response, returns, callback) {
         var results, len, err;
-        // if (response && response.error) {
-        //     console.log("response:", JSON.stringify(response, null, 2));
-        // }
+        if (response && response.error) {
+            console.log("response:", JSON.stringify(response, null, 2));
+        }
         try {
             if (response && typeof response === "string") {
                 response = JSON.parse(response);
@@ -1937,7 +1906,8 @@ module.exports = {
         // select local / hosted node(s) to receive RPC
         nodes = this.selectNodes();
         // if (command.method === "eth_sendRawTransaction") {
-        //     nodes = ["http://frontier-lb.ether.camp/"].concat(nodes);
+        //     console.log("command:", JSON.stringify(command));
+        //     nodes = ["https://morden-state.ether.camp/api/v1/transaction/submit"].concat(nodes);
         // }
 
         // asynchronous request if callback exists
@@ -2246,10 +2216,10 @@ module.exports = {
 
     // sendRawTx(RLP(tx.signed(privateKey))) -> txhash
     sendRawTx: function (rawTx, f) {
-        return this.broadcast(this.marshal("sendRawTransaction", rawTx), f);
+        return this.broadcast(this.marshal("sendRawTransaction", abi.prefix_hex(rawTx)), f);
     },
     sendRawTransaction: function (rawTx, f) {
-        return this.broadcast(this.marshal("sendRawTransaction", rawTx), f);
+        return this.broadcast(this.marshal("sendRawTransaction", abi.prefix_hex(rawTx)), f);
     },
 
     receipt: function (txhash, f) {
