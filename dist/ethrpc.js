@@ -1427,15 +1427,8 @@ module.exports = {
         tx: false,
         broadcast: false,
         fallback: false,
-        latency: true,
         logs: false
     },
-
-    // network load balancer
-    balancer: true,
-
-    // remove unresponsive nodes
-    excision: false,
 
     // use IPC (only available on Node + Linux/OSX)
     ipcpath: null,
@@ -1452,8 +1445,6 @@ module.exports = {
     // Default timeout for asynchronous POST
     POST_TIMEOUT: 30000,
 
-    BALANCER_SAMPLES: 20,
-
     DEFAULT_GAS: "0x2fd618",
 
     ETHER: new BigNumber(10).toPower(18),
@@ -1466,22 +1457,6 @@ module.exports = {
         hosted: HOSTED_NODES.slice(),
         local: null
     },
-
-    primaryNode: null,
-
-    // Mean network latency for each node
-    latency: {},
-
-    // Number of latency samples taken for each node
-    samples: {},
-
-    // Unweighted mean network latency across all nodes
-    // (use debug.latency=true to see this)
-    netLatency: null,
-
-    // Total number of samples taken across all nodes
-    // (use debug.latency=true to see this)
-    netSamples: 0,
 
     requests: 1,
 
@@ -1631,25 +1606,6 @@ module.exports = {
         return returns;
     },
 
-    exciseNode: function (err, deadNode, callback) {
-        if (deadNode && !this.nodes.local && !this.ipcpath) {
-            if (this.debug.logs) {
-                console.warn("[ethrpc] request to", deadNode, "failed:", err);
-            }
-            var deadIndex = this.nodes.hosted.indexOf(deadNode);
-            if (deadIndex > -1) {
-                this.nodes.hosted.splice(deadIndex, 1);
-                if (!this.nodes.hosted.length) {
-                    if (isFunction(callback)) {
-                        return callback(errors.HOSTED_NODE_FAILURE);
-                    }
-                    throw new this.Error(errors.HOSTED_NODE_FAILURE);
-                }
-            }
-            if (isFunction(callback)) callback();
-        }
-    },
-
     postSync: function (rpcUrl, command, returns) {
         var timeout, req = null;
         if (command.timeout) {
@@ -1700,8 +1656,6 @@ module.exports = {
                     e.bubble = err;
                     e.command = command;
                     return callback(e);
-                } else if (self.excision) {
-                    return self.exciseNode(err.code, rpcUrl, callback);
                 }
                 console.warn("[ethrpc] asynchronous RPC timed out", rpcUrl, command);
                 e = errors.RPC_TIMEOUT;
@@ -1714,95 +1668,9 @@ module.exports = {
         });
     },
 
-    // random primary node selection, weighted by (normalized)
-    // inverse mean network latency
-    selectPrimaryNode: function (nodes) {
-        var select, rand, numNodes, total, weights, cdf, high, low;
-        rand = Math.random();
-        numNodes = nodes.length;
-        weights = new Array(numNodes);
-        for (var k = 0; k < numNodes; ++k) {
-            weights[k] = 1 / this.latency[nodes[k]];
-        }
-        cdf = new Array(numNodes);
-        total = 0;
-        for (k = 0; k < numNodes; ++k) {
-            total += weights[k];
-            cdf[k] = total;
-        }
-        for (k = 0; k < numNodes; ++k) {
-            cdf[k] /= total;
-        }
-        high = numNodes - 1;
-        low = 0;
-        while (low < high) {
-            select = Math.ceil((high + low) / 2);
-            if (cdf[select] < rand) {
-                low = select + 1;
-            } else if (cdf[select] > rand) {
-                high = select - 1;
-            } else {
-                return nodes[select];
-            }
-        }
-        if (low != high) {
-            select = (cdf[low] >= rand) ? low : select;
-        } else {
-            select = (cdf[low] >= rand) ? low : low + 1;
-        }
-        console.debug("[ethrpc] primary node:", nodes[select]);
-        return [nodes[select]].concat(nodes);
-    },
-
     selectNodes: function () {
         if (this.nodes.local) return [this.nodes.local];
-        if (!this.balancer || this.nodes.hosted.length === 1) {
-            return this.nodes.hosted.slice();
-        }
-
-        // rotate nodes until we have enough samples to weight them
-        if (!this.samples[HOSTED_NODES[0]] ||
-            this.samples[HOSTED_NODES[0]] < this.BALANCER_SAMPLES) {
-            this.nodes.hosted.unshift(this.nodes.hosted.pop());
-            return this.nodes.hosted.slice();
-
-        // if we have sufficient data, select a primary node
-        } else {
-            if (this.primaryNode === null) {
-                this.primaryNode = this.selectPrimaryNode(this.nodes.hosted);
-            }
-            return this.primaryNode;
-        }
-    },
-
-    // update the active node's mean network latency
-    updateMeanLatency: function (node, latency) {
-        if (!this.samples[node]) {
-            this.samples[node] = 1;
-            this.latency[node] = latency;
-        } else {
-            ++this.samples[node];
-            this.latency[node] = (
-                (this.samples[node] - 1)*this.latency[node] + latency
-            ) / this.samples[node];
-        }
-        if (this.debug.latency) {
-            if (this.netLatency === null) {
-                this.netSamples = 1;
-                this.netLatency = latency;
-            } else {
-                ++this.netSamples;
-                this.netLatency = (
-                    (this.netSamples - 1)*this.netLatency + latency
-                ) / this.netSamples;
-                if (this.debug.logs) {
-                    console.log(
-                        "[" + this.netSamples.toString() + "] mean network latency:",
-                        this.netLatency
-                    );
-                }
-            }
-        }
+        return this.nodes.hosted.slice();
     },
 
     contracts: function (network) {
@@ -1811,7 +1679,7 @@ module.exports = {
 
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
-        var start, nodes, numCommands, returns, result, completed, self = this;
+        var nodes, numCommands, returns, result, completed, self = this;
 
         if (!command || (command.constructor === Object && !command.method) ||
             (command.constructor === Array && !command.length)) {
@@ -1905,10 +1773,6 @@ module.exports = {
 
         // select local / hosted node(s) to receive RPC
         nodes = this.selectNodes();
-        // if (command.method === "eth_sendRawTransaction") {
-        //     console.log("command:", JSON.stringify(command));
-        //     nodes = ["https://morden-state.ether.camp/api/v1/transaction/submit"].concat(nodes);
-        // }
 
         // asynchronous request if callback exists
         if (isFunction(callback)) {
@@ -1917,9 +1781,6 @@ module.exports = {
                     if (self.debug.logs) {
                         console.log("nodes:", JSON.stringify(nodes));
                         console.log("post", command.method, "to:", node);
-                    }
-                    if (self.balancer) {
-                        start = new Date().getTime();
                     }
                     self.post(node, command, returns, function (res) {
                         if (self.debug.logs) {
@@ -1934,9 +1795,6 @@ module.exports = {
                             !res.error && res !== "0x"))
                         {
                             completed = true;
-                            if (self.balancer) {
-                                self.updateMeanLatency(node, new Date().getTime() - start);
-                            }
                             return nextNode({ output: res });
                         }
                         nextNode();
@@ -1955,18 +1813,10 @@ module.exports = {
                         console.log("nodes:", JSON.stringify(nodes));
                         console.log("synchronous post", command.method, "to:", nodes[j]);
                     }
-                    if (this.balancer) {
-                        start = new Date().getTime();
-                    }
                     result = this.postSync(nodes[j], command, returns);
-                    if (this.balancer) {
-                        this.updateMeanLatency(nodes[j], new Date().getTime() - start);
-                    }
                 } catch (e) {
                     if (this.nodes.local) {
                         throw new this.Error(errors.LOCAL_NODE_FAILURE);
-                    } else if (this.excision) {
-                        this.exciseNode(e, nodes[j]);
                     }
                 }
                 if (result !== undefined) return result;
@@ -2030,8 +1880,6 @@ module.exports = {
 
     // delete cached network, notification, and transaction data
     clear: function () {
-        this.latency = {};
-        this.samples = {};
         this.txs = {};
         for (var n in this.notifications) {
             if (!this.notifications.hasOwnProperty(n)) continue;
@@ -2053,7 +1901,6 @@ module.exports = {
      ******************************/
 
     raw: function (command, params, f) {
-        console.log(command, params);
         return this.broadcast(this.marshal(command, params, "null"), f);
     },
 

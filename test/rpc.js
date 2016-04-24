@@ -21,7 +21,7 @@ describe("RPC", function () {
     var COINBASE = "0x00bae5113ee9f252cceb0001205b88fad175461a";
     var SHA3_INPUT = "boom!";
     var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
-    var PROTOCOL_VERSION = "0x3f";
+    var PROTOCOL_VERSION = "63";
     var TXHASH = "0xc52b258dec9e8374880b346f93669d7699d7e64d46c8b6072b19122ca9406461";
     var NETWORK_ID = "2";
     contracts = contracts[NETWORK_ID];
@@ -293,30 +293,6 @@ describe("RPC", function () {
             node: "https://eth3.augur.net",
             listening: true
         });
-        test({
-            node: "https://eth4.augur.net",
-            listening: true
-        });
-        test({
-            node: "https://eth5.augur.net",
-            listening: true
-        });
-        test({
-            node: "",
-            listening: false
-        });
-        test({
-            node: null,
-            listening: false
-        });
-        test({
-            node: undefined,
-            listening: false
-        });
-        test({
-            node: NaN,
-            listening: false
-        });
 
     });
 
@@ -339,14 +315,6 @@ describe("RPC", function () {
             node: "https://eth3.augur.net",
             version: NETWORK_ID
         });
-        test({
-            node: "https://eth4.augur.net",
-            version: NETWORK_ID
-        });
-        test({
-            node: "https://eth5.augur.net",
-            version: NETWORK_ID
-        });
 
     });
 
@@ -364,17 +332,7 @@ describe("RPC", function () {
         test({
             node: "https://eth3.augur.net",
             account: "0x00bae5113ee9f252cceb0001205b88fad175461a",
-            unlocked: false
-        });
-        test({
-            node: "https://eth4.augur.net",
-            account: "0x8296eb59079f435275b76058c08b47c4f8965b78",
-            unlocked: false
-        });
-        test({
-            node: "https://eth5.augur.net",
-            account: "0xe434ed7f4684e3d2db25c4937c9e0b7b1faf54c6",
-            unlocked: false
+            unlocked: true
         });
         test({
             node: "https://faucet.augur.net",
@@ -444,68 +402,14 @@ describe("RPC", function () {
 
     });
 
-    describe("multicast", function () {
-
-        var command = {
-            id: ++requests,
-            jsonrpc: "2.0",
-            method: "eth_protocolVersion",
-            params: []
-        };
-
-        rpc.reset();
-
-        it.each(
-            rpc.nodes.hosted,
-            "[sync] post " + command.method + " RPC to %s",
-            ["element"],
-            function (element, next) {
-                this.timeout(TIMEOUT);
-                assert.strictEqual(rpc.postSync(element, command), PROTOCOL_VERSION);
-                next();
-            }
-        );
-
-        it.each(
-            rpc.nodes.hosted,
-            "[async] post " + command.method + " RPC to %s",
-            ["element"],
-            function (element, next) {
-                this.timeout(TIMEOUT);
-                rpc.post(element, command, null, function (response) {
-                    assert.strictEqual(response, PROTOCOL_VERSION);
-                    next();
-                });
-            }
-        );
-
-        it("call back after first asynchronous response", function (done) {
-            this.timeout(TIMEOUT);
-            rpc.broadcast(command, function (response) {
-                assert.strictEqual(response, PROTOCOL_VERSION);
-                done();
-            });
-        }); 
-
-        it("return after first synchronous response", function (done) {
-            assert.strictEqual(rpc.broadcast(command), PROTOCOL_VERSION);
-            done();
-        });
-
-    });
-
     describe("clear", function () {
 
         it("delete cached network/notification/transaction data", function (done) {
             this.timeout(TIMEOUT);
             rpc.reset();
-            rpc.latency["0x1"] = "junk";
-            rpc.samples["0x1"] = "junk";
             rpc.txs["0x1"] = { junk: "junk" };
             rpc.notifications["0x1"] = setTimeout(function () { done(1); }, 1500);
             rpc.clear();
-            assert.deepEqual(rpc.latency, {});
-            assert.deepEqual(rpc.samples, {});
             assert.deepEqual(rpc.txs, {});
             assert.deepEqual(rpc.notifications, {});
             setTimeout(done, 2000);
@@ -981,136 +885,6 @@ describe("RPC", function () {
 
     });
 
-    describe("exciseNode", function () {
-
-        it("remove node 2", function () {
-            var nodes = HOSTED_NODES.slice();
-            rpc.reset();
-            assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
-            assert.deepEqual(rpc.nodes.hosted, nodes);
-            rpc.exciseNode(null, nodes[2]);
-            nodes.splice(2, 1);
-            assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length - 1);
-            assert.deepEqual(rpc.nodes.hosted, nodes);
-        });
-
-        it("remove nodes 0 and 2", function () {
-            var nodes = HOSTED_NODES.slice();
-            rpc.reset();
-            assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
-            assert.deepEqual(rpc.nodes.hosted, nodes);
-            rpc.exciseNode(null, nodes[0]);
-            rpc.exciseNode(null, nodes[2]);
-            nodes.splice(2, 1);
-            nodes.splice(0, 1);
-            assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length - 2);
-            assert.deepEqual(rpc.nodes.hosted, nodes);
-        });
-
-        it("throw error 411 if all hosted nodes removed", function () {
-            rpc.reset();
-            assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
-            assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
-            rpc.exciseNode(null, HOSTED_NODES[0]);
-            rpc.exciseNode(null, HOSTED_NODES[1]);
-            assert.throws(function () {
-                rpc.exciseNode(null, HOSTED_NODES[2]);
-            }, Error, /411/);
-        });
-
-    });
-
-    describe("Backup nodes", function () {
-
-        it("[sync] graceful failover to eth3.augur.net", function () {
-            this.timeout(TIMEOUT);
-            rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth3.augur.net"];
-            assert.strictEqual(rpc.nodes.hosted.length, 2);
-            assert.strictEqual(rpc.version(), NETWORK_ID);
-            assert.strictEqual(rpc.nodes.hosted.length, 1);
-            assert.strictEqual(rpc.nodes.hosted[0], "https://eth3.augur.net");
-        });
-
-        it("[async] graceful failover to eth3.augur.net", function (done) {
-            this.timeout(TIMEOUT);
-            rpc.nodes.hosted = ["https://lol.lol.lol", "https://eth3.augur.net"];
-            assert.strictEqual(rpc.nodes.hosted.length, 2);
-            rpc.version(function (version) {
-                assert.strictEqual(version, NETWORK_ID);
-                assert.strictEqual(rpc.nodes.hosted.length, 1);
-                assert.strictEqual(rpc.nodes.hosted[0], "https://eth3.augur.net");
-                done();
-            });
-        });
-
-        it("[sync] graceful failover to eth[3,4,5].augur.net", function () {
-            this.timeout(TIMEOUT);
-            rpc.nodes.hosted = [
-                "https://lol.lol.lol",
-                "https://eth3.augur.net",
-                "https://eth4.augur.net",
-                "https://eth5.augur.net"
-            ];
-            assert.strictEqual(rpc.nodes.hosted.length, 4);
-            assert.strictEqual(rpc.version(), NETWORK_ID);
-            assert.strictEqual(rpc.nodes.hosted.length, 3);
-            assert.strictEqual(rpc.nodes.hosted[0], "https://eth3.augur.net");
-            assert.strictEqual(rpc.nodes.hosted[1], "https://eth4.augur.net");
-            assert.strictEqual(rpc.nodes.hosted[2], "https://eth5.augur.net");
-        });
-
-        it("[async] graceful failover to eth[1,3,4].augur.net", function (done) {
-            this.timeout(TIMEOUT);
-            rpc.nodes.hosted = [
-                "https://lol.lol.lol",
-                "https://eth3.augur.net",
-                "https://eth4.augur.net",
-                "https://eth5.augur.net"
-            ];
-            assert.strictEqual(rpc.nodes.hosted.length, 4);
-            rpc.version(function (version) {
-                assert.strictEqual(version, NETWORK_ID);
-                assert.strictEqual(rpc.nodes.hosted.length, 3);
-                assert.strictEqual(rpc.nodes.hosted[0], "https://eth3.augur.net");
-                assert.strictEqual(rpc.nodes.hosted[1], "https://eth4.augur.net");
-                assert.strictEqual(rpc.nodes.hosted[2], "https://eth5.augur.net");
-                done();
-            });
-        });
-
-        it("[sync] hosted node failure", function () {
-            rpc.nodes.hosted = ["https://lol.lol.lol", "https://not.a.node"];
-            assert.strictEqual(rpc.nodes.hosted.length, 2);
-            assert.throws(function () {
-                rpc.broadcast({
-                    id: ++requests,
-                    jsonrpc: "2.0",
-                    method: "eth_coinbase",
-                    params: []
-                });
-            }, Error, /411/);
-        });
-
-        it("[async] hosted node failure", function (done) {
-            this.timeout(TIMEOUT);
-            rpc.nodes.hosted = ["https://lol.lol.lol", "https://not.a.node"];
-            assert.strictEqual(rpc.nodes.hosted.length, 2);
-            rpc.broadcast({
-                id: ++requests,
-                jsonrpc: "2.0",
-                method: "eth_coinbase",
-                params: []
-            }, function (err) {
-                assert.isNotNull(err);
-                assert.property(err, "error");
-                assert.property(err, "message");
-                assert.strictEqual(err.error, 411);
-                done();
-            });
-        });
-
-    });
-
     describe("useHostedNode", function () {
 
         it("switch to hosted node(s)", function () {
@@ -1172,93 +946,6 @@ describe("RPC", function () {
             jsonrpc: "2.0",
             method: "eth_gasPrice",
             params: []
-        });
-
-    });
-
-    describe("Load balancer", function () {
-
-        it("network latency snapshot", function (done) {
-            this.timeout(TIMEOUT);
-            rpc.balancer = true;
-            rpc.reset(true);
-            async.each([
-                "https://eth3.augur.net",
-                "https://eth4.augur.net",
-                "https://eth5.augur.net"
-            ], function (node, nextNode) {
-                rpc.nodes.hosted = [node];
-                rpc.version(function (version) {
-                    assert.strictEqual(version, NETWORK_ID);
-                    assert.property(rpc.latency, node);
-                    assert.property(rpc.samples, node);
-                    assert.isAbove(rpc.latency[node], 0);
-                    assert.strictEqual(rpc.samples[node], 1);
-                    nextNode();
-                });
-            }, function (err) {
-                assert.isNull(err);
-                assert.strictEqual(Object.keys(rpc.latency).length, 3);
-                assert.strictEqual(Object.keys(rpc.samples).length, 3);
-                done();
-            });
-        });
-
-        it("single-node mean latency: " + SAMPLES + " samples", function (done) {
-            this.timeout(TIMEOUT*4);
-            rpc.balancer = true;
-            rpc.excision = false;
-            rpc.reset(true);
-            var node = rpc.nodes.hosted[0];
-            rpc.nodes.hosted = [node];
-            var count = 0;
-            async.whilst(function () {
-                return count < SAMPLES;
-            }, function (callback) {
-                rpc.version(function (version) {
-                    if (version.error) return done(version);
-                    assert.strictEqual(version, NETWORK_ID);
-                    assert.property(rpc.latency, node);
-                    assert.property(rpc.samples, node);
-                    assert.isAbove(rpc.latency[node], 0);
-                    assert.strictEqual(rpc.samples[node], ++count);
-                    callback();
-                });
-            }, function (err) {
-                assert.isNull(err);
-                assert.strictEqual(rpc.samples[node], SAMPLES);
-                assert.strictEqual(Object.keys(rpc.latency).length, 1);
-                assert.strictEqual(Object.keys(rpc.samples).length, 1);
-                done();
-            });
-        });
-
-        it("mean latency profile: " + SAMPLES*10 + " samples", function (done) {
-            this.timeout(TIMEOUT*15);
-            rpc.balancer = true;
-            rpc.excision = false;
-            rpc.reset(true);
-            var count = 0;
-            async.whilst(function () {
-                return ++count < SAMPLES*10;
-            }, function (callback) {
-                rpc.version(function (version) {
-                    assert.strictEqual(version, NETWORK_ID);
-                    callback();
-                });
-            }, function (err) {
-                assert.isNull(err);
-                assert.strictEqual(Object.keys(rpc.latency).length, 3);
-                assert.strictEqual(Object.keys(rpc.samples).length, 3);
-                var total = 0;
-                for (var node in rpc.samples) {
-                    if (!rpc.samples.hasOwnProperty(node)) continue;
-                    total += rpc.samples[node];
-                    assert.isAbove(rpc.latency[node], 0);
-                }
-                assert.strictEqual(total, count - 1);
-                done();
-            });
         });
 
     });
