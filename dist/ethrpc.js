@@ -15,7 +15,6 @@ module.exports={
         "eventResolution": "0x2fac411c69994858409c24ed2a5567da29c61bca",
         "faucets": "0x895d32f2db7d01ebb50053f9e48aacf26584fe40",
         "makeReports": "0x79a406da9ea815fd8cbe75ba8a4cb6d493dbf9b4",
-        "metadata": "0x5cf043ea28e287e818e15181485b3d5d61474126",
         "orderBook": "0xc8bdc68526a959fcb932b57063c97b1fc6176709",
         "ramble": "0x42a77acc59bb566aa670d6e7639b99efa235e6f7",
         "sendReputation": "0x6b969e428c58d81429ef13240c0ecb3529aa91bb",
@@ -44,7 +43,6 @@ module.exports={
         "eventResolution": "0xd399af9820be7ddda37c7d85e701bf8ee2337739",
         "faucets": "0x94bab6be74df76e996b20329dff2ec39d3013dc3",
         "makeReports": "0x0b7c36b76208e2c968b04dce0658c03c27bfdc00",
-        "metadata": "0x5cf043ea28e287e818e15181485b3d5d61474126",
         "orderBook": "0xf86bbf277ae88a8b50ae90d97e1aafb1390e2984",
         "ramble": "0x2258a25e503b19dc3d2c2fdc9ca57a1d5985e30c",
         "sendReputation": "0x7e049a60e0106d263ffd0a60bcfbf4f63dd1f2a4",
@@ -73,7 +71,6 @@ module.exports={
         "eventResolution": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea",
         "faucets": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df",
         "makeReports": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d",
-        "metadata": "0x5cf043ea28e287e818e15181485b3d5d61474126",
         "orderBook": "0x8a4e2993a9972ee035453bb5674816fc3a698718",
         "ramble": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c",
         "sendReputation": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68",
@@ -328,6 +325,7 @@ module.exports={
         }
     }
 }
+
 },{}],2:[function(require,module,exports){
 module.exports={
     "0x": "no response or bad input",
@@ -586,24 +584,9 @@ module.exports = contracts;
 
 module.exports = function (network) {
 
-    var contracts = require("./contracts")[network];
+    var contracts = require("./contracts")[network || "2"];
 
     return {
-
-        // metadata.se
-        setMetadata: {
-            to: contracts.metadata,
-            method: "setMetadata",
-            signature: "iiiiss",
-            returns: "number",
-            send: true
-        },
-        getMetadata: {
-            to: contracts.metadata,
-            method: "getMetadata",
-            signature: "i",
-            returns: "hash[]"
-        },
 
         // faucets.se
         reputationFaucet: {
@@ -752,6 +735,18 @@ module.exports = function (network) {
         getVotePeriod: {
             to: contracts.branches,
             method: "getVotePeriod",
+            signature: "i",
+            returns: "number"
+        },
+        getReportPeriod: {
+            to: contracts.branches,
+            method: "getVotePeriod",
+            signature: "i",
+            returns: "number"
+        },
+        getNumMarkets: {
+            to: contracts.branches,
+            method: "getNumMarketsBranch",
             signature: "i",
             returns: "number"
         },
@@ -973,25 +968,6 @@ module.exports = function (network) {
             signature: "iii",
             send: true
         },
-        setReporterBallot: {
-            to: contracts.expiringEvents,
-            method: "setReporterBallot",
-            signature: "iiiai",
-            send: true,
-            returns: "number"
-        },
-        getTotalReputation: {
-            to: contracts.expiringEvents,
-            method: "getTotalReputation",
-            signature: "ii",
-            returns: "unfix"
-        },
-        setTotalReputation: {
-            to: contracts.expiringEvents,
-            method: "setTotalReputation",
-            signature: "iii",
-            returns: "number"
-        },
 
         // markets.se
         price: {
@@ -1188,14 +1164,148 @@ module.exports = function (network) {
             returns: "unfix"
         },
 
-        // buy&sellShares.se
+        // trades.se
+        makeTradeHash: {
+            to: contracts.trades,
+            method: "makeTradeHash",
+            signature: "iia",
+            returns: "hash"
+        },
         commitTrade: {
-            to: contracts.buyAndSellShares,
+            to: contracts.trades,
             method: "commitTrade",
+            signature: "i",
+            returns: "number",
+            send: true
+        },
+        setInitialTrade: {
+            to: contracts.trades,
+            method: "setInitialTrade",
+            signature: "i",
+            returns: "number",
+            send: true
+        },  
+        getInitialTrade: {
+            to: contracts.trades,
+            method: "getInitialTrade",
+            signature: "i",
+            returns: "hash"
+        },            
+        zeroHash: {
+            to: contracts.trades,
+            method: "zeroHash",
+            returns: "number",
+            send: true
+        },
+        checkHash: {
+            to: contracts.trades,
+            method: "checkHash",
+            signature: "i",
+            returns: "number"
+        },
+        getID: {
+            to: contracts.trades,
+            method: "getID",
+            signature: "i",
+            returns: "hash"
+        },            
+        saveTrade: {
+            to: contracts.trades,
+            method: "saveTrade",
+            signature: "iiiiiii",
+            returns: "number",
+            send: true
+        },
+        get_trade: {
+            to: contracts.trades,
+            method: "get_trade",
+            signature: "i",
+            returns: "hash[]"
+        },
+        get_amount: {
+            to: contracts.trades,
+            method: "get_amount",
+            signature: "i",
+            returns: "unfix"
+        },
+        get_price: {
+            to: contracts.trades,
+            method: "get_price",
+            signature: "i",
+            returns: "unfix"
+        },
+        update_trade: {
+            to: contracts.trades,
+            method: "update_trade",
+            signature: "ii",
+            send: true
+        },
+        remove_trade: {
+            to: contracts.trades,
+            method: "remove_trade",
+            signature: "i",
+            returns: "number",
+            send: true
+        },
+        fill_trade: {
+            to: contracts.trades,
+            method: "fill_trade",
             signature: "ii",
             returns: "number",
             send: true
         },
+
+        // buy&sellShares.se
+        cancel: {
+            to: contracts.buyAndSellShares,
+            method: "cancel",
+            signature: "i",
+            returns: "number",
+            send: true
+        },
+        buy: {
+            to: contracts.buyAndSellShares,
+            method: "buy",
+            signature: "iiii",
+            returns: "number",
+            send: true
+        },
+        sell: {
+            to: contracts.buyAndSellShares,
+            method: "sell",
+            signature: "iiii",
+            returns: "number",
+            send: true
+        },
+        short_sell: {
+            to: contracts.buyAndSellShares,
+            method: "short_sell",
+            signature: "ii",
+            returns: "number",
+            send: true
+        },
+        trade: {
+            to: contracts.buyAndSellShares,
+            method: "trade",
+            signature: "iia",
+            returns: "number",
+            send: true
+        },
+        buyCompleteSets: {
+            to: contracts.buyAndSellShares,
+            method: "buyCompleteSets",
+            signature: "ii",
+            returns: "number",
+            send: true
+        },
+        sellCompleteSets: {
+            to: contracts.buyAndSellShares,
+            method: "sellCompleteSets",
+            signature: "ii",
+            returns: "number",
+            send: true
+        },
+
         buyShares: {
             to: contracts.buyAndSellShares,
             method: "buyShares",
@@ -2090,6 +2200,34 @@ module.exports = {
 
     compileLLL: function (code, f) {
         return this.broadcast(this.marshal("compileLLL", code), f);
+    },
+
+    newFilter: function (params, f) {
+        return this.broadcast(this.marshal("newFilter", params), f);
+    },
+
+    newBlockFilter: function (f) {
+        return this.broadcast(this.marshal("newBlockFilter"), f);
+    },
+
+    newPendingTransactionFilter: function (f) {
+        return this.broadcast(this.marshal("newPendingTransactionFilter"), f);
+    },
+
+    getFilterChanges: function (filter, f) {
+        return this.broadcast(this.marshal("getFilterChanges", filter), f);
+    },
+
+    getFilterLogs: function (filter, f) {
+        return this.broadcast(this.marshal("getFilterLogs", filter), f);
+    },
+
+    getLogs: function (filter, f) {
+        return this.broadcast(this.marshal("getLogs", filter), f);
+    },
+
+    uninstallFilter: function (filter, f) {
+        return this.broadcast(this.marshal("uninstallFilter", filter), f);
     },
 
     // publish a new contract to the blockchain (from the coinbase account)

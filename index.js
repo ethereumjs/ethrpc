@@ -711,6 +711,34 @@ module.exports = {
         return this.broadcast(this.marshal("compileLLL", code), f);
     },
 
+    newFilter: function (params, f) {
+        return this.broadcast(this.marshal("newFilter", params), f);
+    },
+
+    newBlockFilter: function (f) {
+        return this.broadcast(this.marshal("newBlockFilter"), f);
+    },
+
+    newPendingTransactionFilter: function (f) {
+        return this.broadcast(this.marshal("newPendingTransactionFilter"), f);
+    },
+
+    getFilterChanges: function (filter, f) {
+        return this.broadcast(this.marshal("getFilterChanges", filter), f);
+    },
+
+    getFilterLogs: function (filter, f) {
+        return this.broadcast(this.marshal("getFilterLogs", filter), f);
+    },
+
+    getLogs: function (filter, f) {
+        return this.broadcast(this.marshal("getLogs", filter), f);
+    },
+
+    uninstallFilter: function (filter, f) {
+        return this.broadcast(this.marshal("uninstallFilter", filter), f);
+    },
+
     // publish a new contract to the blockchain (from the coinbase account)
     publish: function (compiled, f) {
         return this.sendTx({from: this.coinbase(), data: compiled}, f);
