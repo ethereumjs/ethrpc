@@ -1,97 +1,71 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports={
     "2": {
-        "buyAndSellShares": "0xf37626aa99f29a4afe7406e386f68cc77be2cb6e",
-        "closeMarket": "0x9973183349c7fc536041d65108431e736cbb6f7e",
-        "closeMarketEight": "0xb6e28762fef57f336014643741544d4f197cc494",
-        "closeMarketFour": "0x1665ee14c0b07448c3d758c2792d2a328acd98c5",
-        "closeMarketOne": "0x8b4cd6f60de0362237dc0c5b22be15273b099b7e",
-        "closeMarketTwo": "0x0774e46e0cbddb58f09f2d8d53d4aa8bc53df714",
-        "consensus": "0xb816c3abdbb9967485f8645bc83143bb749572e0",
-        "createBranch": "0x21b87e562066e36da0bc599b3d016efb6fe80913",
-        "createEvent": "0xfab258ae92a2fe25ae4e4ddb9e63fb1c691cc2aa",
-        "createMarket": "0x8a1bbe841ceef103221ebcb7fc50bf3e0edc7773",
-        "createSingleEventMarket": "0xd5283e4f818de5c984f2221a421983f6040961c1",
-        "eventResolution": "0x2fac411c69994858409c24ed2a5567da29c61bca",
-        "faucets": "0x895d32f2db7d01ebb50053f9e48aacf26584fe40",
-        "makeReports": "0x79a406da9ea815fd8cbe75ba8a4cb6d493dbf9b4",
-        "orderBook": "0xc8bdc68526a959fcb932b57063c97b1fc6176709",
-        "ramble": "0x42a77acc59bb566aa670d6e7639b99efa235e6f7",
-        "sendReputation": "0x6b969e428c58d81429ef13240c0ecb3529aa91bb",
-        "transferShares": "0x95ecfe0ebd855931faec81cbb671e61bfe56082e",
-        "branches": "0x513087e06ea1a05b858f6da58befb0012c775e63",
-        "cash": "0x154edcf6418038f863c6cd3b395a16a02c037ae3",
-        "events": "0x2d446b3950fc5ea3cf18804b9ab8f79357978ab9",
-        "expiringEvents": "0x0ed2d24d31ed33b658aa2f1108698d5bc3a8b622",
-        "fxpFunctions": "0xe85133772801961725debe87ace3cefaffb01533",
-        "info": "0xf68dab896ca313cbd8946aecfdb965662a61aa3c",
-        "markets": "0x4b2a8b1cc3a2f686d835bfc2ca0c20671676efb0",
-        "reporting": "0x2828a20e3ce771571177928077bfbbcdd16df764"
-    },
-    "7": {
-        "buyAndSellShares": "0x271ee62a8577a97d648c4b4eb3a0e56306f711c1",
-        "closeMarket": "0x7a2e05c795fbf585af34cebe760602b8425846dd",
-        "closeMarketEight": "0x66021d8b17cd9b90dc53012ba6c8cec8aaef2d1b",
-        "closeMarketFour": "0xfb5c088e0d2b8400800c61ac0d69cfd11261401c",
-        "closeMarketOne": "0xbfaa24839dec3961c010c4831709bdecbac382f5",
-        "closeMarketTwo": "0x8bb3073196dbdbf425157b3d83156f18c5c0e776",
-        "consensus": "0xc4d92584ea34be5dd2b916c464e55ec9b4bd1f8f",
-        "createBranch": "0xb005839c49a328850bb22359bb66f9ba1a0f9994",
-        "createEvent": "0x0c532debb932ddb5d07eb957bf8ff5975e932ca3",
-        "createMarket": "0x26ff0f6452673ff11dd8497491b271a18c76990e",
-        "createSingleEventMarket": "0x6f5452dca9bbfe8ac9151dd0e67c8dde8b1c6572",
-        "eventResolution": "0xd399af9820be7ddda37c7d85e701bf8ee2337739",
-        "faucets": "0x94bab6be74df76e996b20329dff2ec39d3013dc3",
-        "makeReports": "0x0b7c36b76208e2c968b04dce0658c03c27bfdc00",
-        "orderBook": "0xf86bbf277ae88a8b50ae90d97e1aafb1390e2984",
-        "ramble": "0x2258a25e503b19dc3d2c2fdc9ca57a1d5985e30c",
-        "sendReputation": "0x7e049a60e0106d263ffd0a60bcfbf4f63dd1f2a4",
-        "transferShares": "0x40343b107ef5dee9c240ff5f1f87f0afb6f709dc",
-        "branches": "0x44cecf2528fbc502f31a58cfce99b8bae992b9c4",
-        "cash": "0x9ef25450d88c82118a3395f57e7a29931305ac6d",
-        "events": "0xa95fa8fe1f544d80afa29ffb0a959116c842e110",
-        "expiringEvents": "0xad225235b9da03bbfda4fb79bf4e2356296e7d7f",
-        "fxpFunctions": "0xa1a240f9f505aa06e9eabe405ffab14689dfdda3",
-        "info": "0x087785682381a1316303efb19d1d450562603fca",
-        "markets": "0xfd0f6987c7042e867db9c1dae6e681b2c3648de2",
-        "reporting": "0x9d358fee98edb880e6a4549e21f4ab66dfcadfa7"
+        "buyAndSellShares": "0x1af0d76463bd04d61acaa3ecce2dd76d888f2a62",
+        "closeMarket": "0xfc9a1aa49c4f8bf8a8a62d2108230c88dd694abf",
+        "closeMarketEight": "0x5e87ce160a0bd6f9118a8f6d302be3996cc548a0",
+        "closeMarketFour": "0x925a58dd604aedae13ec38e52656951196f0972c",
+        "closeMarketOne": "0xdbe8554632236a1227b3ae6ad0ed845a24ab14b5",
+        "closeMarketTwo": "0xb7b2ea922576589775ed6dd16259f5b2be412db8",
+        "collectFees": "0x444551cb9f366a6dcb2a2ea8195b6cd23b9254b9",
+        "completeSets": "0xbbfaca17af649355b495bd1d9d1a868f79e1db1c",
+        "consensus": "0xeb485fadd10929db477a2178c1dcf0c316d192f2",
+        "createBranch": "0xdfe3a8d15b961ba390432efda62b803eb8c9236e",
+        "createMarket": "0x4653bdc46f1440707a2dbfa89a1b3d22c55342cb",
+        "eventResolution": "0xf07c65ef2543dec8e3b75cf5d1866a967e76340a",
+        "faucets": "0x532c107ac97b2fc48503c16a0e9931baccfe3149",
+        "forking": "0xadf25ff2a60ad2ab876f7bcc212a29098404bc20",
+        "makeReports": "0xff4bc011564a6ab00f5b795ea86533b31a7c0ea2",
+        "penalizeNotEnoughReports": "0x342c5f401271a97b9f488859a6ce51b64ba8e0e7",
+        "roundTwo": "0xedcedb82bcf01a4472cf14e379e9c200a3c78560",
+        "sendReputation": "0xb74e159ecead0f4a666b920b27388a810f9c12c5",
+        "slashRep": "0x15187fb1e21c9c808cf888c457f8e25a00d6c42a",
+        "trade": "0x53a30c5d96d11e061ab8f7754545b2f0e930b319",
+        "backstops": "0x243a5bb4903fdc52da6c001ca1ff4a7d55e78ef4",
+        "branches": "0xe556780b7365bdf861c2366854410b6a61fbf39d",
+        "cash": "0x042951544933052a6316c127cb9c770a791a073d",
+        "events": "0xc77fff92edb265cdb713d2bbb1ff48f4aa2f0b09",
+        "expiringEvents": "0x578f98a81bcd1701b145ffe14b7d3b1ba92f1925",
+        "fxpFunctions": "0x22f8fdeb1156cad0ade3e1f7d1565eabd2496a1d",
+        "info": "0xa14ce93ffc862143ed1a0e688cbb813362b0b075",
+        "markets": "0x0acaff246f8fa04024ce25b8befa1f3a41277250",
+        "reporting": "0x275b6a226c734ca4c710e24b051e9ec1a8b03bcf",
+        "trades": "0x2a03116b60f75545581731b784df4b838a723a67"
     },
     "10101": {
-        "buyAndSellShares": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd",
-        "closeMarket": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7",
-        "closeMarketEight": "0xd15a6cfc462ae76b9ec590cab8b34bfa8e1302d7",
-        "closeMarketFour": "0x81a7621e9a286d061b3dea040888a51c96693b1c",
-        "closeMarketOne": "0xe5b327630cfa7f4b2324f9066c897dceecfd88a3",
-        "closeMarketTwo": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e",
-        "consensus": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79",
-        "createBranch": "0x8c19616de17acdfbc933b99d9f529a689d22098f",
-        "createEvent": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6",
-        "createMarket": "0x35152caa07026203a1add680771afb690d872d7d",
-        "createSingleEventMarket": "0x3f3276849a878a176b2f02dd48a483e8182a49e4",
-        "eventResolution": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea",
-        "faucets": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df",
-        "makeReports": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d",
-        "orderBook": "0x8a4e2993a9972ee035453bb5674816fc3a698718",
-        "ramble": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c",
+        "buyAndSellShares": "0xe5b327630cfa7f4b2324f9066c897dceecfd88a3",
+        "closeMarket": "0x7d4b581a0868204b7481c316b430a97fd292a2fb",
+        "closeMarketEight": "0x81a7621e9a286d061b3dea040888a51c96693b1c",
+        "closeMarketFour": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e",
+        "closeMarketOne": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd",
+        "closeMarketTwo": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6",
+        "collectFees": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79",
+        "completeSets": "0x5069d883e31429c6dd1325d961f443007747c7a2",
+        "consensus": "0x35152caa07026203a1add680771afb690d872d7d",
+        "createBranch": "0xd15a6cfc462ae76b9ec590cab8b34bfa8e1302d7",
+        "createMarket": "0xcd6c7bc634257f82903b182142aae7156d72a200",
+        "eventResolution": "0x9308cf21b5a11f182f9707ca284bbb71bb84f893",
+        "faucets": "0x70a893eb9569041e97a3787f0c76a1eb6378d8b2",
+        "forking": "0x8c19616de17acdfbc933b99d9f529a689d22098f",
+        "makeReports": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7",
+        "penalizeNotEnoughReports": "0x3f3276849a878a176b2f02dd48a483e8182a49e4",
+        "roundTwo": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df",
         "sendReputation": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68",
-        "transferShares": "0x9fe69262bbaa47f013b7dbd6ca5f01e17446c645",
-        "branches": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2",
-        "cash": "0x8f2c2267687cb0f047b28a1b6f945da6e101a0d7",
-        "events": "0xbd19195b9e8a2d8ed14fc3a2823856b5c16f7f55",
-        "expiringEvents": "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
-        "fxpFunctions": "0x708fdfe18bf28afe861a69e95419d183ace003eb",
-        "info": "0x4a61f3db785f1e2a23ffefeafaceeef2df551667",
-        "markets": "0x5069d883e31429c6dd1325d961f443007747c7a2",
-        "reporting": "0xe4714fcbdcdba49629bc408183ef40d120700b8d"
+        "slashRep": "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
+        "trade": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d",
+        "backstops": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea",
+        "branches": "0x708fdfe18bf28afe861a69e95419d183ace003eb",
+        "cash": "0x8a4e2993a9972ee035453bb5674816fc3a698718",
+        "events": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2",
+        "expiringEvents": "0xbd19195b9e8a2d8ed14fc3a2823856b5c16f7f55",
+        "fxpFunctions": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c",
+        "info": "0xe4714fcbdcdba49629bc408183ef40d120700b8d",
+        "markets": "0x4a61f3db785f1e2a23ffefeafaceeef2df551667",
+        "reporting": "0x8f2c2267687cb0f047b28a1b6f945da6e101a0d7",
+        "trades": "0x9fe69262bbaa47f013b7dbd6ca5f01e17446c645"
     },
     "errors": {
         "0x": "no response or bad input",
-        "getSimulatedBuy": {
-            "-2": "cost updating error (did you enter a valid quantity?)"
-        },
-        "getSimulatedSell": {
-            "-2": "cost updating error (did you enter a valid quantity?)"
-        },
         "closeMarket": {
             "0": "fail/trading not over yet/event not expired or closed already",
             "-1": "Market has no cash anyway / already closed",
@@ -99,16 +73,6 @@ module.exports={
             "-4": "Outcome .5 once, pushback and retry",
             "-6": "bonded pushed forward market not ready to be resolved",
             "-7": "event not reportable >.99"
-        },
-        "claimProceeds": {
-            "0": "reporting not done",
-            "-1": "trader doesn't exist"
-        },
-        "report": {
-            "0": "could not set reporter ballot",
-            "-1": "report length does not match number of expiring events",
-            "-2": "voting period expired",
-            "-3": "incorrect hash"
         },
         "submitReportHash": {
             "0": "could not set report hash",
@@ -128,10 +92,6 @@ module.exports={
             "-8": "invalid event",
             "-9": "already resolved",
             "-10": "<24 hr left in period, too late to report, able to put up readj. bonds though"
-        },
-        "checkReportValidity": {
-            "-1": "report isn't long enough",
-            "-2": "reporter doesn't exist, voting period is over, or voting period hasn't started yet"
         },
         "penalizeNotEnoughReports": {
             "-1": "already done",
@@ -184,24 +144,22 @@ module.exports={
             "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
             "-2": "Receiving address doesn't exist"
         },
-        "buyShares": {
-            "-1": "invalid outcome or trading closed",
-            "-2": "entered a -amt of shares",
-            "-3": "not enough money / limit order too low",
-            "-4": "invalid outcome",
-            "-5": "bad commitment or no commitment",
-            "-6": "oracle only branch, no trading"
+        "buy": {
+            "-1": "amount/price bad or no market",
+            "-2": "oracle-only branch",
+            "-4": "not enough money or shares"
         },
-        "sellShares": {
-            "-1": "invalid outcome, trading closed, or you haven't traded in this market",
-            "-2": "entered a -amt of shares",
-            "-3": "you own no shares / limit price too high",
-            "-5": "bad commitment or no commitment",
-            "-6": "oracle only branch, no trading"
+        "sell": {
+            "-1": "amount/price bad or no market",
+            "-2": "oracle only branch",
+            "-4": "not enough money or shares"
         },
-        "WHISPER_POST_FAILED": {
-            "error": 65,
-            "message": "could not post message to whisper"
+        "trade": {
+            "-1": "oracle only branch",
+            "-2": "bad trade hash",
+            "-3": "trader doesn't exist / own shares in this market",
+            "-4": "must buy at least .00000001 in value",
+            "10": "insufficient balance"
         },
         "DB_DELETE_FAILED": {
             "error": 97,
@@ -295,14 +253,6 @@ module.exports={
             "error": 505,
             "message": "could not retrieve market data"
         },
-        "IPFS_ADD_FAILURE": {
-            "error": 506,
-            "message": "files could not be added to IPFS"
-        },
-        "IPFS_GET_FAILURE": {
-            "error": 507,
-            "message": "could not retrieve file from IPFS"
-        },
         "RPC_TIMEOUT": {
             "error": 599,
             "message": "timed out while waiting for Ethereum network response"
@@ -318,10 +268,6 @@ module.exports={
         "ROOT_NOT_FOUND": {
             "error": 700,
             "message": "no LS-LMSR objectve function solution found"
-        },
-        "CHECK_ORDER_BOOK_FAILED": {
-            "error": 710,
-            "message": "could not check order book using current prices"
         }
     }
 }
@@ -610,15 +556,6 @@ module.exports = function (network) {
             send: true
         },
 
-        // createSingleEventMarket.se
-        createSingleEventMarket: {
-            to: contracts.createSingleEventMarket,
-            method: "createSingleEventMarket",
-            signature: "isiiiiiiii",
-            returns: "hash",
-            send: true
-        },
-
         // cash.se
         addCash: {
             to: contracts.cash,
@@ -767,9 +704,9 @@ module.exports = function (network) {
             method: "getNumBranches",
             returns: "number"
         },
-        getBranch: {
+        getBranchByNum: {
             to: contracts.branches,
-            method: "getBranch",
+            method: "getBranchByNum",
             signature: "i",
             returns: "hash"
         },
@@ -789,6 +726,51 @@ module.exports = function (network) {
         },
 
         // consensus.se
+        // def getFeesCollected(branch, address, period):
+        getFeesCollected: {
+            to: contracts.consensus,
+            method: "getFeesCollected",
+            signature: "iii",
+            returns: "number"
+        },
+        // def setFeesCollected(branch, address, period):
+        setFeesCollected: {
+            to: contracts.consensus,
+            method: "setFeesCollected",
+            signature: "iii",
+            returns: "number",
+            send: true
+        },
+        // def setNotEnoughPenalized(branch, address, period):
+        setNotEnoughPenalized: {
+            to: contracts.consensus,
+            method: "setNotEnoughPenalized",
+            signature: "iii",
+            returns: "number",
+            send: true
+        },            
+        // def getNotEnoughPenalized(branch, address, period):
+        getNotEnoughPenalized: {
+            to: contracts.consensus,
+            method: "getNotEnoughPenalized",
+            signature: "iii",
+            returns: "number"
+        },
+        // def getBaseReportersLastPeriod(branch):
+        getBaseReportersLastPeriod: {
+            to: contracts.consensus,
+            method: "getBaseReportersLastPeriod",
+            signature: "i",
+            returns: "number"
+        },
+        // def initialPenalizedSetting(branch, reporter, upto):
+        initialPenalizedSetting: {
+            to: contracts.consensus,
+            method: "initialPenalizedSetting",
+            signature: "iii",
+            returns: "number",
+            send: true
+        },
         proportionCorrect: {
             to: contracts.consensus,
             method: "proportionCorrect",
@@ -802,16 +784,9 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        penalizeNotEnoughReports: {
+        penalizationCatchup: {
             to: contracts.consensus,
-            method: "penalizeNotEnoughReports",
-            signature: "i",
-            returns: "number",
-            send: true
-        },
-        collectFees: {
-            to: contracts.consensus,
-            method: "collectFees",
+            method: "penalizationCatchup",
             signature: "i",
             returns: "number",
             send: true
@@ -823,15 +798,29 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        penalizationCatchup: {
-            to: contracts.consensus,
-            method: "penalizationCatchup",
+
+        // penalizeNotEnoughReports.se
+        penalizeNotEnoughReports: {
+            to: contracts.penalizeNotEnoughReports,
+            method: "penalizeNotEnoughReports",
             signature: "i",
             returns: "number",
             send: true
         },
+
+        // collectFees.se
+        collectFees: {
+            to: contracts.collectFees,
+            method: "collectFees",
+            signature: "i",
+            returns: "number",
+            send: true
+        },
+
+        // slashRep.se
+        // def slashRep(branch, salt, report, reporter, eventID):
         slashRep: {
-            to: contracts.consensus,
+            to: contracts.slashRep,
             method: "slashRep",
             signature: "iiiii",
             returns: "number",
@@ -914,6 +903,12 @@ module.exports = function (network) {
         },
 
         // expiringEvents.se
+        getReportedPeriod: {
+            to: contracts.expiringEvents,
+            method: "getReportedPeriod",
+            signature: "iii",
+            returns: "number"
+        },
         getEventIndex: {
             to: contracts.expiringEvents,
             method: "getEventIndex",
@@ -970,17 +965,12 @@ module.exports = function (network) {
         },
 
         // markets.se
-        price: {
+        get_trade_ids: {
             to: contracts.markets,
-            method: "price",
-            signature: "ii",
-            returns: "unfix"
-        },
-        lsLmsr: {
-            to: contracts.markets,
-            method: "lsLmsr",
+            method: "get_trade_ids",
             signature: "i",
-            returns: "unfix"
+            returns: "hash[]",
+            gas: "0x9184e729fff"
         },
         getMarketInfo: {
             to: contracts.markets,
@@ -1044,6 +1034,12 @@ module.exports = function (network) {
             signature: "i",
             returns: "hash"
         },
+        getCreationBlock: {
+            to: contracts.markets,
+            method: "getCreationBlock",
+            signature: "i",
+            returns: "number"
+        },
         getVolume: {
             to: contracts.markets,
             method: "getVolume",
@@ -1067,12 +1063,6 @@ module.exports = function (network) {
             method: "getParticipantID",
             signature: "ii",
             returns: "address"
-        },
-        getAlpha: {
-            to: contracts.markets,
-            method: "getAlpha",
-            signature: "i",
-            returns: "unfix"
         },
         getCumScale: {
             to: contracts.markets,
@@ -1121,47 +1111,195 @@ module.exports = function (network) {
         },
 
         // reporting.se
-        getRepBalance: {
+        // def checkWhitelist(address):
+        checkWhitelist: {
             to: contracts.reporting,
-            method: "getRepBalance",
-            signature: "ii",
+            method: "checkWhitelist",
+            signature: "i"
+        },
+        // def getActiveRep(branch):
+        getActiveRep: {
+            to: contracts.reporting,
+            method: "getActiveRep",
+            signature: "i",
             returns: "unfix"
         },
+        // def adjustActiveRep(branch, amount):
+        adjustActiveRep: {
+            to: contracts.reporting,
+            method: "adjustActiveRep",
+            signature: "ii",
+            returns: "number",
+            send: true
+        },
+        // def setFork(branch):
+        setFork: {
+            to: contracts.reporting,
+            method: "setFork",
+            signature: "i",
+            returns: "number",
+            send: true
+        },
+        // def getFork(branch):
+        getFork: {
+            to: contracts.reporting,
+            method: "getFork",
+            signature: "i",
+            returns: "number"
+        },
+        // def checkContractWhitelist(contract, address):
+        checkContractWhitelist: {
+            to: contracts.reporting,
+            method: "checkContractWhitelist",
+            signature: "ii"
+        },
+        // def setWhitelist(contract, addresses:arr):
+        setWhitelist: {
+            to: contracts.reporting,
+            method: "setWhitelist",
+            signature: "ia",
+            returns: "string",
+            send: true
+        },
+        // def getRepByIndex(branch, repIndex):
         getRepByIndex: {
             to: contracts.reporting,
             method: "getRepByIndex",
             signature: "ii",
             returns: "unfix"
         },
+        // def getRepBalance(branch, address):
+        getRepBalance: {
+            to: contracts.reporting,
+            method: "getRepBalance",
+            signature: "ii",
+            returns: "unfix"
+        },
+        // def getDormantRepByIndex(branch, repIndex):
+        getDormantRepByIndex: {
+            to: contracts.reporting,
+            method: "getDormantRepByIndex",
+            signature: "ii",
+            returns: "unfix"
+        },
+        // def balanceOf(branch, address):
+        balanceOf: {
+            to: contracts.reporting,
+            method: "balanceOf",
+            signature: "ii",
+            returns: "unfix"
+        },
+        // def totalSupply(branch):
+        totalSupply: {
+            to: contracts.reporting,
+            method: "totalSupply",
+            signature: "i",
+            returns: "unfix"
+        },
+        // def getReporterID(branch, index):
         getReporterID: {
             to: contracts.reporting,
             method: "getReporterID",
             signature: "ii",
             returns: "address"
         },
+        // def getTotalRep(branch):
+        getTotalRep: {
+            to: contracts.reporting,
+            method: "getTotalRep",
+            signature: "i",
+            returns: "unfix"
+        },
+        // def getReputation(address):
         getReputation: {
             to: contracts.reporting,
             method: "getReputation",
             signature: "i",
-            returns: "number[]"
+            returns: "hash[]"
         },
+        // def getNumberReporters(branch):
         getNumberReporters: {
             to: contracts.reporting,
             method: "getNumberReporters",
             signature: "i",
             returns: "number"
         },
+        // def repIDToIndex(branch, repID):
         repIDToIndex: {
             to: contracts.reporting,
             method: "repIDToIndex",
             signature: "ii",
             returns: "number"
         },
-        getTotalRep: {
+        // def hashReport(report: arr, salt):
+        hashReport: {
             to: contracts.reporting,
-            method: "getTotalRep",
-            signature: "i",
-            returns: "unfix"
+            method: "hashReport",
+            signature: "ai"
+        },
+        // def setInitialReporters(parent, branchID):
+        setInitialReporters: {
+            to: contracts.reporting,
+            method: "setInitialReporters",
+            signature: "ii",
+            returns: "number",
+            send: true
+        },
+        // def addReporter(branch, sender):
+        addReporter: {
+            to: contracts.reporting,
+            method: "addReporter",
+            signature: "ii",
+            returns: "number",
+            send: true
+        },
+        // def addRep(branch, index, value):
+        addRep: {
+            to: contracts.reporting,
+            method: "addRep",
+            signature: "iii",
+            returns: "number",
+            send: true
+        },
+        // def subtractRep(branch, index, value):
+        subtractRep: {
+            to: contracts.reporting,
+            method: "subtractRep",
+            signature: "iii",
+            returns: "number",
+            send: true
+        },
+        // def setRep(branch, index, newRep):
+        setRep: {
+            to: contracts.reporting,
+            method: "setRep",
+            signature: "iii",
+            returns: "number",
+            send: true
+        },
+        // def addDormantRep(branch, index, value):
+        addDormantRep: {
+            to: contracts.reporting,
+            method: "addDormantRep",
+            signature: "iii",
+            returns: "number",
+            send: true
+        },
+        // def subtractDormantRep(branch, index, value):
+        subtractDormantRep: {
+            to: contracts.reporting,
+            method: "subtractDormantRep",
+            signature: "iii",
+            returns: "number",
+            send: true
+        },
+        // def setSaleDistribution(addresses: arr, balances: arr, branchID):
+        setSaleDistribution: {
+            to: contracts.reporting,
+            method: "setSaleDistribution",
+            signature: "aai",
+            returns: "number",
+            send: true
         },
 
         // trades.se
@@ -1200,7 +1338,7 @@ module.exports = function (network) {
         checkHash: {
             to: contracts.trades,
             method: "checkHash",
-            signature: "i",
+            signature: "ii",
             returns: "number"
         },
         getID: {
@@ -1267,14 +1405,14 @@ module.exports = function (network) {
             to: contracts.buyAndSellShares,
             method: "buy",
             signature: "iiii",
-            returns: "number",
+            returns: "hash",
             send: true
         },
         sell: {
             to: contracts.buyAndSellShares,
             method: "sell",
             signature: "iiii",
-            returns: "number",
+            returns: "hash",
             send: true
         },
         short_sell: {
@@ -1284,39 +1422,28 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
+
+        // trade.se
         trade: {
-            to: contracts.buyAndSellShares,
+            to: contracts.trade,
             method: "trade",
             signature: "iia",
             returns: "number",
             send: true
         },
+
+        // completeSets.se
         buyCompleteSets: {
-            to: contracts.buyAndSellShares,
+            to: contracts.completeSets,
             method: "buyCompleteSets",
             signature: "ii",
             returns: "number",
             send: true
         },
         sellCompleteSets: {
-            to: contracts.buyAndSellShares,
+            to: contracts.completeSets,
             method: "sellCompleteSets",
             signature: "ii",
-            returns: "number",
-            send: true
-        },
-
-        buyShares: {
-            to: contracts.buyAndSellShares,
-            method: "buyShares",
-            signature: "iiiii",
-            returns: "number",
-            send: true
-        },
-        sellShares: {
-            to: contracts.buyAndSellShares,
-            method: "sellShares",
-            signature: "iiiii",
             returns: "number",
             send: true
         },
@@ -1343,18 +1470,6 @@ module.exports = function (network) {
         getNumEventsToReport: {
             to: contracts.makeReports,
             method: "getNumEventsToReport",
-            signature: "ii",
-            returns: "number"
-        },
-        getReportedPeriod: {
-            to: contracts.makeReports,
-            method: "getReportedPeriod",
-            signature: "iii",
-            returns: "number"
-        },
-        getReportable: {
-            to: contracts.makeReports,
-            method: "getReportable",
             signature: "ii",
             returns: "number"
         },
@@ -1408,7 +1523,7 @@ module.exports = function (network) {
         makeHash: {
             to: contracts.makeReports,
             method: "makeHash",
-            signature: "iii",
+            signature: "iiii",
             returns: "hash"
         },
         calculateReportingThreshold: {
@@ -1438,19 +1553,24 @@ module.exports = function (network) {
             returns: "number"
         },
 
-        // createEvent.se
+        // createMarket.se
         createEvent: {
-            to: contracts.createEvent,
+            to: contracts.createMarket,
             method: "createEvent",
-            signature: "isiiii",
+            signature: "isiiiis",
             send: true
         },
-
-        // createMarket.se
         createMarket: {
             to: contracts.createMarket,
             method: "createMarket",
-            signature: "isiiiai",
+            signature: "isiaiiiis",
+            send: true
+        },
+        createSingleEventMarket: {
+            to: contracts.createMarket,
+            method: "createSingleEventMarket",
+            signature: "isiiiisiiiiis",
+            returns: "hash",
             send: true
         },
 
@@ -1470,13 +1590,120 @@ module.exports = function (network) {
             send: true
         },
 
-        // dispatch.se
-        dispatch: {
-            to: contracts.dispatch,
-            method: "dispatch",
+        // roundTwo.se
+        // def roundTwoPostBond(branch, event, eventIndex, votePeriod):
+        roundTwoPostBond: {
+            to: contracts.roundTwo,
+            method: "roundTwoPostBond",
+            signature: "iiii",
+            returns: "number",
+            send: true
+        },
+        // def roundTwoResolve(branch, event, eventIndex, votePeriod):
+        roundTwoResolve: {
+            to: contracts.roundTwo,
+            method: "roundTwoResolve",
+            signature: "iiii",
+            returns: "number",
+            send: true
+        },
+        // def resolve(branch, event, sender):
+        resolve: {
+            to: contracts.roundTwo,
+            method: "resolve",
+            signature: "iii",
+            returns: "number",
+            send: true
+        },
+
+        // backstops.se
+        // def getRoundTwo(event):
+        getRoundTwo: {
+            to: contracts.backstops,
+            method: "getRoundTwo",
+            signature: "i"
+        },
+        // def setRoundTwo(event, roundTwo):
+        setRoundTwo: {
+            to: contracts.backstops,
+            method: "setRoundTwo",
+            signature: "ii",
+            returns: "number",
+            send: true
+        },
+        // def getBondPoster(event):
+        getBondPoster: {
+            to: contracts.backstops,
+            method: "getBondPoster",
+            signature: "i",
+            returns: "address"
+        },  
+        // def setBondPoster(event, bondPoster):
+        setBondPoster: {
+            to: contracts.backstops,
+            method: "setBondPoster",
+            signature: "ii",
+            returns: "number",
+            send: true
+        },
+        // def getFinal(event):
+        getFinal: {
+            to: contracts.backstops,
+            method: "getFinal",
+            signature: "i"
+        },
+        // def setFinal(event):
+        setFinal: {
+            to: contracts.backstops,
+            method: "setFinal",
+            signature: "i",
+            returns: "number",
+            send: true
+        },
+        // def getOriginalOutcome(event):
+        getOriginalOutcome: {
+            to: contracts.backstops,
+            method: "getOriginalOutcome",
+            signature: "i"
+        },
+        // def setOriginalOutcome(event, originalOutcome):
+        setOriginalOutcome: {
+            to: contracts.backstops,
+            method: "setOriginalOutcome",
+            signature: "ii",
+            returns: "number",
+            send: true
+        },
+        // def getOriginalEthicality(event):
+        getOriginalEthicality: {
+            to: contracts.backstops,
+            method: "getOriginalEthicality",
+            signature: "i"
+        },
+        // def setOriginalEthicality(event, ethicality):
+        setOriginalEthicality: {
+            to: contracts.backstops,
+            method: "setOriginalEthicality",
+            signature: "ii",
+            returns: "number",
+            send: true
+        },
+        // def getOriginalVotePeriod(event):
+        getOriginalVotePeriod: {
+            to: contracts.backstops,
+            method: "getOriginalVotePeriod",
             signature: "i",
             returns: "number"
+        },
+        // def setOriginalVotePeriod(event, period):
+        setOriginalVotePeriod: {
+            to: contracts.backstops,
+            method: "setOriginalVotePeriod",
+            signature: "ii",
+            returns: "number",
+            send: true
         }
+
     };
 
 };
@@ -2030,6 +2257,22 @@ module.exports = {
         return this.broadcast(this.marshal(command, params, "shh_"), f);
     },
 
+    miner: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "miner_"), f);
+    },
+
+    admin: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "admin_"), f);
+    },
+
+    personal: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "personal_"), f);
+    },
+
+    txpool: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "txpool_"), f);
+    },
+
     sha3: function (data, isHex) {
         if (isHex) data = abi.decode_hex(data);
         return abi.prefix_hex(keccak_256(data));
@@ -2246,17 +2489,26 @@ module.exports = {
     // Fast-forward a specified number of blocks
     fastforward: function (blocks, callback) {
         var startBlock, endBlock, self = this;
-        (function fastforward() {
-            self.blockNumber(function (blockNumber) {
-                blockNumber = parseInt(blockNumber);
-                if (startBlock === undefined) {
-                    startBlock = blockNumber;
-                    endBlock = blockNumber + parseInt(blocks);
-                }
-                if (blockNumber >= endBlock) return callback(endBlock);
-                setTimeout(fastforward, 500);
-            });
-        })();
+        this.miner("start", [], function (mining) {
+            if (!mining || mining.error) {
+                self.miner("stop", [], function () { callback(mining); });
+            }
+            (function fastforward() {
+                self.blockNumber(function (blockNumber) {
+                    blockNumber = parseInt(blockNumber);
+                    if (startBlock === undefined) {
+                        startBlock = blockNumber;
+                        endBlock = blockNumber + parseInt(blocks);
+                    }
+                    if (blockNumber >= endBlock) {
+                        return self.miner("stop", [], function () {
+                            callback(endBlock);
+                        });
+                    }
+                    setTimeout(fastforward, 500);
+                });
+            })();
+        });
     },
 
     // Ethereum node status checks

@@ -539,6 +539,22 @@ module.exports = {
         return this.broadcast(this.marshal(command, params, "shh_"), f);
     },
 
+    miner: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "miner_"), f);
+    },
+
+    admin: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "admin_"), f);
+    },
+
+    personal: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "personal_"), f);
+    },
+
+    txpool: function (command, params, f) {
+        return this.broadcast(this.marshal(command, params, "txpool_"), f);
+    },
+
     sha3: function (data, isHex) {
         if (isHex) data = abi.decode_hex(data);
         return abi.prefix_hex(keccak_256(data));
@@ -755,17 +771,26 @@ module.exports = {
     // Fast-forward a specified number of blocks
     fastforward: function (blocks, callback) {
         var startBlock, endBlock, self = this;
-        (function fastforward() {
-            self.blockNumber(function (blockNumber) {
-                blockNumber = parseInt(blockNumber);
-                if (startBlock === undefined) {
-                    startBlock = blockNumber;
-                    endBlock = blockNumber + parseInt(blocks);
-                }
-                if (blockNumber >= endBlock) return callback(endBlock);
-                setTimeout(fastforward, 500);
-            });
-        })();
+        this.miner("start", [], function (mining) {
+            if (!mining || mining.error) {
+                self.miner("stop", [], function () { callback(mining); });
+            }
+            (function fastforward() {
+                self.blockNumber(function (blockNumber) {
+                    blockNumber = parseInt(blockNumber);
+                    if (startBlock === undefined) {
+                        startBlock = blockNumber;
+                        endBlock = blockNumber + parseInt(blocks);
+                    }
+                    if (blockNumber >= endBlock) {
+                        return self.miner("stop", [], function () {
+                            callback(endBlock);
+                        });
+                    }
+                    setTimeout(fastforward, 500);
+                });
+            })();
+        });
     },
 
     // Ethereum node status checks
