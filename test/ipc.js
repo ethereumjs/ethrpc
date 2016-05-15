@@ -51,7 +51,7 @@ describe("IPC", function () {
     var TIMEOUT = 360000;
     var SHA3_INPUT = "boom!";
     var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
-    var PROTOCOL_VERSION = "63";
+    var PROTOCOL_VERSION = "0x3f";
     var TXHASH = "0x8807d1cf7bfad194122285cc586ffa72e124e2c47ff6b56067d5193511993c28";
     var requests = 0;
 

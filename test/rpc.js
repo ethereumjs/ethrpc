@@ -21,7 +21,7 @@ describe("RPC", function () {
     var COINBASE = "0x00bae5113ee9f252cceb0001205b88fad175461a";
     var SHA3_INPUT = "boom!";
     var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
-    var PROTOCOL_VERSION = "63";
+    var PROTOCOL_VERSION = "0x3f";
     var TXHASH = "0xc52b258dec9e8374880b346f93669d7699d7e64d46c8b6072b19122ca9406461";
     var NETWORK_ID = "2";
     contracts = contracts[NETWORK_ID];
