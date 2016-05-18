@@ -771,15 +771,8 @@ module.exports = {
     // Fast-forward a specified number of blocks
     fastforward: function (blocks, callback) {
         var startBlock, endBlock, self = this;
-        this.miner("start", [], function (mining) {
-            if (!mining || mining.error) {
-                try {
-                    self.miner("stop", [], function () { callback(mining); });
-                } catch (exc) {
-                    console.warn("no miner access");
-                }
-            }
-            (function fastforward() {
+        this.miner("start", [], function () {
+            function fastforward() {
                 self.blockNumber(function (blockNumber) {
                     blockNumber = parseInt(blockNumber);
                     if (startBlock === undefined) {
@@ -787,18 +780,15 @@ module.exports = {
                         endBlock = blockNumber + parseInt(blocks);
                     }
                     if (blockNumber >= endBlock) {
-                        try {
-                            self.miner("stop", [], function () {
-                                callback(endBlock);
-                            });
-                        } catch (exc) {
+                        self.miner("stop", [], function () {
                             callback(endBlock);
-                        }
+                        });
                     } else {
                         setTimeout(fastforward, 500);
                     }
                 });
-            })();
+            }
+            fastforward();
         });
     },
 
