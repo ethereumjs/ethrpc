@@ -773,7 +773,11 @@ module.exports = {
         var startBlock, endBlock, self = this;
         this.miner("start", [], function (mining) {
             if (!mining || mining.error) {
-                self.miner("stop", [], function () { callback(mining); });
+                try {
+                    self.miner("stop", [], function () { callback(mining); });
+                } catch (exc) {
+                    console.warn("no miner access");
+                }
             }
             (function fastforward() {
                 self.blockNumber(function (blockNumber) {
@@ -783,11 +787,16 @@ module.exports = {
                         endBlock = blockNumber + parseInt(blocks);
                     }
                     if (blockNumber >= endBlock) {
-                        return self.miner("stop", [], function () {
+                        try {
+                            self.miner("stop", [], function () {
+                                callback(endBlock);
+                            });
+                        } catch (exc) {
                             callback(endBlock);
-                        });
+                        }
+                    } else {
+                        setTimeout(fastforward, 500);
                     }
-                    setTimeout(fastforward, 500);
                 });
             })();
         });
