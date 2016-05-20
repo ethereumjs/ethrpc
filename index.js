@@ -769,27 +769,31 @@ module.exports = {
     },
 
     // Fast-forward a specified number of blocks
-    fastforward: function (blocks, callback) {
+    fastforward: function (blocks, mine, callback) {
         var startBlock, endBlock, self = this;
-        this.miner("start", [], function () {
-            function fastforward() {
-                self.blockNumber(function (blockNumber) {
-                    blockNumber = parseInt(blockNumber);
-                    if (startBlock === undefined) {
-                        startBlock = blockNumber;
-                        endBlock = blockNumber + parseInt(blocks);
-                    }
-                    if (blockNumber >= endBlock) {
-                        self.miner("stop", [], function () {
-                            callback(endBlock);
-                        });
-                    } else {
-                        setTimeout(fastforward, 500);
-                    }
-                });
-            }
-            fastforward();
-        });
+        function fastforward() {
+            self.blockNumber(function (blockNumber) {
+                blockNumber = parseInt(blockNumber);
+                if (startBlock === undefined) {
+                    startBlock = blockNumber;
+                    endBlock = blockNumber + parseInt(blocks);
+                }
+                if (blockNumber >= endBlock) {
+                    if (!mine) return callback(endBlock);
+                    self.miner("stop", [], function () {
+                        callback(endBlock);
+                    });
+                } else {
+                    setTimeout(fastforward, 500);
+                }
+            });
+        }
+        if (!callback && isFunction(mine)) {
+            callback = mine;
+            mine = null;
+        }
+        if (!mine) return fastforward();
+        this.miner("start", [], fastforward);
     },
 
     // Ethereum node status checks
