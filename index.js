@@ -874,8 +874,16 @@ module.exports = {
                     return itx.invocation.invoke.call(itx.invocation.context, itx, f);
                 } else {
                     tx = abi.copy(itx);
-                    if (tx.params !== undefined && tx.params.constructor !== Array) {
+                    if (tx.params === undefined || tx.params === null) {
+                        tx.params = [];
+                    } else if (tx.params.constructor !== Array) {
                         tx.params = [tx.params];
+                    }
+                    for (var j = 0; j < tx.params.length; ++j) {
+                        if (tx.params[j] !== undefined && tx.params[j] !== null &&
+                            tx.params[j].constructor === Number) {
+                            tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
+                        }
                     }
                     if (tx.to) tx.to = abi.format_address(tx.to);
                     if (tx.from) tx.from = abi.format_address(tx.from);
@@ -933,8 +941,15 @@ module.exports = {
         callbacks = new Array(numCommands);
         for (var i = 0; i < numCommands; ++i) {
             tx = abi.copy(txlist[i]);
-            if (tx.params !== undefined && tx.params.constructor !== Array) {
+            if (tx.params === undefined || tx.params === null) {
+                tx.params = [];
+            } else if (tx.params.constructor !== Array) {
                 tx.params = [tx.params];
+            }
+            for (var j = 0; j < tx.params.length; ++j) {
+                if (tx.params[j].constructor === Number) {
+                    tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
+                }
             }
             if (tx.from) tx.from = abi.format_address(tx.from);
             if (tx.to) tx.to = abi.format_address(tx.to);
