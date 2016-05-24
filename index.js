@@ -236,7 +236,7 @@ module.exports = {
             var response = req.getBody().toString();
             return this.parse(response, returns);
         }
-        console.warn("[ethrpc] synchronous RPC request to " + rpcUrl + ":", command);
+        // console.warn("[ethrpc] synchronous RPC request to " + rpcUrl + ":", command);
         if (window.XMLHttpRequest) {
             req = new window.XMLHttpRequest();
         } else {
