@@ -125,7 +125,7 @@ module.exports = {
             if (returns && returns.slice(-2) === "[]") {
                 result = this.unmarshal(result, returns);
             } else if (returns === "string") {
-                result = abi.decode_hex(result, true);
+                result = abi.abi.rawDecode([returns], new Buffer(abi.strip_0x(result), "hex"))[0];
             } else if (returns === "number") {
                 result = abi.string(result);
             } else if (returns === "bignumber") {
@@ -139,9 +139,7 @@ module.exports = {
 
     parse: function (response, returns, callback) {
         var results, len, err;
-        if (response && response.error) {
-            console.log("response:", JSON.stringify(response, null, 2));
-        }
+        if (response && response.error) console.log("response:", response);
         try {
             if (response && typeof response === "string") {
                 response = JSON.parse(response);
@@ -876,19 +874,8 @@ module.exports = {
                     return itx.invocation.invoke.call(itx.invocation.context, itx, f);
                 } else {
                     tx = abi.copy(itx);
-                    if (tx.params !== undefined) {
-                        if (tx.params.constructor === Array) {
-                            for (var i = 0, len = tx.params.length; i < len; ++i) {
-                                if (tx.params[i] !== undefined &&
-                                    tx.params[i].constructor === BigNumber) {
-                                    tx.params[i] = abi.hex(tx.params[i]);
-                                }
-                            }
-                        } else if (tx.params.constructor === BigNumber) {
-                            tx.params = [abi.hex(tx.params)];
-                        } else {
-                            tx.params = [tx.params];
-                        }
+                    if (tx.params !== undefined && tx.params.constructor !== Array) {
+                        tx.params = [tx.params];
                     }
                     if (tx.to) tx.to = abi.format_address(tx.to);
                     if (tx.from) tx.from = abi.format_address(tx.from);
@@ -946,18 +933,8 @@ module.exports = {
         callbacks = new Array(numCommands);
         for (var i = 0; i < numCommands; ++i) {
             tx = abi.copy(txlist[i]);
-            if (tx.params !== undefined) {
-                if (tx.params.constructor === Array) {
-                    for (var j = 0, len = tx.params.length; j < len; ++j) {
-                        if (tx.params[j] !== undefined &&
-                            tx.params[j] !== null &&
-                            tx.params[j].constructor === BigNumber) {
-                            tx.params[j] = abi.hex(tx.params[j]);
-                        }
-                    }
-                } else if (tx.params.constructor === BigNumber) {
-                    tx.params = abi.hex(tx.params);
-                }
+            if (tx.params !== undefined && tx.params.constructor !== Array) {
+                tx.params = [tx.params];
             }
             if (tx.from) tx.from = abi.format_address(tx.from);
             if (tx.to) tx.to = abi.format_address(tx.to);
@@ -997,7 +974,7 @@ module.exports = {
         this.broadcast(rpclist, function (res) {
             if (!res) return console.error(errors.TRANSACTION_FAILED);
             if (res.constructor === Array && res.length) {
-                for (j = 0; j < numCommands; ++j) {
+                for (var j = 0; j < numCommands; ++j) {
                     if (res[j] && callbacks[j]) {
                         callbacks[j](res[j]);
                     }
