@@ -16,13 +16,14 @@ if (NODE_JS) {
     request = require("browser-request");
 }
 var async = require("async");
+var WebSocketClient = require("websocket").client;
 var BigNumber = require("bignumber.js");
 var keccak_256 = require("js-sha3").keccak_256;
 var contracts = require("augur-contracts");
 var abi = require("augur-abi");
 var errors = contracts.errors;
 
-BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
+BigNumber.config({MODULO_MODE: BigNumber.EUCLID});
 
 function RPCError(err) {
     this.name = err.error || err.name;
@@ -49,8 +50,22 @@ module.exports = {
         logs: false
     },
 
-    // use IPC (only available on Node + Linux/OSX)
+    // use IPC (only available on Node)
     ipcpath: null,
+
+    // geth websocket endpoint
+    wsUrl: "wss://ws.augur.net",
+
+    // initial value 0
+    // if connection fails: -1
+    // if connection succeeds: 1
+    wsStatus: 0,
+
+    // null or WebSocketClient instance
+    wsClient: null,
+
+    // active websocket (if connected)
+    websocket: null,
 
     // local ethereum node address
     localnode: "http://127.0.0.1:8545",
@@ -350,8 +365,7 @@ module.exports = {
 
         // if we're on Node, use IPC if available and ipcpath is specified
         if (NODE_JS && this.ipcpath && command.method &&
-            command.method.indexOf("Filter") === -1)
-        {
+            command.method.indexOf("Filter") === -1) {
             var loopback = this.nodes.local && (
                 (this.nodes.local.indexOf("127.0.0.1") > -1 ||
                 this.nodes.local.indexOf("localhost") > -1)
@@ -393,34 +407,84 @@ module.exports = {
 
         // asynchronous request if callback exists
         if (isFunction(callback)) {
-            async.eachSeries(nodes, function (node, nextNode) {
-                if (!completed) {
-                    if (self.debug.logs) {
-                        console.log("nodes:", JSON.stringify(nodes));
-                        console.log("post", command.method, "to:", node);
-                    }
-                    self.post(node, command, returns, function (res) {
-                        if (self.debug.logs) {
-                            if (res && res.constructor === BigNumber) {
-                                console.log(node, "response:", abi.string(res));
-                            } else {
-                                console.log(node, "response:", res);
-                            }
-                        }
-                        if (node === nodes[nodes.length - 1] ||
-                            (res !== undefined && res !== null &&
-                            !res.error && res !== "0x"))
-                        {
-                            completed = true;
-                            return nextNode({ output: res });
-                        }
-                        nextNode();
-                    });
+
+            // use websocket if available
+            if (!this.wsUrl) this.wsStatus = -1;
+            switch (this.wsStatus) {
+
+            // [0] websocket closed / not connected: try to connect
+            case 0:
+                if (this.websocket && this.websocket.state === "open") {
+                    this.websocket.close();
                 }
-            }, function (res) {
-                if (!res && res.output === undefined) return callback();
-                callback(res.output);
-            });
+                this.wsClient = new WebSocketClient();
+                this.wsClient.on("connectFailed", function (err) {
+                    if (self.debug.logs) console.error(err);
+                    self.wsStatus = -1;
+                    self.broadcast(command, callback);
+                });
+                this.wsClient.on("connect", function (ws) {
+                    self.wsStatus = 1;
+                    ws.on("error", function (err) {
+                        if (self.debug.logs) console.error(err);
+                        self.wsStatus = -1;
+                        self.broadcast(command, callback);
+                    });
+                    ws.on("close", function () {
+                        self.wsStatus = 0;
+                    });
+                    ws.on("message", function (msg) {
+                        self.parse(msg.utf8Data, returns, callback);
+                    });
+                    self.websocket = ws;
+                    self.websocket.sendUTF(JSON.stringify(command));
+                });
+                this.wsClient.connect(this.wsUrl);
+                break;
+
+            // [1] websocket connected
+            case 1:
+                this.websocket._events.error = function (err) {
+                    if (self.debug.logs) console.error(err);
+                    self.wsStatus = -1;
+                    self.broadcast(command, callback);
+                };
+                this.websocket._events.message = function (msg) {
+                    self.parse(msg.utf8Data, returns, callback);
+                };
+                this.websocket.sendUTF(JSON.stringify(command));
+                break;
+
+            // [-1] websocket errored or unavailable: fallback to HTTP RPC
+            default:
+                async.eachSeries(nodes, function (node, nextNode) {
+                    if (!completed) {
+                        if (self.debug.logs) {
+                            console.log("nodes:", JSON.stringify(nodes));
+                            console.log("post", command.method, "to:", node);
+                        }
+                        self.post(node, command, returns, function (res) {
+                            if (self.debug.logs) {
+                                if (res && res.constructor === BigNumber) {
+                                    console.log(node, "response:", abi.string(res));
+                                } else {
+                                    console.log(node, "response:", res);
+                                }
+                            }
+                            if (node === nodes[nodes.length - 1] ||
+                                (res !== undefined && res !== null &&
+                                !res.error && res !== "0x")) {
+                                completed = true;
+                                return nextNode({output: res});
+                            }
+                            nextNode();
+                        });
+                    }
+                }, function (res) {
+                    if (!res && res.output === undefined) return callback();
+                    callback(res.output);
+                });
+            }
 
         // use synchronous http if no callback provided
         } else {
