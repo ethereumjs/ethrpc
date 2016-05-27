@@ -24705,7 +24705,7 @@ if (NODE_JS) {
     request = require("browser-request");
 }
 var async = require("async");
-var WebSocketClient = require("websocket").client;
+var W3CWebSocket = (NODE_JS) ? require("websocket").w3cwebsocket : WebSocket;
 var BigNumber = require("bignumber.js");
 var keccak_256 = require("js-sha3").keccak_256;
 var contracts = require("augur-contracts");
@@ -24927,6 +24927,41 @@ module.exports = {
         return returns;
     },
 
+    wsRequests: {},
+
+    wsConnect: function (callback) {
+        var self = this;
+        this.websocket = new W3CWebSocket(this.wsUrl);
+        this.websocket.onerror = function () {
+            self.wsStatus = -1;
+        };
+        this.websocket.onclose = function () {
+            self.wsStatus = 0;
+        };
+        this.websocket.onmessage = function (msg) {
+            if (msg && msg.data && typeof msg.data === "string") {
+                var res = JSON.parse(msg.data);
+                if (res.id !== undefined && res.id !== null) {
+                    var req = self.wsRequests[res.id];
+                    delete self.wsRequests[res.id];
+                    self.parse(msg.data, req.returns, req.callback);
+                }
+            }
+        };
+        this.websocket.onopen = function () {
+            self.wsStatus = 1;
+            callback(true);
+        };
+    },
+
+    wsSend: function (command, returns, callback) {
+        console.log("broadcast:", JSON.stringify(command), returns);
+        this.wsRequests[command.id] = {returns: returns, callback: callback};
+        if (this.websocket.readyState === this.websocket.OPEN) {
+            this.websocket.send(JSON.stringify(command));
+        }
+    },
+
     postSync: function (rpcUrl, command, returns) {
         var timeout, req = null;
         if (command.timeout) {
@@ -25103,45 +25138,15 @@ module.exports = {
 
             // [0] websocket closed / not connected: try to connect
             case 0:
-                if (this.websocket && this.websocket.state === "open") {
-                    this.websocket.close();
-                }
-                this.wsClient = new WebSocketClient();
-                this.wsClient.on("connectFailed", function (err) {
-                    if (self.debug.logs) console.error(err);
-                    self.wsStatus = -1;
-                    self.broadcast(command, callback);
+                this.wsConnect(function (connected) {
+                    if (!connected) return self.broadcast(command, callback);
+                    self.wsSend(command, returns, callback);
                 });
-                this.wsClient.on("connect", function (ws) {
-                    self.wsStatus = 1;
-                    ws.on("error", function (err) {
-                        if (self.debug.logs) console.error(err);
-                        self.wsStatus = -1;
-                        self.broadcast(command, callback);
-                    });
-                    ws.on("close", function () {
-                        self.wsStatus = 0;
-                    });
-                    ws.on("message", function (msg) {
-                        self.parse(msg.utf8Data, returns, callback);
-                    });
-                    self.websocket = ws;
-                    self.websocket.sendUTF(JSON.stringify(command));
-                });
-                this.wsClient.connect(this.wsUrl);
                 break;
 
             // [1] websocket connected
             case 1:
-                this.websocket._events.error = function (err) {
-                    if (self.debug.logs) console.error(err);
-                    self.wsStatus = -1;
-                    self.broadcast(command, callback);
-                };
-                this.websocket._events.message = function (msg) {
-                    self.parse(msg.utf8Data, returns, callback);
-                };
-                this.websocket.sendUTF(JSON.stringify(command));
+                this.wsSend(command, returns, callback);
                 break;
 
             // [-1] websocket errored or unavailable: fallback to HTTP RPC
@@ -26040,7 +26045,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":272,"async":66,"augur-abi":1,"augur-contracts":6,"bignumber.js":67,"browser-request":68,"buffer":72,"js-sha3":292,"net":69,"request":71,"sync-request":71,"websocket":293}],66:[function(require,module,exports){
+},{"_process":272,"async":66,"augur-abi":1,"augur-contracts":6,"bignumber.js":67,"browser-request":68,"buffer":72,"js-sha3":292,"net":69,"request":71,"sync-request":71,"websocket":71}],66:[function(require,module,exports){
 (function (process,global){
 /*!
  * async
@@ -49841,140 +49846,4 @@ module.exports = function(arr, obj){
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],293:[function(require,module,exports){
-var _global = (function() { return this; })();
-var nativeWebSocket = _global.WebSocket || _global.MozWebSocket;
-var websocket_version = require('./version');
-
-
-/**
- * Expose a W3C WebSocket class with just one or two arguments.
- */
-function W3CWebSocket(uri, protocols) {
-	var native_instance;
-
-	if (protocols) {
-		native_instance = new nativeWebSocket(uri, protocols);
-	}
-	else {
-		native_instance = new nativeWebSocket(uri);
-	}
-
-	/**
-	 * 'native_instance' is an instance of nativeWebSocket (the browser's WebSocket
-	 * class). Since it is an Object it will be returned as it is when creating an
-	 * instance of W3CWebSocket via 'new W3CWebSocket()'.
-	 *
-	 * ECMAScript 5: http://bclary.com/2004/11/07/#a-13.2.2
-	 */
-	return native_instance;
-}
-
-
-/**
- * Module exports.
- */
-module.exports = {
-    'w3cwebsocket' : nativeWebSocket ? W3CWebSocket : null,
-    'version'      : websocket_version
-};
-
-},{"./version":294}],294:[function(require,module,exports){
-module.exports = require('../package.json').version;
-
-},{"../package.json":295}],295:[function(require,module,exports){
-module.exports={
-  "name": "websocket",
-  "description": "Websocket Client & Server Library implementing the WebSocket protocol as specified in RFC 6455.",
-  "keywords": [
-    "websocket",
-    "websockets",
-    "socket",
-    "networking",
-    "comet",
-    "push",
-    "RFC-6455",
-    "realtime",
-    "server",
-    "client"
-  ],
-  "author": {
-    "name": "Brian McKelvey",
-    "email": "brian@worlize.com",
-    "url": "https://www.worlize.com/"
-  },
-  "contributors": [
-    {
-      "name": "Iñaki Baz Castillo",
-      "email": "ibc@aliax.net",
-      "url": "http://dev.sipdoc.net"
-    }
-  ],
-  "version": "1.0.23",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/theturtle32/WebSocket-Node.git"
-  },
-  "homepage": "https://github.com/theturtle32/WebSocket-Node",
-  "engines": {
-    "node": ">=0.8.0"
-  },
-  "dependencies": {
-    "debug": "^2.2.0",
-    "nan": "^2.3.3",
-    "typedarray-to-buffer": "^3.1.2",
-    "yaeti": "^0.0.4"
-  },
-  "devDependencies": {
-    "buffer-equal": "^0.0.1",
-    "faucet": "^0.0.1",
-    "gulp": "git+https://github.com/gulpjs/gulp.git#4.0",
-    "gulp-jshint": "^1.11.2",
-    "jshint-stylish": "^1.0.2",
-    "tape": "^4.0.1"
-  },
-  "config": {
-    "verbose": false
-  },
-  "scripts": {
-    "install": "(node-gyp rebuild 2> builderror.log) || (exit 0)",
-    "test": "faucet test/unit",
-    "gulp": "gulp"
-  },
-  "main": "index",
-  "directories": {
-    "lib": "./lib"
-  },
-  "browser": "lib/browser.js",
-  "license": "Apache-2.0",
-  "gitHead": "ba2fa7e9676c456bcfb12ad160655319af66faed",
-  "bugs": {
-    "url": "https://github.com/theturtle32/WebSocket-Node/issues"
-  },
-  "_id": "websocket@1.0.23",
-  "_shasum": "20de8ec4a7126b09465578cd5dbb29a9c296aac6",
-  "_from": "websocket@latest",
-  "_npmVersion": "2.15.1",
-  "_nodeVersion": "0.10.45",
-  "_npmUser": {
-    "name": "theturtle32",
-    "email": "brian@worlize.com"
-  },
-  "maintainers": [
-    {
-      "name": "theturtle32",
-      "email": "brian@worlize.com"
-    }
-  ],
-  "dist": {
-    "shasum": "20de8ec4a7126b09465578cd5dbb29a9c296aac6",
-    "tarball": "https://registry.npmjs.org/websocket/-/websocket-1.0.23.tgz"
-  },
-  "_npmOperationalInternal": {
-    "host": "packages-16-east.internal.npmjs.com",
-    "tmp": "tmp/websocket-1.0.23.tgz_1463625793005_0.4532310354989022"
-  },
-  "_resolved": "https://registry.npmjs.org/websocket/-/websocket-1.0.23.tgz"
-}
-
 },{}]},{},[64]);

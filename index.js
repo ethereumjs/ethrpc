@@ -16,7 +16,7 @@ if (NODE_JS) {
     request = require("browser-request");
 }
 var async = require("async");
-var WebSocketClient = require("websocket").client;
+var W3CWebSocket = (NODE_JS) ? require("websocket").w3cwebsocket : WebSocket;
 var BigNumber = require("bignumber.js");
 var keccak_256 = require("js-sha3").keccak_256;
 var contracts = require("augur-contracts");
@@ -238,6 +238,41 @@ module.exports = {
         return returns;
     },
 
+    wsRequests: {},
+
+    wsConnect: function (callback) {
+        var self = this;
+        this.websocket = new W3CWebSocket(this.wsUrl);
+        this.websocket.onerror = function () {
+            self.wsStatus = -1;
+        };
+        this.websocket.onclose = function () {
+            self.wsStatus = 0;
+        };
+        this.websocket.onmessage = function (msg) {
+            if (msg && msg.data && typeof msg.data === "string") {
+                var res = JSON.parse(msg.data);
+                if (res.id !== undefined && res.id !== null) {
+                    var req = self.wsRequests[res.id];
+                    delete self.wsRequests[res.id];
+                    self.parse(msg.data, req.returns, req.callback);
+                }
+            }
+        };
+        this.websocket.onopen = function () {
+            self.wsStatus = 1;
+            callback(true);
+        };
+    },
+
+    wsSend: function (command, returns, callback) {
+        console.log("broadcast:", JSON.stringify(command), returns);
+        this.wsRequests[command.id] = {returns: returns, callback: callback};
+        if (this.websocket.readyState === this.websocket.OPEN) {
+            this.websocket.send(JSON.stringify(command));
+        }
+    },
+
     postSync: function (rpcUrl, command, returns) {
         var timeout, req = null;
         if (command.timeout) {
@@ -414,45 +449,15 @@ module.exports = {
 
             // [0] websocket closed / not connected: try to connect
             case 0:
-                if (this.websocket && this.websocket.state === "open") {
-                    this.websocket.close();
-                }
-                this.wsClient = new WebSocketClient();
-                this.wsClient.on("connectFailed", function (err) {
-                    if (self.debug.logs) console.error(err);
-                    self.wsStatus = -1;
-                    self.broadcast(command, callback);
+                this.wsConnect(function (connected) {
+                    if (!connected) return self.broadcast(command, callback);
+                    self.wsSend(command, returns, callback);
                 });
-                this.wsClient.on("connect", function (ws) {
-                    self.wsStatus = 1;
-                    ws.on("error", function (err) {
-                        if (self.debug.logs) console.error(err);
-                        self.wsStatus = -1;
-                        self.broadcast(command, callback);
-                    });
-                    ws.on("close", function () {
-                        self.wsStatus = 0;
-                    });
-                    ws.on("message", function (msg) {
-                        self.parse(msg.utf8Data, returns, callback);
-                    });
-                    self.websocket = ws;
-                    self.websocket.sendUTF(JSON.stringify(command));
-                });
-                this.wsClient.connect(this.wsUrl);
                 break;
 
             // [1] websocket connected
             case 1:
-                this.websocket._events.error = function (err) {
-                    if (self.debug.logs) console.error(err);
-                    self.wsStatus = -1;
-                    self.broadcast(command, callback);
-                };
-                this.websocket._events.message = function (msg) {
-                    self.parse(msg.utf8Data, returns, callback);
-                };
-                this.websocket.sendUTF(JSON.stringify(command));
+                this.wsSend(command, returns, callback);
                 break;
 
             // [-1] websocket errored or unavailable: fallback to HTTP RPC

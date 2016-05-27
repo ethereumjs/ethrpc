@@ -1,6 +1,6 @@
 {
   "name": "ethrpc",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Ethereum JSON RPC",
   "main": "index.js",
   "scripts": {
@@ -24,8 +24,7 @@
     "augur-contracts": "AugurProject/augur-contracts",
     "bignumber.js": "^2.0.7",
     "browser-request": "^0.3.3",
-    "js-sha3": "^0.5.1",
-    "websocket": "^1.0.23"
+    "js-sha3": "^0.5.1"
   },
   "devDependencies": {
     "browserify": "^11.0.1",
@@ -43,10 +42,12 @@
   },
   "optionalDependencies": {
     "sync-request": "^2.0.1",
-    "request": "^2.61.0"
+    "request": "^2.61.0",
+    "websocket": "^1.0.23"
   },
   "browser": {
     "sync-request": false,
-    "request": false
+    "request": false,
+    "websocket": false
   }
 }
