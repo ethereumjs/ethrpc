@@ -266,7 +266,6 @@ module.exports = {
     },
 
     wsSend: function (command, returns, callback) {
-        console.log("broadcast:", JSON.stringify(command), returns);
         this.wsRequests[command.id] = {returns: returns, callback: callback};
         if (this.websocket.readyState === this.websocket.OPEN) {
             this.websocket.send(JSON.stringify(command));
