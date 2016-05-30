@@ -140,7 +140,7 @@ module.exports = {
             if (returns && returns.slice(-2) === "[]") {
                 result = this.unmarshal(result, returns);
             } else if (returns === "string") {
-                result = abi.abi.rawDecode([returns], new Buffer(abi.strip_0x(result), "hex"))[0];
+                result = abi.raw_decode_hex(result);
             } else if (returns === "number") {
                 result = abi.string(result);
             } else if (returns === "bignumber") {
@@ -725,14 +725,17 @@ module.exports = {
     },
 
     getBlockByHash: function (hash, full, f) {
-        return this.broadcast(this.marshal("getBlockByHash", [hash, full || true]), f);
+        full = (full !== undefined) ? full : true;
+        return this.broadcast(this.marshal("getBlockByHash", [hash, full]), f);
     },
 
     getBlock: function (number, full, f) {
-        return this.broadcast(this.marshal("getBlockByNumber", [number, full || true]), f);
+        full = (full !== undefined) ? full : true;
+        return this.broadcast(this.marshal("getBlockByNumber", [number, full]), f);
     },
     getBlockByNumber: function (number, full, f) {
-        return this.broadcast(this.marshal("getBlockByNumber", [number, full || true]), f);
+        full = (full !== undefined) ? full : true;
+        return this.broadcast(this.marshal("getBlockByNumber", [number, full]), f);
     },
 
     version: function (f) {

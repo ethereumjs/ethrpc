@@ -23,6 +23,38 @@ module.exports = {
 
     abi: ethabi,
 
+    keccak_256: keccak_256,
+
+    // Convert hex to byte array for sha3
+    // (https://github.com/ethereum/dapp-bin/blob/master/ether_ad/scripts/sha3.min.js)
+    hex_to_bytes: function (s) {
+        var o = [];
+        var alpha = "0123456789abcdef";
+        for (var i = (s.substr(0, 2) === "0x" ? 2 : 0); i < s.length; i += 2) {
+            var index1 = alpha.indexOf(s[i]);
+            var index2 = alpha.indexOf(s[i + 1]);
+            if (index1 < 0 || index2 < 0) {
+                throw("Bad input to hex decoding: " + s + " " + i + " " + index1 + " " + index2);
+            }
+            o.push(16*index1 + index2);
+        }
+        return o;
+    },
+
+    bytes_to_hex: function (b) {
+        var hexbyte, h = "";
+        for (var i = 0, n = b.length; i < n; ++i) {
+            hexbyte = this.strip_0x(b[i].toString(16));
+            if (hexbyte.length === 1) hexbyte = "0" + hexbyte;
+            h += hexbyte;
+        }
+        return h;
+    },
+
+    sha3: function (hexstr) {
+        return keccak_256(this.hex_to_bytes(hexstr));
+    },
+
     copy: function (obj) {
         if (null === obj || "object" !== typeof obj) return obj;
         var copy = obj.constructor();
@@ -87,7 +119,8 @@ module.exports = {
 
     short_string_to_int256: function (s) {
         if (s.length > 32) s = s.slice(0, 32);
-        return this.prefix_hex(ethabi.rawEncode(["string"], [s]).slice(64).toString("hex"));
+        return this.prefix_hex(this.pad_right(new Buffer(s, "utf8").toString("hex")));
+        // return this.prefix_hex(ethabi.rawEncode(["string"], [s]).slice(64).toString("hex"));
     },
 
     int256_to_short_string: function (n) {
@@ -111,17 +144,37 @@ module.exports = {
     },
 
     // convert bytes to hex
-    encode_hex: function (str) {
-        var hexbyte, hex = '';
+    encode_hex: function (str, toArray) {
+        var hexbyte, hex, i, len;
         if (str && str.constructor === Object || str.constructor === Array) {
             str = JSON.stringify(str);
         }
-        for (var i = 0, len = str.length; i < len; ++i) {
-            hexbyte = str.charCodeAt(i).toString(16);
-            if (hexbyte.length === 1) hexbyte = "0" + hexbyte;
-            hex += hexbyte;
+        len = str.length;
+        if (toArray) {
+            hex = [];
+            for (i = 0; i < len; ++i) {
+                hexbyte = str.charCodeAt(i).toString(16);
+                if (hexbyte.length === 1) hexbyte = "0" + hexbyte;
+                hex.push(this.prefix_hex(hexbyte));
+            }
+        } else {
+            hex = '';
+            for (i = 0; i < len; ++i) {
+                hexbyte = str.charCodeAt(i).toString(16);
+                if (hexbyte.length === 1) hexbyte = "0" + hexbyte;
+                hex += hexbyte;
+            }
         }
         return hex;
+    },
+
+    raw_encode_hex: function (str) {
+        return ethabi.rawEncode(["string"], [str]).toString("hex");
+    },
+
+    raw_decode_hex: function (hex) {
+        if (!Buffer.isBuffer(hex)) hex = new Buffer(this.strip_0x(hex), "hex");
+        return ethabi.rawDecode(["string"], hex)[0];
     },
 
     unfork: function (forked, prefix) {
@@ -3662,68 +3715,78 @@ module.exports = {
 },{}],4:[function(require,module,exports){
 module.exports={
     "2": {
-        "buyAndSellShares": "0x01eec1eed6b5d224f33917b4ec14cdf5baeff780",
-        "closeMarket": "0x5f01597f4158f145f5ba9d6d4cc32b62d33ccff9",
-        "closeMarketEight": "0x1cb041bab73b9d2f63ddfee9bf9d5086230638e7",
-        "closeMarketFour": "0x71d1f902f9a9928a2044d8768b19f17191a01b35",
-        "closeMarketOne": "0xe699ee5166178595c4e9265bc7f8e0d8cb20d85a",
-        "closeMarketTwo": "0x18ff8920dfea2b2be8101267d9d501f81cfeaf3b",
-        "collectFees": "0xb9e7d200dc38c4406776ffccff8943dc3bfddd49",
-        "completeSets": "0x413d65ba026fe70cc604a56bb671dcca4ff036d3",
-        "consensus": "0x191df5512d358173ee659e548d9fd21da550edf0",
-        "createBranch": "0x409068a490ae55b7314d25a4ad7f381cae787700",
-        "createMarket": "0xe414cb46cb635b2591a218074d0ab30390741862",
-        "eventResolution": "0x5afb8b6c25738f4bfd190f6df9e04f058d8df33b",
-        "faucets": "0x5ce056d1a97b663012472eb3e7896dd42d5dcf4e",
-        "forking": "0x878fb684091db964631a389e78f56954b4e50173",
-        "makeReports": "0xb5912ea8a911542de971885bbaf2bec35bf2217d",
-        "penalizeNotEnoughReports": "0xfbbc4b846703d18f87affce3de505aa7c5404848",
-        "roundTwo": "0x3adb2dfcbc70571643d8b3c44f1359bb867e130c",
-        "sendReputation": "0xb0d0f952793c4d2265c1073a24c4b7c3f052855b",
-        "slashRep": "0xcdad023fba7e15917ae907fc94fac0ad5bb7f8d5",
-        "trade": "0x8165213984ef305fc3fcc5cf30333accd18fa364",
-        "backstops": "0x70c4772266c402d5c1ded75f9b99db86797e36d8",
-        "branches": "0x902a642ceaf95eeb234584438012758d68d3bef0",
-        "cash": "0x189b9107fdaef854bc8950b1c62d4da2df68e16a",
-        "events": "0xefabfc253b1c8c47422d72942919ad491fc23908",
-        "expiringEvents": "0x5a3f10c1f942a0de4354ed159e5e5b12dfb4d2d1",
-        "fxpFunctions": "0x2c73b92ed27a96a30163ef736d6b155d7c636243",
-        "info": "0x226713fb9663580b69bfacdd8eacafe8d8efa14c",
-        "markets": "0xc7309a28ea0868f362f4659df2760bc669443f6b",
-        "reporting": "0xa4ac5e8c2382734270c6dc0f2094961276f81812",
-        "trades": "0x97db7aa6304aedbaf1fb49ddf269ceaeeb6f3f60"
+        "buyAndSellShares": "0xe8a69343f1d7cc1a869707340caf1401fb81b232",
+        "closeMarket": "0x2b4b368e0a6240670e1f3f24b34c9639052d7668",
+        "closeMarketEight": "0x07a3f371365211154698e4e6ba4893ade296df81",
+        "closeMarketFour": "0x0c492204e21192a595a0e50649f083319beab322",
+        "closeMarketOne": "0x61a193b512e3353b16424aea975f4588d8131dae",
+        "closeMarketTwo": "0x16181875465db0498afaf9e779349fe0fbb7bddc",
+        "collectFees": "0x945f4c66e2900f36af3670066db9e604e350475f",
+        "completeSets": "0x06afc59c4b80fc24a8dc0be52874f2ab9db5118c",
+        "compositeGetters": "0x3fecc845fa5e162f8a9ec0265eda6f816d1ead86",
+        "consensus": "0xd52c1c6981b5a17d37a3fe52a6dacb5fccbc61dc",
+        "createBranch": "0xb322483d9b39ada7c924a764dbe5924df104a47c",
+        "createMarket": "0x80e832f6b26c0c478261f755bf390e7facaa4d5c",
+        "eventResolution": "0xb77ae2d8fb80bd0f44ff35a04e867a8dcdf9e95c",
+        "faucets": "0x7779d56ec1c3bdb6d5d08d8a56330e3f2548aa76",
+        "forkPenalize": "0xfcb196b6c790983210b880b5302bc2d79e7ef88f",
+        "forking": "0x3c50214abffac06871456c8979cfbfed6a682921",
+        "makeReports": "0x15591b54ab17ae8fb421a994bbcb551cdbc830e6",
+        "penalizationCatchup": "0x7e129be52f3306e006a047259ea5414cf37d899a",
+        "penalizeNotEnoughReports": "0x6ade70c1af99cc7f56ee77a13e839be74113f1c0",
+        "roundTwo": "0x2934cb55a042917d7d25dab281e97e9d22d3b889",
+        "roundTwoPenalize": "0x8c95874fa0f93771e4ea42574b37221c9d6b50d6",
+        "sendReputation": "0x3223ab5b670a9d7709c993e6eecd1ecd45acbc71",
+        "slashRep": "0xd06080e64f239f9ae6143a4851479b4cb66cfa31",
+        "trade": "0x582a53b32a394b2fff72aee7f2f66ca605fd83cd",
+        "backstops": "0xb0a3c91805f2a046d11b535f75f9161080d55658",
+        "branches": "0xbbf6c7b2879ecbd1efb8e2eb0a57d5ddb7392591",
+        "cash": "0x21bfae3468d9d56b6ec22ceec3484d5eb2c6e369",
+        "consensusData": "0xb912745dbf75e38a95fa1500adb2769f70360792",
+        "events": "0xf09a6440a9295ef4fff288c0825e36ebc602f9a3",
+        "expiringEvents": "0x70fa60c1d4b4370388db171fee466de0cfb769b2",
+        "fxpFunctions": "0xc978e19ded2bf1256b8a3eee4864c66d4bfde1bc",
+        "info": "0x4eb401fecbf4f5964cb9dbbbbb7d29502d52e141",
+        "markets": "0xcd6747fcc76cba7573103b5dfb4c5006f114debe",
+        "reporting": "0x248c2117467d95689cdfb790d69fa33f1d76f1af",
+        "trades": "0x56530da7b85cf18012855f21a93873e141fdfec4"
     },
     "10101": {
-        "buyAndSellShares": "0x3f765e6a96265fbb6ec1607078d844a32e0fc899",
-        "closeMarket": "0xbc3737730e62de254ae959a500fb2201ca830b11",
-        "closeMarketEight": "0xd0aec2894767244bf695f1756fdb98b91283053f",
-        "closeMarketFour": "0xa6c0510c65a513676fe3ccb4744359707e260b4f",
-        "closeMarketOne": "0xd344ce08e5baf993b86d7cfa58ef881501391054",
-        "closeMarketTwo": "0x9da563d6de741c8becad0c2e821f5d453affff86",
-        "collectFees": "0x16b2fdbfad37095bd87559cb1080ff70f0210d30",
-        "completeSets": "0xa5220364b15e4690a7fe99289a2412ac9615b7d4",
-        "consensus": "0x98493b8f16e5239c2d8cf0bd8baec6794d3140c3",
-        "createBranch": "0xf606379950644622ee0e660deedabecb5195d664",
-        "createMarket": "0x521026c174cbc8af871e61854d83915aa05ba431",
-        "eventResolution": "0x49f7f70d65b04b4d67e3a0b24fbff7fb85c3dc7b",
-        "faucets": "0xf35fd2eeab825b3a8df4c1a22524d7f8b4767311",
-        "forking": "0x94792622dea28826d877e8cc542c946b5f830e16",
-        "makeReports": "0x0d3794afa0ef1674b422931fd79efe6c2ce48407",
-        "penalizeNotEnoughReports": "0x9be2fdb53459632a4dcd2d1c84951c3ec6875bc0",
-        "roundTwo": "0xe9ae5166556f3b628778676e76e936109d203ccd",
-        "sendReputation": "0xfa01886529aba09db0c829ffd8c71f75b8b28cb2",
-        "slashRep": "0x644775f0e6e09fa125db702c1f01c87a0ed26901",
-        "trade": "0x5a6b896c1004c61e0ac2327f7b9f03cf00f3880b",
-        "backstops": "0x240b418921aab4618482d03fb74cc3dac857a40b",
-        "branches": "0x05a945d5ddef38670e9f0443e88a1d568b4d5675",
-        "cash": "0xc0996cdf5f1c3b598b5508bc9fcbc06e1307867b",
-        "events": "0xed9663539fbe0293910e30670a42fc23a24d5b41",
-        "expiringEvents": "0xff87d69ace4872def8d3c619b07ecce943d02f2d",
-        "fxpFunctions": "0x7234fdef4086a8f32bdf73e2fe041ead066e9ec8",
-        "info": "0xce58c43a02f1b61d9e0478f68e0bd165f0e215ea",
-        "markets": "0x18db7e4098343ceff60b9a89a303d9717e6e9bbd",
-        "reporting": "0xdf872973fd24b186c01344b308b25d86cbb645ac",
-        "trades": "0xa4632f29efd8bcae6f655bc7d170a0a38f2552c0"
+        "buyAndSellShares": "0x5c388823ed34d432291c6d19f565abdf3a4ab173",
+        "closeMarket": "0x323f196006b880ffe58232c3d3995715aedfbbd3",
+        "closeMarketEight": "0xf96f73daff5216c1b3a5399674d5f08ab5d00677",
+        "closeMarketFour": "0x320a2efbf1fe71900169c3077c85067ed4ba30c2",
+        "closeMarketOne": "0x9d03429b195e86eeed976a79e5ba666ed2899fd3",
+        "closeMarketTwo": "0xdee8ba48e445ba70e92726af5335dd44295dd0fd",
+        "collectFees": "0xdc1c605aa1c06dc5e60618560d26c77787f6b027",
+        "completeSets": "0x9b38992f85d52316bab41a283430b06f85ded977",
+        "compositeGetters": "0x2fc54625530bb7a0eb840c15bd3329b104fb4515",
+        "consensus": "0x3b4e65b8fa09a570d41d9f5f04cf3b2282738851",
+        "createBranch": "0x9865b08dda7423862964ed33c6771baf8ccd29c5",
+        "createMarket": "0xbb17fbecdd64233a3c70d2829eb4a8abbfa0615e",
+        "eventResolution": "0x57ce48c476ac801967f38eebf8d64711effefd76",
+        "faucets": "0x3fc05b39dd449c0361359f1c491820f9afb35f66",
+        "forkPenalize": "0x5f8dad65c9174e272500aa64bcb9ca2785e71cad",
+        "forking": "0xb7851f4122d07d42abcc7a8d4cd5d9384c2f2f8b",
+        "makeReports": "0x2fcab7efcb9c1b8c0f31aa621bd82ef6a8ae454d",
+        "penalizationCatchup": "0x80a82ca064fe69cb3805bb0e5995ddcc413f37c2",
+        "penalizeNotEnoughReports": "0x54c4212395bf0e6e98340cab67779a93d63e6c2b",
+        "roundTwo": "0x0ebb446f678f0524be8c764e2dd7fa7907febfdd",
+        "roundTwoPenalize": "0xcee858dc2011db5e4ceb8c6e25e80d6038a5d96d",
+        "sendReputation": "0x0ac08b2e45c671d82212df86d5a73980d193231e",
+        "slashRep": "0x66dc445307e2dc2f82c90b5c6dfb4c0e5a018bc4",
+        "trade": "0x20fb0a7ccc66e7bfe3d231bca4be985e3d809d2f",
+        "backstops": "0x2a1bac7c3e13bfd5d9df2103363115146022b531",
+        "branches": "0x18811daedcb3bac4747ef0ff45f705689c9264c0",
+        "cash": "0x9faaf4f58adc18e6968bdacab392d7e28d139443",
+        "consensusData": "0x1e1ed45192c106d8b9313b5e37b4887d915098ab",
+        "events": "0xe1dcfe836d8bf08a839efac43106472a596ca81a",
+        "expiringEvents": "0xf6a37f19c30bd2950d634e8bbbe7b3977aa3d4bd",
+        "fxpFunctions": "0x4fdc1b564f76e4f1755736c8358301d7955accbb",
+        "info": "0x1e6c2d4184271eafb1e0e84aceb4d57d9550b1ac",
+        "markets": "0x210b11e4050ca04790b3eab61af7815c130cea98",
+        "reporting": "0x19aaecfc471ea12e2d515c55e21948cb761d6a71",
+        "trades": "0x81bf8f6a711985b8f3116e4bad3efc3b3da57914"
     },
     "errors": {
         "0x": "no response or bad input",
@@ -4625,38 +4688,46 @@ module.exports = function (network) {
             send: true
         },
 
-        // markets.se
-        get_total_trades: {
-            to: contracts.markets,
-            method: "get_total_trades",
-            signature: "i",
-            returns: "number"
-        },
+        // compositeGetters.se
         getOrderBook: {
-            to: contracts.markets,
+            to: contracts.compositeGetters,
             method: "getOrderBook",
             signature: "i",
             returns: "hash[]",
             gas: "0x9184e729fff"
         },
-        get_trade_ids: {
-            to: contracts.markets,
-            method: "get_trade_ids",
-            signature: "i",
-            returns: "hash[]",
-            gas: "0x9184e729fff"
-        },
         getMarketInfo: {
-            to: contracts.markets,
+            to: contracts.compositeGetters,
             method: "getMarketInfo",
             signature: "i",
             returns: "hash[]",
             gas: "0x9184e729fff"
         },
         getMarketsInfo: {
-            to: contracts.markets,
+            to: contracts.compositeGetters,
             method: "getMarketsInfo",
             signature: "iii",
+            returns: "hash[]",
+            gas: "0x9184e729fff"
+        },
+
+        // markets.se
+        getMakerFees: {
+            to: contracts.markets,
+            method: "getMakerFees",
+            signature: "i",
+            returns: "unfix"
+        },
+        get_total_trades: {
+            to: contracts.markets,
+            method: "get_total_trades",
+            signature: "i",
+            returns: "number"
+        },
+        get_trade_ids: {
+            to: contracts.markets,
+            method: "get_trade_ids",
+            signature: "i",
             returns: "hash[]",
             gas: "0x9184e729fff"
         },
@@ -4707,6 +4778,18 @@ module.exports = function (network) {
             method: "getForkSelection",
             signature: "i",
             returns: "hash"
+        },
+        getLastExpDate: {
+            to: contracts.markets,
+            method: "getLastExpDate",
+            signature: "i",
+            returns: "number"
+        },
+        returnTags: {
+            to: contracts.markets,
+            method: "returnTags",
+            signature: "i",
+            returns: "hash[]"
         },
         getCreationTime: {
             to: contracts.markets,
@@ -4762,13 +4845,6 @@ module.exports = function (network) {
             signature: "ii",
             returns: "unfix"
         },
-        initialLiquiditySetup: {
-            to: contracts.markets,
-            method: "initialLiquiditySetup",
-            signature: "iiii",
-            returns: "number",
-            send: true
-        },
         modifyShares: {
             to: contracts.markets,
             method: "modifyShares",
@@ -4776,29 +4852,19 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        initializeMarket: {
-            to: contracts.markets,
-            method: "initializeMarket",
-            signature: "iaiii",
-            returns: "number",
-            send: true
-        },
 
         // reporting.se
-        // def checkWhitelist(address):
         checkWhitelist: {
             to: contracts.reporting,
             method: "checkWhitelist",
             signature: "i"
         },
-        // def getActiveRep(branch):
         getActiveRep: {
             to: contracts.reporting,
             method: "getActiveRep",
             signature: "i",
             returns: "unfix"
         },
-        // def adjustActiveRep(branch, amount):
         adjustActiveRep: {
             to: contracts.reporting,
             method: "adjustActiveRep",
@@ -4806,7 +4872,6 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        // def setFork(branch):
         setFork: {
             to: contracts.reporting,
             method: "setFork",
@@ -4814,20 +4879,17 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        // def getFork(branch):
         getFork: {
             to: contracts.reporting,
             method: "getFork",
             signature: "i",
             returns: "number"
         },
-        // def checkContractWhitelist(contract, address):
         checkContractWhitelist: {
             to: contracts.reporting,
             method: "checkContractWhitelist",
             signature: "ii"
         },
-        // def setWhitelist(contract, addresses:arr):
         setWhitelist: {
             to: contracts.reporting,
             method: "setWhitelist",
@@ -4835,83 +4897,71 @@ module.exports = function (network) {
             returns: "string",
             send: true
         },
-        // def getRepByIndex(branch, repIndex):
         getRepByIndex: {
             to: contracts.reporting,
             method: "getRepByIndex",
             signature: "ii",
             returns: "unfix"
         },
-        // def getRepBalance(branch, address):
         getRepBalance: {
             to: contracts.reporting,
             method: "getRepBalance",
             signature: "ii",
             returns: "unfix"
         },
-        // def getDormantRepByIndex(branch, repIndex):
         getDormantRepByIndex: {
             to: contracts.reporting,
             method: "getDormantRepByIndex",
             signature: "ii",
             returns: "unfix"
         },
-        // def balanceOf(branch, address):
         balanceOf: {
             to: contracts.reporting,
             method: "balanceOf",
             signature: "ii",
             returns: "unfix"
         },
-        // def totalSupply(branch):
         totalSupply: {
             to: contracts.reporting,
             method: "totalSupply",
             signature: "i",
             returns: "unfix"
         },
-        // def getReporterID(branch, index):
         getReporterID: {
             to: contracts.reporting,
             method: "getReporterID",
             signature: "ii",
             returns: "address"
         },
-        // def getTotalRep(branch):
         getTotalRep: {
             to: contracts.reporting,
             method: "getTotalRep",
             signature: "i",
             returns: "unfix"
         },
-        // def getReputation(address):
         getReputation: {
             to: contracts.reporting,
             method: "getReputation",
             signature: "i",
             returns: "hash[]"
         },
-        // def getNumberReporters(branch):
         getNumberReporters: {
             to: contracts.reporting,
             method: "getNumberReporters",
             signature: "i",
             returns: "number"
         },
-        // def repIDToIndex(branch, repID):
         repIDToIndex: {
             to: contracts.reporting,
             method: "repIDToIndex",
             signature: "ii",
             returns: "number"
         },
-        // def hashReport(report: arr, salt):
         hashReport: {
             to: contracts.reporting,
             method: "hashReport",
             signature: "ai"
         },
-        // def setInitialReporters(parent, branchID):
         setInitialReporters: {
             to: contracts.reporting,
             method: "setInitialReporters",
@@ -4919,7 +4969,6 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        // def addReporter(branch, sender):
         addReporter: {
             to: contracts.reporting,
             method: "addReporter",
@@ -4927,7 +4976,6 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        // def addRep(branch, index, value):
         addRep: {
             to: contracts.reporting,
             method: "addRep",
@@ -4935,7 +4983,6 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        // def subtractRep(branch, index, value):
         subtractRep: {
             to: contracts.reporting,
             method: "subtractRep",
@@ -4943,7 +4990,6 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        // def setRep(branch, index, newRep):
         setRep: {
             to: contracts.reporting,
             method: "setRep",
@@ -4951,7 +4997,6 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        // def addDormantRep(branch, index, value):
         addDormantRep: {
             to: contracts.reporting,
             method: "addDormantRep",
@@ -4959,7 +5004,6 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        // def subtractDormantRep(branch, index, value):
         subtractDormantRep: {
             to: contracts.reporting,
             method: "subtractDormantRep",
@@ -4967,7 +5011,6 @@ module.exports = function (network) {
             returns: "number",
             send: true
         },
-        // def setSaleDistribution(addresses: arr, balances: arr, branchID):
         setSaleDistribution: {
             to: contracts.reporting,
             method: "setSaleDistribution",
@@ -24686,7 +24729,7 @@ global.ethrpc = ethrpc;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./":65}],65:[function(require,module,exports){
-(function (process,Buffer){
+(function (process){
 /**
  * JSON RPC methods for Ethereum
  * @author Jack Peterson (jack@tinybike.net)
@@ -24829,7 +24872,7 @@ module.exports = {
             if (returns && returns.slice(-2) === "[]") {
                 result = this.unmarshal(result, returns);
             } else if (returns === "string") {
-                result = abi.abi.rawDecode([returns], new Buffer(abi.strip_0x(result), "hex"))[0];
+                result = abi.raw_decode_hex(result);
             } else if (returns === "number") {
                 result = abi.string(result);
             } else if (returns === "bignumber") {
@@ -25414,14 +25457,17 @@ module.exports = {
     },
 
     getBlockByHash: function (hash, full, f) {
-        return this.broadcast(this.marshal("getBlockByHash", [hash, full || true]), f);
+        full = (full !== undefined) ? full : true;
+        return this.broadcast(this.marshal("getBlockByHash", [hash, full]), f);
     },
 
     getBlock: function (number, full, f) {
-        return this.broadcast(this.marshal("getBlockByNumber", [number, full || true]), f);
+        full = (full !== undefined) ? full : true;
+        return this.broadcast(this.marshal("getBlockByNumber", [number, full]), f);
     },
     getBlockByNumber: function (number, full, f) {
-        return this.broadcast(this.marshal("getBlockByNumber", [number, full || true]), f);
+        full = (full !== undefined) ? full : true;
+        return this.broadcast(this.marshal("getBlockByNumber", [number, full]), f);
     },
 
     version: function (f) {
@@ -26043,8 +26089,8 @@ module.exports = {
     }
 };
 
-}).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":272,"async":66,"augur-abi":1,"augur-contracts":6,"bignumber.js":67,"browser-request":68,"buffer":72,"js-sha3":292,"net":69,"request":71,"sync-request":71,"websocket":71}],66:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"_process":272,"async":66,"augur-abi":1,"augur-contracts":6,"bignumber.js":67,"browser-request":68,"js-sha3":292,"net":69,"request":71,"sync-request":71,"websocket":71}],66:[function(require,module,exports){
 (function (process,global){
 /*!
  * async
