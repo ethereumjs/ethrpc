@@ -19,9 +19,8 @@ var async = require("async");
 var W3CWebSocket = (NODE_JS) ? require("websocket").w3cwebsocket : WebSocket;
 var BigNumber = require("bignumber.js");
 var keccak_256 = require("js-sha3").keccak_256;
-var contracts = require("augur-contracts");
+var errors = require("augur-contracts").errors;
 var abi = require("augur-abi");
-var errors = contracts.errors;
 
 BigNumber.config({MODULO_MODE: BigNumber.EUCLID});
 
@@ -339,10 +338,6 @@ module.exports = {
         return this.nodes.hosted.slice();
     },
 
-    contracts: function (network) {
-        return contracts[network || this.version()];
-    },
-
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
         var nodes, numCommands, returns, result, completed, self = this;
@@ -351,37 +346,6 @@ module.exports = {
             (command.constructor === Array && !command.length)) {
             if (!callback) return null;
             return callback(null);
-        }
-        if (this.debug.logs) {
-            if (command.method === "eth_call" || command.method === "eth_sendTransaction") {
-                if (command.params && (!command.params.length || !command.params[0].from)) {
-                    console.log(
-                        "**************************\n"+
-                        "* OH GOD WHAT DID YOU DO *\n"+
-                        "**************************"
-                    );
-                    var network = this.version();
-                    var contracts = this.contracts(network);
-                    var contract;
-                    for (var address in contracts) {
-                        if (!contracts.hasOwnProperty(address)) continue;
-                        if (contracts[address] === command.params[0].to) {
-                            contract = address;
-                            break;
-                        }
-                    }
-                    console.log(
-                        "network:", network, "\n"+
-                        "contract:", contract, "[" + command.params[0].to + "]\n"+
-                        "method:", command.method, "\n"+
-                        "params:", JSON.stringify(command.params, null, 2)
-                    );
-                    if (command.debug) {
-                        console.log("tx:", JSON.stringify(command.debug, null, 2));
-                        delete command.debug;
-                    }
-                }
-            }
         }
 
         // parse batched commands and strip "returns" and "invocation" fields
