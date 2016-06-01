@@ -106,6 +106,8 @@ module.exports = {
             bytearray = bytearray.toString("hex");
         }
         bytearray = this.strip_0x(bytearray);
+        // console.log(bytearray);
+        
         return this.remove_trailing_zeros(
             this.abi.rawDecode(
                 ["string"],
@@ -120,11 +122,10 @@ module.exports = {
     short_string_to_int256: function (s) {
         if (s.length > 32) s = s.slice(0, 32);
         return this.prefix_hex(this.pad_right(new Buffer(s, "utf8").toString("hex")));
-        // return this.prefix_hex(ethabi.rawEncode(["string"], [s]).slice(64).toString("hex"));
     },
 
     int256_to_short_string: function (n) {
-        return this.bytes_to_utf16(this.remove_trailing_zeros(n));
+        return new Buffer(this.strip_0x(this.remove_trailing_zeros(n)), "hex").toString("utf8");
     },
 
     decode_hex: function (h, strip) {
@@ -3715,7 +3716,7 @@ module.exports = {
 },{}],4:[function(require,module,exports){
 module.exports={
     "2": {
-        "buyAndSellShares": "0x47be35dcdd588ffcd30d6aaee5ed95630fecf918",
+        "buyAndSellShares": "0x6738507f217ffd6decf639793f7d0a57216c5ace",
         "closeMarket": "0xb50a2e85c68c0d4fe04759e4dc3f1f119e765707",
         "closeMarketEight": "0xf1b39ec03b64b7c839f551413c0e68c72bdc0131",
         "closeMarketFour": "0x9489d1c57cbe9d305540f7c40922b8283f9be089",
@@ -3723,7 +3724,7 @@ module.exports={
         "closeMarketTwo": "0x0d6c2fab4529c275ce0f1ada01ea025f9ad6c9f8",
         "collectFees": "0x8e16c43eadcb81a5cceafe8b2d693dbea4976ab0",
         "completeSets": "0x02102aadb33d5af80cb02c15701f791f2b82b0b3",
-        "compositeGetters": "0xa1b8f9226b884c501a20b3bf830bf39073a50147",
+        "compositeGetters": "0xeee6bc21b091b3f45e483b4378700bf5158918c2",
         "consensus": "0x13af9740aa6bfb1c16b7be01374e4021b281c01c",
         "createBranch": "0xe26e56cd96da49d19fe7471311af2e4ba4129df7",
         "createMarket": "0x0f5512956b1bf9f03a461783495b647f05bea520",
@@ -3738,7 +3739,7 @@ module.exports={
         "roundTwoPenalize": "0xc9a545fafdd2c6849c2186bab01aa2a5e27e7c70",
         "sendReputation": "0x7d82274b758b015867fc12325ff3629302c4187b",
         "slashRep": "0xb02033249eddd36a8b86a1cdaa8a18414f97e7a9",
-        "trade": "0x5827c3f05226f0934e67050b3b89f8e22f03f8f4",
+        "trade": "0x53e758fd531a82410ecdde4b69f8fdc52bac9810",
         "backstops": "0xc7da2eafd342f597d4434673b14f14ae3f41d942",
         "branches": "0x9678efb1b05634a3968c0c1d642eef4635ef371e",
         "cash": "0xaf9c171a9e906d3231d8cf1b765fd774bfb1d3c9",
@@ -3760,7 +3761,7 @@ module.exports={
         "closeMarketTwo": "0x7ba9727bd11556abe84d577da769c3c654485b91",
         "collectFees": "0xa9d19963a10b6cd6c4ccf93990aa27d09269e704",
         "completeSets": "0x470f9a8742c7ae216a61cd7c5c639495929c42cb",
-        "compositeGetters": "0x0542deac8debbc9cdf1d16ddadd75b3464bee084",
+        "compositeGetters": "0x049899ffa5d91e07bd17ddd778afaa2ba06215b5",
         "consensus": "0xd5e6b60100f91a7b193e1eb99229cb6ad053b589",
         "createBranch": "0xcfe7ff3615e407b03aee9be253575e690bc80a17",
         "createMarket": "0xfa0b869cc786e0c25ce1f718c49b942ca5a55817",
@@ -4703,6 +4704,13 @@ module.exports = function (network) {
             returns: "hash[]",
             gas: "0x9184e729fff"
         },
+        batchGetMarketInfo: {
+            to: contracts.compositeGetters,
+            method: "batchGetMarketInfo",
+            signature: "a",
+            returns: "hash[]",
+            gas: "0x9184e729fff"
+        },
         getMarketsInfo: {
             to: contracts.compositeGetters,
             method: "getMarketsInfo",
@@ -5132,13 +5140,6 @@ module.exports = function (network) {
             returns: "hash",
             send: true
         },
-        short_sell: {
-            to: contracts.buyAndSellShares,
-            method: "short_sell",
-            signature: "ii",
-            returns: "number",
-            send: true
-        },
 
         // trade.se
         trade: {
@@ -5146,6 +5147,13 @@ module.exports = function (network) {
             method: "trade",
             signature: "iia",
             returns: "hash[]",
+            send: true
+        },
+        short_sell: {
+            to: contracts.trade,
+            method: "short_sell",
+            signature: "ii",
+            returns: "number",
             send: true
         },
 
@@ -9346,7 +9354,6 @@ module.exports = ABI
 
 }).call(this,require("buffer").Buffer)
 },{"./bn":9,"buffer":72,"ethereumjs-util":12,"utf8":63}],11:[function(require,module,exports){
-(function (Buffer){
 (function (module, exports) {
   'use strict';
 
@@ -9400,11 +9407,11 @@ module.exports = ABI
   BN.BN = BN;
   BN.wordSize = 26;
 
-  // var Buffer;
-  // try {
-  //   Buffer = require('buf' + 'fer').Buffer;
-  // } catch (e) {
-  // }
+  var Buffer;
+  try {
+    Buffer = require('buf' + 'fer').Buffer;
+  } catch (e) {
+  }
 
   BN.max = function max (left, right) {
     if (left.cmp(right) > 0) return left;
@@ -9662,6 +9669,13 @@ module.exports = ABI
     var r = new BN(null);
     this.copy(r);
     return r;
+  };
+
+  BN.prototype._expand = function _expand (size) {
+    while (this.length < size) {
+      this.words[this.length++] = 0;
+    }
+    return this;
   };
 
   // Remove leading `0` from `this`
@@ -10139,9 +10153,7 @@ module.exports = ABI
     var bitsLeft = width % 26;
 
     // Extend the buffer with leading zeroes
-    while (this.length < bytesNeeded) {
-      this.words[this.length++] = 0;
-    }
+    this._expand(bytesNeeded);
 
     if (bitsLeft > 0) {
       bytesNeeded--;
@@ -10172,9 +10184,7 @@ module.exports = ABI
     var off = (bit / 26) | 0;
     var wbit = bit % 26;
 
-    while (this.length <= off) {
-      this.words[this.length++] = 0;
-    }
+    this._expand(off + 1);
 
     if (val) {
       this.words[off] = this.words[off] | (1 << wbit);
@@ -11232,6 +11242,7 @@ module.exports = ABI
 
   BN.prototype.imuln = function imuln (num) {
     assert(typeof num === 'number');
+    assert(num < 0x4000000);
 
     // Carry
     var carry = 0;
@@ -11463,6 +11474,7 @@ module.exports = ABI
   // Add plain number `num` to `this`
   BN.prototype.iaddn = function iaddn (num) {
     assert(typeof num === 'number');
+    assert(num < 0x4000000);
     if (num < 0) return this.isubn(-num);
 
     // Possible sign change
@@ -11503,6 +11515,7 @@ module.exports = ABI
   // Subtract plain number `num` from `this`
   BN.prototype.isubn = function isubn (num) {
     assert(typeof num === 'number');
+    assert(num < 0x4000000);
     if (num < 0) return this.iaddn(-num);
 
     if (this.negative !== 0) {
@@ -11547,24 +11560,10 @@ module.exports = ABI
   };
 
   BN.prototype._ishlnsubmul = function _ishlnsubmul (num, mul, shift) {
-    // Bigger storage is needed
     var len = num.length + shift;
     var i;
-    if (this.words.length < len) {
-      var t = new Array(len);
-      for (i = 0; i < this.length; i++) {
-        t[i] = this.words[i];
-      }
-      this.words = t;
-    } else {
-      i = this.length;
-    }
 
-    // Zeroify rest
-    this.length = Math.max(this.length, len);
-    for (; i < this.length; i++) {
-      this.words[i] = 0;
-    }
+    this._expand(len);
 
     var w;
     var carry = 0;
@@ -11664,11 +11663,25 @@ module.exports = ABI
       a.iushrn(shift);
     }
 
-    return { div: q || null, mod: a };
+    return {
+      div: q || null,
+      mod: a
+    };
   };
 
+  // NOTE: 1) `mode` can be set to `mod` to request mod only,
+  //       to `div` to request div only, or be absent to
+  //       request both div & mod
+  //       2) `positive` is true if unsigned mod is requested
   BN.prototype.divmod = function divmod (num, mode, positive) {
     assert(!num.isZero());
+
+    if (this.isZero()) {
+      return {
+        div: new BN(0),
+        mod: new BN(0)
+      };
+    }
 
     var div, mod, res;
     if (this.negative !== 0 && num.negative === 0) {
@@ -11698,7 +11711,10 @@ module.exports = ABI
         div = res.div.neg();
       }
 
-      return { div: div, mod: res.mod };
+      return {
+        div: div,
+        mod: res.mod
+      };
     }
 
     if ((this.negative & num.negative) !== 0) {
@@ -11721,17 +11737,26 @@ module.exports = ABI
 
     // Strip both numbers to approximate shift value
     if (num.length > this.length || this.cmp(num) < 0) {
-      return { div: new BN(0), mod: this };
+      return {
+        div: new BN(0),
+        mod: this
+      };
     }
 
     // Very short reduction
     if (num.length === 1) {
       if (mode === 'div') {
-        return { div: this.divn(num.words[0]), mod: null };
+        return {
+          div: this.divn(num.words[0]),
+          mod: null
+        };
       }
 
       if (mode === 'mod') {
-        return { div: null, mod: new BN(this.modn(num.words[0])) };
+        return {
+          div: null,
+          mod: new BN(this.modn(num.words[0]))
+        };
       }
 
       return {
@@ -11956,8 +11981,8 @@ module.exports = ABI
   };
 
   BN.prototype.gcd = function gcd (num) {
-    if (this.isZero()) return num.clone();
-    if (num.isZero()) return this.clone();
+    if (this.isZero()) return num.abs();
+    if (num.isZero()) return this.abs();
 
     var a = this.clone();
     var b = num.clone();
@@ -12021,17 +12046,14 @@ module.exports = ABI
 
     // Fast case: bit is much higher than all existing words
     if (this.length <= s) {
-      for (var i = this.length; i < s + 1; i++) {
-        this.words[i] = 0;
-      }
+      this._expand(s + 1);
       this.words[s] |= q;
-      this.length = s + 1;
       return this;
     }
 
     // Add bit and propagate, if needed
     var carry = q;
-    for (i = s; carry !== 0 && i < this.length; i++) {
+    for (var i = s; carry !== 0 && i < this.length; i++) {
       var w = this.words[i] | 0;
       w += carry;
       carry = w >>> 26;
@@ -12070,9 +12092,7 @@ module.exports = ABI
       var w = this.words[0] | 0;
       res = w === num ? 0 : w < num ? -1 : 1;
     }
-    if (this.negative !== 0) {
-      res = -res;
-    }
+    if (this.negative !== 0) return -res | 0;
     return res;
   };
 
@@ -12085,8 +12105,7 @@ module.exports = ABI
     if (this.negative === 0 && num.negative !== 0) return 1;
 
     var res = this.ucmp(num);
-    if (this.negative !== 0) return -res;
-
+    if (this.negative !== 0) return -res | 0;
     return res;
   };
 
@@ -12348,8 +12367,13 @@ module.exports = ABI
       input.words[i - 10] = ((next & mask) << 4) | (prev >>> 22);
       prev = next;
     }
-    input.words[i - 10] = prev >>> 22;
-    input.length -= 9;
+    prev >>>= 22;
+    input.words[i - 10] = prev;
+    if (prev === 0 && input.length > 10) {
+      input.length -= 10;
+    } else {
+      input.length -= 9;
+    }
   };
 
   K256.prototype.imulK = function imulK (num) {
@@ -12749,8 +12773,7 @@ module.exports = ABI
   };
 })(typeof module === 'undefined' || module, this);
 
-}).call(this,require("buffer").Buffer)
-},{"buffer":72}],12:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function (Buffer){
 const SHA3 = require('keccakjs')
 const secp256k1 = require('secp256k1')
@@ -19551,9 +19574,19 @@ BaseCurve.prototype.decodePoint = function decodePoint(bytes, enc) {
   bytes = utils.toArray(bytes, enc);
 
   var len = this.p.byteLength();
-  if (bytes[0] === 0x04 && bytes.length - 1 === 2 * len) {
-    return this.point(bytes.slice(1, 1 + len),
-                      bytes.slice(1 + len, 1 + 2 * len));
+
+  // uncompressed, hybrid-odd, hybrid-even
+  if ((bytes[0] === 0x04 || bytes[0] === 0x06 || bytes[0] === 0x07) &&
+      bytes.length - 1 === 2 * len) {
+    if (bytes[0] === 0x06)
+      assert(bytes[bytes.length - 1] % 2 === 0);
+    else if (bytes[0] === 0x07)
+      assert(bytes[bytes.length - 1] % 2 === 1);
+
+    var res =  this.point(bytes.slice(1, 1 + len),
+                          bytes.slice(1 + len, 1 + 2 * len));
+
+    return res;
   } else if ((bytes[0] === 0x02 || bytes[0] === 0x03) &&
               bytes.length - 1 === len) {
     return this.pointFromX(bytes.slice(1, 1 + len), bytes[0] === 0x03);
@@ -24391,7 +24424,7 @@ arguments[4][17][0].apply(exports,arguments)
 },{"dup":17}],62:[function(require,module,exports){
 module.exports={
   "name": "elliptic",
-  "version": "6.2.5",
+  "version": "6.2.8",
   "description": "EC cryptography",
   "main": "lib/elliptic.js",
   "files": [
@@ -24445,9 +24478,9 @@ module.exports={
     "hash.js": "^1.0.0",
     "inherits": "^2.0.1"
   },
-  "gitHead": "fa5ffdc2d008fd6b1eb6e34864c977ea2748b7ce",
-  "_id": "elliptic@6.2.5",
-  "_shasum": "24846340477dfce75c56b8ff4b1d6d6ec258e06a",
+  "gitHead": "236f37395bdf9e4af1dfc8e84f6353bce540b93e",
+  "_id": "elliptic@6.2.8",
+  "_shasum": "44a25b3d1550bebb74d0b6d22d89940206b51739",
   "_from": "elliptic@>=6.2.3 <7.0.0",
   "_npmVersion": "3.8.6",
   "_nodeVersion": "6.0.0",
@@ -24456,8 +24489,8 @@ module.exports={
     "email": "fedor@indutny.com"
   },
   "dist": {
-    "shasum": "24846340477dfce75c56b8ff4b1d6d6ec258e06a",
-    "tarball": "https://registry.npmjs.org/elliptic/-/elliptic-6.2.5.tgz"
+    "shasum": "44a25b3d1550bebb74d0b6d22d89940206b51739",
+    "tarball": "https://registry.npmjs.org/elliptic/-/elliptic-6.2.8.tgz"
   },
   "maintainers": [
     {
@@ -24467,10 +24500,10 @@ module.exports={
   ],
   "_npmOperationalInternal": {
     "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/elliptic-6.2.5.tgz_1463781139171_0.8202476925216615"
+    "tmp": "tmp/elliptic-6.2.8.tgz_1464746004719_0.6379144776146859"
   },
   "directories": {},
-  "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.2.5.tgz",
+  "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.2.8.tgz",
   "readme": "ERROR: No README data found!"
 }
 
@@ -24781,19 +24814,18 @@ module.exports = {
         logs: false
     },
 
-    // use IPC (only available on Node)
+    // geth IPC endpoint (Node-only)
     ipcpath: null,
+    socket: null,
 
     // geth websocket endpoint
-    wsUrl: "wss://ws.augur.net",
+    wsUrl: process.env.GETH_WEBSOCKET_URL || "wss://ws.augur.net",
 
     // initial value 0
     // if connection fails: -1
     // if connection succeeds: 1
+    ipcStatus: 0,
     wsStatus: 0,
-
-    // null or WebSocketClient instance
-    wsClient: null,
 
     // active websocket (if connected)
     websocket: null,
@@ -24969,7 +25001,47 @@ module.exports = {
         return returns;
     },
 
+    ipcRequests: {},
     wsRequests: {},
+
+    ipcConnect: function (callback) {
+        var self = this;
+        var received = "";
+        this.socket = new net.Socket();
+        this.socket.setEncoding("utf8");
+        this.socket.on("data", function (data) {
+            received += data;
+            try {
+                data = JSON.parse(received);
+                received = "";
+                if (data.id !== undefined && data.id !== null) {
+                    var req = self.ipcRequests[data.id];
+                    delete self.ipcRequests[data.id];
+                    self.parse(JSON.stringify(data), req.returns, req.callback);
+                }
+            } catch (exc) {
+                if (self.debug.broadcast) console.debug(exc);
+            }
+        });
+        this.socket.on("end", function () {
+            console.debug("IPC socket end");
+            received = "";
+        });
+        this.socket.on("error", function (err) {
+            console.error("IPC socket error:", err);
+            self.ipcStatus = -1;
+            self.socket.destroy();
+            received = "";
+        });
+        this.socket.on("close", function (err) {
+            self.ipcStatus = (err) ? -1 : 0;
+            received = "";
+        });
+        this.socket.connect({path: this.ipcpath}, function () {
+            self.ipcStatus = 1;
+            callback(true);
+        });
+    },
 
     wsConnect: function (callback) {
         var self = this;
@@ -24996,6 +25068,11 @@ module.exports = {
         };
     },
 
+    ipcSend: function (command, returns, callback) {
+        this.ipcRequests[command.id] = {returns: returns, callback: callback};
+        if (this.ipcStatus === 1) this.socket.write(JSON.stringify(command));
+    },
+
     wsSend: function (command, returns, callback) {
         this.wsRequests[command.id] = {returns: returns, callback: callback};
         if (this.websocket.readyState === this.websocket.OPEN) {
@@ -25016,7 +25093,6 @@ module.exports = {
             var response = req.getBody().toString();
             return this.parse(response, returns);
         }
-        // console.warn("[ethrpc] synchronous RPC request to " + rpcUrl + ":", command);
         if (window.XMLHttpRequest) {
             req = new window.XMLHttpRequest();
         } else {
@@ -25073,11 +25149,16 @@ module.exports = {
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
         var nodes, numCommands, returns, result, completed, self = this;
-
         if (!command || (command.constructor === Object && !command.method) ||
             (command.constructor === Array && !command.length)) {
             if (!callback) return null;
             return callback(null);
+        }
+
+        // make sure the ethereum node list isn't empty
+        if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath && !this.wsUrl) {
+            if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
+            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
         }
 
         // parse batched commands and strip "returns" and "invocation" fields
@@ -25094,42 +25175,29 @@ module.exports = {
         }
 
         // if we're on Node, use IPC if available and ipcpath is specified
-        if (NODE_JS && this.ipcpath && command.method &&
-            command.method.indexOf("Filter") === -1) {
+        if (NODE_JS && this.ipcpath && command.method) {
             var loopback = this.nodes.local && (
                 (this.nodes.local.indexOf("127.0.0.1") > -1 ||
-                this.nodes.local.indexOf("localhost") > -1)
-            );
+                this.nodes.local.indexOf("localhost") > -1));
             if (!isFunction(callback) && !loopback) {
                 throw new this.Error(errors.LOOPBACK_NOT_FOUND);
             }
             if (isFunction(callback) && command.constructor !== Array) {
-                var received = '';
-                var socket = new net.Socket();
-                socket.setEncoding("utf8");
-                socket.connect({path: this.ipcpath}, function () {
-                    socket.write(JSON.stringify(command));
-                });
-                socket.on("data", function (data) {
-                    received += data;
-                    self.parse(received, returns, function (parsed) {
-                        if (parsed && parsed.error === 409) return;
-                        socket.destroy();
-                        callback(parsed);
-                    });
-                });
-                socket.on("error", function (err) {
-                    socket.destroy();
-                    callback(err);
-                });
-                return;
-            }
-        }
+                if (!this.ipcpath) this.ipcStatus = -1;
+                switch (this.ipcStatus) {
 
-        // make sure the ethereum node list isn't empty
-        if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath) {
-            if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
-            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
+                // [0] IPC socket closed / not connected: try to connect
+                case 0:
+                    return this.ipcConnect(function (connected) {
+                        if (!connected) return self.broadcast(command, callback);
+                        self.ipcSend(command, returns, callback);
+                    });
+
+                // [1] IPC socket connected
+                case 1:
+                    return this.ipcSend(command, returns, callback);
+                }
+            }
         }
 
         // select local / hosted node(s) to receive RPC
@@ -25490,6 +25558,29 @@ module.exports = {
 
     compileLLL: function (code, f) {
         return this.broadcast(this.marshal("compileLLL", code), f);
+    },
+
+    subscribe: function (label, options, f) {
+        return this.broadcast(this.marshal("subscribe", [label, options]), f);
+    },
+
+    subscribeLogs: function (options, f) {
+        return this.broadcast(this.marshal("subscribe", ["logs", options]), f);
+    },
+
+    subscribeNewBlocks: function (options, f) {
+        if (!f && isFunction(options)) {
+            f = options;
+            options = null;
+        }
+        return this.broadcast(this.marshal("subscribe", ["newBlocks", options || {
+            includeTransactions: false,
+            transactionDetails: false
+        }]), f);
+    },    
+
+    unsubscribe: function (label, f) {
+        return this.broadcast(this.marshal("unsubscribe", label), f);
     },
 
     newFilter: function (params, f) {

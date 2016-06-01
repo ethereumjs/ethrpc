@@ -49,19 +49,18 @@ module.exports = {
         logs: false
     },
 
-    // use IPC (only available on Node)
+    // geth IPC endpoint (Node-only)
     ipcpath: null,
+    socket: null,
 
     // geth websocket endpoint
-    wsUrl: "wss://ws.augur.net",
+    wsUrl: process.env.GETH_WEBSOCKET_URL || "wss://ws.augur.net",
 
     // initial value 0
     // if connection fails: -1
     // if connection succeeds: 1
+    ipcStatus: 0,
     wsStatus: 0,
-
-    // null or WebSocketClient instance
-    wsClient: null,
 
     // active websocket (if connected)
     websocket: null,
@@ -237,7 +236,47 @@ module.exports = {
         return returns;
     },
 
+    ipcRequests: {},
     wsRequests: {},
+
+    ipcConnect: function (callback) {
+        var self = this;
+        var received = "";
+        this.socket = new net.Socket();
+        this.socket.setEncoding("utf8");
+        this.socket.on("data", function (data) {
+            received += data;
+            try {
+                data = JSON.parse(received);
+                received = "";
+                if (data.id !== undefined && data.id !== null) {
+                    var req = self.ipcRequests[data.id];
+                    delete self.ipcRequests[data.id];
+                    self.parse(JSON.stringify(data), req.returns, req.callback);
+                }
+            } catch (exc) {
+                if (self.debug.broadcast) console.debug(exc);
+            }
+        });
+        this.socket.on("end", function () {
+            console.debug("IPC socket end");
+            received = "";
+        });
+        this.socket.on("error", function (err) {
+            console.error("IPC socket error:", err);
+            self.ipcStatus = -1;
+            self.socket.destroy();
+            received = "";
+        });
+        this.socket.on("close", function (err) {
+            self.ipcStatus = (err) ? -1 : 0;
+            received = "";
+        });
+        this.socket.connect({path: this.ipcpath}, function () {
+            self.ipcStatus = 1;
+            callback(true);
+        });
+    },
 
     wsConnect: function (callback) {
         var self = this;
@@ -264,6 +303,11 @@ module.exports = {
         };
     },
 
+    ipcSend: function (command, returns, callback) {
+        this.ipcRequests[command.id] = {returns: returns, callback: callback};
+        if (this.ipcStatus === 1) this.socket.write(JSON.stringify(command));
+    },
+
     wsSend: function (command, returns, callback) {
         this.wsRequests[command.id] = {returns: returns, callback: callback};
         if (this.websocket.readyState === this.websocket.OPEN) {
@@ -284,7 +328,6 @@ module.exports = {
             var response = req.getBody().toString();
             return this.parse(response, returns);
         }
-        // console.warn("[ethrpc] synchronous RPC request to " + rpcUrl + ":", command);
         if (window.XMLHttpRequest) {
             req = new window.XMLHttpRequest();
         } else {
@@ -341,11 +384,16 @@ module.exports = {
     // Post JSON-RPC command to all Ethereum nodes
     broadcast: function (command, callback) {
         var nodes, numCommands, returns, result, completed, self = this;
-
         if (!command || (command.constructor === Object && !command.method) ||
             (command.constructor === Array && !command.length)) {
             if (!callback) return null;
             return callback(null);
+        }
+
+        // make sure the ethereum node list isn't empty
+        if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath && !this.wsUrl) {
+            if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
+            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
         }
 
         // parse batched commands and strip "returns" and "invocation" fields
@@ -362,42 +410,29 @@ module.exports = {
         }
 
         // if we're on Node, use IPC if available and ipcpath is specified
-        if (NODE_JS && this.ipcpath && command.method &&
-            command.method.indexOf("Filter") === -1) {
+        if (NODE_JS && this.ipcpath && command.method) {
             var loopback = this.nodes.local && (
                 (this.nodes.local.indexOf("127.0.0.1") > -1 ||
-                this.nodes.local.indexOf("localhost") > -1)
-            );
+                this.nodes.local.indexOf("localhost") > -1));
             if (!isFunction(callback) && !loopback) {
                 throw new this.Error(errors.LOOPBACK_NOT_FOUND);
             }
             if (isFunction(callback) && command.constructor !== Array) {
-                var received = '';
-                var socket = new net.Socket();
-                socket.setEncoding("utf8");
-                socket.connect({path: this.ipcpath}, function () {
-                    socket.write(JSON.stringify(command));
-                });
-                socket.on("data", function (data) {
-                    received += data;
-                    self.parse(received, returns, function (parsed) {
-                        if (parsed && parsed.error === 409) return;
-                        socket.destroy();
-                        callback(parsed);
-                    });
-                });
-                socket.on("error", function (err) {
-                    socket.destroy();
-                    callback(err);
-                });
-                return;
-            }
-        }
+                if (!this.ipcpath) this.ipcStatus = -1;
+                switch (this.ipcStatus) {
 
-        // make sure the ethereum node list isn't empty
-        if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath) {
-            if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
-            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
+                // [0] IPC socket closed / not connected: try to connect
+                case 0:
+                    return this.ipcConnect(function (connected) {
+                        if (!connected) return self.broadcast(command, callback);
+                        self.ipcSend(command, returns, callback);
+                    });
+
+                // [1] IPC socket connected
+                case 1:
+                    return this.ipcSend(command, returns, callback);
+                }
+            }
         }
 
         // select local / hosted node(s) to receive RPC
@@ -758,6 +793,29 @@ module.exports = {
 
     compileLLL: function (code, f) {
         return this.broadcast(this.marshal("compileLLL", code), f);
+    },
+
+    subscribe: function (label, options, f) {
+        return this.broadcast(this.marshal("subscribe", [label, options]), f);
+    },
+
+    subscribeLogs: function (options, f) {
+        return this.broadcast(this.marshal("subscribe", ["logs", options]), f);
+    },
+
+    subscribeNewBlocks: function (options, f) {
+        if (!f && isFunction(options)) {
+            f = options;
+            options = null;
+        }
+        return this.broadcast(this.marshal("subscribe", ["newBlocks", options || {
+            includeTransactions: false,
+            transactionDetails: false
+        }]), f);
+    },    
+
+    unsubscribe: function (label, f) {
+        return this.broadcast(this.marshal("unsubscribe", label), f);
     },
 
     newFilter: function (params, f) {
