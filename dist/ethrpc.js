@@ -25001,6 +25001,12 @@ module.exports = {
         return returns;
     },
 
+    subscriptions: {},
+
+    registerSubscriptionCallback: function (id, callback) {
+        this.subscriptions[id] = callback;
+    },
+
     ipcRequests: {},
     wsRequests: {},
 
@@ -25013,20 +25019,20 @@ module.exports = {
             received += data;
             try {
                 data = JSON.parse(received);
-                received = "";
                 if (data.id !== undefined && data.id !== null) {
                     var req = self.ipcRequests[data.id];
                     delete self.ipcRequests[data.id];
-                    self.parse(JSON.stringify(data), req.returns, req.callback);
+                    self.parse(received, req.returns, req.callback);
+                } else if (data.method === "eth_subscription" && data.params &&
+                    data.params.subscription && data.params.result) {
+                    self.subscriptions[data.params.subscription](data.params.result);
                 }
+                received = "";
             } catch (exc) {
                 if (self.debug.broadcast) console.debug(exc);
             }
         });
-        this.socket.on("end", function () {
-            console.debug("IPC socket end");
-            received = "";
-        });
+        this.socket.on("end", function () { received = ""; });
         this.socket.on("error", function (err) {
             console.error("IPC socket error:", err);
             self.ipcStatus = -1;
@@ -25059,6 +25065,9 @@ module.exports = {
                     var req = self.wsRequests[res.id];
                     delete self.wsRequests[res.id];
                     self.parse(msg.data, req.returns, req.callback);
+                } else if (res.method === "eth_subscription" && res.params &&
+                    res.params.subscription && res.params.result) {
+                    self.subscriptions[res.params.subscription](res.params.result);
                 }
             }
         };
@@ -25565,6 +25574,7 @@ module.exports = {
     },
 
     subscribeLogs: function (options, f) {
+        console.log(JSON.stringify(this.marshal("subscribe", ["logs", options])));
         return this.broadcast(this.marshal("subscribe", ["logs", options]), f);
     },
 
