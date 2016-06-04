@@ -251,20 +251,28 @@ module.exports = {
         this.socket = new net.Socket();
         this.socket.setEncoding("utf8");
         this.socket.on("data", function (data) {
-            received += data;
+            var parsed;
             try {
-                data = JSON.parse(received);
-                if (data.id !== undefined && data.id !== null) {
-                    var req = self.ipcRequests[data.id];
-                    delete self.ipcRequests[data.id];
-                    self.parse(received, req.returns, req.callback);
-                } else if (data.method === "eth_subscription" && data.params &&
-                    data.params.subscription && data.params.result) {
-                    self.subscriptions[data.params.subscription](data.params.result);
-                }
-                received = "";
+                parsed = JSON.parse(data);
             } catch (exc) {
                 if (self.debug.broadcast) console.debug(exc);
+                received += data;
+                try {
+                    parsed = JSON.parse(received);
+                } catch (ex) {
+                    if (self.debug.broadcast) console.debug(ex);
+                }
+            }
+            if (parsed) {
+                if (parsed.id !== undefined && parsed.id !== null) {
+                    var req = self.ipcRequests[parsed.id];
+                    delete self.ipcRequests[parsed.id];
+                    self.parse(JSON.stringify(parsed), req.returns, req.callback);
+                } else if (parsed.method === "eth_subscription" && parsed.params &&
+                    parsed.params.subscription && parsed.params.result) {
+                    self.subscriptions[parsed.params.subscription](parsed.params.result);
+                }
+                received = "";
             }
         });
         this.socket.on("end", function () { received = ""; });
