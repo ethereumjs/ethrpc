@@ -18515,7 +18515,6 @@ module.exports = {
     },
 
     subscribeLogs: function (options, f) {
-        console.log(JSON.stringify(this.marshal("subscribe", ["logs", options])));
         return this.broadcast(this.marshal("subscribe", ["logs", options]), f);
     },
 
