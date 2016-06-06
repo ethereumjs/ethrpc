@@ -18736,7 +18736,8 @@ module.exports = {
      * Batched RPC commands
      */
     batch: function (txlist, f) {
-        var numCommands, rpclist, callbacks, tx, dataAbi, packaged, invocation;
+        var self = this;
+        var numCommands, rpclist, callbacks, tx, dataAbi, packaged, invocation, returns;
         if (txlist.constructor !== Array) {
             if (this.debug.logs) {
                 console.warn("expected array for batch RPC, invoking instead");
@@ -18746,6 +18747,7 @@ module.exports = {
         numCommands = txlist.length;
         rpclist = new Array(numCommands);
         callbacks = new Array(numCommands);
+        returns = [];
         for (var i = 0; i < numCommands; ++i) {
             tx = abi.copy(txlist[i]);
             if (tx.params === undefined || tx.params === null) {
@@ -18776,6 +18778,7 @@ module.exports = {
                 if (tx.timeout) packaged.timeout = tx.timeout;
                 if (tx.value) packaged.value = tx.value;
                 if (tx.returns) packaged.returns = tx.returns;
+                returns.push(tx.returns);
                 if (this.debug.broadcast) {
                     packaged.debug = abi.copy(tx);
                     packaged.debug.batch = true;
@@ -18787,16 +18790,40 @@ module.exports = {
                 return rpclist;
             }
         }
-        if (!f) return this.broadcast(rpclist, f);
+        if (!f) {
+            var res = this.broadcast(rpclist);
+            var result = new Array(numCommands);
+            for (i = 0; i < numCommands; ++i) {
+                if (returns[i]) {
+                    result[i] = self.applyReturns(returns[i], res[i]);
+                } else {
+                    result[i] = res[i];
+                }
+            }
+            return result;
+        }
 
         // callback on whole array
-        if (isFunction(f)) return this.broadcast(rpclist, f);
+        if (isFunction(f)) return this.broadcast(rpclist, function (res) {
+            var result = new Array(numCommands);
+            for (var i = 0; i < numCommands; ++i) {
+                if (returns[i]) {
+                    result[i] = self.applyReturns(returns[i], res[i]);
+                } else {
+                    result[i] = res[i];
+                }
+            }
+            f(result);
+        });
 
         // callback on each element
         this.broadcast(rpclist, function (res) {
             if (!res) return console.error(errors.TRANSACTION_FAILED);
             if (res.constructor === Array && res.length) {
                 for (var j = 0; j < numCommands; ++j) {
+                    if (returns[j]) {
+                        res[j] = self.applyReturns(returns[j], res[j]);
+                    }
                     if (res[j] && callbacks[j]) {
                         callbacks[j](res[j]);
                     }
