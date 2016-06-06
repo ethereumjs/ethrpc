@@ -136,8 +136,9 @@ module.exports = {
     applyReturns: function (returns, result) {
         var res;
         if (returns && result && result !== "0x") {
+            if (result.error) return result;
             returns = returns.toLowerCase();
-            res = result.slice();
+            res = clone(result);
             if (returns && returns.slice(-2) === "[]") {
                 res = this.unmarshal(res, returns);
                 if (returns === "hash[]" || returns === "hash") {

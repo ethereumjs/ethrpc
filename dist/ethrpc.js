@@ -17838,8 +17838,9 @@ module.exports = {
     applyReturns: function (returns, result) {
         var res;
         if (returns && result && result !== "0x") {
+            if (result.error) return result;
             returns = returns.toLowerCase();
-            res = result.slice();
+            res = clone(result);
             if (returns && returns.slice(-2) === "[]") {
                 res = this.unmarshal(res, returns);
                 if (returns === "hash[]" || returns === "hash") {
@@ -18853,8 +18854,7 @@ module.exports = {
                 } else {
                     if (tx.returns && tx.returns !== "string" ||
                         (response && response.constructor === String &&
-                        response.slice(0,2) === "0x"))
-                    {
+                        response.slice(0,2) === "0x")) {
                         var responseNumber = abi.bignum(response);
                         if (responseNumber) {
                             responseNumber = abi.string(responseNumber);
@@ -18881,7 +18881,6 @@ module.exports = {
             throw new this.Error(errors.NO_RESPONSE);
         }
         this.invoke(tx, function (res) {
-            console.log("res:", res);
             if (res) {
                 res = self.errorCodes(tx, self.applyReturns(itx.returns, res));
                 return callback(res);
