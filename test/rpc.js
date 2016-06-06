@@ -860,14 +860,13 @@ describe("RPC", function () {
             });
 
             it("getMarketsInBranch(1010101) -> hash[]", function (done) {
-                var markets = rpc.invoke({
+                var markets = rpc.applyReturns("hash[]", rpc.invoke({
                     to: contracts.branches,
                     from: COINBASE,
                     method: "getMarketsInBranch",
                     signature: "i",
-                    returns: "hash[]",
                     params: 1010101
-                });
+                }));
                 if (markets.error) return done(markets);
                 assert.isAbove(markets.length, 1);
                 assert.strictEqual(markets[0].length, 66);
@@ -876,10 +875,10 @@ describe("RPC", function () {
                     from: COINBASE,
                     method: "getMarketsInBranch",
                     signature: "i",
-                    returns: "hash[]",
                     params: 1010101
                 }, function (res) {
                     if (res.error) return done(res);
+                    res = rpc.applyReturns("hash[]", res);
                     assert.isAbove(res.length, 1);
                     assert.strictEqual(res[0].length, 66);
                     done();
