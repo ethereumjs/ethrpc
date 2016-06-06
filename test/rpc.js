@@ -1004,11 +1004,11 @@ describe("RPC", function () {
 
         });
 
-        describe("encodeResult", function () {
+        describe("applyReturns", function () {
 
             var test = function (t) {
                 it(t.result + "," + t.returns + " -> " + t.expected, function () {
-                    var actual = rpc.encodeResult(t.result, t.returns);
+                    var actual = rpc.applyReturns(t.returns, t.result);
                     assert.strictEqual(actual, t.expected);
                 });
             };

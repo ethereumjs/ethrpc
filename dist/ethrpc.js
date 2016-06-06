@@ -578,7 +578,11 @@ module.exports = {
     // hex-encode a function's ABI data and return it
     encode: function (tx) {
         tx.signature = tx.signature || "";
-        return this.encode_prefix(tx.method, tx.signature) + ethabi.rawEncode(ethabi.fromSerpent(tx.signature), tx.params).toString("hex");
+        var sig = ethabi.fromSerpent(tx.signature);
+        return this.prefix_hex(Buffer.concat([
+            ethabi.methodID(tx.method, sig),
+            ethabi.rawEncode(sig, tx.params)
+        ]).toString("hex"));
     }
 };
 
@@ -17714,6 +17718,7 @@ if (NODE_JS) {
     request = require("browser-request");
 }
 var async = require("async");
+var clone = require("clone");
 var W3CWebSocket = (NODE_JS) ? require("websocket").w3cwebsocket : WebSocket;
 var BigNumber = require("bignumber.js");
 var keccak_256 = require("js-sha3").keccak_256;
@@ -17831,25 +17836,37 @@ module.exports = {
     },
 
     applyReturns: function (returns, result) {
-        returns = returns.toLowerCase();
-        if (result && result !== "0x") {
+        var res;
+        if (returns && result && result !== "0x") {
+            returns = returns.toLowerCase();
+            res = result.slice();
             if (returns && returns.slice(-2) === "[]") {
-                result = this.unmarshal(result, returns);
+                res = this.unmarshal(res, returns);
+                if (returns === "hash[]" || returns === "hash") {
+                    res = abi.hex(res);
+                }
             } else if (returns === "string") {
-                result = abi.raw_decode_hex(result);
+                res = abi.raw_decode_hex(res);
             } else if (returns === "number") {
-                result = abi.string(result);
+                res = abi.string(res);
             } else if (returns === "bignumber") {
-                result = abi.bignum(result);
+                res = abi.bignum(res);
             } else if (returns === "unfix") {
-                result = abi.unfix(result, "string");
+                res = abi.unfix(res, "string");
+            } else if (returns === "null") {
+                res = null;
+            } else if (returns === "address" || returns === "address[]") {
+                res = abi.format_address(res);
             }
+        } else {
+            res = result;
         }
-        return result;
+        return res;
     },
 
-    parse: function (response, returns, callback) {
+    parse: function (origResponse, returns, callback) {
         var results, len, err;
+        var response = clone(origResponse);
         if (response && response.error) console.log("response:", response);
         try {
             if (response && typeof response === "string") {
@@ -17864,17 +17881,6 @@ module.exports = {
                     if (!callback) return response;
                     callback(response);
                 } else if (response.result !== undefined) {
-                    if (typeof response.result !== "boolean") {
-                        if (returns) {
-                            response.result = this.applyReturns(returns, response.result);
-                        } else {
-                            if (response.result && response.result.length > 2 &&
-                                response.result.slice(0,2) === "0x") {
-                                response.result = abi.remove_leading_zeros(response.result);
-                                response.result = abi.prefix_hex(response.result);
-                            }
-                        }
-                    }
                     if (!callback) return response.result;
                     callback(response.result);
                 } else if (response.constructor === Array && response.length) {
@@ -17886,15 +17892,6 @@ module.exports = {
                             if (this.debug.broadcast) {
                                 if (isFunction(callback)) return callback(response.error);
                                 throw new this.Error(response.error);
-                            }
-                        } else if (response[i].result !== undefined) {
-                            if (typeof response[i].result !== "boolean") {
-                                if (returns[i]) {
-                                    results[i] = this.applyReturns(returns[i], response[i].result);
-                                } else {
-                                    results[i] = abi.remove_leading_zeros(results[i]);
-                                    results[i] = abi.prefix_hex(results[i]);
-                                }
                             }
                         }
                     }
@@ -18005,10 +18002,12 @@ module.exports = {
                 if (res.id !== undefined && res.id !== null) {
                     var req = self.wsRequests[res.id];
                     delete self.wsRequests[res.id];
-                    self.parse(msg.data, req.returns, req.callback);
+                    self.parse(res, req.returns, req.callback);
                 } else if (res.method === "eth_subscription" && res.params &&
                     res.params.subscription && res.params.result) {
                     self.subscriptions[res.params.subscription](res.params.result);
+                } else {
+                    console.warn("unknown message received:", msg);
                 }
             }
         };
@@ -18590,7 +18589,7 @@ module.exports = {
                         callback(endBlock);
                     });
                 } else {
-                    setTimeout(fastforward, 500);
+                    setTimeout(fastforward, 3000);
                 }
             });
         }
@@ -18810,23 +18809,6 @@ module.exports = {
         });
     },
 
-    encodeResult: function (result, returns) {
-        if (result) {
-            if (returns === "null") {
-                result = null;
-            } else if (returns === "address" || returns === "address[]") {
-                result = abi.format_address(result);
-            } else {
-                if (!returns || returns === "hash[]" || returns === "hash") {
-                    result = abi.hex(result);
-                } else if (returns === "number") {
-                    result = abi.string(result);
-                }
-            }
-        }
-        return result;
-    },
-
     errorCodes: function (tx, response) {
         if (response) {
             if (response.constructor === Array) {
@@ -18870,7 +18852,7 @@ module.exports = {
             var res = this.errorCodes(tx, this.invoke(tx));
             if (res) {
                 if (res.error) return res;
-                return this.encodeResult(res, itx.returns);
+                return this.applyReturns(itx.returns, res);
             }
             throw new this.Error(errors.NO_RESPONSE);
         }
@@ -18878,7 +18860,7 @@ module.exports = {
             res = self.errorCodes(tx, res);
             if (res) {
                 if (res.error) return callback(res);
-                return callback(self.encodeResult(res, itx.returns));
+                return callback(self.applyReturns(itx.returns, res));
             }
             callback(errors.NO_RESPONSE);
         });
@@ -18894,7 +18876,7 @@ module.exports = {
         ++this.txs[txhash].count;
         if (this.debug.tx) console.debug("checkBlockHash:", tx, callreturn, itx);
         if (tx && tx.blockHash && abi.number(tx.blockHash) !== 0) {
-            tx.callReturn = this.encodeResult(callreturn, returns);
+            tx.callReturn = callreturn;
             tx.txHash = tx.hash;
             delete tx.hash;
             this.txs[txhash].status = "confirmed";
@@ -18964,7 +18946,7 @@ module.exports = {
                 if (this.txs[txhash]) {
                     if (isFunction(onFailed)) onFailed(errors.DUPLICATE_TRANSACTION);
                 } else {
-                    this.txs[txhash] = { hash: txhash, tx: tx, count: 0, status: "pending" };
+                    this.txs[txhash] = {hash: txhash, tx: tx, count: 0, status: "pending"};
                     this.txs[txhash].tx.returns = returns;
                     return this.getTx(txhash, function (sent) {
                         if (self.debug.tx) console.debug("sent:", sent);
@@ -18984,10 +18966,9 @@ module.exports = {
                                             tx: tx
                                         });
                                     } else {
-                                        callReturn = JSON.stringify({ result: callReturn });
 
                                         // transform callReturn to a number
-                                        var numReturn = self.parse(callReturn, "number");
+                                        var numReturn = self.applyReturns("number", callReturn);
 
                                         // check if numReturn is an error object
                                         if (numReturn.constructor === Object && numReturn.error) {
@@ -19018,14 +18999,13 @@ module.exports = {
 
                                                     // no errors found, so transform to the requested
                                                     // return type, specified by "returns" parameter
-                                                    callReturn = self.parse(callReturn, returns);
-                                                    self.txs[txhash].callReturn = self.encodeResult(callReturn, returns);
+                                                    self.txs[txhash].callReturn = self.applyReturns(returns, callReturn);
 
                                                     // send the transaction hash and return value back
                                                     // to the client, using the onSent callback
                                                     onSent({
                                                         txHash: txhash,
-                                                        callReturn: self.encodeResult(callReturn, returns)
+                                                        callReturn: self.txs[txhash].callReturn
                                                     });
 
                                                     // if an onSuccess callback was supplied, then
@@ -19034,7 +19014,7 @@ module.exports = {
                                                     // blockHash field)
                                                     if (isFunction(onSuccess)) {
                                                         self.txNotify(
-                                                            callReturn,
+                                                            self.txs[txhash].callReturn,
                                                             tx,
                                                             txhash,
                                                             returns,
@@ -19095,7 +19075,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"_process":269,"async":63,"augur-abi":1,"augur-contracts":6,"bignumber.js":64,"browser-request":65,"js-sha3":289,"net":66,"request":68,"sync-request":68,"websocket":68}],63:[function(require,module,exports){
+},{"_process":269,"async":63,"augur-abi":1,"augur-contracts":6,"bignumber.js":64,"browser-request":65,"clone":289,"js-sha3":290,"net":66,"request":68,"sync-request":68,"websocket":68}],63:[function(require,module,exports){
 (function (process,global){
 /*!
  * async
@@ -42420,6 +42400,170 @@ module.exports = function(arr, obj){
   return -1;
 };
 },{}],289:[function(require,module,exports){
+(function (Buffer){
+var clone = (function() {
+'use strict';
+
+/**
+ * Clones (copies) an Object using deep copying.
+ *
+ * This function supports circular references by default, but if you are certain
+ * there are no circular references in your object, you can save some CPU time
+ * by calling clone(obj, false).
+ *
+ * Caution: if `circular` is false and `parent` contains circular references,
+ * your program may enter an infinite loop and crash.
+ *
+ * @param `parent` - the object to be cloned
+ * @param `circular` - set to true if the object to be cloned may contain
+ *    circular references. (optional - true by default)
+ * @param `depth` - set to a number if the object is only to be cloned to
+ *    a particular depth. (optional - defaults to Infinity)
+ * @param `prototype` - sets the prototype to be used when cloning an object.
+ *    (optional - defaults to parent prototype).
+*/
+function clone(parent, circular, depth, prototype) {
+  var filter;
+  if (typeof circular === 'object') {
+    depth = circular.depth;
+    prototype = circular.prototype;
+    filter = circular.filter;
+    circular = circular.circular
+  }
+  // maintain two arrays for circular references, where corresponding parents
+  // and children have the same index
+  var allParents = [];
+  var allChildren = [];
+
+  var useBuffer = typeof Buffer != 'undefined';
+
+  if (typeof circular == 'undefined')
+    circular = true;
+
+  if (typeof depth == 'undefined')
+    depth = Infinity;
+
+  // recurse this function so we don't reset allParents and allChildren
+  function _clone(parent, depth) {
+    // cloning null always returns null
+    if (parent === null)
+      return null;
+
+    if (depth == 0)
+      return parent;
+
+    var child;
+    var proto;
+    if (typeof parent != 'object') {
+      return parent;
+    }
+
+    if (clone.__isArray(parent)) {
+      child = [];
+    } else if (clone.__isRegExp(parent)) {
+      child = new RegExp(parent.source, __getRegExpFlags(parent));
+      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
+    } else if (clone.__isDate(parent)) {
+      child = new Date(parent.getTime());
+    } else if (useBuffer && Buffer.isBuffer(parent)) {
+      child = new Buffer(parent.length);
+      parent.copy(child);
+      return child;
+    } else {
+      if (typeof prototype == 'undefined') {
+        proto = Object.getPrototypeOf(parent);
+        child = Object.create(proto);
+      }
+      else {
+        child = Object.create(prototype);
+        proto = prototype;
+      }
+    }
+
+    if (circular) {
+      var index = allParents.indexOf(parent);
+
+      if (index != -1) {
+        return allChildren[index];
+      }
+      allParents.push(parent);
+      allChildren.push(child);
+    }
+
+    for (var i in parent) {
+      var attrs;
+      if (proto) {
+        attrs = Object.getOwnPropertyDescriptor(proto, i);
+      }
+
+      if (attrs && attrs.set == null) {
+        continue;
+      }
+      child[i] = _clone(parent[i], depth - 1);
+    }
+
+    return child;
+  }
+
+  return _clone(parent, depth);
+}
+
+/**
+ * Simple flat clone using prototype, accepts only objects, usefull for property
+ * override on FLAT configuration object (no nested props).
+ *
+ * USE WITH CAUTION! This may not behave as you wish if you do not know how this
+ * works.
+ */
+clone.clonePrototype = function clonePrototype(parent) {
+  if (parent === null)
+    return null;
+
+  var c = function () {};
+  c.prototype = parent;
+  return new c();
+};
+
+// private utility functions
+
+function __objToStr(o) {
+  return Object.prototype.toString.call(o);
+};
+clone.__objToStr = __objToStr;
+
+function __isDate(o) {
+  return typeof o === 'object' && __objToStr(o) === '[object Date]';
+};
+clone.__isDate = __isDate;
+
+function __isArray(o) {
+  return typeof o === 'object' && __objToStr(o) === '[object Array]';
+};
+clone.__isArray = __isArray;
+
+function __isRegExp(o) {
+  return typeof o === 'object' && __objToStr(o) === '[object RegExp]';
+};
+clone.__isRegExp = __isRegExp;
+
+function __getRegExpFlags(re) {
+  var flags = '';
+  if (re.global) flags += 'g';
+  if (re.ignoreCase) flags += 'i';
+  if (re.multiline) flags += 'm';
+  return flags;
+};
+clone.__getRegExpFlags = __getRegExpFlags;
+
+return clone;
+})();
+
+if (typeof module === 'object' && module.exports) {
+  module.exports = clone;
+}
+
+}).call(this,require("buffer").Buffer)
+},{"buffer":69}],290:[function(require,module,exports){
 (function (global){
 /*
  * js-sha3 v0.5.1

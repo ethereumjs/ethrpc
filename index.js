@@ -16,6 +16,7 @@ if (NODE_JS) {
     request = require("browser-request");
 }
 var async = require("async");
+var clone = require("clone");
 var W3CWebSocket = (NODE_JS) ? require("websocket").w3cwebsocket : WebSocket;
 var BigNumber = require("bignumber.js");
 var keccak_256 = require("js-sha3").keccak_256;
@@ -133,25 +134,37 @@ module.exports = {
     },
 
     applyReturns: function (returns, result) {
-        returns = returns.toLowerCase();
-        if (result && result !== "0x") {
+        var res;
+        if (returns && result && result !== "0x") {
+            returns = returns.toLowerCase();
+            res = result.slice();
             if (returns && returns.slice(-2) === "[]") {
-                result = this.unmarshal(result, returns);
+                res = this.unmarshal(res, returns);
+                if (returns === "hash[]" || returns === "hash") {
+                    res = abi.hex(res);
+                }
             } else if (returns === "string") {
-                result = abi.raw_decode_hex(result);
+                res = abi.raw_decode_hex(res);
             } else if (returns === "number") {
-                result = abi.string(result);
+                res = abi.string(res);
             } else if (returns === "bignumber") {
-                result = abi.bignum(result);
+                res = abi.bignum(res);
             } else if (returns === "unfix") {
-                result = abi.unfix(result, "string");
+                res = abi.unfix(res, "string");
+            } else if (returns === "null") {
+                res = null;
+            } else if (returns === "address" || returns === "address[]") {
+                res = abi.format_address(res);
             }
+        } else {
+            res = result;
         }
-        return result;
+        return res;
     },
 
-    parse: function (response, returns, callback) {
+    parse: function (origResponse, returns, callback) {
         var results, len, err;
+        var response = clone(origResponse);
         if (response && response.error) console.log("response:", response);
         try {
             if (response && typeof response === "string") {
@@ -166,17 +179,6 @@ module.exports = {
                     if (!callback) return response;
                     callback(response);
                 } else if (response.result !== undefined) {
-                    if (typeof response.result !== "boolean") {
-                        if (returns) {
-                            response.result = this.applyReturns(returns, response.result);
-                        } else {
-                            if (response.result && response.result.length > 2 &&
-                                response.result.slice(0,2) === "0x") {
-                                response.result = abi.remove_leading_zeros(response.result);
-                                response.result = abi.prefix_hex(response.result);
-                            }
-                        }
-                    }
                     if (!callback) return response.result;
                     callback(response.result);
                 } else if (response.constructor === Array && response.length) {
@@ -188,15 +190,6 @@ module.exports = {
                             if (this.debug.broadcast) {
                                 if (isFunction(callback)) return callback(response.error);
                                 throw new this.Error(response.error);
-                            }
-                        } else if (response[i].result !== undefined) {
-                            if (typeof response[i].result !== "boolean") {
-                                if (returns[i]) {
-                                    results[i] = this.applyReturns(returns[i], response[i].result);
-                                } else {
-                                    results[i] = abi.remove_leading_zeros(results[i]);
-                                    results[i] = abi.prefix_hex(results[i]);
-                                }
                             }
                         }
                     }
@@ -307,10 +300,12 @@ module.exports = {
                 if (res.id !== undefined && res.id !== null) {
                     var req = self.wsRequests[res.id];
                     delete self.wsRequests[res.id];
-                    self.parse(msg.data, req.returns, req.callback);
+                    self.parse(res, req.returns, req.callback);
                 } else if (res.method === "eth_subscription" && res.params &&
                     res.params.subscription && res.params.result) {
                     self.subscriptions[res.params.subscription](res.params.result);
+                } else {
+                    console.warn("unknown message received:", msg);
                 }
             }
         };
@@ -892,7 +887,7 @@ module.exports = {
                         callback(endBlock);
                     });
                 } else {
-                    setTimeout(fastforward, 500);
+                    setTimeout(fastforward, 3000);
                 }
             });
         }
@@ -1112,23 +1107,6 @@ module.exports = {
         });
     },
 
-    encodeResult: function (result, returns) {
-        if (result) {
-            if (returns === "null") {
-                result = null;
-            } else if (returns === "address" || returns === "address[]") {
-                result = abi.format_address(result);
-            } else {
-                if (!returns || returns === "hash[]" || returns === "hash") {
-                    result = abi.hex(result);
-                } else if (returns === "number") {
-                    result = abi.string(result);
-                }
-            }
-        }
-        return result;
-    },
-
     errorCodes: function (tx, response) {
         if (response) {
             if (response.constructor === Array) {
@@ -1172,7 +1150,7 @@ module.exports = {
             var res = this.errorCodes(tx, this.invoke(tx));
             if (res) {
                 if (res.error) return res;
-                return this.encodeResult(res, itx.returns);
+                return this.applyReturns(itx.returns, res);
             }
             throw new this.Error(errors.NO_RESPONSE);
         }
@@ -1180,7 +1158,7 @@ module.exports = {
             res = self.errorCodes(tx, res);
             if (res) {
                 if (res.error) return callback(res);
-                return callback(self.encodeResult(res, itx.returns));
+                return callback(self.applyReturns(itx.returns, res));
             }
             callback(errors.NO_RESPONSE);
         });
@@ -1196,7 +1174,7 @@ module.exports = {
         ++this.txs[txhash].count;
         if (this.debug.tx) console.debug("checkBlockHash:", tx, callreturn, itx);
         if (tx && tx.blockHash && abi.number(tx.blockHash) !== 0) {
-            tx.callReturn = this.encodeResult(callreturn, returns);
+            tx.callReturn = callreturn;
             tx.txHash = tx.hash;
             delete tx.hash;
             this.txs[txhash].status = "confirmed";
@@ -1266,7 +1244,7 @@ module.exports = {
                 if (this.txs[txhash]) {
                     if (isFunction(onFailed)) onFailed(errors.DUPLICATE_TRANSACTION);
                 } else {
-                    this.txs[txhash] = { hash: txhash, tx: tx, count: 0, status: "pending" };
+                    this.txs[txhash] = {hash: txhash, tx: tx, count: 0, status: "pending"};
                     this.txs[txhash].tx.returns = returns;
                     return this.getTx(txhash, function (sent) {
                         if (self.debug.tx) console.debug("sent:", sent);
@@ -1286,10 +1264,9 @@ module.exports = {
                                             tx: tx
                                         });
                                     } else {
-                                        callReturn = JSON.stringify({ result: callReturn });
 
                                         // transform callReturn to a number
-                                        var numReturn = self.parse(callReturn, "number");
+                                        var numReturn = self.applyReturns("number", callReturn);
 
                                         // check if numReturn is an error object
                                         if (numReturn.constructor === Object && numReturn.error) {
@@ -1320,14 +1297,13 @@ module.exports = {
 
                                                     // no errors found, so transform to the requested
                                                     // return type, specified by "returns" parameter
-                                                    callReturn = self.parse(callReturn, returns);
-                                                    self.txs[txhash].callReturn = self.encodeResult(callReturn, returns);
+                                                    self.txs[txhash].callReturn = self.applyReturns(returns, callReturn);
 
                                                     // send the transaction hash and return value back
                                                     // to the client, using the onSent callback
                                                     onSent({
                                                         txHash: txhash,
-                                                        callReturn: self.encodeResult(callReturn, returns)
+                                                        callReturn: self.txs[txhash].callReturn
                                                     });
 
                                                     // if an onSuccess callback was supplied, then
@@ -1336,7 +1312,7 @@ module.exports = {
                                                     // blockHash field)
                                                     if (isFunction(onSuccess)) {
                                                         self.txNotify(
-                                                            callReturn,
+                                                            self.txs[txhash].callReturn,
                                                             tx,
                                                             txhash,
                                                             returns,
