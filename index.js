@@ -135,7 +135,8 @@ module.exports = {
 
     applyReturns: function (returns, result) {
         var res;
-        if (returns && result && result !== "0x") {
+        if (!returns) return result;
+        if (result && result !== "0x") {
             if (result.error) return result;
             returns = returns.toLowerCase();
             res = clone(result);
@@ -1135,11 +1136,11 @@ module.exports = {
         });
     },
 
-    errorCodes: function (tx, response) {
+    errorCodes: function (method, returns, response) {
         if (response) {
             if (response.constructor === Array) {
                 for (var i = 0, len = response.length; i < len; ++i) {
-                    response[i] = this.errorCodes(tx.method, response[i]);
+                    response[i] = this.errorCodes(method, returns, response[i]);
                 }
             } else if (response.name && response.message && response.stack) {
                 response.error = response.name;
@@ -1150,16 +1151,16 @@ module.exports = {
                         message: errors[response]
                     };
                 } else {
-                    if (tx.returns && tx.returns !== "string" ||
+                    if (returns && returns !== "string" ||
                         (response && response.constructor === String &&
                         response.slice(0,2) === "0x")) {
                         var responseNumber = abi.bignum(response);
                         if (responseNumber) {
                             responseNumber = abi.string(responseNumber);
-                            if (errors[tx.method] && errors[tx.method][responseNumber]) {
+                            if (errors[method] && errors[method][responseNumber]) {
                                 response = {
                                     error: responseNumber,
-                                    message: errors[tx.method][responseNumber]
+                                    message: errors[method][responseNumber]
                                 };
                             }
                         }
@@ -1174,13 +1175,13 @@ module.exports = {
         var self = this;
         var tx = abi.copy(itx);
         if (!isFunction(callback)) {
-            var res = this.errorCodes(tx, self.applyReturns(itx.returns, this.invoke(tx)));
+            var res = this.errorCodes(itx.method, itx.returns, this.applyReturns(itx.returns, this.invoke(tx)));
             if (res) return res;
             throw new this.Error(errors.NO_RESPONSE);
         }
         this.invoke(tx, function (res) {
             if (res) {
-                res = self.errorCodes(tx, self.applyReturns(itx.returns, res));
+                res = self.errorCodes(itx.method, itx.returns, self.applyReturns(itx.returns, res));
                 return callback(res);
             }
             callback(errors.NO_RESPONSE);
@@ -1288,62 +1289,46 @@ module.exports = {
                                         });
                                     } else {
 
-                                        // transform callReturn to a number
-                                        var numReturn = self.applyReturns("number", callReturn);
-
-                                        // check if numReturn is an error object
-                                        if (numReturn.constructor === Object && numReturn.error) {
+                                        // check if the call return is an error code
+                                        var errorCheck = self.errorCodes(tx.method, tx.returns, callReturn);
+                                        if (errorCheck.constructor === Object && errorCheck.error) {
                                             self.txs[txhash].status = "failed";
-                                            if (isFunction(onFailed)) onFailed(numReturn);
-                                        } else if (errors[numReturn]) {
+                                            if (isFunction(onFailed)) onFailed(errorCheck);
+                                        } else if (errors[errorCheck]) {
                                             self.txs[txhash].status = "failed";
                                             if (isFunction(onFailed)) onFailed({
-                                                error: numReturn,
-                                                message: errors[numReturn],
+                                                error: errorCheck,
+                                                message: errors[errorCheck],
                                                 tx: tx
                                             });
                                         } else {
                                             try {
 
-                                                // check if numReturn is an error code
-                                                if (numReturn && numReturn.constructor === BigNumber) {
-                                                    numReturn = numReturn.toFixed();
-                                                }
-                                                if (numReturn && errors[tx.method] && errors[tx.method][numReturn]) {
-                                                    self.txs[txhash].status = "failed";
-                                                    if (isFunction(onFailed)) onFailed({
-                                                        error: numReturn,
-                                                        message: errors[tx.method][numReturn],
-                                                        tx: tx
-                                                    });
-                                                } else {
+                                                // no errors found, so transform to the requested
+                                                // return type, specified by "returns" parameter
+                                                self.txs[txhash].callReturn = self.applyReturns(returns, callReturn);
 
-                                                    // no errors found, so transform to the requested
-                                                    // return type, specified by "returns" parameter
-                                                    self.txs[txhash].callReturn = self.applyReturns(returns, callReturn);
+                                                // send the transaction hash and return value back
+                                                // to the client, using the onSent callback
+                                                onSent({
+                                                    txHash: txhash,
+                                                    callReturn: self.txs[txhash].callReturn
+                                                });
 
-                                                    // send the transaction hash and return value back
-                                                    // to the client, using the onSent callback
-                                                    onSent({
-                                                        txHash: txhash,
-                                                        callReturn: self.txs[txhash].callReturn
-                                                    });
-
-                                                    // if an onSuccess callback was supplied, then
-                                                    // poll the network until the transaction is
-                                                    // included in a block (i.e., has a non-null
-                                                    // blockHash field)
-                                                    if (isFunction(onSuccess)) {
-                                                        self.txNotify(
-                                                            self.txs[txhash].callReturn,
-                                                            tx,
-                                                            txhash,
-                                                            returns,
-                                                            onSent,
-                                                            onSuccess,
-                                                            onFailed
-                                                        );
-                                                    }
+                                                // if an onSuccess callback was supplied, then
+                                                // poll the network until the transaction is
+                                                // included in a block (i.e., has a non-null
+                                                // blockHash field)
+                                                if (isFunction(onSuccess)) {
+                                                    self.txNotify(
+                                                        self.txs[txhash].callReturn,
+                                                        tx,
+                                                        txhash,
+                                                        returns,
+                                                        onSent,
+                                                        onSuccess,
+                                                        onFailed
+                                                    );
                                                 }
 
                                             // something went wrong :(
