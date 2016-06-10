@@ -3733,7 +3733,7 @@ module.exports={
         "consensus": "0xfcd9b63e2a8a2b869db64f8dd25f599b0b172ffd",
         "createBranch": "0xf2fc3c829ad9a271a64e6f437fb6f9e8ed0f9770",
         "createMarket": "0x2bcf1482f030d37de85528fb405e9864922d3ba6",
-        "createSingleEventMarket": "0x1574efcee47d5ab0014643602196b2ef5ebfd760",
+        "createSingleEventMarket": "0x9a11cd80fdf2cdf74b3bc9816f5d3c309c5dcf72",
         "eventResolution": "0xfa01e10196e9575835e08d0af12383119b43ea5e",
         "faucets": "0x59997e2d0d9fb15cb4bb3ff41a79e8e3041e817f",
         "forkPenalize": "0x3ffd684dc0ff3c49eb137b8ceb3a6a825bd62a84",
@@ -3903,6 +3903,14 @@ module.exports={
         "-4": "must buy at least .00000001 in value",
         "10": "insufficient balance"
     },
+    "INSUFFICIENT_LIQUIDITY": {
+        "error": 42,
+        "message": "insufficient liquidity to generate order book"
+    },
+    "INITIAL_PRICE_OUT_OF_BOUNDS": {
+        "error": 43,
+        "message": "one or more initial fair prices are out-of-bounds"
+    }, 
     "DB_DELETE_FAILED": {
         "error": 97,
         "message": "database delete failed"
@@ -4031,9 +4039,9 @@ module.exports = contracts;
 
 "use strict";
 
-module.exports = function (network) {
+module.exports = function (network, contracts) {
 
-    var contracts = require("./contracts")[network || "2"];
+    contracts = contracts || require("./contracts")[network || "2"];
 
     return {
 
@@ -17517,6 +17525,7 @@ var HOSTED_NODES = [
     // "https://morden-state.ether.camp/api/v1/transaction/submit"
     "https://eth3.augur.net"
 ];
+var HOSTED_WEBSOCKET = "wss://ws.augur.net";
 
 module.exports = {
 
@@ -17532,7 +17541,7 @@ module.exports = {
     socket: null,
 
     // geth websocket endpoint
-    wsUrl: process.env.GETH_WEBSOCKET_URL || "wss://ws.augur.net",
+    wsUrl: process.env.GETH_WEBSOCKET_URL || HOSTED_WEBSOCKET,
 
     // initial value 0
     // if connection fails: -1
@@ -18048,9 +18057,16 @@ module.exports = {
         this.nodes.local = urlstr || this.localnode;
     },
 
-    useHostedNode: function (urlstr) {
+    useHostedNode: function (host) {
         this.nodes.local = null;
-        if (urlstr) this.nodes.hosted = [urlstr];
+        if (host) {
+            if (host.constructor === Object) {
+                if (host.http) this.nodes.hosted = [host.http];
+                if (host.ws) this.wsUrl = host.ws;
+            } else {
+                this.nodes.hosted = [host];
+            }
+        }
     },
 
     // delete cached network, notification, and transaction data
@@ -18068,6 +18084,7 @@ module.exports = {
     // reset to default Ethereum nodes
     reset: function (deleteData) {
         this.nodes.hosted = HOSTED_NODES.slice();
+        this.wsUrl = process.env.GETH_WEBSOCKET_URL || HOSTED_WEBSOCKET;
         if (deleteData) this.clear();
     },
 
@@ -18411,7 +18428,7 @@ module.exports = {
         }
         try {
             if (isFunction(f)) {
-                this.sign(account, "1010101", function (res) {
+                this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5", function (res) {
                     if (res) {
                         if (res.error) return f(false);
                         return f(true);
@@ -18419,7 +18436,7 @@ module.exports = {
                     f(false);
                 });
             } else {
-                var res = this.sign(account, "1010101");
+                var res = this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5");
                 if (res) {
                     if (res.error) {
                         return false;

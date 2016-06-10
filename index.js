@@ -40,6 +40,7 @@ var HOSTED_NODES = [
     // "https://morden-state.ether.camp/api/v1/transaction/submit"
     "https://eth3.augur.net"
 ];
+var HOSTED_WEBSOCKET = "wss://ws.augur.net";
 
 module.exports = {
 
@@ -55,7 +56,7 @@ module.exports = {
     socket: null,
 
     // geth websocket endpoint
-    wsUrl: process.env.GETH_WEBSOCKET_URL || "wss://ws.augur.net",
+    wsUrl: process.env.GETH_WEBSOCKET_URL || HOSTED_WEBSOCKET,
 
     // initial value 0
     // if connection fails: -1
@@ -571,9 +572,16 @@ module.exports = {
         this.nodes.local = urlstr || this.localnode;
     },
 
-    useHostedNode: function (urlstr) {
+    useHostedNode: function (host) {
         this.nodes.local = null;
-        if (urlstr) this.nodes.hosted = [urlstr];
+        if (host) {
+            if (host.constructor === Object) {
+                if (host.http) this.nodes.hosted = [host.http];
+                if (host.ws) this.wsUrl = host.ws;
+            } else {
+                this.nodes.hosted = [host];
+            }
+        }
     },
 
     // delete cached network, notification, and transaction data
@@ -591,6 +599,7 @@ module.exports = {
     // reset to default Ethereum nodes
     reset: function (deleteData) {
         this.nodes.hosted = HOSTED_NODES.slice();
+        this.wsUrl = process.env.GETH_WEBSOCKET_URL || HOSTED_WEBSOCKET;
         if (deleteData) this.clear();
     },
 
@@ -934,7 +943,7 @@ module.exports = {
         }
         try {
             if (isFunction(f)) {
-                this.sign(account, "1010101", function (res) {
+                this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5", function (res) {
                     if (res) {
                         if (res.error) return f(false);
                         return f(true);
@@ -942,7 +951,7 @@ module.exports = {
                     f(false);
                 });
             } else {
-                var res = this.sign(account, "1010101");
+                var res = this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5");
                 if (res) {
                     if (res.error) {
                         return false;
