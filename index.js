@@ -554,7 +554,8 @@ module.exports = {
             }
             if (params.constructor === Array) {
                 for (var i = 0, len = params.length; i < len; ++i) {
-                    if (params[i].constructor === Number) {
+                    if (params[i] !== null && params[i] !== undefined &&
+                        params[i].constructor === Number) {
                         params[i] = abi.prefix_hex(params[i].toString(16));
                     }
                 }

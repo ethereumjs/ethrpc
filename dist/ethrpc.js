@@ -3733,7 +3733,6 @@ module.exports={
         "consensus": "0xfcd9b63e2a8a2b869db64f8dd25f599b0b172ffd",
         "createBranch": "0xf2fc3c829ad9a271a64e6f437fb6f9e8ed0f9770",
         "createMarket": "0x2bcf1482f030d37de85528fb405e9864922d3ba6",
-        "createSingleEventMarket": "0x9a11cd80fdf2cdf74b3bc9816f5d3c309c5dcf72",
         "eventResolution": "0xfa01e10196e9575835e08d0af12383119b43ea5e",
         "faucets": "0x59997e2d0d9fb15cb4bb3ff41a79e8e3041e817f",
         "forkPenalize": "0x3ffd684dc0ff3c49eb137b8ceb3a6a825bd62a84",
@@ -3771,7 +3770,6 @@ module.exports={
         "consensus": "0x787deb1acee09cc5159494aa4a940a3752017d77",
         "createBranch": "0xea7420bc20dfe272850cfe26bbbbbef4fa32152a",
         "createMarket": "0x13da6616a4e1901354a8b252b4a24550568fcfaf",
-        "createSingleEventMarket": "0x1574efcee47d5ab0014643602196b2ef5ebfd760",
         "eventResolution": "0xa727de27cea1006dc88c6512f66dbf2a93bd18d9",
         "faucets": "0xd39874ec9c3f062d18e9b0b1e667aef8c99aa3c2",
         "forkPenalize": "0x41f9bf1daa579d8e1d9c0f05f06fc084a01c01b8",
@@ -5080,7 +5078,7 @@ module.exports = function (network, contracts) {
 
         // createSingleEventMarket.se
         createSingleEventMarket: {
-            to: contracts.createSingleEventMarket,
+            to: contracts.createMarket,
             method: "createSingleEventMarket",
             signature: "isiiiisiiiiis",
             returns: "hash",
@@ -18039,7 +18037,8 @@ module.exports = {
             }
             if (params.constructor === Array) {
                 for (var i = 0, len = params.length; i < len; ++i) {
-                    if (params[i].constructor === Number) {
+                    if (params[i] !== null && params[i] !== undefined &&
+                        params[i].constructor === Number) {
                         params[i] = abi.prefix_hex(params[i].toString(16));
                     }
                 }
