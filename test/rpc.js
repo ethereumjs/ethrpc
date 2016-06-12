@@ -335,7 +335,7 @@ describe("RPC", function () {
             test({
                 node: "https://eth3.augur.net",
                 account: "0x00bae5113ee9f252cceb0001205b88fad175461a",
-                unlocked: false
+                unlocked: true
             });
             test({
                 node: "https://faucet.augur.net",
@@ -982,7 +982,7 @@ describe("RPC", function () {
 
             var test = function (t) {
                 it(t.itx.method, function () {
-                    var actual = rpc.errorCodes(t.itx, t.response);
+                    var actual = rpc.errorCodes(t.itx.method, t.itx.returns, t.response);
                     assert.strictEqual(actual, t.expected);
                 });
             };
