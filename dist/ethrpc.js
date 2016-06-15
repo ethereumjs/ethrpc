@@ -3732,7 +3732,7 @@ module.exports={
         "compositeGetters": "0xce65c10f58c0ba0fe6dd98c4872af2b14a97a539",
         "consensus": "0xfcd9b63e2a8a2b869db64f8dd25f599b0b172ffd",
         "createBranch": "0xf2fc3c829ad9a271a64e6f437fb6f9e8ed0f9770",
-        "createMarket": "0x2bcf1482f030d37de85528fb405e9864922d3ba6",
+        "createMarket": "0x660cdfdf3d0e7443e7935343a1131b961575ccc7",
         "eventResolution": "0xfa01e10196e9575835e08d0af12383119b43ea5e",
         "faucets": "0x59997e2d0d9fb15cb4bb3ff41a79e8e3041e817f",
         "forkPenalize": "0x3ffd684dc0ff3c49eb137b8ceb3a6a825bd62a84",
@@ -3799,78 +3799,45 @@ module.exports={
 },{}],5:[function(require,module,exports){
 module.exports={
     "0x": "no response or bad input",
-    "closeMarket": {
-        "0": "fail/trading not over yet/event not expired or closed already",
-        "-1": "Market has no cash anyway / already closed",
-        "-2": "0 outcome",
-        "-4": "Outcome .5 once, pushback and retry",
-        "-6": "bonded pushed forward market not ready to be resolved",
-        "-7": "event not reportable >.99"
+    "buy": {
+        "-1": "amount/price bad or no market",
+        "-2": "oracle-only branch",
+        "-4": "not enough money or shares"
     },
-    "submitReportHash": {
-        "0": "could not set report hash",
-        "-1": "reporter (you) doesn't (don't) exist, or voting period over or hasn't started yet",
-        "-2": "not in hash submitting timeframe or event doesn't exist / not a valid event expiring then",
-        "-4": "already resolved",
-        "-5": ".99 market",
-        "-6": "no markets"
+    "buyCompleteSets": {
+        "0": "market not found",
+        "-1": "oracle-only branch",
+        "-3": "not enough cash"
     },
-    "submitReport": {
-        "-1": "has already reported",
-        "-2": "reporter (you) doesn't (don't) exist, or voting period over or hasn't started yet",
-        "-3": "hash doesn't match",
-        "-4": "no rep",
-        "-5": "bad report",
-        "-6": "hash not low enough",
-        "-8": "invalid event",
-        "-9": "already resolved",
-        "-10": "<24 hr left in period, too late to report, able to put up readj. bonds though"
+    "cashFaucet": {
+        "-1": "Hey, you're not broke!"
     },
     "claimProceeds": {
         "0": "reporting not done",
         "-1": "trader doesn't exist"
     },
-    "penalizeNotEnoughReports": {
-        "-1": "already done",
-        "-2": "hasn't reported this period"
-    },
-    "penalizationCatchup": {
-        "-2": "can only be called during the first half of the reporting period"
-    },
-    "penalizeWrong": {
-        "-1": "pushed back event already resolved, so can't redistribute rep based off of its original expected expiration period",
-        "-2": "already past first half of new period and needed to penalize before then",
-        "-3": "need to do not enough reports penalization [or lackthereof]"
+    "closeMarket": {
+        "0": "fail/trading not over yet/event not expired or closed already",
+        "-1": "Market has no cash anyway / already closed",
+        "-2": "0 outcome / not reported on yet",
+        "-3": "not final round 2 event",
+        "-5": "Event forked and not final yet",
+        "-6": "bonded pushed forward market not ready to be resolved",
+        "-7": "event not reportable >.99",
+        "-8": "market isn't in branch"
     },
     "collectFees": {
-        "-2": "needs to be second half of reporting period to claim rep [1st half is when redistribution is done]"
-    },
-    "slashRep": {
-        "0": "not a valid claim",
-        "-2": "reporter doesn't exist"
-    },
-    "createSubbranch": {
-        "-1": "bad input or parent doesn't exist",
-        "-2": "no money for creation fee or branch already exists"
+        "-2": "needs to be second half of reporting period to claim rep (1st half is when redistribution is done)"
     },
     "createEvent": {
-        "0": "not enough money to pay fees or event already exists",
         "-1": "we're either already past that date, branch doesn't exist, or description is bad",
-        "-2": "max value < min value"
+        "0": "not enough money to pay fees or event already exists",
+        "-2": "max value < min value",
+        "-9": "would expire during non-reporting fork period"
     },
     "createMarket": {
         "-1": "bad input or parent doesn't exist",
         "-2": "too many events",
-        "-3": "too many outcomes",
-        "-4": "not enough money or market already exists",
-        "-5": "fee too low",
-        "-6": "duplicate events",
-        "-7": "event already expired"
-    },
-    "createSingleEventMarket": {
-        "0": "not enough money to pay fees or event already exists",
-        "-1": "we're either already past that date, branch doesn't exist, or description is bad, or bad input or parent doesn't exist",
-        "-2": "max value < min value",
         "-3": "too many outcomes",
         "-4": "not enough money",
         "-5": "fee too low",
@@ -3879,20 +3846,87 @@ module.exports={
         "-8": "market already exists",
         "-9": "would expire during non-reporting fork period"
     },
-    "sendReputation": {
-        "0": "not enough reputation",
-        "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
-        "-2": "Receiving address doesn't exist"
+    "createSubbranch": {
+        "-1": "bad input or parent doesn't exist",
+        "-2": "no money for creation fee or branch already exists"
     },
-    "buy": {
-        "-1": "amount/price bad or no market",
-        "-2": "oracle-only branch",
-        "-4": "not enough money or shares"
+    "penalizationCatchup": {
+        "-2": "can only be called during the first half of the reporting period"
+    },
+    "penalizeOnForkedEvent": {
+        "-2": "already past first half of new period and needed to penalize before then",
+        "-4": "fork event isn't resolved yet",
+        "-5": "already done for all events in this period"
+    },
+    "penalizeRoundTwoWrong": {
+        "0": "event is a fork event",
+        "-1": "need to penalize in round 2 penalize function",
+        "-2": "already past first half of new period and needed to penalize before then",
+        "-4": "in fork period only thing that rbcr is done on is the round 2 event in the original branch via round 2 penalize",
+        "-5": "already done for all events in this period",
+        "-6": "forked events should be penalized using the fork penalization function"
+    },
+    "penalizeWrong": {
+        "0": "event is a fork event",
+        "-1": "need to penalize in round 2 penalize function",
+        "-2": "already past first half of new period and needed to penalize before then",
+        "-4": "in fork period only thing that rbcr is done on is the round 2 event in the original branch via round 2 penalize",
+        "-5": "already done for all events in this period",
+        "-6": "forked events should be penalized using the fork penalization function",
+        "-7": "no outcome"
+    },
+    "proveReporterDidntReportEnough": {
+        "-1": "already done",
+        "-2": "not in right part of period"
+    },
+    "pushMarketForward": {
+        "-1": "fork period cannot be the current or previous period",
+        "-2": "market is already closed or pushed forward",
+        "-3": "not enough cash to post early resolution bond",
+        "-4": "early resolution already attempted or outcome already exists"
     },
     "sell": {
         "-1": "amount/price bad or no market",
         "-2": "oracle only branch",
         "-4": "not enough money or shares"
+    },
+    "sellCompleteSets": {
+        "-1": "oracle-only branch",
+        "-2": "not a participant in this market",
+        "-3": "not enough shares"
+    },
+    "sendReputation": {
+        "0": "not enough reputation",
+        "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
+        "-2": "Receiving address doesn't exist"
+    },
+    "short_sell": {
+        "-1": "oracle only branch",
+        "-2": "bad trade hash",
+        "-3": "trader doesn't exist / own shares in this market",
+        "-4": "must buy at least .00000001 in value",
+        "10": "insufficient balance"
+    },
+    "slashRep": {
+        "0": "not a valid claim",
+        "-2": "reporter doesn't exist"
+    },
+    "submitReportHash": {
+        "0": "not caught up on rep redistributions",
+        "-1": "invalid event",
+        "-2": "not in first half of period (commit phase)"
+    },
+    "submitReport": {
+        "0": "reporter doesn't exist or has <1 rep",
+        "-1": "has already reported",
+        "-2": "not in second half of period [reveal part]",
+        "-3": "hash doesn't match",
+        "-4": "bad report",
+        "-5": "invalid event",
+        "-6": "already resolved",
+        "-7": "<48 hr left in period, too late to report, able to put up readj. bonds though",
+        "-8": "fees couldn't be collected",
+        "-9": "need to pay not reporting bond"
     },
     "trade": {
         "-1": "oracle only branch",
@@ -3900,6 +3934,10 @@ module.exports={
         "-3": "trader doesn't exist / own shares in this market",
         "-4": "must buy at least .00000001 in value",
         "10": "insufficient balance"
+    },
+    "updateTradingFee": {
+        "-1": "invalid trading fee: either fee is below the minimum trading fee or you are trying to raise the trading fee (trading fees can be lowered, but not raised)",
+        "-4": "sender's address does not match the market creator's address"
     },
     "INSUFFICIENT_LIQUIDITY": {
         "error": 42,
@@ -3969,6 +4007,10 @@ module.exports={
         "error": 411,
         "message": "RPC request to hosted nodes failed"
     },
+    "TRANSACTION_INVALID": {
+        "error": 412,
+        "message": "transaction validation failed"
+    },
     "HANDLE_TAKEN": {
         "error": 422,
         "message": "handle already taken"
@@ -4012,10 +4054,6 @@ module.exports={
     "ETHEREUM_NOT_FOUND": {
         "error": 651,
         "message": "no active ethereum node(s) found"
-    },
-    "ROOT_NOT_FOUND": {
-        "error": 700,
-        "message": "no LS-LMSR objectve function solution found"
     },
     "CHECK_ORDER_BOOK_FAILED": {
         "error": 710,
@@ -4723,7 +4761,7 @@ module.exports = function (network, contracts) {
             to: contracts.reporting,
             method: "getReporterID",
             signature: "ii",
-            returns: "address"
+            returns: "hash"
         },
         getTotalRep: {
             to: contracts.reporting,
@@ -5075,15 +5113,29 @@ module.exports = function (network, contracts) {
             signature: "isiaiiiis",
             send: true
         },
+        updateTradingFee: {
+            to: contracts.createMarket,
+            method: "updateTradingFee",
+            signature: "iii",
+            send: true,
+            returns: "number"
+        },
+        pushMarketForward: {
+            to: contracts.createMarket,
+            method: "pushMarketForward",
+            signature: "ii",
+            send: true,
+            returns: "number"
+        },
 
         // createSingleEventMarket.se
-        createSingleEventMarket: {
-            to: contracts.createMarket,
-            method: "createSingleEventMarket",
-            signature: "isiiiisiiiiis",
-            returns: "hash",
-            send: true
-        },
+        // createSingleEventMarket: {
+        //     to: contracts.createMarket,
+        //     method: "createSingleEventMarket",
+        //     signature: "isiiiisiiiiis",
+        //     returns: "hash",
+        //     send: true
+        // },
 
         // closeMarket.se
         closeMarket: {
@@ -17530,7 +17582,6 @@ module.exports = {
     debug: {
         tx: false,
         broadcast: false,
-        fallback: false,
         logs: false
     },
 
@@ -17756,14 +17807,19 @@ module.exports = {
         });
         this.socket.on("end", function () { received = ""; });
         this.socket.on("error", function (err) {
-            console.error("IPC socket error:", err);
             self.ipcStatus = -1;
             self.socket.destroy();
             received = "";
+            if (self.debug.broadcast) {
+                console.error("[ethrpc] IPC socket error", self.ipcpath, self.ipcStatus, err);
+            }
         });
         this.socket.on("close", function (err) {
             self.ipcStatus = (err) ? -1 : 0;
             received = "";
+            if (self.debug.broadcast) {
+                console.warn("[ethrpc] IPC socket closed", self.ipcpath, self.ipcStatus);
+            }
         });
         this.socket.connect({path: this.ipcpath}, function () {
             self.ipcStatus = 1;
@@ -17776,9 +17832,15 @@ module.exports = {
         this.websocket = new W3CWebSocket(this.wsUrl);
         this.websocket.onerror = function () {
             self.wsStatus = -1;
+            if (self.debug.broadcast) {
+                console.error("[ethrpc] WebSocket error", self.wsUrl, self.wsStatus);
+            }
         };
         this.websocket.onclose = function () {
             self.wsStatus = 0;
+            if (self.debug.broadcast) {
+                console.warn("[ethrpc] WebSocket closed", self.wsUrl, self.wsStatus);
+            }
         };
         this.websocket.onmessage = function (msg) {
             if (msg && msg.data && typeof msg.data === "string") {
@@ -17802,11 +17864,17 @@ module.exports = {
     },
 
     ipcSend: function (command, returns, callback) {
+        if (this.debug.broadcast) {
+            console.log("[ethrpc] IPC request to", this.ipcpath + "\n" + JSON.stringify(command));
+        }
         this.ipcRequests[command.id] = {returns: returns, callback: callback};
         if (this.ipcStatus === 1) this.socket.write(JSON.stringify(command));
     },
 
     wsSend: function (command, returns, callback) {
+        if (this.debug.broadcast) {
+            console.log("[ethrpc] WebSocket request to", this.wsUrl + "\n" + JSON.stringify(command));
+        }
         this.wsRequests[command.id] = {returns: returns, callback: callback};
         if (this.websocket.readyState === this.websocket.OPEN) {
             this.websocket.send(JSON.stringify(command));
@@ -17820,6 +17888,9 @@ module.exports = {
             delete command.timeout;
         } else {
             timeout = this.POST_TIMEOUT;
+        }
+        if (this.debug.broadcast) {
+            console.warn("[ethrpc] Synchronous HTTP request to", rpcUrl + "\n" + JSON.stringify(command));
         }
         if (NODE_JS) {
             req = syncRequest("POST", rpcUrl, {json: command, timeout: timeout});
@@ -17844,6 +17915,9 @@ module.exports = {
             delete command.timeout;
         } else {
             timeout = this.POST_TIMEOUT;
+        }
+        if (this.debug.broadcast) {
+            console.log("[ethrpc] Asynchronous HTTP request to", rpcUrl + "\n" + JSON.stringify(command));
         }
         request({
             url: rpcUrl,
