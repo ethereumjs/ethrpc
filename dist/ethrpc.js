@@ -3939,6 +3939,10 @@ module.exports={
         "-1": "invalid trading fee: either fee is below the minimum trading fee or you are trying to raise the trading fee (trading fees can be lowered, but not raised)",
         "-4": "sender's address does not match the market creator's address"
     },
+    "WRONG_NUMBER_OF_OUTCOMES": {
+        "error": 41,
+        "message": "the number of initial fair prices does not match this market's number of outcomes"
+    },
     "INSUFFICIENT_LIQUIDITY": {
         "error": 42,
         "message": "insufficient liquidity to generate order book"
@@ -4450,12 +4454,6 @@ module.exports = function (network, contracts) {
         },
 
         // expiringEvents.se
-        getReportedPeriod: {
-            to: contracts.expiringEvents,
-            method: "getReportedPeriod",
-            signature: "iii",
-            returns: "number"
-        },
         getEventIndex: {
             to: contracts.expiringEvents,
             method: "getEventIndex",
