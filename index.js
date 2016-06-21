@@ -149,6 +149,8 @@ module.exports = {
                 res = abi.raw_decode_hex(res);
             } else if (returns === "number") {
                 res = abi.string(res);
+            } else if (returns === "int") {
+                res = parseInt(res, 16);
             } else if (returns === "bignumber") {
                 res = abi.bignum(res);
             } else if (returns === "unfix") {

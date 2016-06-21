@@ -3950,7 +3950,11 @@ module.exports={
     "INITIAL_PRICE_OUT_OF_BOUNDS": {
         "error": 43,
         "message": "one or more initial fair prices are out-of-bounds"
-    }, 
+    },
+    "PRICE_WIDTH_OUT_OF_BOUNDS": {
+        "error": 44,
+        "message": "price width is too large for one or more initial fair prices"
+    },
     "DB_DELETE_FAILED": {
         "error": 97,
         "message": "database delete failed"
@@ -4540,9 +4544,27 @@ module.exports = function (network, contracts) {
         },
 
         // markets.se
+        getFees: {
+            to: contracts.markets,
+            method: "getFees",
+            signature: "i",
+            returns: "unfix"
+        },
         getMakerFees: {
             to: contracts.markets,
             method: "getMakerFees",
+            signature: "i",
+            returns: "unfix"
+        },
+        getgasSubsidy: {
+            to: contracts.markets,
+            method: "getgasSubsidy",
+            signature: "i",
+            returns: "int"
+        },
+        getSharesValue: {
+            to: contracts.markets,
+            method: "getSharesValue",
             signature: "i",
             returns: "unfix"
         },
@@ -17682,6 +17704,8 @@ module.exports = {
                 res = abi.raw_decode_hex(res);
             } else if (returns === "number") {
                 res = abi.string(res);
+            } else if (returns === "int") {
+                res = parseInt(res, 16);
             } else if (returns === "bignumber") {
                 res = abi.bignum(res);
             } else if (returns === "unfix") {
