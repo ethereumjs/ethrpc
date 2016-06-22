@@ -3729,7 +3729,7 @@ module.exports={
         "closeMarketTwo": "0x486b370b1ba29711b683e1e71cc9a7c2a1614e4c",
         "collectFees": "0x0e5816830d327c7272c115348a2dda92e4706b25",
         "completeSets": "0x4f0d1af7d72d72a2e95e1fb9d187e958c07a1084",
-        "compositeGetters": "0xce65c10f58c0ba0fe6dd98c4872af2b14a97a539",
+        "compositeGetters": "0x0d9995e01fd62263a5b52255dc069d70d4edc1a7",
         "consensus": "0xfcd9b63e2a8a2b869db64f8dd25f599b0b172ffd",
         "createBranch": "0xf2fc3c829ad9a271a64e6f437fb6f9e8ed0f9770",
         "createMarket": "0x660cdfdf3d0e7443e7935343a1131b961575ccc7",
