@@ -296,18 +296,25 @@ module.exports = {
 
     wsConnect: function (callback) {
         var self = this;
+        var calledCallback = false;
+        if (!this.wsUrl) {
+            this.wsStatus = -1;
+            return callback(false);
+        }
         this.websocket = new W3CWebSocket(this.wsUrl);
         this.websocket.onerror = function () {
-            self.wsStatus = -1;
             if (self.debug.broadcast) {
                 console.error("[ethrpc] WebSocket error", self.wsUrl, self.wsStatus);
             }
+            self.wsStatus = -1;
+            self.wsUrl = null;
         };
         this.websocket.onclose = function () {
-            self.wsStatus = 0;
+            if (self.wsStatus === 1) self.wsStatus = 0;
             if (self.debug.broadcast) {
                 console.warn("[ethrpc] WebSocket closed", self.wsUrl, self.wsStatus);
             }
+            if (!calledCallback) callback(false);
         };
         this.websocket.onmessage = function (msg) {
             if (msg && msg.data && typeof msg.data === "string") {
@@ -326,13 +333,14 @@ module.exports = {
         };
         this.websocket.onopen = function () {
             self.wsStatus = 1;
+            calledCallback = true;
             callback(true);
         };
     },
 
     ipcSend: function (command, returns, callback) {
         if (this.debug.broadcast) {
-            console.log("[ethrpc] IPC request to", this.ipcpath + "\n" + JSON.stringify(command));
+            console.log("[ethrpc] IPC request to", this.ipcpath, "\n" + JSON.stringify(command));
         }
         this.ipcRequests[command.id] = {returns: returns, callback: callback};
         if (this.ipcStatus === 1) this.socket.write(JSON.stringify(command));
@@ -340,7 +348,7 @@ module.exports = {
 
     wsSend: function (command, returns, callback) {
         if (this.debug.broadcast) {
-            console.log("[ethrpc] WebSocket request to", this.wsUrl + "\n" + JSON.stringify(command));
+            console.log("[ethrpc] WebSocket request to", this.wsUrl, "\n" + JSON.stringify(command));
         }
         this.wsRequests[command.id] = {returns: returns, callback: callback};
         if (this.websocket.readyState === this.websocket.OPEN) {
@@ -481,7 +489,6 @@ module.exports = {
         if (isFunction(callback)) {
 
             // use websocket if available
-            if (!this.wsUrl) this.wsStatus = -1;
             switch (this.wsStatus) {
 
             // [0] websocket closed / not connected: try to connect

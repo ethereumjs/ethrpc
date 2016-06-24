@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
+    "integration-test": "INTEGRATION_TESTS=true mocha",
     "lint": "jshint index.js",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/rpc.js"
   },

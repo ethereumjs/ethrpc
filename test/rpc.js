@@ -12,21 +12,151 @@ var errors = contracts.errors;
 var abi = require("augur-abi");
 var rpc = require("../");
 
-require('it-each')({ testPerIteration: true });
+require('it-each')({testPerIteration: true});
+
+var requests = 0;
+var TIMEOUT = 360000;
+var SAMPLES = 25;
+var COINBASE = "0x00bae5113ee9f252cceb0001205b88fad175461a";
+var SHA3_INPUT = "boom!";
+var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
+var PROTOCOL_VERSION = "0x3f";
+var TXHASH = "0xc52b258dec9e8374880b346f93669d7699d7e64d46c8b6072b19122ca9406461";
+var NETWORK_ID = "2";
+contracts = contracts[NETWORK_ID];
+var HOSTED_NODES;
+
+describe("wsConnect", function () {
+    var test = function (t) {
+        it(JSON.stringify(t), function (done) {
+            rpc.wsUrl = t.wsUrl;
+            rpc.wsStatus = t.wsStatus;
+            rpc.wsConnect(function (connected) {
+                assert.strictEqual(connected, t.expected.connected);
+                assert.strictEqual(rpc.wsUrl, t.expected.wsUrl);
+                assert.strictEqual(rpc.wsStatus, t.expected.wsStatus);
+                if (connected) {
+                    assert.strictEqual(rpc.websocket.readyState, rpc.websocket.OPEN);
+                }
+                done();
+            });
+        });
+    };
+    test({
+        wsUrl: "wss://ws.augur.net",
+        wsStatus: 0,
+        expected: {
+            connected: true,
+            wsUrl: "wss://ws.augur.net",
+            wsStatus: 1,
+        }
+    });
+    test({
+        wsUrl: "wss://ws.augur.net",
+        wsStatus: -1,
+        expected: {
+            connected: true,
+            wsUrl: "wss://ws.augur.net",
+            wsStatus: 1,
+        }
+    });
+    test({
+        wsUrl: "ws://127.0.0.2:1212",
+        wsStatus: 0,
+        expected: {
+            connected: false,
+            wsUrl: null,
+            wsStatus: -1
+        }
+    });
+    test({
+        wsUrl: "ws://127.0.0.2:1212",
+        wsStatus: -1,
+        expected: {
+            connected: false,
+            wsUrl: null,
+            wsStatus: -1
+        }
+    });
+    test({
+        wsUrl: null,
+        wsStatus: 0,
+        expected: {
+            connected: false,
+            wsUrl: null,
+            wsStatus: -1,
+        }
+    });
+});
+
+describe("wsSend", function () {
+    afterEach(function () { 
+        rpc.websocket.close();
+        rpc.wsStatus = 0;
+    });
+    var test = function (t) {
+        it(JSON.stringify(t), function (done) {
+            rpc.wsUrl = "wss://ws.augur.net";
+            rpc.wsStatus = 0;
+            rpc.wsConnect(function (connected) {
+                assert.isTrue(connected);
+                assert.strictEqual(rpc.websocket.readyState, rpc.websocket.OPEN);
+                var callback = function (res) {
+                    assert.strictEqual(rpc.websocket.readyState, rpc.websocket.OPEN);
+                    assert.isUndefined(rpc.wsRequests[t.command.id]);
+                    assert.strictEqual(res, t.expected);
+                    done();
+                };
+                rpc.wsSend(t.command, t.returns, callback);
+                assert.isObject(rpc.wsRequests[t.command.id]);
+                assert.strictEqual(rpc.wsRequests[t.command.id].returns, t.returns);
+                assert.strictEqual(rpc.wsRequests[t.command.id].callback, callback);
+            });
+        });
+    };
+    test({
+        command: {
+            id: ++requests,
+            jsonrpc: "2.0",
+            method: "eth_coinbase",
+            params: []
+        },
+        returns: "address",
+        expected: COINBASE
+    });
+    test({
+        command: {
+            id: ++requests,
+            jsonrpc: "2.0",
+            method: "web3_sha3",
+            params: [SHA3_INPUT]
+        },
+        returns: "hash",
+        expected: SHA3_DIGEST
+    });
+    test({
+        command: {
+            id: ++requests,
+            jsonrpc: "2.0",
+            method: "net_listening",
+            params: []
+        },
+        returns: "bool",
+        expected: true
+    });
+    test({
+        command: {
+            id: ++requests,
+            jsonrpc: "2.0",
+            method: "eth_protocolVersion",
+            params: []
+        },
+        returns: "hash",
+        expected: PROTOCOL_VERSION
+    });
+});
 
 describe("RPC", function () {
-
-    var TIMEOUT = 360000;
-    var SAMPLES = 25;
-    var COINBASE = "0x00bae5113ee9f252cceb0001205b88fad175461a";
-    var SHA3_INPUT = "boom!";
-    var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
-    var PROTOCOL_VERSION = "0x3f";
-    var TXHASH = "0xc52b258dec9e8374880b346f93669d7699d7e64d46c8b6072b19122ca9406461";
-    var NETWORK_ID = "2";
-    contracts = contracts[NETWORK_ID];
-    var requests = 0;
-    var HOSTED_NODES;
 
     function runtests(wsUrl) {
 
@@ -1046,7 +1176,7 @@ describe("RPC", function () {
 
         });
 
-        if (!process.env.CONTINUOUS_INTEGRATION) {
+        if (process.env.INTEGRATION_TESTS) {
 
             describe("call-send-confirm sequence", function () {
 
