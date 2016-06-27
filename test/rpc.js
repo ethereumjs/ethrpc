@@ -930,16 +930,17 @@ describe("RPC", function () {
             it("[sync] invoke == call == broadcast", function () {
                 this.timeout(TIMEOUT);
                 var invokeResult = rpc.invoke({
-                    to: contracts.branches,
+                    to: contracts.Branches,
                     from: COINBASE,
                     method: "getVotePeriod",
-                    signature: "i",
+                    inputs: ["branch"],
+                    signature: ["int256"],
                     returns: returns,
                     params: "0xf69b5"
                 });
                 var callResult = rpc.call({
                     from: COINBASE,
-                    to: contracts.branches,
+                    to: contracts.Branches,
                     data: encodedParams,
                     returns: returns
                 });
@@ -949,7 +950,7 @@ describe("RPC", function () {
                     method: "eth_call",
                     params: [{
                         from: COINBASE,
-                        to: contracts.branches,
+                        to: contracts.Branches,
                         data: encodedParams,
                         returns: returns
                     }, "latest"]
@@ -961,16 +962,17 @@ describe("RPC", function () {
             it("[async] invoke == call == broadcast", function (done) {
                 this.timeout(TIMEOUT);
                 rpc.invoke({
-                    to: contracts.branches,
+                    to: contracts.Branches,
                     from: COINBASE,
                     method: "getVotePeriod",
-                    signature: "i",
+                    inputs: ["branch"],
+                    signature: ["int256"],
                     returns: returns,
                     params: "0xf69b5"
                 }, function (invokeResult) {
                     rpc.call({
                         from: COINBASE,
-                        to: contracts.branches,
+                        to: contracts.Branches,
                         data: encodedParams,
                         returns: returns
                     }, function (callResult) {
@@ -980,7 +982,7 @@ describe("RPC", function () {
                             method: "eth_call",
                             params: [{
                                 from: COINBASE,
-                                to: contracts.branches,
+                                to: contracts.Branches,
                                 data: encodedParams,
                                 returns: returns
                             }, "latest"]
@@ -995,20 +997,22 @@ describe("RPC", function () {
 
             it("getMarketsInBranch(1010101) -> hash[]", function (done) {
                 var markets = rpc.applyReturns("hash[]", rpc.invoke({
-                    to: contracts.branches,
+                    to: contracts.Branches,
                     from: COINBASE,
                     method: "getMarketsInBranch",
-                    signature: "i",
+                    inputs: ["branch"],
+                    signature: ["int256"],
                     params: 1010101
                 }));
                 if (markets.error) return done(markets);
                 assert.isAbove(markets.length, 1);
                 assert.strictEqual(markets[0].length, 66);
                 rpc.invoke({
-                    to: contracts.branches,
+                    to: contracts.Branches,
                     from: COINBASE,
                     method: "getMarketsInBranch",
-                    signature: "i",
+                    inputs: ["branch"],
+                    signature: ["int256"],
                     params: 1010101
                 }, function (res) {
                     if (res.error) return done(res);
