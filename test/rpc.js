@@ -167,6 +167,7 @@ describe("RPC", function () {
             rpc.excision = true;
             HOSTED_NODES = rpc.nodes.hosted.slice();
             rpc.wsUrl = wsUrl;
+            if (!wsUrl) rpc.wsStatus = -1;
             rpc.useHostedNode();
         });
 
@@ -506,16 +507,18 @@ describe("RPC", function () {
             };
 
             var txList = [{
-                to: contracts.faucets,
+                to: contracts.Faucets,
                 method: "reputationFaucet",
-                signature: "i",
+                inputs: ["branch"],
+                signature: ["int256"],
                 params: "0xf69b5",
                 send: false,
                 gasPrice: "0x4a817c800"
             }, {
-                to: contracts.faucets,
+                to: contracts.Faucets,
                 method: "reputationFaucet",
-                signature: "i",
+                inputs: ["branch"],
+                signature: ["int256"],
                 params: "0xf69b5",
                 send: false,
                 gasPrice: "0x4a817c800"
@@ -529,6 +532,7 @@ describe("RPC", function () {
             it("async: callback on whole array", function (done) {
                 rpc.reset();
                 rpc.batch(txList, function (r) {
+                    console.log(r);
                     test(r); done();
                 });
             });
@@ -1103,7 +1107,7 @@ describe("RPC", function () {
                 assert.isAbove(parseInt(res.blockNumber), 0);
                 assert.isAbove(parseInt(res.nonce), 0);
                 assert.strictEqual(res.from, COINBASE);
-                assert.strictEqual(res.to, contracts.faucets);
+                assert.strictEqual(res.to, contracts.Faucets);
                 assert.strictEqual(abi.number(res.value), 0);
             }
         };
@@ -1119,10 +1123,11 @@ describe("RPC", function () {
 
             test({
                 itx: {
-                    to: contracts.faucets,
+                    to: contracts.Faucets,
                     from: COINBASE,
                     method: "reputationFaucet",
-                    signature: "i",
+                    inputs: ["branch"],
+                    signature: ["int256"],
                     params: "0xf69b5",
                     returns: "number"
                 },
@@ -1164,10 +1169,11 @@ describe("RPC", function () {
 
             test({
                 itx: {
-                    to: contracts.faucets,
+                    to: contracts.Faucets,
                     from: COINBASE,
                     method: "reputationFaucet",
-                    signature: "i",
+                    inputs: ["branch"],
+                    signature: ["int256"],
                     params: "0xf69b5",
                     returns: "number"
                 },
@@ -1185,10 +1191,11 @@ describe("RPC", function () {
                     rpc.TX_POLL_MAX = 64;
                     rpc.TX_POLL_INTERVAL = 12000;
                     var tx = {
-                        to: contracts.faucets,
+                        to: contracts.Faucets,
                         from: COINBASE,
                         method: "reputationFaucet",
-                        signature: "i",
+                        inputs: ["branch"],
+                        signature: ["int256"],
                         params: "0xf69b5",
                         returns: "number"
                     };
@@ -1246,7 +1253,7 @@ describe("RPC", function () {
                             blockNumber: "0x2f336",
                             transactionIndex: "0x0",
                             from: COINBASE,
-                            to: contracts.faucets,
+                            to: contracts.Faucets,
                             value: "0x0",
                             gas: "0x2fd618",
                             gasPrice: "0xba43b7400",
@@ -1256,10 +1263,11 @@ describe("RPC", function () {
                         },
                         callreturn: "1",
                         itx: {
-                            to: contracts.faucets,
+                            to: contracts.Faucets,
                             from: COINBASE,
                             method: "reputationFaucet",
-                            signature: "i",
+                            inputs: ["branch"],
+                            signature: ["int256"],
                             params: "0xf69b5"
                         },
                         txhash: TXHASH,
@@ -1337,10 +1345,11 @@ describe("RPC", function () {
                     test({
                         callreturn: "1",
                         itx: {
-                            to: contracts.faucets,
+                            to: contracts.Faucets,
                             from: COINBASE,
                             method: "reputationFaucet",
-                            signature: "i",
+                            inputs: ["branch"],
+                            signature: ["int256"],
                             params: "0xf69b5"
                         },
                         returns: "number"
@@ -1374,10 +1383,11 @@ describe("RPC", function () {
 
                     test({
                         tx: {
-                            to: contracts.faucets,
+                            to: contracts.Faucets,
                             from: COINBASE,
                             method: "reputationFaucet",
-                            signature: "i",
+                            inputs: ["int256"],
+                            signature: ["int256"],
                             params: "0xf69b5",
                             returns: "number"
                         },
@@ -1409,10 +1419,11 @@ describe("RPC", function () {
 
                     test({
                         tx: {
-                            to: contracts.faucets,
+                            to: contracts.Faucets,
                             from: COINBASE,
                             method: "reputationFaucet",
-                            signature: "i",
+                            inputs: ["branch"],
+                            signature: ["int256"],
                             params: "0xf69b5",
                             returns: "number"
                         }
