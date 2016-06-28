@@ -532,7 +532,6 @@ describe("RPC", function () {
             it("async: callback on whole array", function (done) {
                 rpc.reset();
                 rpc.batch(txList, function (r) {
-                    console.log(r);
                     test(r); done();
                 });
             });
