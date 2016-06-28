@@ -16986,6 +16986,16 @@ module.exports={
         "int256"
       ]
     }, 
+    "getMarketInfoCache": {
+      "inputs": [
+        "marketID"
+      ], 
+      "method": "getMarketInfoCache", 
+      "returns": "hash[]",
+      "signature": [
+        "int256"
+      ]
+    }, 
     "getMarketsInfo": {
       "inputs": [
         "branch", 
@@ -20290,7 +20300,7 @@ module.exports={
         "CloseMarketTwo": "0x482211bfc15fb115e44a5a8d36ad1a7126ef17e4",
         "CollectFees": "0xd4f7fc08294dbb9be817798a7f5ee3e8010c5eaf",
         "CompleteSets": "0x8256d174e5bbbe0c4a53315009e0b668cb7fef44",
-        "CompositeGetters": "0x7244081b06fb1ba723c9b03c5978d0dee928d6bb",
+        "CompositeGetters": "0x16ca9b6b6d91dd35442d149531269cd6010f1773",
         "Consensus": "0xe6e719dbbfe5ce8c468b915479b44787bbcadc2c",
         "CreateBranch": "0x79d90f19cedf27d569431f671ef16e7b1c7a517b",
         "CreateMarket": "0x03921882faceffe8d217a0056000dd900939c0fa",
