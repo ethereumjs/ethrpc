@@ -20235,11 +20235,11 @@ module.exports={
         "CloseMarketTwo": "0x5e3972e215854523c977ecb9faa21efeb0bcaa0a", 
         "CollectFees": "0x59c8771527a8b9f7a8d1686a5d0abee424bee648", 
         "CompleteSets": "0xf64657c13c7dcae029b84ce099dcc0751fc41cc2", 
-        "CompositeGetters": "0xe395aebbdd119abdafa93cf73f444971e263b8c1", 
+        "CompositeGetters": "0xc42826de38b20a7894cdc1a096bdbcee9c57dbf1", 
         "Consensus": "0xd752e83681d78c344dc1636f3088294b8573dc49", 
         "ConsensusData": "0x3ed2cdd6bfbb4368a249368ee681b77fc9965492", 
         "CreateBranch": "0x6577c99511bc1d5eb74bfde123881a21428ae812", 
-        "CreateMarket": "0xc9ce26545179816b7a82e161cfbaaab547aa1989", 
+        "CreateMarket": "0x54894e13b69e760e9d0f6af18b9b2c87c5fc5525", 
         "EventResolution": "0x34eea9d6769355b56348f22d6e1e2b25fbd8f513", 
         "Events": "0xa80cb397a4a0f401980c758fa768d5c0f6d6d5f2", 
         "ExpiringEvents": "0xd2cfe56ceb218117da138fe6a7450aa8c6b450d2", 
@@ -21025,7 +21025,8 @@ module.exports = {
                     delete self.ipcRequests[parsed.id];
                     self.parse(JSON.stringify(parsed), req.returns, req.callback);
                 } else if (parsed.method === "eth_subscription" && parsed.params &&
-                    parsed.params.subscription && parsed.params.result) {
+                    parsed.params.subscription && parsed.params.result &&
+                    self.subscriptions[parsed.params.subscription]) {
                     self.subscriptions[parsed.params.subscription](parsed.params.result);
                 }
                 received = "";
@@ -21083,10 +21084,13 @@ module.exports = {
                     delete self.wsRequests[res.id];
                     self.parse(res, req.returns, req.callback);
                 } else if (res.method === "eth_subscription" && res.params &&
-                    res.params.subscription && res.params.result) {
+                    res.params.subscription && res.params.result &&
+                    self.subscriptions[res.params.subscription]) {
                     self.subscriptions[res.params.subscription](res.params.result);
                 } else {
-                    console.warn("unknown message received:", msg);
+                    if (self.debug.broadcast) {
+                        console.warn("unknown message received:", msg);
+                    }
                 }
             }
         };
