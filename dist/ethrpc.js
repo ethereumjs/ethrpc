@@ -22207,7 +22207,6 @@ module.exports = {
         this.fire(tx, function (res) {
             if (res && res.error) return onFailed(res);
             tx.send = true;
-            if (!isFunction(onSent)) return this.invoke(tx);
             self.invoke(tx, function (txhash) {
                 if (self.debug.tx) console.debug("txhash:", txhash);
                 if (!txhash) return onFailed(errors.NULL_RESPONSE);
