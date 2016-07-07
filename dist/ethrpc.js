@@ -22037,6 +22037,7 @@ module.exports = {
         if (this.txs[txhash].count === undefined) this.txs[txhash].count = 0;
         ++this.txs[txhash].count;
         if (this.debug.tx) console.debug("checkBlockHash:", tx, callreturn, itx);
+        onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
         if (tx && tx.blockHash && abi.number(tx.blockHash) !== 0) {
             tx.callReturn = callreturn;
             tx.txHash = tx.hash;
@@ -22058,11 +22059,33 @@ module.exports = {
         }, this.TX_POLL_INTERVAL);
     },
 
+    getLoggedReturnValue: function (tx, itx, txhash, returns, onSent, onSuccess, onFailed) {
+        // if mutable return value, then lookup logged return
+        // value in transaction receipt (after confirmation)
+        var self = this;
+        if (itx.mutable && tx.blockHash && abi.number(tx.blockHash) !== 0) {
+            console.log("getting tx receipt for:", txhash);
+            return this.getTransactionReceipt(txhash, function (receipt) {
+                console.log("receipt:", JSON.stringify(receipt, null, 2));
+                if (!receipt || !receipt.logs || !receipt.logs.length ||
+                    !receipt.logs[0] || receipt.logs[0].data === null ||
+                    receipt.logs[0].data === undefined) {
+                    return onFailed(errors.NULL_CALL_RETURN);
+                }
+                self.processCallReturn(receipt.logs[0].data, itx, txhash, returns, onSent, onSuccess, onFailed, function (callReturn) {
+                    console.log("processed log:", callReturn);
+                    self.checkBlockHash(tx, callReturn, itx, txhash, returns, onSent, onSuccess, onFailed);
+                });
+            });
+        }
+    },
+
     txNotify: function (callreturn, itx, txhash, returns, onSent, onSuccess, onFailed) {
         var self = this;
         this.getTx(txhash, function (tx) {
             if (self.debug.tx) console.debug("txNofity.getTx:", tx);
             if (tx) {
+                self.getLoggedReturnValue(tx, itx, txhash, returns, onSent, onSuccess, onFailed);
                 return self.checkBlockHash(tx, callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
             }
             self.txs[txhash].status = "failed";
@@ -22089,7 +22112,7 @@ module.exports = {
         });
     },
 
-    processCallReturn: function (callReturn, tx, txhash, returns, onSent, onSuccess, onFailed) {
+    processCallReturn: function (callReturn, tx, txhash, returns, onSent, onSuccess, onFailed, next) {
         var self = this;
         if (errors[callReturn]) {
             self.txs[txhash].status = "failed";
@@ -22126,21 +22149,12 @@ module.exports = {
                 callReturn: self.txs[txhash].callReturn
             });
 
-            // if an onSuccess callback was supplied, then
-            // poll the network until the transaction is
-            // included in a block (i.e., has a non-null
-            // blockHash field)
-            if (isFunction(onSuccess)) {
-                self.txNotify(
-                    self.txs[txhash].callReturn,
-                    tx,
-                    txhash,
-                    returns,
-                    onSent,
-                    onSuccess,
-                    onFailed
-                );
+            // if an onSuccess callback was supplied, then poll the network until the transaction is
+            // included in a block (i.e., has a non-null blockHash field)
+            if (tx.mutable) {
+                return next(self.txs[txhash].callReturn);
             }
+            self.txNotify(self.txs[txhash].callReturn, tx, txhash, returns, onSent, onSuccess, onFailed);
 
         // something went wrong :(
         } catch (e) {
@@ -22169,21 +22183,8 @@ module.exports = {
         return this.getTx(txhash, function (sent) {
             if (self.debug.tx) console.debug("sent:", sent);
 
-            // if mutable return value, then lookup logged return
-            // value in transaction receipt
-            if (tx.mutable) {
-                return self.getTransactionReceipt(txhash, function (receipt) {
-                    if (!receipt || !receipt.logs || !receipt.logs.length ||
-                        !receipt.logs[0] || receipt.logs[0].data === null ||
-                        receipt.logs[0].data === undefined) {
-                        return onFailed(errors.NULL_CALL_RETURN);
-                    }
-                    self.processCallReturn(receipt.logs[0].data, tx, txhash, returns, onSent, onSuccess, onFailed);
-                });
-            }
-
             // otherwise use eth_call to get the return value
-            if (returns !== "null") {
+            if (returns !== "null" && !tx.mutable) {
                 return self.call({
                     from: sent.from,
                     to: sent.to || tx.to,
@@ -22200,9 +22201,7 @@ module.exports = {
 
             // if returns type is null, skip the intermediate call
             onSent({txHash: txhash, callReturn: null});
-            if (isFunction(onSuccess)) {
-                self.txNotify(null, tx, txhash, returns, onSent, onSuccess, onFailed);
-            }
+            self.txNotify(null, tx, txhash, returns, onSent, onSuccess, onFailed);
         });
     },
 
