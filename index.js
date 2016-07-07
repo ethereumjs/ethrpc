@@ -1239,20 +1239,18 @@ module.exports = {
             this.txs[txhash].status = "confirmed";
             clearTimeout(this.notifications[txhash]);
             delete this.notifications[txhash];
-            if (isFunction(onSuccess)) onSuccess(tx);
-        } else {
-            var self = this;
-            if (this.txs[txhash].count < this.TX_POLL_MAX) {
-                this.notifications[txhash] = setTimeout(function () {
-                    if (self.txs[txhash].status === "pending") {
-                        self.txNotify(callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
-                    }
-                }, this.TX_POLL_INTERVAL);
-            } else {
-                self.txs[txhash].status = "unconfirmed";
-                if (isFunction(onFailed)) onFailed(errors.TRANSACTION_NOT_CONFIRMED);
-            }
+            return onSuccess(tx);
         }
+        var self = this;
+        if (this.txs[txhash].count >= this.TX_POLL_MAX) {
+            self.txs[txhash].status = "unconfirmed";
+            return onFailed(errors.TRANSACTION_NOT_CONFIRMED);
+        }
+        this.notifications[txhash] = setTimeout(function () {
+            if (self.txs[txhash].status === "pending") {
+                self.txNotify(callreturn, itx, txhash, returns, onSent, onSuccess, onFailed);
+            }
+        }, this.TX_POLL_INTERVAL);
     },
 
     txNotify: function (callreturn, itx, txhash, returns, onSent, onSuccess, onFailed) {
@@ -1267,130 +1265,140 @@ module.exports = {
                 console.log("raw transactions:", self.rawTxs);
 
             // resubmit if this is a raw transaction and has a duplicate nonce
-            if (self.rawTxs[txhash] && self.rawTxs[txhash].tx) {
-                var duplicateNonce;
-                for (var hash in self.rawTxs) {
-                    if (!self.rawTxs.hasOwnProperty(hash)) continue;
-                    if (self.rawTxs[hash].tx.nonce === self.rawTxs[txhash].tx.nonce &&
-                        JSON.stringify(self.rawTxs[hash].tx) !== JSON.stringify(self.rawTxs[txhash].tx)) {
-                        duplicateNonce = true;
-                        break;
-                    }
-                }
-                if (duplicateNonce) {
-                    if (returns) itx.returns = returns;
-                    self.txs[txhash].status = "resubmitted";
-                    return self.transact(itx, onSent, onSuccess, onFailed);
-                } else {
-                    if (isFunction(onFailed)) onFailed(errors.TRANSACTION_NOT_FOUND);
-                }
-            } else {
-                if (isFunction(onFailed)) onFailed(errors.TRANSACTION_NOT_FOUND);
+            if (!self.rawTxs[txhash] || !self.rawTxs[txhash].tx) {
+                return onFailed(errors.TRANSACTION_NOT_FOUND);
             }
+            var duplicateNonce;
+            for (var hash in self.rawTxs) {
+                if (!self.rawTxs.hasOwnProperty(hash)) continue;
+                if (self.rawTxs[hash].tx.nonce === self.rawTxs[txhash].tx.nonce &&
+                    JSON.stringify(self.rawTxs[hash].tx) !== JSON.stringify(self.rawTxs[txhash].tx)) {
+                    duplicateNonce = true;
+                    break;
+                }
+            }
+            if (!duplicateNonce) return onFailed(errors.TRANSACTION_NOT_FOUND);
+            if (returns) itx.returns = returns;
+            self.txs[txhash].status = "resubmitted";
+            return self.transact(itx, onSent, onSuccess, onFailed);
         });
+    },
+
+    processCallReturn: function (callReturn, tx, txhash, returns, onSent, onSuccess, onFailed) {
+        var self = this;
+        if (errors[callReturn]) {
+            self.txs[txhash].status = "failed";
+            return onFailed({
+                error: callReturn,
+                message: errors[callReturn],
+                tx: tx
+            });
+        }
+
+        // check if the call return is an error code
+        var errorCheck = self.errorCodes(tx.method, tx.returns, callReturn);
+        if (errorCheck.constructor === Object && errorCheck.error) {
+            self.txs[txhash].status = "failed";
+            return onFailed(errorCheck);
+        } else if (errors[errorCheck]) {
+            self.txs[txhash].status = "failed";
+            return onFailed({
+                error: errorCheck,
+                message: errors[errorCheck],
+                tx: tx
+            });
+        }
+        try {
+
+            // no errors found, so transform to the requested
+            // return type (specified by "returns" parameter)
+            self.txs[txhash].callReturn = self.applyReturns(returns, callReturn);
+
+            // send the transaction hash and return value back
+            // to the client, using the onSent callback
+            onSent({
+                txHash: txhash,
+                callReturn: self.txs[txhash].callReturn
+            });
+
+            // if an onSuccess callback was supplied, then
+            // poll the network until the transaction is
+            // included in a block (i.e., has a non-null
+            // blockHash field)
+            if (isFunction(onSuccess)) {
+                self.txNotify(
+                    self.txs[txhash].callReturn,
+                    tx,
+                    txhash,
+                    returns,
+                    onSent,
+                    onSuccess,
+                    onFailed
+                );
+            }
+
+        // something went wrong :(
+        } catch (e) {
+            self.txs[txhash].status = "failed";
+            return onFailed(e);
+        }
     },
 
     confirmTx: function (tx, txhash, returns, onSent, onSuccess, onFailed) {
         var self = this;
-        if (tx && txhash) {
-            if (errors[txhash]) {
-                if (isFunction(onFailed)) onFailed({
-                    error: txhash,
-                    message: errors[txhash],
-                    tx: tx
-                });
-            } else {
-                if (this.txs[txhash]) {
-                    if (isFunction(onFailed)) onFailed(errors.DUPLICATE_TRANSACTION);
-                } else {
-                    this.txs[txhash] = {hash: txhash, tx: tx, count: 0, status: "pending"};
-                    this.txs[txhash].tx.returns = returns;
-                    return this.getTx(txhash, function (sent) {
-                        if (self.debug.tx) console.debug("sent:", sent);
-                        if (returns !== "null") {
-                            return self.call({
-                                from: sent.from,
-                                to: sent.to || tx.to,
-                                value: sent.value || tx.value,
-                                data: sent.input
-                            }, function (callReturn) {
-                                if (callReturn) {
-                                    if (errors[callReturn]) {
-                                        self.txs[txhash].status = "failed";
-                                        if (isFunction(onFailed)) onFailed({
-                                            error: callReturn,
-                                            message: errors[callReturn],
-                                            tx: tx
-                                        });
-                                    } else {
-
-                                        // check if the call return is an error code
-                                        var errorCheck = self.errorCodes(tx.method, tx.returns, callReturn);
-                                        if (errorCheck.constructor === Object && errorCheck.error) {
-                                            self.txs[txhash].status = "failed";
-                                            if (isFunction(onFailed)) onFailed(errorCheck);
-                                        } else if (errors[errorCheck]) {
-                                            self.txs[txhash].status = "failed";
-                                            if (isFunction(onFailed)) onFailed({
-                                                error: errorCheck,
-                                                message: errors[errorCheck],
-                                                tx: tx
-                                            });
-                                        } else {
-                                            try {
-
-                                                // no errors found, so transform to the requested
-                                                // return type, specified by "returns" parameter
-                                                self.txs[txhash].callReturn = self.applyReturns(returns, callReturn);
-
-                                                // send the transaction hash and return value back
-                                                // to the client, using the onSent callback
-                                                onSent({
-                                                    txHash: txhash,
-                                                    callReturn: self.txs[txhash].callReturn
-                                                });
-
-                                                // if an onSuccess callback was supplied, then
-                                                // poll the network until the transaction is
-                                                // included in a block (i.e., has a non-null
-                                                // blockHash field)
-                                                if (isFunction(onSuccess)) {
-                                                    self.txNotify(
-                                                        self.txs[txhash].callReturn,
-                                                        tx,
-                                                        txhash,
-                                                        returns,
-                                                        onSent,
-                                                        onSuccess,
-                                                        onFailed
-                                                    );
-                                                }
-
-                                            // something went wrong :(
-                                            } catch (e) {
-                                                self.txs[txhash].status = "failed";
-                                                if (isFunction(onFailed)) onFailed(e);
-                                            }
-                                        }
-                                    }
-
-                                // no return value for call
-                                } else {
-                                    self.txs[txhash].status = "failed";
-                                    if (isFunction(onFailed)) onFailed(errors.NULL_CALL_RETURN);
-                                }
-                            });
-                        }
-
-                        // if returns type is null, skip the intermediate call
-                        onSent({txHash: txhash, callReturn: null});
-                        if (isFunction(onSuccess)) {
-                            self.txNotify(null, tx, txhash, returns, onSent, onSuccess, onFailed);
-                        }
-                    });
-                }
-            }
+        if (!tx || txhash === null || txhash === undefined) {
+            return onFailed(errors.TRANSACTION_FAILED);
         }
+        if (errors[txhash]) {
+            return onFailed({
+                error: txhash,
+                message: errors[txhash],
+                tx: tx
+            });
+        }
+        if (this.txs[txhash]) {
+            return onFailed(errors.DUPLICATE_TRANSACTION);
+        }
+        this.txs[txhash] = {hash: txhash, tx: tx, count: 0, status: "pending"};
+        this.txs[txhash].tx.returns = returns;
+        return this.getTx(txhash, function (sent) {
+            if (self.debug.tx) console.debug("sent:", sent);
+
+            // if mutable return value, then lookup logged return
+            // value in transaction receipt
+            if (tx.mutable) {
+                return self.getTransactionReceipt(txhash, function (receipt) {
+                    if (!receipt || !receipt.logs || !receipt.logs.length ||
+                        !receipt.logs[0] || receipt.logs[0].data === null ||
+                        receipt.logs[0].data === undefined) {
+                        return onFailed(errors.NULL_CALL_RETURN);
+                    }
+                    self.processCallReturn(receipt.logs[0].data, tx, txhash, returns, onSent, onSuccess, onFailed);
+                });
+            }
+
+            // otherwise use eth_call to get the return value
+            if (returns !== "null") {
+                return self.call({
+                    from: sent.from,
+                    to: sent.to || tx.to,
+                    value: sent.value || tx.value,
+                    data: sent.input
+                }, function (callReturn) {
+                    if (callReturn === null || callReturn === undefined) {
+                        self.txs[txhash].status = "failed";
+                        return onFailed(errors.NULL_CALL_RETURN);
+                    }
+                    return self.processCallReturn(callReturn, tx, txhash, returns, onSent, onSuccess, onFailed);
+                });
+            }
+
+            // if returns type is null, skip the intermediate call
+            onSent({txHash: txhash, callReturn: null});
+            if (isFunction(onSuccess)) {
+                self.txNotify(null, tx, txhash, returns, onSent, onSuccess, onFailed);
+            }
+        });
     },
 
     transact: function (tx, onSent, onSuccess, onFailed) {
