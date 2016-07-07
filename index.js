@@ -42,6 +42,8 @@ var HOSTED_NODES = [
 ];
 var HOSTED_WEBSOCKET = "wss://ws.augur.net";
 
+var noop = function () {};
+
 module.exports = {
 
     debug: {
@@ -1381,7 +1383,7 @@ module.exports = {
                         }
 
                         // if returns type is null, skip the intermediate call
-                        onSent({ txHash: txhash, callReturn: null });
+                        onSent({txHash: txhash, callReturn: null});
                         if (isFunction(onSuccess)) {
                             self.txNotify(null, tx, txhash, returns, onSent, onSuccess, onFailed);
                         }
@@ -1394,21 +1396,24 @@ module.exports = {
     transact: function (tx, onSent, onSuccess, onFailed) {
         var self = this;
         var returns = tx.returns;
-        tx.send = true;
         delete tx.returns;
-        if (!isFunction(onSent)) return this.invoke(tx);
-        this.invoke(tx, function (txhash) {
-            if (self.debug.tx) console.debug("txhash:", txhash);
-            if (txhash) {
-                if (txhash.error) {
-                    if (isFunction(onFailed)) onFailed(txhash);
-                } else {
-                    txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
-                    self.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
-                }
-            } else {
-                if (isFunction(onFailed)) onFailed(errors.NULL_RESPONSE);
-            }
+        tx.send = false;
+        if (!isFunction(onSent)) {
+            tx.send = true;
+            return this.invoke(tx);
+        }
+        onFailed = (isFunction(onFailed)) ? onFailed : noop;
+        this.fire(tx, function (res) {
+            if (res && res.error) return onFailed(res);
+            tx.send = true;
+            if (!isFunction(onSent)) return this.invoke(tx);
+            self.invoke(tx, function (txhash) {
+                if (self.debug.tx) console.debug("txhash:", txhash);
+                if (!txhash) return onFailed(errors.NULL_RESPONSE);
+                if (txhash.error) return onFailed(txhash);
+                txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
+                self.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
+            });
         });
     }
 };

@@ -17146,7 +17146,7 @@ module.exports={
         "reporter"
       ], 
       "method": "getRepRedistributionDone", 
-      "returns": "int", 
+      "returns": "number", 
       "signature": [
         "int256", 
         "int256"
@@ -20286,19 +20286,19 @@ module.exports={
         "ExpiringEvents": "0xd2cfe56ceb218117da138fe6a7450aa8c6b450d2", 
         "Faucets": "0xf3315a83f8b53fd199e16503f4b905716af4751f", 
         "ForkPenalize": "0xc3c8471f3721fcf2d0824424c8ab61ff1f054729", 
-        "Forking": "0xb6f0fa68e4a64e365a452bae7bbe2c1a78b4b30c", 
+        "Forking": "0xad547f769776a72b7218bf81afc541a4705aca21", 
         "FxpFunctions": "0xdcd34a389bb8e51356bbf3f191682a1a114e1bb0", 
         "Info": "0x0ec7078eed298506918767f610d0b69fbe80f4fc", 
-        "MakeReports": "0xc1e959e39c9a9dbfaab18fa87f8313d607082fde", 
+        "MakeReports": "0xe89775bc665e2c5d140999d593b79a99a01565a4", 
         "Markets": "0x35c70a5372d7643739ac1ee6de6ce03311d28c42", 
         "PenalizationCatchup": "0x6f256d44ccb33499d8a4fff683e89bf5b9c7b7ad", 
         "PenalizeNotEnoughReports": "0x6a51b8d60052308f84ea652e291e2f39e03a2e0d", 
         "ProportionCorrect": "0x099c0ac81d1b44e289c7d1a9aab5158e17b476b5", 
         "Reporting": "0x95b46aa63e212de35607bd867592de7b3886df07", 
         "ReportingThreshold": "0xf90466aaa6028f5389b9549372aa286ba793ece6", 
-        "RoundTwo": "0xa847152ce52806089de472ccca22993b4ee9e93c", 
-        "RoundTwoPenalize": "0x215e7f54a86c118e04a9fa5c294f51d32536007b", 
-        "SendReputation": "0xbcc6b8c0681979617318223b9b56d9e17dc40487", 
+        "RoundTwo": "0xeb78999349f48145fadbd4ba8002133f8be0f5f7", 
+        "RoundTwoPenalize": "0x2162c2ac329d3718a791e6f0248687928c73d9e1", 
+        "SendReputation": "0x6a4100d4fe8d6143e72f76f8d8ffab37129138c7", 
         "SlashRep": "0x56553d406fdc17e28168e5894c131f6c45e109ae", 
         "Trade": "0xe0e90fd3c22eebcfb109e9c719b8686f6c61f5df", 
         "Trades": "0x55d17c58426f7ae2374d882a19b43ae031a63246"
@@ -20397,7 +20397,8 @@ module.exports={
         "-4": "in fork period only thing that rbcr is done on is the round 2 event in the original branch via round 2 penalize",
         "-5": "already done for all events in this period",
         "-6": "forked events should be penalized using the fork penalization function",
-        "-7": "no outcome"
+        "-7": "no outcome",
+        "-8": "needed to collect fees last period which sets the before/after rep"
     },
     "proveReporterDidntReportEnough": {
         "-1": "already done",
@@ -20451,7 +20452,6 @@ module.exports={
         "-5": "invalid event",
         "-6": "already resolved",
         "-7": "<48 hr left in period, too late to report, able to put up readj. bonds though",
-        "-8": "fees couldn't be collected",
         "-9": "need to pay not reporting bond"
     },
     "trade": {
@@ -20842,6 +20842,8 @@ var HOSTED_NODES = [
     "https://eth3.augur.net"
 ];
 var HOSTED_WEBSOCKET = "wss://ws.augur.net";
+
+var noop = function () {};
 
 module.exports = {
 
@@ -22182,7 +22184,7 @@ module.exports = {
                         }
 
                         // if returns type is null, skip the intermediate call
-                        onSent({ txHash: txhash, callReturn: null });
+                        onSent({txHash: txhash, callReturn: null});
                         if (isFunction(onSuccess)) {
                             self.txNotify(null, tx, txhash, returns, onSent, onSuccess, onFailed);
                         }
@@ -22195,21 +22197,24 @@ module.exports = {
     transact: function (tx, onSent, onSuccess, onFailed) {
         var self = this;
         var returns = tx.returns;
-        tx.send = true;
         delete tx.returns;
-        if (!isFunction(onSent)) return this.invoke(tx);
-        this.invoke(tx, function (txhash) {
-            if (self.debug.tx) console.debug("txhash:", txhash);
-            if (txhash) {
-                if (txhash.error) {
-                    if (isFunction(onFailed)) onFailed(txhash);
-                } else {
-                    txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
-                    self.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
-                }
-            } else {
-                if (isFunction(onFailed)) onFailed(errors.NULL_RESPONSE);
-            }
+        tx.send = false;
+        if (!isFunction(onSent)) {
+            tx.send = true;
+            return this.invoke(tx);
+        }
+        onFailed = (isFunction(onFailed)) ? onFailed : noop;
+        this.fire(tx, function (res) {
+            if (res && res.error) return onFailed(res);
+            tx.send = true;
+            if (!isFunction(onSent)) return this.invoke(tx);
+            self.invoke(tx, function (txhash) {
+                if (self.debug.tx) console.debug("txhash:", txhash);
+                if (!txhash) return onFailed(errors.NULL_RESPONSE);
+                if (txhash.error) return onFailed(txhash);
+                txhash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txhash)));
+                self.confirmTx(tx, txhash, returns, onSent, onSuccess, onFailed);
+            });
         });
     }
 };
