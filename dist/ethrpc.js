@@ -17012,8 +17012,7 @@ module.exports={
         "event"
       ], 
       "method": "penalizeWrong", 
-      "mutable": true, 
-      "returns": "hash[]", 
+      "returns": "number", 
       "send": true, 
       "signature": [
         "int256", 
@@ -22090,56 +22089,11 @@ module.exports = {
         });
     },
 
-    // processCallReturn: function (payload, response, callback) {
-    //     var self = this;
-    //     var callReturn = response.callReturn;
-    //     var txHash = response.txHash;
-    //     if (callReturn === null) return callback(null, callReturn);
-    //     if (errors[callReturn]) {
-    //         self.txs[txHash].status = "failed";
-    //         return callback({error: callReturn, message: errors[callReturn], payload: payload});
-    //     }
-
-    //     // check if the call return is an error code
-    //     var errorCheck = self.errorCodes(payload.method, payload.returns, callReturn);
-    //     if (errorCheck.constructor === Object && errorCheck.error) {
-    //         self.txs[txHash].status = "failed";
-    //         return callback(errorCheck);
-    //     } else if (errors[errorCheck]) {
-    //         self.txs[txHash].status = "failed";
-    //         return callback({
-    //             error: errorCheck,
-    //             message: errors[errorCheck],
-    //             payload: payload
-    //         });
-    //     }
-
-    //     // no errors found, so transform to the requested
-    //     // return type (specified by payload.returns)
-    //     try {
-    //         callReturn = self.applyReturns(payload.returns, callReturn);
-    //         self.txs[txHash].callReturn = callReturn;
-    //         return callback(null, callReturn);
-
-    //     // something went wrong :(
-    //     } catch (e) {
-    //         self.txs[txHash].status = "failed";
-    //         return callback(e);
-    //     }
-    // },
-
     verifyTxSubmitted: function (payload, txHash, callback) {
         var self = this;
         if (!payload || txHash === null || txHash === undefined) {
             return callback(errors.TRANSACTION_FAILED);
         }
-        // if (errors[txHash]) {
-        //     return callback({
-        //         error: txHash,
-        //         message: errors[txHash],
-        //         payload: payload
-        //     });
-        // }
         if (this.txs[txHash]) return callback(errors.DUPLICATE_TRANSACTION);
         this.getTransaction(txHash, function (tx) {
             if (!tx) return callback(errors.TRANSACTION_FAILED);
@@ -22150,21 +22104,6 @@ module.exports = {
                 status: "pending"
             };
             callback(null);
-            // // use eth_call to get the return value
-            // if (returns !== "null" && !payload.mutable) {
-            //     return self.call({
-            //         from: tx.from,
-            //         to: tx.to || payload.to,
-            //         value: tx.value || payload.value,
-            //         data: tx.input
-            //     }, function (callReturn) {
-            //         if (callReturn === null || callReturn === undefined) {
-            //             self.txs[txHash].status = "failed";
-            //             return callback(errors.NULL_CALL_RETURN);
-            //         }
-            //         callback(null, callReturn);
-            //     });
-            // }
         });
     },
 
