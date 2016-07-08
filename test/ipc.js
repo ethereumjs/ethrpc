@@ -239,7 +239,7 @@ describe("IPC", function () {
         });
 
         it("gasPrice", function (done) {
-            ethrpc.gasPrice(function (res) {
+            ethrpc.getGasPrice(function (res) {
                 if (res.error) return done(res);
                 assert.isAbove(parseInt(res), 0);
                 done();
