@@ -1365,8 +1365,8 @@ module.exports = {
                             if (loggedReturnValue && loggedReturnValue.error) {
                                 return onFailed(loggedReturnValue);
                             }
-                            response.callReturn = loggedReturnValue;
-                            onSuccess(response);
+                            tx.callReturn = loggedReturnValue;
+                            onSuccess(tx);
                         });
                     });
                 });
