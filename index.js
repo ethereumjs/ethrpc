@@ -1329,6 +1329,7 @@ module.exports = {
         onFailed = (isFunction(onFailed)) ? onFailed : noop;
         onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
         this.fire(payload, function (callReturn) {
+            if (returns === "null") callReturn = null;
             if (callReturn && callReturn.error) return onFailed(callReturn);
             payload.send = true;
             delete payload.returns;
@@ -1341,8 +1342,7 @@ module.exports = {
 
                 // send the transaction hash and return value back
                 // to the client, using the onSent callback
-                var response = {txHash: txHash, callReturn: callReturn};
-                onSent(response);
+                onSent({txHash: txHash, callReturn: callReturn});
 
                 self.verifyTxSubmitted(payload, txHash, function (err) {
                     if (err) return onFailed(err);
