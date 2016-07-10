@@ -20830,8 +20830,8 @@ var abi = require("augur-abi");
 BigNumber.config({MODULO_MODE: BigNumber.EUCLID});
 
 function RPCError(err) {
-    this.name = err.error || err.name;
-    this.message = err.message;
+    this.name = "RPCError";
+    this.message = JSON.stringify(err);
 }
 
 RPCError.prototype = Error.prototype;
