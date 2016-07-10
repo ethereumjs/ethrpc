@@ -27,6 +27,77 @@ var NETWORK_ID = "2";
 contracts = contracts[NETWORK_ID];
 var HOSTED_NODES;
 
+describe("RPCError", function () {
+    var test = function (t) {
+        var invoke;
+        before(function () { invoke = rpc.invoke; });
+        after(function () { rpc.invoke = invoke; });
+        it("[sync] " + JSON.stringify(t), function () {
+            rpc.invoke = function (payload, callback) {
+                if (!callback) return t.response;
+                callback(t.response);
+            };
+            assert.throws(function () { rpc.fire(t.payload); }, rpc.Error);
+        });
+        it("[async] " + JSON.stringify(t), function (done) {
+            rpc.fire(t.payload, function (res) {
+                var errCode = abi.bignum(t.response, "string", true);
+                var err = errors[t.payload.method][errCode];
+                assert.strictEqual(res.message, err);
+                done();
+            });
+        });
+    };
+    test({
+        payload: {method: "cashFaucet", returns: "number"},
+        response: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    });
+    test({
+        payload: {method: "createEvent", returns: "hash"},
+        response: "0x0"
+    });
+    test({
+        payload: {method: "createEvent", returns: "hash"},
+        response: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    });
+    test({
+        payload: {method: "createEvent", returns: "hash"},
+        response: "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe"
+    });
+    test({
+        payload: {method: "createMarket", returns: "hash"},
+        response: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    });
+    test({
+        payload: {method: "createMarket", returns: "hash"},
+        response: "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe"
+    });
+    test({
+        payload: {method: "createMarket", returns: "hash"},
+        response: "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd"
+    });
+    test({
+        payload: {method: "closeMarket", returns: "number"},
+        response: "0x0"
+    });
+    test({
+        payload: {method: "closeMarket", returns: "number"},
+        response: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    });
+    test({
+        payload: {method: "trade", returns: "hash[]"},
+        response: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    });
+    test({
+        payload: {method: "trade", returns: "hash[]"},
+        response: "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe"
+    });
+    test({
+        payload: {method: "trade", returns: "hash[]"},
+        response: "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd"
+    });
+});
+
 describe("wsConnect", function () {
     var test = function (t) {
         it(JSON.stringify(t), function (done) {

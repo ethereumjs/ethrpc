@@ -20831,10 +20831,10 @@ BigNumber.config({MODULO_MODE: BigNumber.EUCLID});
 
 function RPCError(err) {
     this.name = err.error || err.name;
-    this.message = (err.error || err.name) + ": " + err.message;
+    this.message = err.message;
 }
 
-RPCError.prototype = new Error();
+RPCError.prototype = Error.prototype;
 
 function isFunction(f) {
     return Object.prototype.toString.call(f) === "[object Function]";
@@ -21985,6 +21985,11 @@ module.exports = {
             } else if (response.name && response.message && response.stack) {
                 response.error = response.name;
             } else if (!response.error) {
+                if (returns.indexOf("[]") > -1) {
+                    if (response.length >= 194) {
+                        response = "0x" + response.slice(130, 194);
+                    }
+                }
                 if (errors[response]) {
                     response = {
                         error: response,
@@ -22014,13 +22019,21 @@ module.exports = {
         var self = this;
         var tx = clone(payload);
         if (!isFunction(callback)) {
-            var res = this.applyReturns(tx.returns, this.errorCodes(tx.method, tx.returns, this.invoke(tx)));
-            if (res) return res;
-            throw new this.Error(errors.NO_RESPONSE);
+            var res = this.invoke(tx);
+            if (res === undefined || res === null) {
+                throw new this.Error(errors.NO_RESPONSE);
+            }
+            var err = this.errorCodes(tx.method, tx.returns, res);
+            if (err && err.error) throw new this.Error(err);
+            return this.applyReturns(tx.returns, res);
         }
         this.invoke(tx, function (res) {
-            if (res === undefined || res === null) return callback(errors.NO_RESPONSE);
-            return callback(self.applyReturns(tx.returns, self.errorCodes(tx.method, tx.returns, res)));
+            if (res === undefined || res === null) {
+                return callback(errors.NO_RESPONSE);
+            }
+            var err = self.errorCodes(tx.method, tx.returns, res);
+            if (err && err.error) return callback(err);
+            return callback(self.applyReturns(tx.returns, res));
         });
     },
 
@@ -22164,12 +22177,9 @@ module.exports = {
                         // value in transaction receipt (after confirmation)
                         self.getLoggedReturnValue(txHash, function (err, loggedReturnValue) {
                             if (err) return onFailed(err);
-                            loggedReturnValue = self.errorCodes(payload.method, payload.returns, loggedReturnValue);
-                            loggedReturnValue = self.applyReturns(payload.returns, loggedReturnValue);
-                            if (loggedReturnValue && loggedReturnValue.error) {
-                                return onFailed(loggedReturnValue);
-                            }
-                            tx.callReturn = loggedReturnValue;
+                            var e = self.errorCodes(payload.method, payload.returns, loggedReturnValue);
+                            if (e && e.error) return onFailed(e);
+                            tx.callReturn = self.applyReturns(payload.returns, loggedReturnValue);
                             onSuccess(tx);
                         });
                     });
