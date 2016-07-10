@@ -1187,7 +1187,7 @@ module.exports = {
                         message: errors[response]
                     };
                 } else {
-                    if (returns && returns !== "string" ||
+                    if (returns !== "null" && returns !== "string" ||
                         (response && response.constructor === String &&
                         response.slice(0,2) === "0x")) {
                         var responseNumber = abi.bignum(response, "string", true);
@@ -1210,13 +1210,13 @@ module.exports = {
         var self = this;
         var tx = clone(payload);
         if (!isFunction(callback)) {
-            var res = this.errorCodes(tx.method, tx.returns, this.applyReturns(tx.returns, this.invoke(tx)));
+            var res = this.applyReturns(tx.returns, this.errorCodes(tx.method, tx.returns, this.invoke(tx)));
             if (res) return res;
             throw new this.Error(errors.NO_RESPONSE);
         }
         this.invoke(tx, function (res) {
             if (res === undefined || res === null) return callback(errors.NO_RESPONSE);
-            return callback(self.errorCodes(tx.method, tx.returns, self.applyReturns(tx.returns, res)));
+            return callback(self.applyReturns(tx.returns, self.errorCodes(tx.method, tx.returns, res)));
         });
     },
 
@@ -1360,8 +1360,8 @@ module.exports = {
                         // value in transaction receipt (after confirmation)
                         self.getLoggedReturnValue(txHash, function (err, loggedReturnValue) {
                             if (err) return onFailed(err);
-                            loggedReturnValue = self.applyReturns(payload.returns, loggedReturnValue);
                             loggedReturnValue = self.errorCodes(payload.method, payload.returns, loggedReturnValue);
+                            loggedReturnValue = self.applyReturns(payload.returns, loggedReturnValue);
                             if (loggedReturnValue && loggedReturnValue.error) {
                                 return onFailed(loggedReturnValue);
                             }
