@@ -7,6 +7,7 @@
 
 var assert = require("chai").assert;
 var async = require("async");
+var clone = require("clone");
 var contracts = require("augur-contracts");
 var errors = contracts.errors;
 var abi = require("augur-abi");
@@ -24,6 +25,77 @@ var TXHASH = "0xc52b258dec9e8374880b346f93669d7699d7e64d46c8b6072b19122ca9406461
 var NETWORK_ID = "2";
 contracts = contracts[NETWORK_ID];
 var HOSTED_NODES;
+
+describe("RPCError", function () {
+    var test = function (t) {
+        var invoke;
+        before(function () { invoke = rpc.invoke; });
+        after(function () { rpc.invoke = invoke; });
+        it("[sync] " + JSON.stringify(t), function () {
+            rpc.invoke = function (payload, callback) {
+                if (!callback) return t.response;
+                callback(t.response);
+            };
+            assert.throws(function () { rpc.fire(t.payload); }, rpc.Error);
+        });
+        it("[async] " + JSON.stringify(t), function (done) {
+            rpc.fire(t.payload, function (res) {
+                var errCode = abi.bignum(t.response, "string", true);
+                var err = errors[t.payload.method][errCode];
+                assert.strictEqual(res.message, err);
+                done();
+            });
+        });
+    };
+    test({
+        payload: {method: "cashFaucet", returns: "number"},
+        response: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    });
+    test({
+        payload: {method: "createEvent", returns: "hash"},
+        response: "0x0"
+    });
+    test({
+        payload: {method: "createEvent", returns: "hash"},
+        response: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    });
+    test({
+        payload: {method: "createEvent", returns: "hash"},
+        response: "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe"
+    });
+    test({
+        payload: {method: "createMarket", returns: "hash"},
+        response: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    });
+    test({
+        payload: {method: "createMarket", returns: "hash"},
+        response: "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe"
+    });
+    test({
+        payload: {method: "createMarket", returns: "hash"},
+        response: "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd"
+    });
+    test({
+        payload: {method: "closeMarket", returns: "number"},
+        response: "0x0"
+    });
+    test({
+        payload: {method: "closeMarket", returns: "number"},
+        response: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    });
+    test({
+        payload: {method: "trade", returns: "hash[]"},
+        response: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    });
+    test({
+        payload: {method: "trade", returns: "hash[]"},
+        response: "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe"
+    });
+    test({
+        payload: {method: "trade", returns: "hash[]"},
+        response: "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd"
+    });
+});
 
 describe("wsConnect", function () {
     var test = function (t) {
@@ -1159,9 +1231,9 @@ describe("RPC", function () {
         describe("fire", function () {
 
             var test = function (t) {
-                it(t.itx.method, function (done) {
+                it(JSON.stringify(t.payload), function (done) {
                     this.timeout(TIMEOUT);
-                    rpc.fire(t.itx, function (res) {
+                    rpc.fire(t.payload, function (res) {
                         assert.strictEqual(res, t.expected);
                         done();
                     });
@@ -1169,7 +1241,7 @@ describe("RPC", function () {
             };
 
             test({
-                itx: {
+                payload: {
                     to: contracts.Faucets,
                     from: COINBASE,
                     method: "reputationFaucet",
@@ -1183,256 +1255,631 @@ describe("RPC", function () {
 
         });
 
-        if (process.env.INTEGRATION_TESTS) {
-
-            describe("call-send-confirm sequence", function () {
-
-                before(function (done) {
+        describe("checkBlockHash", function () {
+            var test = function (t) {
+                beforeEach(function () {
+                    rpc.txs = {};
+                    rpc.rawTxs = {};
+                });
+                it(JSON.stringify(t), function (done) {
                     this.timeout(TIMEOUT);
-                    rpc.TX_POLL_MAX = 64;
-                    rpc.TX_POLL_INTERVAL = 12000;
-                    var tx = {
-                        to: contracts.Faucets,
-                        from: COINBASE,
-                        method: "reputationFaucet",
-                        inputs: ["branch"],
-                        signature: ["int256"],
-                        params: "0xf69b5",
-                        returns: "number"
+                    rpc.txs[t.tx.hash] = {
+                        hash: t.tx.hash,
+                        payload: t.payload,
+                        count: t.count,
+                        status: "pending"
                     };
-                    rpc.transact(tx,
-                        function (res) {
-                            callbacks.onSent(res);
-                            TXHASH = res.txHash;
-                        },
-                        function (res) {
-                            callbacks.onSuccess(res);
-                            assert.strictEqual(abi.encode(tx), res.input);
-                            done();
-                        },
-                        done
-                    );
-                });
-
-                describe("checkBlockHash", function () {
-
-                    var test = function (t) {
-                        it(t.itx.method, function (done) {
-                            this.timeout(TIMEOUT);
-                            rpc.txs[t.txhash] = {
-                                hash: t.txhash,
-                                tx: t.tx,
-                                count: 0,
-                                status: "pending"
-                            };
-                            rpc.checkBlockHash(
-                                t.tx,
-                                t.callreturn,
-                                t.itx,
-                                t.txhash,
-                                t.returns,
-                                function (res) {
-                                    callbacks.onSent(res);
-                                    assert.strictEqual(res.callReturn, t.callreturn);
-                                },
-                                function (res) {
-                                    callbacks.onSuccess(res);
-                                    assert.strictEqual(abi.encode(t.itx), res.input);
-                                    assert.strictEqual(rpc.txs[t.txhash].status, "confirmed");
-                                    assert.strictEqual(rpc.txs[t.txhash].count, 1);
-                                    done();
-                                },
-                                done
-                            );
-                        });
-                    };
-
-                    test({
-                        tx: {
-                            nonce: "0xf22",
-                            blockHash: "0x043d7f980beb3c59b3335d90c4b14794f4577a71ff591c80858fac8a2f99dc39",
-                            blockNumber: "0x2f336",
-                            transactionIndex: "0x0",
-                            from: COINBASE,
-                            to: contracts.Faucets,
-                            value: "0x0",
-                            gas: "0x2fd618",
-                            gasPrice: "0xba43b7400",
-                            input: "0x988445fe00000000000000000000000000000000000000000000000000000000000f69b5",
-                            callReturn: "1",
-                            hash: TXHASH
-                        },
-                        callreturn: "1",
-                        itx: {
-                            to: contracts.Faucets,
-                            from: COINBASE,
-                            method: "reputationFaucet",
-                            inputs: ["branch"],
-                            signature: ["int256"],
-                            params: "0xf69b5"
-                        },
-                        txhash: TXHASH,
-                        returns: "number"
-                    });
-                });
-
-                describe("txNotify", function () {
-
-                    var test = function (t) {
-                        it(t.itx.method, function (done) {
-                            this.timeout(TIMEOUT);
-                            rpc.txs[TXHASH] = {
-                                hash: TXHASH,
-                                tx: t.itx,
-                                count: 0,
-                                status: "pending"
-                            };
-                            rpc.txNotify(
-                                t.callreturn,
-                                t.itx,
-                                TXHASH,
-                                t.returns,
-                                function (res) {
-                                    callbacks.onSent(res);
-                                    assert.strictEqual(res.callReturn, t.callreturn);
-                                },
-                                function (res) {
-                                    callbacks.onSuccess(res);
-                                    assert.notProperty(rpc.notifications, TXHASH);
-                                    assert.strictEqual(abi.encode(t.itx), res.input);
-                                    assert.strictEqual(rpc.txs[TXHASH].status, "confirmed");
-                                    assert.strictEqual(rpc.txs[TXHASH].count, 1);
-                                    done();
-                                },
-                                done
-                            );
-                        });
-                        it("trailing timeout check", function (done) {
-                            this.timeout(TIMEOUT);
-                            rpc.TX_POLL_MAX = 2;
-                            rpc.TX_POLL_INTERVAL = 1;
-                            rpc.txs[TXHASH] = {
-                                hash: TXHASH,
-                                tx: t.itx,
-                                count: 0,
-                                status: "pending"
-                            };
-                            rpc.txNotify(
-                                t.callreturn,
-                                t.itx,
-                                TXHASH,
-                                t.returns,
-                                function (res) {
-                                    callbacks.onSent(res);
-                                    assert.strictEqual(res.callReturn, t.callreturn);
-                                },
-                                function (res) {
-                                    callbacks.onSuccess(res);
-                                    assert.notProperty(rpc.notifications, TXHASH);
-                                    assert.strictEqual(abi.encode(t.itx), res.input);
-                                    assert.strictEqual(rpc.txs[TXHASH].status, "confirmed");
-                                    assert.isTrue(false);
-                                },
-                                function (res) {
-                                    assert.strictEqual(rpc.txs[TXHASH].count, rpc.TX_POLL_MAX);
-                                    assert.strictEqual(rpc.txs[TXHASH].status, "unconfirmed");
-                                    assert.deepEqual(res, errors.TRANSACTION_NOT_CONFIRMED);
-                                    done();
-                                }
-                            );
-                        });
-                    };
-
-                    test({
-                        callreturn: "1",
-                        itx: {
-                            to: contracts.Faucets,
-                            from: COINBASE,
-                            method: "reputationFaucet",
-                            inputs: ["branch"],
-                            signature: ["int256"],
-                            params: "0xf69b5"
-                        },
-                        returns: "number"
-                    });
-
-                });
-
-                describe("confirmTx", function () {
-
-                    var test = function (t) {
-                        it(t.tx.method, function (done) {
-                            this.timeout(TIMEOUT);
-                            delete rpc.txs[TXHASH];
-                            rpc.confirmTx(
-                                t.tx,
-                                TXHASH,
-                                t.returns,
-                                function (res) {
-                                    callbacks.onSent(res);
-                                    assert.strictEqual(res.callReturn, t.expected);
-                                },
-                                function (res) {
-                                    callbacks.onSuccess(res);
-                                    assert.strictEqual(abi.encode(t.tx), res.input);
-                                    done();
-                                },
-                                done
-                            );
-                        });
-                    };
-
-                    test({
-                        tx: {
-                            to: contracts.Faucets,
-                            from: COINBASE,
-                            method: "reputationFaucet",
-                            inputs: ["int256"],
-                            signature: ["int256"],
-                            params: "0xf69b5",
-                            returns: "number"
-                        },
-                        returns: "number",
-                        expected: "1"
-                    });
-
-                });
-
-                describe("transact", function () {
-
-                    var test = function (t) {
-                        it(t.tx.method, function (done) {
-                            this.timeout(TIMEOUT);
-                            rpc.TX_POLL_MAX = 64;
-                            rpc.TX_POLL_INTERVAL = 12000;
-                            rpc.transact(
-                                t.tx,
-                                callbacks.onSent,
-                                function (res) {
-                                    callbacks.onSuccess(res);
-                                    assert.strictEqual(abi.encode(t.tx), res.input);
-                                    done();
-                                },
-                                done
-                            );
-                        });
-                    };
-
-                    test({
-                        tx: {
-                            to: contracts.Faucets,
-                            from: COINBASE,
-                            method: "reputationFaucet",
-                            inputs: ["branch"],
-                            signature: ["int256"],
-                            params: "0xf69b5",
-                            returns: "number"
+                    rpc.checkBlockHash(t.tx, function (err, res) {
+                        assert.strictEqual(rpc.txs[t.tx.hash].count, t.count + 1);
+                        assert.strictEqual(rpc.txs[t.tx.hash].status, t.expected);
+                        switch (t.expected) {
+                        case "confirmed":
+                            assert.isNull(err);
+                            assert.isAbove(parseInt(res.blockHash, 16), 0);
+                            assert.isAbove(parseInt(res.blockNumber, 16), 0);
+                            assert.strictEqual(abi.encode(t.payload), res.input);
+                            assert.isAtMost(rpc.txs[t.tx.hash].count, rpc.TX_POLL_MAX);
+                            break;
+                        case "unconfirmed":
+                            assert.isUndefined(res);
+                            assert.deepEqual(err, errors.TRANSACTION_NOT_CONFIRMED);
+                            assert.isAtLeast(rpc.txs[t.tx.hash].count, rpc.TX_POLL_MAX);
+                            break;
+                        case "pending":
+                            assert.isNull(err);
+                            assert.isNull(res);
+                            assert.isBelow(rpc.txs[t.tx.hash].count, rpc.TX_POLL_MAX);
+                            break;
+                        default:
+                            return done(new Error("unexpected status"));
                         }
+                        done();
                     });
-
                 });
+            };
+            test({
+                tx: {
+                    nonce: "0xf23",
+                    blockHash: "0x043d7f980beb3c59b3335d90c4b14794f4577a71ff591c80858fac8a2f99dc39",
+                    blockNumber: "0x2f336",
+                    transactionIndex: "0x0",
+                    from: COINBASE,
+                    to: contracts.Faucets,
+                    value: "0x0",
+                    gas: "0x2fd618",
+                    gasPrice: "0xba43b7400",
+                    input: "0x988445fe00000000000000000000000000000000000000000000000000000000000f69b5",
+                    hash: TXHASH
+                },
+                payload: {
+                    to: contracts.Faucets,
+                    from: COINBASE,
+                    method: "reputationFaucet",
+                    inputs: ["branch"],
+                    signature: ["int256"],
+                    params: ["0xf69b5"],
+                    returns: "number"
+                },
+                count: 0,
+                expected: "confirmed"
             });
-        }
+            test({
+                tx: {
+                    nonce: "0xf23",
+                    blockHash: "0x0",
+                    blockNumber: "0x0",
+                    transactionIndex: "0x0",
+                    from: COINBASE,
+                    to: contracts.Faucets,
+                    value: "0x0",
+                    gas: "0x2fd618",
+                    gasPrice: "0xba43b7400",
+                    input: "0x988445fe00000000000000000000000000000000000000000000000000000000000f69b5",
+                    hash: TXHASH
+                },
+                payload: {
+                    to: contracts.Faucets,
+                    from: COINBASE,
+                    method: "reputationFaucet",
+                    inputs: ["branch"],
+                    signature: ["int256"],
+                    params: ["0xf69b5"],
+                    returns: "number"
+                },
+                count: 0,
+                expected: "pending"
+            });
+            test({
+                tx: {
+                    nonce: "0xf23",
+                    blockHash: "0x043d7f980beb3c59b3335d90c4b14794f4577a71ff591c80858fac8a2f99dc39",
+                    blockNumber: "0x2f336",
+                    transactionIndex: "0x0",
+                    from: COINBASE,
+                    to: contracts.Faucets,
+                    value: "0x0",
+                    gas: "0x2fd618",
+                    gasPrice: "0xba43b7400",
+                    input: "0x988445fe00000000000000000000000000000000000000000000000000000000000f69b5",
+                    hash: TXHASH
+                },
+                payload: {
+                    to: contracts.Faucets,
+                    from: COINBASE,
+                    method: "reputationFaucet",
+                    inputs: ["branch"],
+                    signature: ["int256"],
+                    params: ["0xf69b5"],
+                    returns: "number"
+                },
+                count: rpc.TX_POLL_MAX - 1,
+                expected: "confirmed"
+            });
+            test({
+                tx: {
+                    nonce: "0xf23",
+                    blockHash: "0x0",
+                    blockNumber: "0x0",
+                    transactionIndex: "0x0",
+                    from: COINBASE,
+                    to: contracts.Faucets,
+                    value: "0x0",
+                    gas: "0x2fd618",
+                    gasPrice: "0xba43b7400",
+                    input: "0x988445fe00000000000000000000000000000000000000000000000000000000000f69b5",
+                    hash: TXHASH
+                },
+                payload: {
+                    to: contracts.Faucets,
+                    from: COINBASE,
+                    method: "reputationFaucet",
+                    inputs: ["branch"],
+                    signature: ["int256"],
+                    params: ["0xf69b5"],
+                    returns: "number"
+                },
+                count: rpc.TX_POLL_MAX - 2,
+                expected: "pending"
+            });
+            test({
+                tx: {
+                    nonce: "0xf23",
+                    blockHash: "0x0",
+                    blockNumber: "0x0",
+                    transactionIndex: "0x0",
+                    from: COINBASE,
+                    to: contracts.Faucets,
+                    value: "0x0",
+                    gas: "0x2fd618",
+                    gasPrice: "0xba43b7400",
+                    input: "0x988445fe00000000000000000000000000000000000000000000000000000000000f69b5",
+                    hash: TXHASH
+                },
+                payload: {
+                    to: contracts.Faucets,
+                    from: COINBASE,
+                    method: "reputationFaucet",
+                    inputs: ["branch"],
+                    signature: ["int256"],
+                    params: ["0xf69b5"],
+                    returns: "number"
+                },
+                count: rpc.TX_POLL_MAX,
+                expected: "unconfirmed"
+            });
+        });
+
+        describe("getLoggedReturnValue", function () {
+            var test = function (t) {
+                var getTransactionReceipt;
+                before(function () {
+                    getTransactionReceipt = rpc.getTransactionReceipt;
+                });
+                after(function () {
+                    rpc.getTransactionReceipt = getTransactionReceipt;
+                });
+                it(JSON.stringify(t), function (done) {
+                    rpc.getTransactionReceipt = function (txHash, callback) {
+                        return callback(t.receipt);
+                    };
+                    rpc.getLoggedReturnValue(t.txHash, function (err, loggedReturnValue) {
+                        if (t.receipt.logs.length) {
+                            assert.isNull(err);
+                            assert.strictEqual(loggedReturnValue, t.receipt.logs[0].data);
+                        } else {
+                            assert.isUndefined(loggedReturnValue);
+                            assert.deepEqual(err, errors.NULL_CALL_RETURN);
+                        }
+                        done();
+                    });
+                });
+            };
+            test({
+                txHash: "0x5026ed5250f2362af5a8d87c9cb0cf2aec3133451fbcb381b8215d338b2c8bd6",
+                receipt: {
+                    blockHash: "0x520cbbffb517fb67703334f146a80948d0ced650432176ec2fb89f3e5ade0429",
+                    blockNumber: "0x1362b4",
+                    contractAddress: null,
+                    cumulativeGasUsed: "0x10ad59",
+                    from: "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+                    gasUsed: "0x10ad59",
+                    logs: [{
+                        address: "0x854cde0fd53ae086342605dbf59a5b2632970fb2",
+                        blockHash: "0x520cbbffb517fb67703334f146a80948d0ced650432176ec2fb89f3e5ade0429",
+                        blockNumber: "0x1362b4",
+                        data: "0x4029a41614f26640bffa5eb5f817c85d0320c673f873839edb6830aa611b12b2",
+                        logIndex: "0x0",
+                        topics: ["0x63f140d7adcc464732c9379020aa9e5ce1b1e350796814d780ea3ca41d62a36b"],
+                        transactionHash: "0x5026ed5250f2362af5a8d87c9cb0cf2aec3133451fbcb381b8215d338b2c8bd6",
+                        transactionIndex: "0x0"
+                    }],
+                    root: "f25d798e248c5c9f70f9e643a7d6a34443a349f141c76cf85c0258d88f0e4089",
+                    to: "0x854cde0fd53ae086342605dbf59a5b2632970fb2",
+                    transactionHash: "0x5026ed5250f2362af5a8d87c9cb0cf2aec3133451fbcb381b8215d338b2c8bd6",
+                    transactionIndex: "0x0"
+                },
+                expected: "0x4029a41614f26640bffa5eb5f817c85d0320c673f873839edb6830aa611b12b2"
+            });
+            test({
+                txHash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                receipt: {
+                    blockHash: "0x8a022646e5b42a468bc96c71775c870a3be73feae6688b955e4f66010949a1e8",
+                    blockNumber: "0x136362",
+                    contractAddress: null,
+                    cumulativeGasUsed: "0x438af",
+                    from: "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+                    gasUsed: "0xfb64",
+                    logs: [],
+                    root: "73c2dee8a7d64833e0c10db6ddf81dcb67ae13fdf201a6799340eeaca3dc37f1",
+                    to: "0xf3315a83f8b53fd199e16503f4b905716af4751f",
+                    transactionHash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                    transactionIndex: "0x1"
+                },
+                expected: errors.NULL_CALL_RETURN
+            });
+        });
+
+        describe("txNotify", function () {
+            var test = function (t) {
+                var getTransaction;
+                before(function () {
+                    getTransaction = rpc.getTransaction;
+                });
+                beforeEach(function () {
+                    rpc.txs = {};
+                    rpc.rawTxs = {};
+                });
+                after(function () {
+                    rpc.getTransaction = getTransaction;
+                });
+                it(JSON.stringify(t), function (done) {
+                    rpc.getTransaction = function (txHash, callback) {
+                        return callback(t.tx);
+                    };
+                    rpc.txs[t.txHash] = {status: "pending"};
+                    rpc.rawTxs = clone(t.rawTxs);
+                    rpc.txNotify(t.txHash, function (err, tx) {
+                        assert.strictEqual(rpc.txs[t.txHash].status, t.expected);
+                        switch (t.expected) {
+                        case "pending":
+                            assert.isNull(err);
+                            assert.deepEqual(tx, t.tx);
+                            break;
+                        case "failed":
+                            assert.isUndefined(tx);
+                            assert.deepEqual(err, errors.TRANSACTION_NOT_FOUND);
+                            break;
+                        case "resubmitted":
+                            assert.isNull(err);
+                            assert.isNull(tx);
+                            break;
+                        default:
+                            return done(new Error("unexpected status"));
+                        }
+                        done();
+                    });
+                });
+            };
+            test({
+                txHash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                tx: {
+                    blockHash: "0x8a022646e5b42a468bc96c71775c870a3be73feae6688b955e4f66010949a1e8",
+                    blockNumber: "0x136362",
+                    from: "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+                    gas: "0x2fd618",
+                    gasPrice: "0x4a817c800",
+                    hash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                    input: "0x5f92896e00000000000000000000000000000000000000000000000000000000000f69b5",
+                    nonce: "0x11c334",
+                    to: "0xf3315a83f8b53fd199e16503f4b905716af4751f",
+                    transactionIndex: "0x1",
+                    value: "0x0"
+                },
+                rawTxs: {},
+                expected: "pending"
+            });
+            test({
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: {
+                    blockHash: "0x0bc730af2bae2ab7e0d6d7f8a71a0e6ae5e7706d9872806f5367ffc5936fb4df",
+                    blockNumber: "0x1362ae",
+                    from: "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+                    gas: "0x2fd618",
+                    gasPrice: "0x4a817c800",
+                    hash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                    input: "0x47c7ea4200000000000000000000000000000000000000000000000000000000000f69b500000000000000000000000000000000000000000000000000000000000001a000000000000000000000000000000000000000000000000000000000613800740000000000000000000000000000000000000000000001a500000000000000000000000000000000000000000000000000000000000001c9000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000051eb851eb851eb86261736866756c00000000000000000000000000000000000000000000000000736c6f7065730000000000000000000000000000000000000000000000000000696e64656e7400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000000246c696768742d686561727465642d64697374726573732d71333170356e653770686b743900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f7361696c2e6c616e7465726e2e757300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000027576573742041626469656c2073656c656374696e672070757a7a6c6564206672696374696f6e2100000000000000000000000000000000000000000000000000",
+                    nonce: "0x11c320",
+                    to: "0x854cde0fd53ae086342605dbf59a5b2632970fb2",
+                    transactionIndex: "0x0",
+                    value: "0x78cad1e25d0000"
+                },
+                rawTxs: {},
+                expected: "pending"
+            });
+            test({
+                txHash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                tx: {
+                    blockHash: "0x0",
+                    blockNumber: "0x0",
+                    from: "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+                    gas: "0x2fd618",
+                    gasPrice: "0x4a817c800",
+                    hash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                    input: "0x5f92896e00000000000000000000000000000000000000000000000000000000000f69b5",
+                    nonce: "0x11c334",
+                    to: "0xf3315a83f8b53fd199e16503f4b905716af4751f",
+                    transactionIndex: "0x1",
+                    value: "0x0"
+                },
+                rawTxs: {},
+                expected: "pending"
+            });
+            test({
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: null,
+                rawTxs: {},
+                expected: "failed"
+            });
+            test({
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: null,
+                rawTxs: {
+                    "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08": {
+                        tx: null
+                    }
+                },
+                expected: "failed"
+            });
+            test({
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: null,
+                rawTxs: {
+                    "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08": {
+                        tx: {nonce: "0x11c334", from: "0x854cde0fd53ae086342605dbf59a5b2632970fb2"}
+                    }
+                },
+                expected: "failed"
+            });
+            test({
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: null,
+                rawTxs: {
+                    "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08": {
+                        tx: {nonce: "0x11c334", from: "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c"}
+                    }
+                },
+                expected: "failed"
+            });
+            test({
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: null,
+                rawTxs: {
+                    "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08": {
+                        tx: {nonce: "0x11c334", from: "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c"}
+                    },
+                    "0x520cbbffb517fb67703334f146a80948d0ced650432176ec2fb89f3e5ade0429": {
+                        tx: {nonce: "0x11c334", from: "0x854cde0fd53ae086342605dbf59a5b2632970fb2"}
+                    }
+                },
+                expected: "resubmitted"
+            });
+            test({
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: null,
+                rawTxs: {
+                    "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08": {
+                        tx: {nonce: "0x11c334", from: "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c"}
+                    },
+                    "0x520cbbffb517fb67703334f146a80948d0ced650432176ec2fb89f3e5ade0429": {
+                        tx: {nonce: "0x11c335", from: "0x854cde0fd53ae086342605dbf59a5b2632970fb2"}
+                    }
+                },
+                expected: "failed"
+            });
+            test({
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: null,
+                rawTxs: {
+                    "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08": {
+                        tx: {nonce: "0x11c335", from: "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c"}
+                    },
+                    "0x520cbbffb517fb67703334f146a80948d0ced650432176ec2fb89f3e5ade0429": {
+                        tx: {nonce: "0x11c334", from: "0x854cde0fd53ae086342605dbf59a5b2632970fb2"}
+                    }
+                },
+                expected: "failed"
+            });
+        });
+
+        describe("verifyTxSubmitted", function () {
+            var test = function (t) {
+                var getTransaction;
+                before(function () {
+                    getTransaction = rpc.getTransaction;
+                });
+                beforeEach(function () {
+                    rpc.txs = {};
+                    rpc.rawTxs = {};
+                });
+                after(function () {
+                    rpc.getTransaction = getTransaction;
+                });
+                it(JSON.stringify(t), function (done) {
+                    rpc.getTransaction = function (txHash, callback) {
+                        return callback(t.tx);
+                    };
+                    if (t.expected.storedTx) {
+                        t.expected.storedTx.count = 0;
+                        t.expected.storedTx.status = "pending";
+                    }
+                    rpc.txs[t.txHash] = clone(t.storedTx);
+                    rpc.verifyTxSubmitted(t.payload, t.txHash, function (err) {
+                        assert.deepEqual(err, t.expected.err);
+                        assert.deepEqual(rpc.txs[t.txHash], t.expected.storedTx);
+                        done();
+                    });
+                });
+            };
+            test({
+                payload: null,
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: {nonce: "0x1"},
+                storedTx: undefined,
+                expected: {err: errors.TRANSACTION_FAILED, storedTx: undefined}
+            });
+            test({
+                payload: {nonce: "0x1"},
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: null,
+                storedTx: undefined,
+                expected: {err: errors.TRANSACTION_FAILED, storedTx: undefined}
+            });
+            test({
+                payload: {nonce: "0x1"},
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: {nonce: "0x1"},
+                storedTx: {payload: {nonce: "0x1"}, count: 0, status: "pending"},
+                expected: {err: errors.DUPLICATE_TRANSACTION, storedTx: {payload: {nonce: "0x1"}}}
+            });
+            test({
+                payload: {nonce: "0x1"},
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: {nonce: "0x2"},
+                storedTx: {payload: {nonce: "0x3"}, count: 0, status: "pending"},
+                expected: {err: errors.DUPLICATE_TRANSACTION, storedTx: {payload: {nonce: "0x3"}}}
+            });
+            test({
+                payload: {nonce: "0x1"},
+                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                tx: {nonce: "0x2"},
+                storedTx: undefined,
+                expected: {
+                    err: null,
+                    storedTx: {
+                        hash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                        payload: {nonce: "0x1"}
+                    }
+                }
+            });
+        });
+
+        describe("pollForTxConfirmation", function () {
+            var test = function (t) {
+                var txNotify, checkBlockHash;
+                before(function () {
+                    txNotify = rpc.txNotify;
+                    checkBlockHash = rpc.checkBlockHash;
+                });
+                after(function () {
+                    rpc.txNotify = txNotify;
+                    rpc.checkBlockHash = checkBlockHash;
+                });
+                it(JSON.stringify(t), function (done) {
+                    rpc.txNotify = function (txHash, callback) {
+                        return callback(t.err.txNotify, t.tx);
+                    };
+                    rpc.checkBlockHash = function (tx, callback) {
+                        var minedTx = (t.err.checkBlockHash) ? undefined : tx;
+                        return callback(t.err.checkBlockHash, minedTx);
+                    };
+                    rpc.pollForTxConfirmation(t.txHash, function (err, minedTx) {
+                        if (t.err.txNotify) {
+                            assert.deepEqual(err, t.err.txNotify);
+                            assert.isUndefined(minedTx);
+                        } else if (t.tx === null) {
+                            assert.isNull(err);
+                            assert.isNull(minedTx);
+                        } else if (t.err.checkBlockHash) {
+                            assert.deepEqual(err, t.err.checkBlockHash);
+                            assert.isUndefined(minedTx);
+                        } else {
+                            assert.isNull(err);
+                            assert.deepEqual(minedTx, t.tx);
+                        }
+                        assert.deepEqual(err, t.expected.err);
+                        assert.deepEqual(minedTx, t.expected.minedTx);
+                        done();
+                    });
+                });
+            };
+            var exampleTx = {
+                blockHash: "0x520cbbffb517fb67703334f146a80948d0ced650432176ec2fb89f3e5ade0429",
+                blockNumber: "0x1362b4",
+                from: "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+                gas: "0x2fd618",
+                gasPrice: "0x4a817c800",
+                hash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                input: "0x5f92896e00000000000000000000000000000000000000000000000000000000000f69b5",
+                nonce: "0x11c334",
+                to: "0xf3315a83f8b53fd199e16503f4b905716af4751f",
+                transactionIndex: "0x1",
+                value: "0x0"
+            };
+            test({
+                txHash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                tx: exampleTx,
+                err: {
+                    txNotify: null,
+                    checkBlockHash: null
+                },
+                expected: {
+                    err: null,
+                    minedTx: exampleTx
+                }
+            });
+            test({
+                txHash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                tx: exampleTx,
+                err: {
+                    txNotify: errors.TRANSACTION_NOT_FOUND,
+                    checkBlockHash: null
+                },
+                expected: {
+                    err: errors.TRANSACTION_NOT_FOUND,
+                    minedTx: undefined
+                }
+            });
+            test({
+                txHash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                tx: exampleTx,
+                err: {
+                    txNotify: null,
+                    checkBlockHash: errors.TRANSACTION_NOT_CONFIRMED
+                },
+                expected: {
+                    err: errors.TRANSACTION_NOT_CONFIRMED,
+                    minedTx: undefined
+                }
+            });
+            test({
+                txHash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                tx: exampleTx,
+                err: {
+                    txNotify: errors.TRANSACTION_NOT_FOUND,
+                    checkBlockHash: errors.TRANSACTION_NOT_CONFIRMED
+                },
+                expected: {
+                    err: errors.TRANSACTION_NOT_FOUND,
+                    minedTx: undefined
+                }
+            });
+            test({
+                txHash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                tx: null,
+                err: {
+                    txNotify: errors.TRANSACTION_NOT_FOUND,
+                    checkBlockHash: errors.TRANSACTION_NOT_CONFIRMED
+                },
+                expected: {
+                    err: errors.TRANSACTION_NOT_FOUND,
+                    minedTx: undefined
+                }
+            });
+            test({
+                txHash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                tx: null,
+                err: {
+                    txNotify: null,
+                    checkBlockHash: errors.TRANSACTION_NOT_CONFIRMED
+                },
+                expected: {
+                    err: null,
+                    minedTx: null
+                }
+            });
+            test({
+                txHash: "0x47e13568f70785d12e42dec9a3884b7202c707186d5714d9bd426ab69679d6e2",
+                tx: null,
+                err: {
+                    txNotify: null,
+                    checkBlockHash: null
+                },
+                expected: {
+                    err: null,
+                    minedTx: null
+                }
+            });
+        });
     }
 
     describe("HTTP", function () { runtests(); });
