@@ -17,7 +17,6 @@ require('it-each')({testPerIteration: true});
 
 var requests = 0;
 var TIMEOUT = 360000;
-var SAMPLES = 25;
 var COINBASE = "0x00bae5113ee9f252cceb0001205b88fad175461a";
 var SHA3_INPUT = "boom!";
 var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
@@ -120,7 +119,7 @@ describe("wsConnect", function () {
         expected: {
             connected: true,
             wsUrl: "wss://ws.augur.net",
-            wsStatus: 1,
+            wsStatus: 1
         }
     });
     test({
@@ -129,7 +128,7 @@ describe("wsConnect", function () {
         expected: {
             connected: true,
             wsUrl: "wss://ws.augur.net",
-            wsStatus: 1,
+            wsStatus: 1
         }
     });
     test({
@@ -156,7 +155,7 @@ describe("wsConnect", function () {
         expected: {
             connected: false,
             wsUrl: null,
-            wsStatus: -1,
+            wsStatus: -1
         }
     });
 });
@@ -681,7 +680,7 @@ describe("RPC", function () {
 
                 // hex input
                 assert.strictEqual(rpc.web3("sha3", data.hex), expected.hex);
-                assert.strictEqual(rpc.sha3(data.hex, true), expected.hex)
+                assert.strictEqual(rpc.sha3(data.hex, true), expected.hex);
                 assert.strictEqual(rpc.web3("sha3", data.hex), rpc.sha3(data.hex, true));
 
                 // ASCII input
@@ -692,8 +691,8 @@ describe("RPC", function () {
 
             it("gasPrice", function (done) {
                 this.timeout(TIMEOUT);
-                assert.isAbove(parseInt(rpc.gasPrice()), 0);
-                rpc.gasPrice(function (res) {
+                assert.isAbove(parseInt(rpc.getGasPrice()), 0);
+                rpc.getGasPrice(function (res) {
                     if (res.error) return done(res);
                     assert.isAbove(parseInt(res), 0);
                     done();
