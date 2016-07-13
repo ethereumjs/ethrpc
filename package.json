@@ -1,11 +1,10 @@
 {
   "name": "ethrpc",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Ethereum JSON RPC",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
-    "integration-test": "INTEGRATION_TESTS=true mocha",
+    "test": "mocha test/rpc.js",
     "lint": "jshint index.js",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/rpc.js"
   },
@@ -21,8 +20,8 @@
   "homepage": "https://github.com/AugurProject/ethrpc#readme",
   "dependencies": {
     "async": "1.5.2",
-    "augur-abi": "0.4.3",
-    "augur-contracts": "1.3.1",
+    "augur-abi": "0.4.4",
+    "augur-contracts": "1.3.3",
     "bignumber.js": "2.3.0",
     "browser-request": "0.3.3",
     "clone": "1.0.2",

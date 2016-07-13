@@ -15,6 +15,8 @@ BigNumber.config({MODULO_MODE: BigNumber.EUCLID});
 
 module.exports = {
 
+    debug: false,
+
     constants: {
         ONE: (new BigNumber(10)).toPower(18),
         MOD: new BigNumber(2).toPower(256),
@@ -244,6 +246,21 @@ module.exports = {
         return false;
     },
 
+    format_int256: function (s) {
+        if (s === undefined || s === null || s === "0x") return s;
+        if (Buffer.isBuffer(s)) s = s.toString("hex");
+        if (s.constructor !== String) s = s.toString(16);
+        s = this.strip_0x(s);
+        if (s.length > 64) {
+            if (this.debug) {
+                var overflow = (s.length / 2) - 32;
+                console.warn("input " + overflow + " bytes too large for int256, truncating");
+            }
+            s = s.slice(0, 64);
+        }
+        return this.prefix_hex(this.pad_left(s));
+    },
+
     format_address: function (addr) {
         if (addr && addr.constructor === String) {
             addr = this.strip_0x(addr);
@@ -289,18 +306,15 @@ module.exports = {
     },
 
     prefix_hex: function (n) {
-        if (n !== undefined && n !== null) {
-            if (n.constructor === Number || n.constructor === BigNumber) {
-                n = n.toString(16);
-            }
-            if (n.constructor === String &&
-                n.slice(0,2) !== "0x" && n.slice(0,3) !== "-0x")
-            {
-                if (n.slice(0,1) === '-') {
-                    n = "-0x" + n.slice(1);
-                } else {
-                    n = "0x" + n;
-                }
+        if (n === undefined || n === null || n === "") return n;
+        if (n.constructor === Number || n.constructor === BigNumber) {
+            n = n.toString(16);
+        }
+        if (n.constructor === String && n.slice(0,2) !== "0x" && n.slice(0,3) !== "-0x") {
+            if (n.slice(0,1) === '-') {
+                n = "-0x" + n.slice(1);
+            } else {
+                n = "0x" + n;
             }
         }
         return n;
@@ -464,7 +478,7 @@ module.exports = {
     pad_right: function (s, chunk_len, prefix) {
         chunk_len = chunk_len || 64;
         s = this.strip_0x(s);
-        var multiple = chunk_len * this.chunk(s.length, chunk_len);
+        var multiple = chunk_len * (this.chunk(s.length, chunk_len) || 1);
         while (s.length < multiple) {
             s += '0';
         }
@@ -475,7 +489,7 @@ module.exports = {
     pad_left: function (s, chunk_len, prefix) {
         chunk_len = chunk_len || 64;
         s = this.strip_0x(s);
-        var multiple = chunk_len * this.chunk(s.length, chunk_len);
+        var multiple = chunk_len * (this.chunk(s.length, chunk_len) || 1);
         while (s.length < multiple) {
             s = '0' + s;
         }
@@ -16093,4141 +16107,4646 @@ module.exports={
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],56:[function(require,module,exports){
 module.exports={
-  "Backstops": {
-    "adjForkBondPaid": {
-      "inputs": [
-        "event", 
-        "amount"
-      ], 
-      "method": "adjForkBondPaid", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
+  "events": {
+    "BuyAndSellShares": {
+      "log_add_tx": {
+        "inputs": [
+          {
+            "indexed": true, 
+            "name": "market", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": true, 
+            "name": "sender", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "type", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "price", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "amount", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "outcome", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "tradeid", 
+            "type": "int256"
+          }
+        ], 
+        "name": "log_add_tx(int256,int256,int256,int256,int256,int256,int256)", 
+        "signature": "0x8dbed7bffe37a9907a92186110f23d8104f5967a71fb059f3b907ca9001fd160"
+      }, 
+      "log_cancel": {
+        "inputs": [
+          {
+            "indexed": true, 
+            "name": "market", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": true, 
+            "name": "sender", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "price", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "amount", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "tradeid", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "outcome", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "type", 
+            "type": "int256"
+          }
+        ], 
+        "name": "log_cancel(int256,int256,int256,int256,int256,int256,int256)", 
+        "signature": "0x9ecf4903f3efaf1549dc51545bd945f94d51923f37ce198a3b838125a2f397d5"
+      }
     }, 
-    "doRoundTwoRefund": {
-      "inputs": [
-        "sender", 
-        "event"
-      ], 
-      "method": "doRoundTwoRefund", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
+    "Consensus": {
+      "penalize": {
+        "inputs": [
+          {
+            "indexed": true, 
+            "name": "user", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "outcome", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "oldrep", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "repchange", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "newafterrep", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "p", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "reportValue", 
+            "type": "int256"
+          }
+        ], 
+        "name": "penalize(int256,int256,int256,int256,int256,int256,int256)", 
+        "signature": "0x3253564cd022a8ec496277f26ccdaddf64e75973423eda45df329f60b2a0c6a7"
+      }
     }, 
-    "getBondAmount": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getBondAmount", 
-      "signature": [
-        "int256"
-      ]
+    "CreateMarket": {
+      "marketCreated": {
+        "inputs": [
+          {
+            "indexed": false, 
+            "name": "marketID", 
+            "type": "int256"
+          }
+        ], 
+        "name": "marketCreated(int256)", 
+        "signature": "0x63f140d7adcc464732c9379020aa9e5ce1b1e350796814d780ea3ca41d62a36b"
+      }, 
+      "tradingFeeUpdated": {
+        "inputs": [
+          {
+            "indexed": false, 
+            "name": "marketID", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "tradingFee", 
+            "type": "int256"
+          }
+        ], 
+        "name": "tradingFeeUpdated(int256,int256)", 
+        "signature": "0xb8c735cc6495f8dac2581d532413dea78d7e03e0ff0880c32b4648c2145fba41"
+      }
     }, 
-    "getBondPaid": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getBondPaid", 
-      "signature": [
-        "int256"
-      ]
+    "MakeReports": {
+      "returnValue": {
+        "inputs": [
+          {
+            "indexed": false, 
+            "name": "x", 
+            "type": "int256"
+          }
+        ], 
+        "name": "returnValue(int256)", 
+        "signature": "0x8bc92e9868f513a8fbcf983ca23f542d05ea98a0e6e3c107c013a07651f59383"
+      }
     }, 
-    "getBondPoster": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getBondPoster", 
-      "returns": "address", 
-      "signature": [
-        "int256"
-      ]
+    "SendReputation": {
+      "Approval": {
+        "inputs": [
+          {
+            "indexed": true, 
+            "name": "_owner", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": true, 
+            "name": "_spender", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "value", 
+            "type": "int256"
+          }
+        ], 
+        "name": "Approval(int256,int256,int256)", 
+        "signature": "0xe64e66bf3e94c88742c041103133494023640d143db88ec4aec44744744d85f1"
+      }, 
+      "Transfer": {
+        "inputs": [
+          {
+            "indexed": true, 
+            "name": "_from", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": true, 
+            "name": "_to", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "_value", 
+            "type": "int256"
+          }
+        ], 
+        "name": "Transfer(int256,int256,int256)", 
+        "signature": "0x66e05b8a99642b6a77335be485dc593f0217aee37e6180f32909449b16ed7eca"
+      }
     }, 
-    "getBondReturned": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getBondReturned", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getFinal": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getFinal", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getForkBondPaid": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getForkBondPaid", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getForkBondPoster": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getForkBondPoster", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getForkedOverEthicality": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getForkedOverEthicality", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getMoved": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getMoved", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getOriginalBranch": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getOriginalBranch", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getOriginalEthicality": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getOriginalEthicality", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getOriginalOutcome": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getOriginalOutcome", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getOriginalVotePeriod": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getOriginalVotePeriod", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getResolved": {
-      "inputs": [
-        "branch", 
-        "forkPeriod"
-      ], 
-      "method": "getResolved", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getRoundTwo": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getRoundTwo", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "increaseBondPaid": {
-      "inputs": [
-        "event", 
-        "amount"
-      ], 
-      "method": "increaseBondPaid", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setBondAmount": {
-      "inputs": [
-        "event", 
-        "amount"
-      ], 
-      "method": "setBondAmount", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setBondPoster": {
-      "inputs": [
-        "event", 
-        "bondPoster"
-      ], 
-      "method": "setBondPoster", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setBondReturned": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "setBondReturned", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "setFinal": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "setFinal", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "setForkBondPoster": {
-      "inputs": [
-        "event", 
-        "poster"
-      ], 
-      "method": "setForkBondPoster", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setForkedOverEthicality": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "setForkedOverEthicality", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "setMoved": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "setMoved", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "setOriginalBranch": {
-      "inputs": [
-        "event", 
-        "branch"
-      ], 
-      "method": "setOriginalBranch", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setOriginalEthicality": {
-      "inputs": [
-        "event", 
-        "ethicality"
-      ], 
-      "method": "setOriginalEthicality", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setOriginalOutcome": {
-      "inputs": [
-        "event", 
-        "originalOutcome"
-      ], 
-      "method": "setOriginalOutcome", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setOriginalVotePeriod": {
-      "inputs": [
-        "event", 
-        "period"
-      ], 
-      "method": "setOriginalVotePeriod", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setResolved": {
-      "inputs": [
-        "branch", 
-        "forkPeriod", 
-        "winner"
-      ], 
-      "method": "setResolved", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setRoundTwo": {
-      "inputs": [
-        "event", 
-        "roundTwo"
-      ], 
-      "method": "setRoundTwo", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setRoundTwoRefund": {
-      "inputs": [
-        "event", 
-        "amt"
-      ], 
-      "method": "setRoundTwoRefund", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
+    "Trade": {
+      "log_fill_tx": {
+        "inputs": [
+          {
+            "indexed": true, 
+            "name": "market", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": true, 
+            "name": "sender", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": true, 
+            "name": "owner", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "type", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "price", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "amount", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "tradeid", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "outcome", 
+            "type": "int256"
+          }
+        ], 
+        "name": "log_fill_tx(int256,int256,int256,int256,int256,int256,int256,int256)", 
+        "signature": "0x715b9a9cb6dfb4fa9cb1ebc2eba40d2a7bd66aa8cef75f87a77d1ff05d29a3b6"
+      }, 
+      "log_price": {
+        "inputs": [
+          {
+            "indexed": true, 
+            "name": "market", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "type", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "price", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "amount", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "timestamp", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": false, 
+            "name": "outcome", 
+            "type": "int256"
+          }, 
+          {
+            "indexed": true, 
+            "name": "trader", 
+            "type": "int256"
+          }
+        ], 
+        "name": "log_price(int256,int256,int256,int256,int256,int256,int256)", 
+        "signature": "0xf448ecd2d0b1133184bb354020b9e90e2810dbc78102637d9a054ed06e8506d3"
+      }
     }
   }, 
-  "Branches": {
-    "addMarketToBranch": {
-      "inputs": [
-        "branch", 
-        "market"
-      ], 
-      "method": "addMarketToBranch", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getBaseReporters": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getBaseReporters", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getBranchByNum": {
-      "inputs": [
-        "branchNumber"
-      ], 
-      "method": "getBranchByNum", 
-      "returns": "hash", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getBranches": {
-      "method": "getBranches", 
-      "returns": "hash[]"
-    }, 
-    "getCreationDate": {
-      "inputs": [
-        "ID"
-      ], 
-      "method": "getCreationDate", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getEventForkedOver": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getEventForkedOver", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getForkPeriod": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getForkPeriod", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getInitialBalance": {
-      "inputs": [
-        "branch", 
-        "period"
-      ], 
-      "method": "getInitialBalance", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getMarketsInBranch": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getMarketsInBranch", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getMinTradingFee": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getMinTradingFee", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getNumBranches": {
-      "method": "getNumBranches", 
-      "returns": "number"
-    }, 
-    "getNumMarketsBranch": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getNumMarketsBranch", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getOracleOnly": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getOracleOnly", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getParent": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getParent", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getParentPeriod": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getParentPeriod", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getPeriodLength": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getPeriodLength", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getSomeMarketsInBranch": {
-      "inputs": [
-        "branch", 
-        "initial", 
-        "last"
-      ], 
-      "method": "getSomeMarketsInBranch", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getVotePeriod": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getVotePeriod", 
-      "returns": "int", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "incrementPeriod": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "incrementPeriod", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "initDefaultBranch": {
-      "method": "initDefaultBranch", 
-      "returns": "number", 
-      "send": true
-    }, 
-    "initializeBranch": {
-      "inputs": [
-        "ID", 
-        "currentVotePeriod", 
-        "periodLength", 
-        "minTradingFee", 
-        "oracleOnly", 
-        "parentPeriod", 
-        "parent"
-      ], 
-      "method": "initializeBranch", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setBaseReporters": {
-      "inputs": [
-        "branch", 
-        "num"
-      ], 
-      "method": "setBaseReporters", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setEventForkedOver": {
-      "inputs": [
-        "branch", 
-        "event"
-      ], 
-      "method": "setEventForkedOver", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setForkPeriod": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "setForkPeriod", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "setInitialBalance": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "balance"
-      ], 
-      "method": "setInitialBalance", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "BuyAndSellShares": {
-    "buy": {
-      "inputs": [
-        "amount", 
-        "price", 
-        "market", 
-        "outcome"
-      ], 
-      "method": "buy", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "cancel": {
-      "inputs": [
-        "trade_id"
-      ], 
-      "method": "cancel", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "sell": {
-      "inputs": [
-        "amount", 
-        "price", 
-        "market", 
-        "outcome"
-      ], 
-      "method": "sell", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "Cash": {
-    "addCash": {
-      "inputs": [
-        "ID", 
-        "amount"
-      ], 
-      "method": "addCash", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "balance": {
-      "inputs": [
-        "address"
-      ], 
-      "method": "balance", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "depositEther": {
-      "method": "depositEther", 
-      "returns": "number", 
-      "send": true
-    }, 
-    "initiateOwner": {
-      "inputs": [
-        "account"
-      ], 
-      "method": "initiateOwner", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "send": {
-      "inputs": [
-        "recver", 
-        "value"
-      ], 
-      "method": "send", 
-      "returns": "unfix", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "sendFrom": {
-      "inputs": [
-        "recver", 
-        "value", 
-        "from"
-      ], 
-      "method": "sendFrom", 
-      "returns": "unfix", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setCash": {
-      "inputs": [
-        "address", 
-        "balance"
-      ], 
-      "method": "setCash", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "subtractCash": {
-      "inputs": [
-        "ID", 
-        "amount"
-      ], 
-      "method": "subtractCash", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "withdrawEther": {
-      "inputs": [
-        "to", 
-        "value"
-      ], 
-      "method": "withdrawEther", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "CloseMarket": {
-    "claimProceeds": {
-      "inputs": [
-        "branch", 
-        "market"
-      ], 
-      "method": "claimProceeds", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "closeMarket": {
-      "inputs": [
-        "branch", 
-        "market", 
-        "sender"
-      ], 
-      "method": "closeMarket", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "CloseMarketOne": {
-    "oneOutcome": {
-      "inputs": [
-        "market", 
-        "winningOutcome", 
-        "sender", 
-        "categoricalPointFive", 
-        "numOutcomes"
-      ], 
-      "method": "oneOutcome", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "CloseMarketTwo": {
-    "twoOutcomes": {
-      "inputs": [
-        "market", 
-        "winningOutcome", 
-        "event", 
-        "sender"
-      ], 
-      "method": "twoOutcomes", 
-      "signature": [
-        "int256", 
-        "int256[]", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "CollectFees": {
-    "collectFees": {
-      "inputs": [
-        "branch", 
-        "sender"
-      ], 
-      "method": "collectFees", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "CompleteSets": {
-    "buyCompleteSets": {
-      "inputs": [
-        "market", 
-        "amount"
-      ], 
-      "method": "buyCompleteSets", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "sellCompleteSets": {
-      "inputs": [
-        "market", 
-        "amount"
-      ], 
-      "method": "sellCompleteSets", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "CompositeGetters": {
-    "batchGetMarketInfo": {
-      "inputs": [
-        "marketIDs"
-      ], 
-      "method": "batchGetMarketInfo", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256[]"
-      ]
-    }, 
-    "getMarketInfo": {
-      "inputs": [
-        "marketID"
-      ], 
-      "method": "getMarketInfo", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getMarketInfoCache": {
-      "inputs": [
-        "marketID"
-      ], 
-      "method": "getMarketInfoCache", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getMarketsInfo": {
-      "inputs": [
-        "branch", 
-        "offset", 
-        "numMarketsToLoad"
-      ], 
-      "method": "getMarketsInfo", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getOrderBook": {
-      "inputs": [
-        "marketID"
-      ], 
-      "method": "getOrderBook", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256"
-      ]
-    }
-  }, 
-  "Consensus": {
-    "incrementPeriodAfterReporting": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "incrementPeriodAfterReporting", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "penalizeWrong": {
-      "inputs": [
-        "branch", 
-        "event"
-      ], 
-      "method": "penalizeWrong", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "ConsensusData": {
-    "doRefund": {
-      "inputs": [
-        "sender", 
-        "refunder"
-      ], 
-      "method": "doRefund", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getBaseReportersLastPeriod": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getBaseReportersLastPeriod", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getDenominator": {
-      "inputs": [
-        "branch", 
-        "period"
-      ], 
-      "method": "getDenominator", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getFeeFirst": {
-      "inputs": [
-        "branch", 
-        "period"
-      ], 
-      "method": "getFeeFirst", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getFeesCollected": {
-      "inputs": [
-        "branch", 
-        "address", 
-        "period"
-      ], 
-      "method": "getFeesCollected", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getNotEnoughPenalized": {
-      "inputs": [
-        "branch", 
-        "address", 
-        "period"
-      ], 
-      "method": "getNotEnoughPenalized", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getPenalized": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "sender", 
-        "event"
-      ], 
-      "method": "getPenalized", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getPenalizedNum": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "sender"
-      ], 
-      "method": "getPenalizedNum", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getPenalizedUpTo": {
-      "inputs": [
-        "branch", 
-        "sender"
-      ], 
-      "method": "getPenalizedUpTo", 
-      "returns": "int", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getPeriodBalance": {
-      "inputs": [
-        "branch", 
-        "period"
-      ], 
-      "method": "getPeriodBalance", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getRepRedistributionDone": {
-      "inputs": [
-        "branch", 
-        "reporter"
-      ], 
-      "method": "getRepRedistributionDone", 
-      "returns": "number", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getSlashed": {
-      "inputs": [
-        "branch", 
-        "votePeriod", 
-        "reporter"
-      ], 
-      "method": "getSlashed", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "increaseDenominator": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "amount"
-      ], 
-      "method": "increaseDenominator", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "increasePenalizedNum": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "sender", 
-        "amount"
-      ], 
-      "method": "increasePenalizedNum", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setBaseReportersLastPeriod": {
-      "inputs": [
-        "branch", 
-        "amount"
-      ], 
-      "method": "setBaseReportersLastPeriod", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setFeeFirst": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "val"
-      ], 
-      "method": "setFeeFirst", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setFeesCollected": {
-      "inputs": [
-        "branch", 
-        "address", 
-        "period"
-      ], 
-      "method": "setFeesCollected", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setNotEnoughPenalized": {
-      "inputs": [
-        "branch", 
-        "address", 
-        "period"
-      ], 
-      "method": "setNotEnoughPenalized", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setPenalized": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "sender", 
-        "event"
-      ], 
-      "method": "setPenalized", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setPenalizedUpTo": {
-      "inputs": [
-        "branch", 
-        "sender", 
-        "period"
-      ], 
-      "method": "setPenalizedUpTo", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setPeriodBalance": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "balance"
-      ], 
-      "method": "setPeriodBalance", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setRefund": {
-      "inputs": [
-        "refunder", 
-        "amt"
-      ], 
-      "method": "setRefund", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setSlashed": {
-      "inputs": [
-        "branch", 
-        "votePeriod", 
-        "reporter"
-      ], 
-      "method": "setSlashed", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "CreateBranch": {
-    "createSubbranch": {
-      "inputs": [
-        "description", 
-        "periodLength", 
-        "parent", 
-        "minTradingFee", 
-        "oracleOnly"
-      ], 
-      "method": "createSubbranch", 
-      "returns": "hash", 
-      "send": true, 
-      "signature": [
-        "bytes", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "CreateMarket": {
-    "createEvent": {
-      "inputs": [
-        "branch", 
-        "description", 
-        "expDate", 
-        "minValue", 
-        "maxValue", 
-        "numOutcomes", 
-        "resolution"
-      ], 
-      "method": "createEvent", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "bytes", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "bytes"
-      ]
-    }, 
-    "createMarket": {
-      "inputs": [
-        "branch", 
-        "description", 
-        "tradingFee", 
-        "event", 
-        "tag1", 
-        "tag2", 
-        "tag3", 
-        "makerFees", 
-        "extraInfo"
-      ], 
-      "method": "createMarket", 
-      "mutable": true, 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "bytes", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "bytes"
-      ]
-    }, 
-    "createSingleEventMarket": {
-      "inputs": [
-        "branch", 
-        "description", 
-        "expDate", 
-        "minValue", 
-        "maxValue", 
-        "numOutcomes", 
-        "resolution", 
-        "tradingFee", 
-        "tag1", 
-        "tag2", 
-        "tag3", 
-        "makerFees", 
-        "extraInfo"
-      ], 
-      "method": "createSingleEventMarket", 
-      "mutable": true, 
-      "returns": "hash", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "bytes", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "bytes", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "bytes"
-      ]
-    }, 
-    "pushMarketForward": {
-      "inputs": [
-        "branch", 
-        "market"
-      ], 
-      "method": "pushMarketForward", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "updateTradingFee": {
-      "inputs": [
-        "branch", 
-        "market", 
-        "tradingFee"
-      ], 
-      "method": "updateTradingFee", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "EventResolution": {
-    "determineWinningOutcomes": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "determineWinningOutcomes", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "resolveBinary": {
-      "inputs": [
-        "event", 
-        "market", 
-        "branch", 
-        "votingPeriodEvent"
-      ], 
-      "method": "resolveBinary", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "resolveCategoricalOrScalar": {
-      "inputs": [
-        "scaled_min", 
-        "scaled_max", 
-        "event", 
-        "market", 
-        "branch", 
-        "votingPeriodEvent"
-      ], 
-      "method": "resolveCategoricalOrScalar", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "Events": {
-    "addMarket": {
-      "inputs": [
-        "event", 
-        "marketID"
-      ], 
-      "method": "addMarket", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "addPast24": {
-      "inputs": [
-        "period"
-      ], 
-      "method": "addPast24", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getBond": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getBond", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getBranch": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getBranch", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getEthical": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getEthical", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getEthics": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getEthics", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getEventBranch": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getEventBranch", 
-      "returns": "hash", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getEventInfo": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getEventInfo", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getEventPushedUp": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getEventPushedUp", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getEventResolution": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getEventResolution", 
-      "returns": "string", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getExpiration": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getExpiration", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getForkEthicality": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getForkEthicality", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getForkOutcome": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getForkOutcome", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getForked": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getForked", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getForkedDone": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getForkedDone", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getMarket": {
-      "inputs": [
-        "event", 
-        "marketIndex"
-      ], 
-      "method": "getMarket", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getMarkets": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getMarkets", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getMaxValue": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getMaxValue", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getMinValue": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getMinValue", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getNumMarkets": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getNumMarkets", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getNumOutcomes": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getNumOutcomes", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getOriginalExpiration": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getOriginalExpiration", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getOutcome": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getOutcome", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getPast24": {
-      "inputs": [
-        "period"
-      ], 
-      "method": "getPast24", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getRejected": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getRejected", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getRejectedPeriod": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getRejectedPeriod", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getReportingThreshold": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getReportingThreshold", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getResolution": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getResolution", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getUncaughtOutcome": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getUncaughtOutcome", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getmode": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getmode", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "initializeEvent": {
-      "inputs": [
-        "ID", 
-        "branch", 
-        "expirationDate", 
-        "minValue", 
-        "maxValue", 
-        "numOutcomes", 
-        "resolution"
-      ], 
-      "method": "initializeEvent", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "bytes"
-      ]
-    }, 
-    "setBond": {
-      "inputs": [
-        "event", 
-        "bond"
-      ], 
-      "method": "setBond", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setBranch": {
-      "inputs": [
-        "event", 
-        "branch"
-      ], 
-      "method": "setBranch", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setEthics": {
-      "inputs": [
-        "event", 
-        "ethicality"
-      ], 
-      "method": "setEthics", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setEventPushedUp": {
-      "inputs": [
-        "event", 
-        "val"
-      ], 
-      "method": "setEventPushedUp", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setExpiration": {
-      "inputs": [
-        "event", 
-        "date"
-      ], 
-      "method": "setExpiration", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setForkDone": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "setForkDone", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "setForkEthicality": {
-      "inputs": [
-        "event", 
-        "value"
-      ], 
-      "method": "setForkEthicality", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setForkOutcome": {
-      "inputs": [
-        "event", 
-        "value"
-      ], 
-      "method": "setForkOutcome", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setForked": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "setForked", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "setOriginalExpiration": {
-      "inputs": [
-        "event", 
-        "date"
-      ], 
-      "method": "setOriginalExpiration", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setOutcome": {
-      "inputs": [
-        "ID", 
-        "outcome"
-      ], 
-      "method": "setOutcome", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setRejected": {
-      "inputs": [
-        "event", 
-        "period"
-      ], 
-      "method": "setRejected", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setThreshold": {
-      "inputs": [
-        "event", 
-        "threshold"
-      ], 
-      "method": "setThreshold", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setUncaughtOutcome": {
-      "inputs": [
-        "event", 
-        "outcome"
-      ], 
-      "method": "setUncaughtOutcome", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setmode": {
-      "inputs": [
-        "event", 
-        "mode"
-      ], 
-      "method": "setmode", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "ExpiringEvents": {
-    "addEvent": {
-      "inputs": [
-        "branch", 
-        "futurePeriod", 
-        "eventID", 
-        "subsidy"
-      ], 
-      "method": "addEvent", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "addRepEvent": {
-      "inputs": [
-        "branch", 
-        "votePeriod", 
-        "event", 
-        "amount"
-      ], 
-      "method": "addRepEvent", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "addReportToEvent": {
-      "inputs": [
-        "branch", 
-        "votePeriod", 
-        "eventID", 
-        "sender"
-      ], 
-      "method": "addReportToEvent", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "addReportersPaidSoFar": {
-      "inputs": [
-        "branch", 
-        "event"
-      ], 
-      "method": "addReportersPaidSoFar", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "addRoundTwo": {
-      "inputs": [
-        "branch", 
-        "period"
-      ], 
-      "method": "addRoundTwo", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "addToWeightOfReport": {
-      "inputs": [
-        "period", 
-        "event", 
-        "report", 
-        "amount"
-      ], 
-      "method": "addToWeightOfReport", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "adjustPeriodShareValueOutstanding": {
-      "inputs": [
-        "branch", 
-        "expIndex", 
-        "amount"
-      ], 
-      "method": "adjustPeriodShareValueOutstanding", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "deleteEvent": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "event"
-      ], 
-      "method": "deleteEvent", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getAfterRep": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "sender"
-      ], 
-      "method": "getAfterRep", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getBeforeRep": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "sender"
-      ], 
-      "method": "getBeforeRep", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getCurrentMode": {
-      "inputs": [
-        "period", 
-        "event"
-      ], 
-      "method": "getCurrentMode", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getCurrentModeItems": {
-      "inputs": [
-        "period", 
-        "event"
-      ], 
-      "method": "getCurrentModeItems", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getEthicReport": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "event", 
-        "sender"
-      ], 
-      "method": "getEthicReport", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getEvent": {
-      "inputs": [
-        "branch", 
-        "expDateIndex", 
-        "eventIndex"
-      ], 
-      "method": "getEvent", 
-      "returns": "hash", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getEventIndex": {
-      "inputs": [
-        "period", 
-        "eventID"
-      ], 
-      "method": "getEventIndex", 
-      "returns": "number", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getEvents": {
-      "inputs": [
-        "branch", 
-        "expDateIndex"
-      ], 
-      "method": "getEvents", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getEventsRange": {
-      "inputs": [
-        "branch", 
-        "expDateIndex", 
-        "start", 
-        "end"
-      ], 
-      "method": "getEventsRange", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getLesserReportNum": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "event"
-      ], 
-      "method": "getLesserReportNum", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getNumEventsToReportOn": {
-      "inputs": [
-        "branch", 
-        "expDateIndex"
-      ], 
-      "method": "getNumEventsToReportOn", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getNumRemoved": {
-      "inputs": [
-        "branch", 
-        "period"
-      ], 
-      "method": "getNumRemoved", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getNumReportsActual": {
-      "inputs": [
-        "branch", 
-        "votePeriod", 
-        "sender"
-      ], 
-      "method": "getNumReportsActual", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getNumReportsEvent": {
-      "inputs": [
-        "branch", 
-        "votePeriod", 
-        "eventID"
-      ], 
-      "method": "getNumReportsEvent", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getNumRequired": {
-      "inputs": [
-        "branch", 
-        "period"
-      ], 
-      "method": "getNumRequired", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getNumRoundTwo": {
-      "inputs": [
-        "branch", 
-        "period"
-      ], 
-      "method": "getNumRoundTwo", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getNumberEvents": {
-      "inputs": [
-        "branch", 
-        "expDateIndex"
-      ], 
-      "method": "getNumberEvents", 
-      "returns": "number", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getPeriodDormantRep": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "sender"
-      ], 
-      "method": "getPeriodDormantRep", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getPeriodRepConstant": {
-      "inputs": [
-        "branch", 
-        "votePeriod", 
-        "sender"
-      ], 
-      "method": "getPeriodRepConstant", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getRepEvent": {
-      "inputs": [
-        "branch", 
-        "votePeriod", 
-        "event"
-      ], 
-      "method": "getRepEvent", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getReport": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "event", 
-        "sender"
-      ], 
-      "method": "getReport", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getReportHash": {
-      "inputs": [
-        "branch", 
-        "expDateIndex", 
-        "reporter", 
-        "event"
-      ], 
-      "method": "getReportHash", 
-      "returns": "hash", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getReportersPaidSoFar": {
-      "inputs": [
-        "branch", 
-        "event"
-      ], 
-      "method": "getReportersPaidSoFar", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getRequired": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "getRequired", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getSaltyHash": {
-      "inputs": [
-        "branch", 
-        "expDateIndex", 
-        "reporter", 
-        "event"
-      ], 
-      "method": "getSaltyHash", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getShareValue": {
-      "inputs": [
-        "branch", 
-        "expIndex"
-      ], 
-      "method": "getShareValue", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getSubsidy": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "event"
-      ], 
-      "method": "getSubsidy", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getWeightOfReport": {
-      "inputs": [
-        "period", 
-        "event", 
-        "report"
-      ], 
-      "method": "getWeightOfReport", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "moveEvent": {
-      "inputs": [
-        "branch", 
-        "event"
-      ], 
-      "method": "moveEvent", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "refundCost": {
-      "inputs": [
-        "to", 
-        "value"
-      ], 
-      "method": "refundCost", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "removeEvent": {
-      "inputs": [
-        "branch", 
-        "period"
-      ], 
-      "method": "removeEvent", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setAfterRep": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "rep", 
-        "sender"
-      ], 
-      "method": "setAfterRep", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setBeforeRep": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "rep", 
-        "sender"
-      ], 
-      "method": "setBeforeRep", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setCurrentMode": {
-      "inputs": [
-        "period", 
-        "event", 
-        "mode"
-      ], 
-      "method": "setCurrentMode", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setCurrentModeItems": {
-      "inputs": [
-        "period", 
-        "event", 
-        "modeReport"
-      ], 
-      "method": "setCurrentModeItems", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setEthicReport": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "event", 
-        "ethics", 
-        "sender"
-      ], 
-      "method": "setEthicReport", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setEventRequired": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "event"
-      ], 
-      "method": "setEventRequired", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setLesserReportNum": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "event", 
-        "num"
-      ], 
-      "method": "setLesserReportNum", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setNumEventsToReportOn": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "setNumEventsToReportOn", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "setNumReportsEvent": {
-      "inputs": [
-        "branch", 
-        "votePeriod", 
-        "eventID", 
-        "num"
-      ], 
-      "method": "setNumReportsEvent", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setPeriodDormantRep": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "rep", 
-        "sender"
-      ], 
-      "method": "setPeriodDormantRep", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setPeriodRepConstant": {
-      "inputs": [
-        "branch", 
-        "votePeriod", 
-        "sender", 
-        "value"
-      ], 
-      "method": "setPeriodRepConstant", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setReport": {
-      "inputs": [
-        "branch", 
-        "period", 
-        "event", 
-        "report", 
-        "sender"
-      ], 
-      "method": "setReport", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setReportHash": {
-      "inputs": [
-        "branch", 
-        "expDateIndex", 
-        "reporter", 
-        "reportHash", 
-        "event"
-      ], 
-      "method": "setReportHash", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setSaltyHash": {
-      "inputs": [
-        "branch", 
-        "expDateIndex", 
-        "reporter", 
-        "saltyHash", 
-        "event"
-      ], 
-      "method": "setSaltyHash", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "Faucets": {
-    "cashFaucet": {
-      "method": "cashFaucet", 
-      "returns": "number", 
-      "send": true
-    }, 
-    "claimInitialRep": {
-      "inputs": [
-        "parent", 
-        "branch"
-      ], 
-      "method": "claimInitialRep", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "fundNewAccount": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "fundNewAccount", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "reputationFaucet": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "reputationFaucet", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256"
-      ]
-    }
-  }, 
-  "ForkPenalize": {
-    "penalizeOnForkedEvent": {
-      "inputs": [
-        "branch", 
-        "event"
-      ], 
-      "method": "penalizeOnForkedEvent", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "proportionCorrectForkEvent": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "proportionCorrectForkEvent", 
-      "signature": [
-        "int256"
-      ]
-    }
-  }, 
-  "Forking": {
-    "exchangeRate": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "exchangeRate", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "fork": {
-      "inputs": [
-        "event", 
-        "branch", 
-        "forkedOverEthicality"
-      ], 
-      "method": "fork", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "move_event": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "move_event", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "resolveForkEvent": {
-      "inputs": [
-        "branch", 
-        "event"
-      ], 
-      "method": "resolveForkEvent", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "resolveForkedEvent": {
-      "inputs": [
-        "branch", 
-        "event"
-      ], 
-      "method": "resolveForkedEvent", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "resolve_fork": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "resolve_fork", 
-      "signature": [
-        "int256"
-      ]
-    }
-  }, 
-  "FxpFunctions": {
-    "fx_exp": {
-      "inputs": [
-        "x"
-      ], 
-      "method": "fx_exp", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "fx_log": {
-      "inputs": [
-        "x"
-      ], 
-      "method": "fx_log", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "sqrt": {
-      "inputs": [
-        "n"
-      ], 
-      "method": "sqrt", 
-      "signature": [
-        "int256"
-      ]
-    }
-  }, 
-  "Info": {
-    "getCreationFee": {
-      "inputs": [
-        "ID"
-      ], 
-      "method": "getCreationFee", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getCreator": {
-      "inputs": [
-        "ID"
-      ], 
-      "method": "getCreator", 
-      "returns": "address", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getDescription": {
-      "inputs": [
-        "ID"
-      ], 
-      "method": "getDescription", 
-      "returns": "string", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getDescriptionLength": {
-      "inputs": [
-        "ID"
-      ], 
-      "method": "getDescriptionLength", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "setInfo": {
-      "inputs": [
-        "ID", 
-        "description", 
-        "creator", 
-        "fee"
-      ], 
-      "method": "setInfo", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "bytes", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "MakeReports": {
-    "calculateReportTargetForEvent": {
-      "inputs": [
-        "branch", 
-        "eventID", 
-        "votePeriod", 
-        "sender"
-      ], 
-      "method": "calculateReportTargetForEvent", 
-      "returns": "unfix", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "makeHash": {
-      "inputs": [
-        "salt", 
-        "report", 
-        "eventID", 
-        "sender"
-      ], 
-      "method": "makeHash", 
-      "returns": "hash", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "submitReport": {
-      "inputs": [
-        "event", 
-        "salt", 
-        "report", 
-        "ethics"
-      ], 
-      "method": "submitReport", 
-      "mutable": true, 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "submitReportHash": {
-      "inputs": [
-        "event", 
-        "reportHash", 
-        "encryptedSaltyHash"
-      ], 
-      "method": "submitReportHash", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "validateReport": {
-      "inputs": [
-        "eventID", 
-        "branch", 
-        "votePeriod", 
-        "report", 
-        "forkedOverEthicality", 
-        "forkedOverThisEvent", 
-        "roundTwo", 
-        "balance"
-      ], 
-      "method": "validateReport", 
-      "returns": "number", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "Markets": {
-    "addFees": {
-      "inputs": [
-        "market", 
-        "amount"
-      ], 
-      "method": "addFees", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "addToMarketsHash": {
-      "inputs": [
-        "branch", 
-        "newHash"
-      ], 
-      "method": "addToMarketsHash", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "addTrade": {
-      "inputs": [
-        "market", 
-        "trade_id", 
-        "last_id"
-      ], 
-      "method": "addTrade", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getBondsMan": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getBondsMan", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getBranchID": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getBranchID", 
-      "returns": "hash", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getCreationTime": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getCreationTime", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getCumScale": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getCumScale", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getExtraInfo": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getExtraInfo", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getFees": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getFees", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getLastExpDate": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getLastExpDate", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getLastOutcomePrice": {
-      "inputs": [
-        "market", 
-        "outcome"
-      ], 
-      "method": "getLastOutcomePrice", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getLastTrade": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getLastTrade", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getMakerFees": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getMakerFees", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getMarketEvent": {
-      "inputs": [
-        "market", 
-        "index"
-      ], 
-      "method": "getMarketEvent", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getMarketEvents": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getMarketEvents", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getMarketNumOutcomes": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getMarketNumOutcomes", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getMarketsHash": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getMarketsHash", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getNumEvents": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getNumEvents", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getOneWinningOutcome": {
-      "inputs": [
-        "market", 
-        "num"
-      ], 
-      "method": "getOneWinningOutcome", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getOriginalTradingPeriod": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getOriginalTradingPeriod", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getParticipantSharesPurchased": {
-      "inputs": [
-        "market", 
-        "trader", 
-        "outcome"
-      ], 
-      "method": "getParticipantSharesPurchased", 
-      "returns": "unfix", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getPushedForward": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getPushedForward", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getSender": {
-      "method": "getSender"
-    }, 
-    "getSharesPurchased": {
-      "inputs": [
-        "market", 
-        "outcome"
-      ], 
-      "method": "getSharesPurchased", 
-      "returns": "unfix", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getSharesValue": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getSharesValue", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getTotalSharesPurchased": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getTotalSharesPurchased", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getTradingFee": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getTradingFee", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getTradingPeriod": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getTradingPeriod", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getVolume": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getVolume", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getWinningOutcomes": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getWinningOutcomes", 
-      "returns": "number[]", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "get_total_trades": {
-      "inputs": [
-        "market_id"
-      ], 
-      "method": "get_total_trades", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "get_trade_ids": {
-      "inputs": [
-        "market_id"
-      ], 
-      "method": "get_trade_ids", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getgasSubsidy": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "getgasSubsidy", 
-      "returns": "int", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "initializeMarket": {
-      "inputs": [
-        "marketID", 
-        "events", 
-        "tradingPeriod", 
-        "tradingFee", 
-        "branch", 
-        "tag1", 
-        "tag2", 
-        "tag3", 
-        "makerFees", 
-        "cumScale", 
-        "numOutcomes", 
-        "extraInfo", 
-        "gasSubsidy", 
-        "creationFee", 
-        "lastExpDate"
-      ], 
-      "method": "initializeMarket", 
-      "signature": [
-        "int256", 
-        "int256[]", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "bytes", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "modifyParticipantShares": {
-      "inputs": [
-        "marketID", 
-        "trader", 
-        "outcome", 
-        "amount", 
-        "cancel"
-      ], 
-      "method": "modifyParticipantShares", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "modifyShares": {
-      "inputs": [
-        "marketID", 
-        "outcome", 
-        "amount"
-      ], 
-      "method": "modifyShares", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "modifySharesValue": {
-      "inputs": [
-        "marketID", 
-        "amount"
-      ], 
-      "method": "modifySharesValue", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "refundClosing": {
-      "inputs": [
-        "market", 
-        "to"
-      ], 
-      "method": "refundClosing", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "remove_trade_from_market": {
-      "inputs": [
-        "market_id", 
-        "trade_id"
-      ], 
-      "method": "remove_trade_from_market", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "returnTags": {
-      "inputs": [
-        "market"
-      ], 
-      "method": "returnTags", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "setPrice": {
-      "inputs": [
-        "market", 
-        "outcome", 
-        "price"
-      ], 
-      "method": "setPrice", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setPushedForward": {
-      "inputs": [
-        "market", 
-        "bool", 
-        "sender"
-      ], 
-      "method": "setPushedForward", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setTradingFee": {
-      "inputs": [
-        "market", 
-        "fee"
-      ], 
-      "method": "setTradingFee", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setTradingPeriod": {
-      "inputs": [
-        "market", 
-        "period"
-      ], 
-      "method": "setTradingPeriod", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setWinningOutcomes": {
-      "inputs": [
-        "market", 
-        "outcomes"
-      ], 
-      "method": "setWinningOutcomes", 
-      "signature": [
-        "int256", 
-        "int256[]"
-      ]
-    }
-  }, 
-  "PenalizationCatchup": {
-    "penalizationCatchup": {
-      "inputs": [
-        "branch", 
-        "sender"
-      ], 
-      "method": "penalizationCatchup", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "PenalizeNotEnoughReports": {
-    "proveReporterDidntReportEnough": {
-      "inputs": [
-        "branch", 
-        "reporter", 
-        "eventExample"
-      ], 
-      "method": "proveReporterDidntReportEnough", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "ProportionCorrect": {
-    "proportionCorrect": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "proportionCorrect", 
-      "signature": [
-        "int256"
-      ]
-    }
-  }, 
-  "Reporting": {
-    "addDormantRep": {
-      "inputs": [
-        "branch", 
-        "index", 
-        "value"
-      ], 
-      "method": "addDormantRep", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "addRep": {
-      "inputs": [
-        "branch", 
-        "index", 
-        "value"
-      ], 
-      "method": "addRep", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "addReporter": {
-      "inputs": [
-        "branch", 
-        "sender", 
-        "amount", 
-        "dormant", 
-        "repToBonderOrBranch"
-      ], 
-      "method": "addReporter", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "adjustActiveRep": {
-      "inputs": [
-        "branch", 
-        "amount"
-      ], 
-      "method": "adjustActiveRep", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "balanceOf": {
-      "inputs": [
-        "branch", 
-        "address"
-      ], 
-      "method": "balanceOf", 
-      "returns": "unfix", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "checkContractWhitelist": {
-      "inputs": [
-        "contract", 
-        "address"
-      ], 
-      "method": "checkContractWhitelist", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "checkWhitelist": {
-      "inputs": [
-        "address"
-      ], 
-      "method": "checkWhitelist", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getActiveRep": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getActiveRep", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getDormantRepByIndex": {
-      "inputs": [
-        "branch", 
-        "repIndex"
-      ], 
-      "method": "getDormantRepByIndex", 
-      "returns": "unfix", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getFork": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getFork", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getNumberReporters": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getNumberReporters", 
-      "returns": "number", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getRepBalance": {
-      "inputs": [
-        "branch", 
-        "address"
-      ], 
-      "method": "getRepBalance", 
-      "returns": "unfix", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getRepByIndex": {
-      "inputs": [
-        "branch", 
-        "repIndex"
-      ], 
-      "method": "getRepByIndex", 
-      "returns": "unfix", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getReporterID": {
-      "inputs": [
-        "branch", 
-        "index"
-      ], 
-      "method": "getReporterID", 
-      "returns": "hash", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getReputation": {
-      "inputs": [
-        "address"
-      ], 
-      "method": "getReputation", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "getTotalRep": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "getTotalRep", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "repIDToIndex": {
-      "inputs": [
-        "branch", 
-        "repID"
-      ], 
-      "method": "repIDToIndex", 
-      "returns": "number", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setFork": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "setFork", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "setInitialReporters": {
-      "inputs": [
-        "parent", 
-        "branchID"
-      ], 
-      "method": "setInitialReporters", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setRep": {
-      "inputs": [
-        "branch", 
-        "index", 
-        "newRep"
-      ], 
-      "method": "setRep", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setSaleDistribution": {
-      "inputs": [
-        "addresses", 
-        "balances", 
-        "branchID"
-      ], 
-      "method": "setSaleDistribution", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256[]", 
-        "int256[]", 
-        "int256"
-      ]
-    }, 
-    "setWhitelist": {
-      "inputs": [
-        "contract", 
-        "addresses"
-      ], 
-      "method": "setWhitelist", 
-      "returns": "string", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256[]"
-      ]
-    }, 
-    "subtractDormantRep": {
-      "inputs": [
-        "branch", 
-        "index", 
-        "value"
-      ], 
-      "method": "subtractDormantRep", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "subtractRep": {
-      "inputs": [
-        "branch", 
-        "index", 
-        "value"
-      ], 
-      "method": "subtractRep", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "totalSupply": {
-      "inputs": [
-        "branch"
-      ], 
-      "method": "totalSupply", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }
-  }, 
-  "ReportingThreshold": {
-    "calculateReportingThreshold": {
-      "inputs": [
-        "branch", 
-        "eventID", 
-        "votePeriod", 
-        "sender"
-      ], 
-      "method": "calculateReportingThreshold", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getEventCanReportOn": {
-      "inputs": [
-        "branch", 
-        "expDateIndex", 
-        "reporter", 
-        "event"
-      ], 
-      "method": "getEventCanReportOn", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getEventsToReportOn": {
-      "inputs": [
-        "branch", 
-        "expDateIndex", 
-        "sender"
-      ], 
-      "method": "getEventsToReportOn", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "setReportingThreshold": {
-      "inputs": [
-        "event"
-      ], 
-      "method": "setReportingThreshold", 
-      "signature": [
-        "int256"
-      ]
-    }
-  }, 
-  "RoundTwo": {
-    "resolve": {
-      "inputs": [
-        "branch", 
-        "event"
-      ], 
-      "method": "resolve", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "roundTwoPostBond": {
-      "inputs": [
-        "branch", 
-        "event", 
-        "eventIndex", 
-        "votePeriod"
-      ], 
-      "method": "roundTwoPostBond", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "roundTwoResolve": {
-      "inputs": [
-        "branch", 
-        "event", 
-        "eventIndex", 
-        "sender"
-      ], 
-      "method": "roundTwoResolve", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "RoundTwoPenalize": {
-    "penalizeRoundTwoWrong": {
-      "inputs": [
-        "branch", 
-        "event"
-      ], 
-      "method": "penalizeRoundTwoWrong", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "SendReputation": {
-    "allowance": {
-      "inputs": [
-        "owner", 
-        "spender"
-      ], 
-      "method": "allowance", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "approve": {
-      "inputs": [
-        "branch", 
-        "spender", 
-        "value"
-      ], 
-      "method": "approve", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "convertToActiveRep": {
-      "inputs": [
-        "branch", 
-        "value"
-      ], 
-      "method": "convertToActiveRep", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "convertToDormantRep": {
-      "inputs": [
-        "branch", 
-        "value"
-      ], 
-      "method": "convertToDormantRep", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "sendReputation": {
-      "inputs": [
-        "branch", 
-        "recver", 
-        "value"
-      ], 
-      "method": "sendReputation", 
-      "returns": "unfix", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "transfer": {
-      "inputs": [
-        "branch", 
-        "recver", 
-        "value"
-      ], 
-      "method": "transfer", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "transferFrom": {
-      "inputs": [
-        "branch", 
-        "from", 
-        "recver", 
-        "value"
-      ], 
-      "method": "transferFrom", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "SlashRep": {
-    "slashRep": {
-      "inputs": [
-        "branch", 
-        "salt", 
-        "report", 
-        "reporter", 
-        "eventID"
-      ], 
-      "method": "slashRep", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }
-  }, 
-  "Trade": {
-    "short_sell": {
-      "inputs": [
-        "buyer_trade_id", 
-        "max_amount"
-      ], 
-      "method": "short_sell", 
-      "returns": "hash[]", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "trade": {
-      "inputs": [
-        "max_value", 
-        "max_amount", 
-        "trade_ids"
-      ], 
-      "method": "trade", 
-      "returns": "hash[]", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256[]"
-      ]
-    }
-  }, 
-  "Trades": {
-    "checkHash": {
-      "inputs": [
-        "tradeHash", 
-        "sender"
-      ], 
-      "method": "checkHash", 
-      "returns": "number", 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "commitTrade": {
-      "inputs": [
-        "hash"
-      ], 
-      "method": "commitTrade", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "fill_trade": {
-      "inputs": [
-        "id", 
-        "fill"
-      ], 
-      "method": "fill_trade", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "getID": {
-      "inputs": [
-        "tradeID"
-      ], 
-      "method": "getID", 
-      "returns": "hash", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "get_amount": {
-      "inputs": [
-        "id"
-      ], 
-      "method": "get_amount", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "get_price": {
-      "inputs": [
-        "id"
-      ], 
-      "method": "get_price", 
-      "returns": "unfix", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "get_trade": {
-      "inputs": [
-        "id"
-      ], 
-      "method": "get_trade", 
-      "returns": "hash[]", 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "makeTradeHash": {
-      "inputs": [
-        "max_value", 
-        "max_amount", 
-        "trade_ids"
-      ], 
-      "method": "makeTradeHash", 
-      "returns": "hash", 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256[]"
-      ]
-    }, 
-    "remove_trade": {
-      "inputs": [
-        "id"
-      ], 
-      "method": "remove_trade", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256"
-      ]
-    }, 
-    "saveTrade": {
-      "inputs": [
-        "trade_id", 
-        "type", 
-        "market", 
-        "amount", 
-        "price", 
-        "sender", 
-        "outcome"
-      ], 
-      "method": "saveTrade", 
-      "returns": "number", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "update_trade": {
-      "inputs": [
-        "id", 
-        "price"
-      ], 
-      "method": "update_trade", 
-      "send": true, 
-      "signature": [
-        "int256", 
-        "int256"
-      ]
-    }, 
-    "zeroHash": {
-      "method": "zeroHash", 
-      "returns": "number", 
-      "send": true
+  "functions": {
+    "Backstops": {
+      "adjForkBondPaid": {
+        "inputs": [
+          "event", 
+          "amount"
+        ], 
+        "method": "adjForkBondPaid", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "doRoundTwoRefund": {
+        "inputs": [
+          "sender", 
+          "event"
+        ], 
+        "method": "doRoundTwoRefund", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getBondAmount": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getBondAmount", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getBondPaid": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getBondPaid", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getBondPoster": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getBondPoster", 
+        "returns": "address", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getBondReturned": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getBondReturned", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getFinal": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getFinal", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getForkBondPaid": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getForkBondPaid", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getForkBondPoster": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getForkBondPoster", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getForkedOverEthicality": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getForkedOverEthicality", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getMoved": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getMoved", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getOriginalBranch": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getOriginalBranch", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getOriginalEthicality": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getOriginalEthicality", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getOriginalOutcome": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getOriginalOutcome", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getOriginalVotePeriod": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getOriginalVotePeriod", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getResolved": {
+        "inputs": [
+          "branch", 
+          "forkPeriod"
+        ], 
+        "method": "getResolved", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getRoundTwo": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getRoundTwo", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "increaseBondPaid": {
+        "inputs": [
+          "event", 
+          "amount"
+        ], 
+        "method": "increaseBondPaid", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setBondAmount": {
+        "inputs": [
+          "event", 
+          "amount"
+        ], 
+        "method": "setBondAmount", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setBondPoster": {
+        "inputs": [
+          "event", 
+          "bondPoster"
+        ], 
+        "method": "setBondPoster", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setBondReturned": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "setBondReturned", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "setFinal": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "setFinal", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "setForkBondPoster": {
+        "inputs": [
+          "event", 
+          "poster"
+        ], 
+        "method": "setForkBondPoster", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setForkedOverEthicality": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "setForkedOverEthicality", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "setMoved": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "setMoved", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "setOriginalBranch": {
+        "inputs": [
+          "event", 
+          "branch"
+        ], 
+        "method": "setOriginalBranch", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setOriginalEthicality": {
+        "inputs": [
+          "event", 
+          "ethicality"
+        ], 
+        "method": "setOriginalEthicality", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setOriginalOutcome": {
+        "inputs": [
+          "event", 
+          "originalOutcome"
+        ], 
+        "method": "setOriginalOutcome", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setOriginalVotePeriod": {
+        "inputs": [
+          "event", 
+          "period"
+        ], 
+        "method": "setOriginalVotePeriod", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setResolved": {
+        "inputs": [
+          "branch", 
+          "forkPeriod", 
+          "winner"
+        ], 
+        "method": "setResolved", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setRoundTwo": {
+        "inputs": [
+          "event", 
+          "roundTwo"
+        ], 
+        "method": "setRoundTwo", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setRoundTwoRefund": {
+        "inputs": [
+          "event", 
+          "amt"
+        ], 
+        "method": "setRoundTwoRefund", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "Branches": {
+      "addMarketToBranch": {
+        "inputs": [
+          "branch", 
+          "market"
+        ], 
+        "method": "addMarketToBranch", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getBaseReporters": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getBaseReporters", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getBranchByNum": {
+        "inputs": [
+          "branchNumber"
+        ], 
+        "method": "getBranchByNum", 
+        "returns": "hash", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getBranches": {
+        "method": "getBranches", 
+        "returns": "hash[]"
+      }, 
+      "getCreationDate": {
+        "inputs": [
+          "ID"
+        ], 
+        "method": "getCreationDate", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getEventForkedOver": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getEventForkedOver", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getForkPeriod": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getForkPeriod", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getInitialBalance": {
+        "inputs": [
+          "branch", 
+          "period"
+        ], 
+        "method": "getInitialBalance", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getMarketsInBranch": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getMarketsInBranch", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getMinTradingFee": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getMinTradingFee", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getNumBranches": {
+        "method": "getNumBranches", 
+        "returns": "number"
+      }, 
+      "getNumMarketsBranch": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getNumMarketsBranch", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getOracleOnly": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getOracleOnly", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getParent": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getParent", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getParentPeriod": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getParentPeriod", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getPeriodLength": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getPeriodLength", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getSomeMarketsInBranch": {
+        "inputs": [
+          "branch", 
+          "initial", 
+          "last"
+        ], 
+        "method": "getSomeMarketsInBranch", 
+        "returns": "int256[]", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getVotePeriod": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getVotePeriod", 
+        "returns": "int", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "incrementPeriod": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "incrementPeriod", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "initDefaultBranch": {
+        "method": "initDefaultBranch", 
+        "returns": "number", 
+        "send": true
+      }, 
+      "initializeBranch": {
+        "inputs": [
+          "ID", 
+          "currentVotePeriod", 
+          "periodLength", 
+          "minTradingFee", 
+          "oracleOnly", 
+          "parentPeriod", 
+          "parent"
+        ], 
+        "method": "initializeBranch", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setBaseReporters": {
+        "inputs": [
+          "branch", 
+          "num"
+        ], 
+        "method": "setBaseReporters", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setEventForkedOver": {
+        "inputs": [
+          "branch", 
+          "event"
+        ], 
+        "method": "setEventForkedOver", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setForkPeriod": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "setForkPeriod", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "setInitialBalance": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "balance"
+        ], 
+        "method": "setInitialBalance", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "BuyAndSellShares": {
+      "buy": {
+        "inputs": [
+          "amount", 
+          "price", 
+          "market", 
+          "outcome"
+        ], 
+        "method": "buy", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "cancel": {
+        "inputs": [
+          "trade_id"
+        ], 
+        "method": "cancel", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "sell": {
+        "inputs": [
+          "amount", 
+          "price", 
+          "market", 
+          "outcome"
+        ], 
+        "method": "sell", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "Cash": {
+      "addCash": {
+        "inputs": [
+          "ID", 
+          "amount"
+        ], 
+        "method": "addCash", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "balance": {
+        "inputs": [
+          "address"
+        ], 
+        "method": "balance", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "depositEther": {
+        "method": "depositEther", 
+        "returns": "number", 
+        "send": true
+      }, 
+      "initiateOwner": {
+        "inputs": [
+          "account"
+        ], 
+        "method": "initiateOwner", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "send": {
+        "inputs": [
+          "recver", 
+          "value"
+        ], 
+        "method": "send", 
+        "returns": "unfix", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "sendFrom": {
+        "inputs": [
+          "recver", 
+          "value", 
+          "from"
+        ], 
+        "method": "sendFrom", 
+        "returns": "unfix", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setCash": {
+        "inputs": [
+          "address", 
+          "balance"
+        ], 
+        "method": "setCash", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "subtractCash": {
+        "inputs": [
+          "ID", 
+          "amount"
+        ], 
+        "method": "subtractCash", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "withdrawEther": {
+        "inputs": [
+          "to", 
+          "value"
+        ], 
+        "method": "withdrawEther", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "CloseMarket": {
+      "claimProceeds": {
+        "inputs": [
+          "branch", 
+          "market"
+        ], 
+        "method": "claimProceeds", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "closeMarket": {
+        "inputs": [
+          "branch", 
+          "market", 
+          "sender"
+        ], 
+        "method": "closeMarket", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "CloseMarketOne": {
+      "oneOutcome": {
+        "inputs": [
+          "market", 
+          "winningOutcome", 
+          "sender", 
+          "categoricalPointFive", 
+          "numOutcomes"
+        ], 
+        "method": "oneOutcome", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "CloseMarketTwo": {
+      "twoOutcomes": {
+        "inputs": [
+          "market", 
+          "winningOutcome", 
+          "event", 
+          "sender"
+        ], 
+        "method": "twoOutcomes", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256[]", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "CollectFees": {
+      "collectFees": {
+        "inputs": [
+          "branch", 
+          "sender"
+        ], 
+        "method": "collectFees", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "CompleteSets": {
+      "buyCompleteSets": {
+        "inputs": [
+          "market", 
+          "amount"
+        ], 
+        "method": "buyCompleteSets", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "sellCompleteSets": {
+        "inputs": [
+          "market", 
+          "amount"
+        ], 
+        "method": "sellCompleteSets", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "CompositeGetters": {
+      "batchGetMarketInfo": {
+        "inputs": [
+          "marketIDs"
+        ], 
+        "method": "batchGetMarketInfo", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256[]"
+        ]
+      }, 
+      "getMarketInfo": {
+        "inputs": [
+          "marketID"
+        ], 
+        "method": "getMarketInfo", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getMarketInfoCache": {
+        "inputs": [
+          "marketID"
+        ], 
+        "method": "getMarketInfoCache", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getMarketsInfo": {
+        "inputs": [
+          "branch", 
+          "offset", 
+          "numMarketsToLoad"
+        ], 
+        "method": "getMarketsInfo", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getOrderBook": {
+        "inputs": [
+          "marketID"
+        ], 
+        "method": "getOrderBook", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256"
+        ]
+      }
+    }, 
+    "Consensus": {
+      "incrementPeriodAfterReporting": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "incrementPeriodAfterReporting", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "penalizeWrong": {
+        "inputs": [
+          "branch", 
+          "event"
+        ], 
+        "method": "penalizeWrong", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "ConsensusData": {
+      "doRefund": {
+        "inputs": [
+          "sender", 
+          "refunder"
+        ], 
+        "method": "doRefund", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getBaseReportersLastPeriod": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getBaseReportersLastPeriod", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getDenominator": {
+        "inputs": [
+          "branch", 
+          "period"
+        ], 
+        "method": "getDenominator", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getFeeFirst": {
+        "inputs": [
+          "branch", 
+          "period"
+        ], 
+        "method": "getFeeFirst", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getFeesCollected": {
+        "inputs": [
+          "branch", 
+          "address", 
+          "period"
+        ], 
+        "method": "getFeesCollected", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getNotEnoughPenalized": {
+        "inputs": [
+          "branch", 
+          "address", 
+          "period"
+        ], 
+        "method": "getNotEnoughPenalized", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getPenalized": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "sender", 
+          "event"
+        ], 
+        "method": "getPenalized", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getPenalizedNum": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "sender"
+        ], 
+        "method": "getPenalizedNum", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getPenalizedUpTo": {
+        "inputs": [
+          "branch", 
+          "sender"
+        ], 
+        "method": "getPenalizedUpTo", 
+        "returns": "int", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getPeriodBalance": {
+        "inputs": [
+          "branch", 
+          "period"
+        ], 
+        "method": "getPeriodBalance", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getRepRedistributionDone": {
+        "inputs": [
+          "branch", 
+          "reporter"
+        ], 
+        "method": "getRepRedistributionDone", 
+        "returns": "number", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getSlashed": {
+        "inputs": [
+          "branch", 
+          "votePeriod", 
+          "reporter"
+        ], 
+        "method": "getSlashed", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "increaseDenominator": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "amount"
+        ], 
+        "method": "increaseDenominator", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "increasePenalizedNum": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "sender", 
+          "amount"
+        ], 
+        "method": "increasePenalizedNum", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setBaseReportersLastPeriod": {
+        "inputs": [
+          "branch", 
+          "amount"
+        ], 
+        "method": "setBaseReportersLastPeriod", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setFeeFirst": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "val"
+        ], 
+        "method": "setFeeFirst", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setFeesCollected": {
+        "inputs": [
+          "branch", 
+          "address", 
+          "period"
+        ], 
+        "method": "setFeesCollected", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setNotEnoughPenalized": {
+        "inputs": [
+          "branch", 
+          "address", 
+          "period"
+        ], 
+        "method": "setNotEnoughPenalized", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setPenalized": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "sender", 
+          "event"
+        ], 
+        "method": "setPenalized", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setPenalizedUpTo": {
+        "inputs": [
+          "branch", 
+          "sender", 
+          "period"
+        ], 
+        "method": "setPenalizedUpTo", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setPeriodBalance": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "balance"
+        ], 
+        "method": "setPeriodBalance", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setRefund": {
+        "inputs": [
+          "refunder", 
+          "amt"
+        ], 
+        "method": "setRefund", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setSlashed": {
+        "inputs": [
+          "branch", 
+          "votePeriod", 
+          "reporter"
+        ], 
+        "method": "setSlashed", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "CreateBranch": {
+      "createSubbranch": {
+        "inputs": [
+          "description", 
+          "periodLength", 
+          "parent", 
+          "minTradingFee", 
+          "oracleOnly"
+        ], 
+        "method": "createSubbranch", 
+        "returns": "hash", 
+        "send": true, 
+        "signature": [
+          "bytes", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "CreateMarket": {
+      "createEvent": {
+        "inputs": [
+          "branch", 
+          "description", 
+          "expDate", 
+          "minValue", 
+          "maxValue", 
+          "numOutcomes", 
+          "resolution"
+        ], 
+        "method": "createEvent", 
+        "returns": "int256", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "bytes", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "bytes"
+        ]
+      }, 
+      "createMarket": {
+        "inputs": [
+          "branch", 
+          "description", 
+          "tradingFee", 
+          "event", 
+          "tag1", 
+          "tag2", 
+          "tag3", 
+          "makerFees", 
+          "extraInfo"
+        ], 
+        "method": "createMarket", 
+        "mutable": true, 
+        "returns": "int256", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "bytes", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "bytes"
+        ]
+      }, 
+      "createSingleEventMarket": {
+        "inputs": [
+          "branch", 
+          "description", 
+          "expDate", 
+          "minValue", 
+          "maxValue", 
+          "numOutcomes", 
+          "resolution", 
+          "tradingFee", 
+          "tag1", 
+          "tag2", 
+          "tag3", 
+          "makerFees", 
+          "extraInfo"
+        ], 
+        "method": "createSingleEventMarket", 
+        "mutable": true, 
+        "returns": "hash", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "bytes", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "bytes", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "bytes"
+        ]
+      }, 
+      "pushMarketForward": {
+        "inputs": [
+          "branch", 
+          "market"
+        ], 
+        "method": "pushMarketForward", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "updateTradingFee": {
+        "inputs": [
+          "branch", 
+          "market", 
+          "tradingFee"
+        ], 
+        "method": "updateTradingFee", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "EventResolution": {
+      "determineWinningOutcomes": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "determineWinningOutcomes", 
+        "returns": "int256[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "resolveBinary": {
+        "inputs": [
+          "event", 
+          "market", 
+          "branch", 
+          "votingPeriodEvent"
+        ], 
+        "method": "resolveBinary", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "resolveCategoricalOrScalar": {
+        "inputs": [
+          "scaled_min", 
+          "scaled_max", 
+          "event", 
+          "market", 
+          "branch", 
+          "votingPeriodEvent"
+        ], 
+        "method": "resolveCategoricalOrScalar", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "Events": {
+      "addMarket": {
+        "inputs": [
+          "event", 
+          "marketID"
+        ], 
+        "method": "addMarket", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "addPast24": {
+        "inputs": [
+          "period"
+        ], 
+        "method": "addPast24", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getBond": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getBond", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getBranch": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getBranch", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getEthical": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getEthical", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getEthics": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getEthics", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getEventBranch": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getEventBranch", 
+        "returns": "hash", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getEventInfo": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getEventInfo", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getEventPushedUp": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getEventPushedUp", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getEventResolution": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getEventResolution", 
+        "returns": "string", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getExpiration": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getExpiration", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getForkEthicality": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getForkEthicality", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getForkOutcome": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getForkOutcome", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getForked": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getForked", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getForkedDone": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getForkedDone", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getMarket": {
+        "inputs": [
+          "event", 
+          "marketIndex"
+        ], 
+        "method": "getMarket", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getMarkets": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getMarkets", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getMaxValue": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getMaxValue", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getMinValue": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getMinValue", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getNumMarkets": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getNumMarkets", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getNumOutcomes": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getNumOutcomes", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getOriginalExpiration": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getOriginalExpiration", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getOutcome": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getOutcome", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getPast24": {
+        "inputs": [
+          "period"
+        ], 
+        "method": "getPast24", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getRejected": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getRejected", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getRejectedPeriod": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getRejectedPeriod", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getReportingThreshold": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getReportingThreshold", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getResolution": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getResolution", 
+        "returns": "string", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getUncaughtOutcome": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getUncaughtOutcome", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getmode": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getmode", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "initializeEvent": {
+        "inputs": [
+          "ID", 
+          "branch", 
+          "expirationDate", 
+          "minValue", 
+          "maxValue", 
+          "numOutcomes", 
+          "resolution"
+        ], 
+        "method": "initializeEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "bytes"
+        ]
+      }, 
+      "setBond": {
+        "inputs": [
+          "event", 
+          "bond"
+        ], 
+        "method": "setBond", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setBranch": {
+        "inputs": [
+          "event", 
+          "branch"
+        ], 
+        "method": "setBranch", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setEthics": {
+        "inputs": [
+          "event", 
+          "ethicality"
+        ], 
+        "method": "setEthics", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setEventPushedUp": {
+        "inputs": [
+          "event", 
+          "val"
+        ], 
+        "method": "setEventPushedUp", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setExpiration": {
+        "inputs": [
+          "event", 
+          "date"
+        ], 
+        "method": "setExpiration", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setForkDone": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "setForkDone", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "setForkEthicality": {
+        "inputs": [
+          "event", 
+          "value"
+        ], 
+        "method": "setForkEthicality", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setForkOutcome": {
+        "inputs": [
+          "event", 
+          "value"
+        ], 
+        "method": "setForkOutcome", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setForked": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "setForked", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "setOriginalExpiration": {
+        "inputs": [
+          "event", 
+          "date"
+        ], 
+        "method": "setOriginalExpiration", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setOutcome": {
+        "inputs": [
+          "ID", 
+          "outcome"
+        ], 
+        "method": "setOutcome", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setRejected": {
+        "inputs": [
+          "event", 
+          "period"
+        ], 
+        "method": "setRejected", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setThreshold": {
+        "inputs": [
+          "event", 
+          "threshold"
+        ], 
+        "method": "setThreshold", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setUncaughtOutcome": {
+        "inputs": [
+          "event", 
+          "outcome"
+        ], 
+        "method": "setUncaughtOutcome", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setmode": {
+        "inputs": [
+          "event", 
+          "mode"
+        ], 
+        "method": "setmode", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "ExpiringEvents": {
+      "addEvent": {
+        "inputs": [
+          "branch", 
+          "futurePeriod", 
+          "eventID", 
+          "subsidy"
+        ], 
+        "method": "addEvent", 
+        "returns": "int256", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "addRepEvent": {
+        "inputs": [
+          "branch", 
+          "votePeriod", 
+          "event", 
+          "amount"
+        ], 
+        "method": "addRepEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "addReportToEvent": {
+        "inputs": [
+          "branch", 
+          "votePeriod", 
+          "eventID", 
+          "sender"
+        ], 
+        "method": "addReportToEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "addReportersPaidSoFar": {
+        "inputs": [
+          "branch", 
+          "event"
+        ], 
+        "method": "addReportersPaidSoFar", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "addRoundTwo": {
+        "inputs": [
+          "branch", 
+          "period"
+        ], 
+        "method": "addRoundTwo", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "addToWeightOfReport": {
+        "inputs": [
+          "period", 
+          "event", 
+          "report", 
+          "amount"
+        ], 
+        "method": "addToWeightOfReport", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "adjustPeriodShareValueOutstanding": {
+        "inputs": [
+          "branch", 
+          "expIndex", 
+          "amount"
+        ], 
+        "method": "adjustPeriodShareValueOutstanding", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "deleteEvent": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "event"
+        ], 
+        "method": "deleteEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getAfterRep": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "sender"
+        ], 
+        "method": "getAfterRep", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getBeforeRep": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "sender"
+        ], 
+        "method": "getBeforeRep", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getCurrentMode": {
+        "inputs": [
+          "period", 
+          "event"
+        ], 
+        "method": "getCurrentMode", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getCurrentModeItems": {
+        "inputs": [
+          "period", 
+          "event"
+        ], 
+        "method": "getCurrentModeItems", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getEthicReport": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "event", 
+          "sender"
+        ], 
+        "method": "getEthicReport", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getEvent": {
+        "inputs": [
+          "branch", 
+          "expDateIndex", 
+          "eventIndex"
+        ], 
+        "method": "getEvent", 
+        "returns": "hash", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getEventIndex": {
+        "inputs": [
+          "period", 
+          "eventID"
+        ], 
+        "method": "getEventIndex", 
+        "returns": "number", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getEvents": {
+        "inputs": [
+          "branch", 
+          "expDateIndex"
+        ], 
+        "method": "getEvents", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getEventsRange": {
+        "inputs": [
+          "branch", 
+          "expDateIndex", 
+          "start", 
+          "end"
+        ], 
+        "method": "getEventsRange", 
+        "returns": "int256[]", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getLesserReportNum": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "event"
+        ], 
+        "method": "getLesserReportNum", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getNumEventsToReportOn": {
+        "inputs": [
+          "branch", 
+          "expDateIndex"
+        ], 
+        "method": "getNumEventsToReportOn", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getNumRemoved": {
+        "inputs": [
+          "branch", 
+          "period"
+        ], 
+        "method": "getNumRemoved", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getNumReportsActual": {
+        "inputs": [
+          "branch", 
+          "votePeriod", 
+          "sender"
+        ], 
+        "method": "getNumReportsActual", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getNumReportsEvent": {
+        "inputs": [
+          "branch", 
+          "votePeriod", 
+          "eventID"
+        ], 
+        "method": "getNumReportsEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getNumRequired": {
+        "inputs": [
+          "branch", 
+          "period"
+        ], 
+        "method": "getNumRequired", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getNumRoundTwo": {
+        "inputs": [
+          "branch", 
+          "period"
+        ], 
+        "method": "getNumRoundTwo", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getNumberEvents": {
+        "inputs": [
+          "branch", 
+          "expDateIndex"
+        ], 
+        "method": "getNumberEvents", 
+        "returns": "number", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getPeriodDormantRep": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "sender"
+        ], 
+        "method": "getPeriodDormantRep", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getPeriodRepConstant": {
+        "inputs": [
+          "branch", 
+          "votePeriod", 
+          "sender"
+        ], 
+        "method": "getPeriodRepConstant", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getRepEvent": {
+        "inputs": [
+          "branch", 
+          "votePeriod", 
+          "event"
+        ], 
+        "method": "getRepEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getReport": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "event", 
+          "sender"
+        ], 
+        "method": "getReport", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getReportHash": {
+        "inputs": [
+          "branch", 
+          "expDateIndex", 
+          "reporter", 
+          "event"
+        ], 
+        "method": "getReportHash", 
+        "returns": "hash", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getReportersPaidSoFar": {
+        "inputs": [
+          "branch", 
+          "event"
+        ], 
+        "method": "getReportersPaidSoFar", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getRequired": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "getRequired", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getSaltyHash": {
+        "inputs": [
+          "branch", 
+          "expDateIndex", 
+          "reporter", 
+          "event"
+        ], 
+        "method": "getSaltyHash", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getShareValue": {
+        "inputs": [
+          "branch", 
+          "expIndex"
+        ], 
+        "method": "getShareValue", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getSubsidy": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "event"
+        ], 
+        "method": "getSubsidy", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getWeightOfReport": {
+        "inputs": [
+          "period", 
+          "event", 
+          "report"
+        ], 
+        "method": "getWeightOfReport", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "moveEvent": {
+        "inputs": [
+          "branch", 
+          "event"
+        ], 
+        "method": "moveEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "refundCost": {
+        "inputs": [
+          "to", 
+          "value"
+        ], 
+        "method": "refundCost", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "removeEvent": {
+        "inputs": [
+          "branch", 
+          "period"
+        ], 
+        "method": "removeEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setAfterRep": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "rep", 
+          "sender"
+        ], 
+        "method": "setAfterRep", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setBeforeRep": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "rep", 
+          "sender"
+        ], 
+        "method": "setBeforeRep", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setCurrentMode": {
+        "inputs": [
+          "period", 
+          "event", 
+          "mode"
+        ], 
+        "method": "setCurrentMode", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setCurrentModeItems": {
+        "inputs": [
+          "period", 
+          "event", 
+          "modeReport"
+        ], 
+        "method": "setCurrentModeItems", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setEthicReport": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "event", 
+          "ethics", 
+          "sender"
+        ], 
+        "method": "setEthicReport", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setEventRequired": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "event"
+        ], 
+        "method": "setEventRequired", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setLesserReportNum": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "event", 
+          "num"
+        ], 
+        "method": "setLesserReportNum", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setNumEventsToReportOn": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "setNumEventsToReportOn", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "setNumReportsEvent": {
+        "inputs": [
+          "branch", 
+          "votePeriod", 
+          "eventID", 
+          "num"
+        ], 
+        "method": "setNumReportsEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setPeriodDormantRep": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "rep", 
+          "sender"
+        ], 
+        "method": "setPeriodDormantRep", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setPeriodRepConstant": {
+        "inputs": [
+          "branch", 
+          "votePeriod", 
+          "sender", 
+          "value"
+        ], 
+        "method": "setPeriodRepConstant", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setReport": {
+        "inputs": [
+          "branch", 
+          "period", 
+          "event", 
+          "report", 
+          "sender"
+        ], 
+        "method": "setReport", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setReportHash": {
+        "inputs": [
+          "branch", 
+          "expDateIndex", 
+          "reporter", 
+          "reportHash", 
+          "event"
+        ], 
+        "method": "setReportHash", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setSaltyHash": {
+        "inputs": [
+          "branch", 
+          "expDateIndex", 
+          "reporter", 
+          "saltyHash", 
+          "event"
+        ], 
+        "method": "setSaltyHash", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "Faucets": {
+      "cashFaucet": {
+        "method": "cashFaucet", 
+        "returns": "number", 
+        "send": true
+      }, 
+      "claimInitialRep": {
+        "inputs": [
+          "parent", 
+          "branch"
+        ], 
+        "method": "claimInitialRep", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "fundNewAccount": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "fundNewAccount", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "reputationFaucet": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "reputationFaucet", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256"
+        ]
+      }
+    }, 
+    "ForkPenalize": {
+      "penalizeOnForkedEvent": {
+        "inputs": [
+          "branch", 
+          "event"
+        ], 
+        "method": "penalizeOnForkedEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "proportionCorrectForkEvent": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "proportionCorrectForkEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }
+    }, 
+    "Forking": {
+      "exchangeRate": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "exchangeRate", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "fork": {
+        "inputs": [
+          "event", 
+          "branch", 
+          "forkedOverEthicality"
+        ], 
+        "method": "fork", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "move_event": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "move_event", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "resolveForkEvent": {
+        "inputs": [
+          "branch", 
+          "event"
+        ], 
+        "method": "resolveForkEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "resolveForkedEvent": {
+        "inputs": [
+          "branch", 
+          "event"
+        ], 
+        "method": "resolveForkedEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "resolve_fork": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "resolve_fork", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }
+    }, 
+    "FxpFunctions": {
+      "fx_exp": {
+        "inputs": [
+          "x"
+        ], 
+        "method": "fx_exp", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "fx_log": {
+        "inputs": [
+          "x"
+        ], 
+        "method": "fx_log", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "sqrt": {
+        "inputs": [
+          "n"
+        ], 
+        "method": "sqrt", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }
+    }, 
+    "Info": {
+      "getCreationFee": {
+        "inputs": [
+          "ID"
+        ], 
+        "method": "getCreationFee", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getCreator": {
+        "inputs": [
+          "ID"
+        ], 
+        "method": "getCreator", 
+        "returns": "address", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getDescription": {
+        "inputs": [
+          "ID"
+        ], 
+        "method": "getDescription", 
+        "returns": "string", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getDescriptionLength": {
+        "inputs": [
+          "ID"
+        ], 
+        "method": "getDescriptionLength", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "setInfo": {
+        "inputs": [
+          "ID", 
+          "description", 
+          "creator", 
+          "fee"
+        ], 
+        "method": "setInfo", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "bytes", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "MakeReports": {
+      "calculateReportTargetForEvent": {
+        "inputs": [
+          "branch", 
+          "eventID", 
+          "votePeriod", 
+          "sender"
+        ], 
+        "method": "calculateReportTargetForEvent", 
+        "returns": "unfix", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "makeHash": {
+        "inputs": [
+          "salt", 
+          "report", 
+          "eventID", 
+          "sender"
+        ], 
+        "method": "makeHash", 
+        "returns": "hash", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "submitReport": {
+        "inputs": [
+          "event", 
+          "salt", 
+          "report", 
+          "ethics"
+        ], 
+        "method": "submitReport", 
+        "mutable": true, 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "submitReportHash": {
+        "inputs": [
+          "event", 
+          "reportHash", 
+          "encryptedSaltyHash"
+        ], 
+        "method": "submitReportHash", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "validateReport": {
+        "inputs": [
+          "eventID", 
+          "branch", 
+          "votePeriod", 
+          "report", 
+          "forkedOverEthicality", 
+          "forkedOverThisEvent", 
+          "roundTwo", 
+          "balance"
+        ], 
+        "method": "validateReport", 
+        "returns": "number", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "Markets": {
+      "addFees": {
+        "inputs": [
+          "market", 
+          "amount"
+        ], 
+        "method": "addFees", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "addToMarketsHash": {
+        "inputs": [
+          "branch", 
+          "newHash"
+        ], 
+        "method": "addToMarketsHash", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "addTrade": {
+        "inputs": [
+          "market", 
+          "trade_id", 
+          "last_id"
+        ], 
+        "method": "addTrade", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getBondsMan": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getBondsMan", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getBranchID": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getBranchID", 
+        "returns": "hash", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getCreationTime": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getCreationTime", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getCumScale": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getCumScale", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getExtraInfo": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getExtraInfo", 
+        "returns": "string", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getFees": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getFees", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getLastExpDate": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getLastExpDate", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getLastOutcomePrice": {
+        "inputs": [
+          "market", 
+          "outcome"
+        ], 
+        "method": "getLastOutcomePrice", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getLastTrade": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getLastTrade", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getMakerFees": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getMakerFees", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getMarketEvent": {
+        "inputs": [
+          "market", 
+          "index"
+        ], 
+        "method": "getMarketEvent", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getMarketEvents": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getMarketEvents", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getMarketNumOutcomes": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getMarketNumOutcomes", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getMarketsHash": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getMarketsHash", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getNumEvents": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getNumEvents", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getOneWinningOutcome": {
+        "inputs": [
+          "market", 
+          "num"
+        ], 
+        "method": "getOneWinningOutcome", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getOriginalTradingPeriod": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getOriginalTradingPeriod", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getParticipantSharesPurchased": {
+        "inputs": [
+          "market", 
+          "trader", 
+          "outcome"
+        ], 
+        "method": "getParticipantSharesPurchased", 
+        "returns": "unfix", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getPushedForward": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getPushedForward", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getSender": {
+        "method": "getSender", 
+        "returns": "int256"
+      }, 
+      "getSharesPurchased": {
+        "inputs": [
+          "market", 
+          "outcome"
+        ], 
+        "method": "getSharesPurchased", 
+        "returns": "unfix", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getSharesValue": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getSharesValue", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getTotalSharesPurchased": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getTotalSharesPurchased", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getTradingFee": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getTradingFee", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getTradingPeriod": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getTradingPeriod", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getVolume": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getVolume", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getWinningOutcomes": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getWinningOutcomes", 
+        "returns": "number[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "get_total_trades": {
+        "inputs": [
+          "market_id"
+        ], 
+        "method": "get_total_trades", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "get_trade_ids": {
+        "inputs": [
+          "market_id"
+        ], 
+        "method": "get_trade_ids", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getgasSubsidy": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "getgasSubsidy", 
+        "returns": "int", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "initializeMarket": {
+        "inputs": [
+          "marketID", 
+          "events", 
+          "tradingPeriod", 
+          "tradingFee", 
+          "branch", 
+          "tag1", 
+          "tag2", 
+          "tag3", 
+          "makerFees", 
+          "cumScale", 
+          "numOutcomes", 
+          "extraInfo", 
+          "gasSubsidy", 
+          "creationFee", 
+          "lastExpDate"
+        ], 
+        "method": "initializeMarket", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256[]", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "bytes", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "modifyParticipantShares": {
+        "inputs": [
+          "marketID", 
+          "trader", 
+          "outcome", 
+          "amount", 
+          "cancel"
+        ], 
+        "method": "modifyParticipantShares", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "modifyShares": {
+        "inputs": [
+          "marketID", 
+          "outcome", 
+          "amount"
+        ], 
+        "method": "modifyShares", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "modifySharesValue": {
+        "inputs": [
+          "marketID", 
+          "amount"
+        ], 
+        "method": "modifySharesValue", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "refundClosing": {
+        "inputs": [
+          "market", 
+          "to"
+        ], 
+        "method": "refundClosing", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "remove_trade_from_market": {
+        "inputs": [
+          "market_id", 
+          "trade_id"
+        ], 
+        "method": "remove_trade_from_market", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "returnTags": {
+        "inputs": [
+          "market"
+        ], 
+        "method": "returnTags", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "setPrice": {
+        "inputs": [
+          "market", 
+          "outcome", 
+          "price"
+        ], 
+        "method": "setPrice", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setPushedForward": {
+        "inputs": [
+          "market", 
+          "bool", 
+          "sender"
+        ], 
+        "method": "setPushedForward", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setTradingFee": {
+        "inputs": [
+          "market", 
+          "fee"
+        ], 
+        "method": "setTradingFee", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setTradingPeriod": {
+        "inputs": [
+          "market", 
+          "period"
+        ], 
+        "method": "setTradingPeriod", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setWinningOutcomes": {
+        "inputs": [
+          "market", 
+          "outcomes"
+        ], 
+        "method": "setWinningOutcomes", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256[]"
+        ]
+      }
+    }, 
+    "PenalizationCatchup": {
+      "penalizationCatchup": {
+        "inputs": [
+          "branch", 
+          "sender"
+        ], 
+        "method": "penalizationCatchup", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "PenalizeNotEnoughReports": {
+      "proveReporterDidntReportEnough": {
+        "inputs": [
+          "branch", 
+          "reporter", 
+          "eventExample"
+        ], 
+        "method": "proveReporterDidntReportEnough", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "ProportionCorrect": {
+      "proportionCorrect": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "proportionCorrect", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }
+    }, 
+    "Reporting": {
+      "addDormantRep": {
+        "inputs": [
+          "branch", 
+          "index", 
+          "value"
+        ], 
+        "method": "addDormantRep", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "addRep": {
+        "inputs": [
+          "branch", 
+          "index", 
+          "value"
+        ], 
+        "method": "addRep", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "addReporter": {
+        "inputs": [
+          "branch", 
+          "sender", 
+          "amount", 
+          "dormant", 
+          "repToBonderOrBranch"
+        ], 
+        "method": "addReporter", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "adjustActiveRep": {
+        "inputs": [
+          "branch", 
+          "amount"
+        ], 
+        "method": "adjustActiveRep", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "balanceOf": {
+        "inputs": [
+          "branch", 
+          "address"
+        ], 
+        "method": "balanceOf", 
+        "returns": "unfix", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "checkContractWhitelist": {
+        "inputs": [
+          "contract", 
+          "address"
+        ], 
+        "method": "checkContractWhitelist", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "checkWhitelist": {
+        "inputs": [
+          "address"
+        ], 
+        "method": "checkWhitelist", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getActiveRep": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getActiveRep", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getDormantRepByIndex": {
+        "inputs": [
+          "branch", 
+          "repIndex"
+        ], 
+        "method": "getDormantRepByIndex", 
+        "returns": "unfix", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getFork": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getFork", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getNumberReporters": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getNumberReporters", 
+        "returns": "number", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getRepBalance": {
+        "inputs": [
+          "branch", 
+          "address"
+        ], 
+        "method": "getRepBalance", 
+        "returns": "unfix", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getRepByIndex": {
+        "inputs": [
+          "branch", 
+          "repIndex"
+        ], 
+        "method": "getRepByIndex", 
+        "returns": "unfix", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getReporterID": {
+        "inputs": [
+          "branch", 
+          "index"
+        ], 
+        "method": "getReporterID", 
+        "returns": "hash", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getReputation": {
+        "inputs": [
+          "address"
+        ], 
+        "method": "getReputation", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getTotalRep": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "getTotalRep", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "repIDToIndex": {
+        "inputs": [
+          "branch", 
+          "repID"
+        ], 
+        "method": "repIDToIndex", 
+        "returns": "number", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setFork": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "setFork", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "setInitialReporters": {
+        "inputs": [
+          "parent", 
+          "branchID"
+        ], 
+        "method": "setInitialReporters", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setRep": {
+        "inputs": [
+          "branch", 
+          "index", 
+          "newRep"
+        ], 
+        "method": "setRep", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setSaleDistribution": {
+        "inputs": [
+          "addresses", 
+          "balances", 
+          "branchID"
+        ], 
+        "method": "setSaleDistribution", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256[]", 
+          "int256[]", 
+          "int256"
+        ]
+      }, 
+      "setWhitelist": {
+        "inputs": [
+          "contract", 
+          "addresses"
+        ], 
+        "method": "setWhitelist", 
+        "returns": "string", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256[]"
+        ]
+      }, 
+      "subtractDormantRep": {
+        "inputs": [
+          "branch", 
+          "index", 
+          "value"
+        ], 
+        "method": "subtractDormantRep", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "subtractRep": {
+        "inputs": [
+          "branch", 
+          "index", 
+          "value"
+        ], 
+        "method": "subtractRep", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "totalSupply": {
+        "inputs": [
+          "branch"
+        ], 
+        "method": "totalSupply", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }
+    }, 
+    "ReportingThreshold": {
+      "calculateReportingThreshold": {
+        "inputs": [
+          "branch", 
+          "eventID", 
+          "votePeriod", 
+          "sender"
+        ], 
+        "method": "calculateReportingThreshold", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getEventCanReportOn": {
+        "inputs": [
+          "branch", 
+          "expDateIndex", 
+          "reporter", 
+          "event"
+        ], 
+        "method": "getEventCanReportOn", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getEventsToReportOn": {
+        "inputs": [
+          "branch", 
+          "expDateIndex", 
+          "sender"
+        ], 
+        "method": "getEventsToReportOn", 
+        "returns": "int256[]", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "setReportingThreshold": {
+        "inputs": [
+          "event"
+        ], 
+        "method": "setReportingThreshold", 
+        "returns": "int256", 
+        "signature": [
+          "int256"
+        ]
+      }
+    }, 
+    "RoundTwo": {
+      "resolve": {
+        "inputs": [
+          "branch", 
+          "event"
+        ], 
+        "method": "resolve", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "roundTwoPostBond": {
+        "inputs": [
+          "branch", 
+          "event", 
+          "eventIndex", 
+          "votePeriod"
+        ], 
+        "method": "roundTwoPostBond", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "roundTwoResolve": {
+        "inputs": [
+          "branch", 
+          "event", 
+          "eventIndex", 
+          "sender"
+        ], 
+        "method": "roundTwoResolve", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "RoundTwoPenalize": {
+      "penalizeRoundTwoWrong": {
+        "inputs": [
+          "branch", 
+          "event"
+        ], 
+        "method": "penalizeRoundTwoWrong", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "SendReputation": {
+      "allowance": {
+        "inputs": [
+          "owner", 
+          "spender"
+        ], 
+        "method": "allowance", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "approve": {
+        "inputs": [
+          "branch", 
+          "spender", 
+          "value"
+        ], 
+        "method": "approve", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "convertToActiveRep": {
+        "inputs": [
+          "branch", 
+          "value"
+        ], 
+        "method": "convertToActiveRep", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "convertToDormantRep": {
+        "inputs": [
+          "branch", 
+          "value"
+        ], 
+        "method": "convertToDormantRep", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "sendReputation": {
+        "inputs": [
+          "branch", 
+          "recver", 
+          "value"
+        ], 
+        "method": "sendReputation", 
+        "returns": "unfix", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "transfer": {
+        "inputs": [
+          "branch", 
+          "recver", 
+          "value"
+        ], 
+        "method": "transfer", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "transferFrom": {
+        "inputs": [
+          "branch", 
+          "from", 
+          "recver", 
+          "value"
+        ], 
+        "method": "transferFrom", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "SlashRep": {
+      "slashRep": {
+        "inputs": [
+          "branch", 
+          "salt", 
+          "report", 
+          "reporter", 
+          "eventID"
+        ], 
+        "method": "slashRep", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }
+    }, 
+    "Trade": {
+      "short_sell": {
+        "inputs": [
+          "buyer_trade_id", 
+          "max_amount"
+        ], 
+        "method": "short_sell", 
+        "returns": "hash[]", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "trade": {
+        "inputs": [
+          "max_value", 
+          "max_amount", 
+          "trade_ids"
+        ], 
+        "method": "trade", 
+        "returns": "hash[]", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256[]"
+        ]
+      }
+    }, 
+    "Trades": {
+      "checkHash": {
+        "inputs": [
+          "tradeHash", 
+          "sender"
+        ], 
+        "method": "checkHash", 
+        "returns": "number", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "commitTrade": {
+        "inputs": [
+          "hash"
+        ], 
+        "method": "commitTrade", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "fill_trade": {
+        "inputs": [
+          "id", 
+          "fill"
+        ], 
+        "method": "fill_trade", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "getID": {
+        "inputs": [
+          "tradeID"
+        ], 
+        "method": "getID", 
+        "returns": "hash", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "get_amount": {
+        "inputs": [
+          "id"
+        ], 
+        "method": "get_amount", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "get_price": {
+        "inputs": [
+          "id"
+        ], 
+        "method": "get_price", 
+        "returns": "unfix", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "get_trade": {
+        "inputs": [
+          "id"
+        ], 
+        "method": "get_trade", 
+        "returns": "hash[]", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "makeTradeHash": {
+        "inputs": [
+          "max_value", 
+          "max_amount", 
+          "trade_ids"
+        ], 
+        "method": "makeTradeHash", 
+        "returns": "hash", 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256[]"
+        ]
+      }, 
+      "remove_trade": {
+        "inputs": [
+          "id"
+        ], 
+        "method": "remove_trade", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "saveTrade": {
+        "inputs": [
+          "trade_id", 
+          "type", 
+          "market", 
+          "amount", 
+          "price", 
+          "sender", 
+          "outcome"
+        ], 
+        "method": "saveTrade", 
+        "returns": "number", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "update_trade": {
+        "inputs": [
+          "id", 
+          "price"
+        ], 
+        "method": "update_trade", 
+        "send": true, 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
+      "zeroHash": {
+        "method": "zeroHash", 
+        "returns": "number", 
+        "send": true
+      }
     }
   }
 }
@@ -20784,11 +21303,18 @@ module.exports = function (network, contracts) {
     contracts = contracts || require("./contracts")[network || "2"];
     var api = clone(require("./api"));
 
-    for (var contract in api) {
-        if (!api.hasOwnProperty(contract)) continue;
-        for (var method in api[contract]) {
-            if (!api[contract].hasOwnProperty(method)) continue;
-            api[contract][method].to = contracts[contract];
+    for (var contract in api.functions) {
+        if (!api.functions.hasOwnProperty(contract)) continue;
+        for (var method in api.functions[contract]) {
+            if (!api.functions[contract].hasOwnProperty(method)) continue;
+            api.functions[contract][method].to = contracts[contract];
+        }
+    }
+    for (var contract in api.events) {
+        if (!api.events.hasOwnProperty(contract)) continue;
+        for (var method in api.events[contract]) {
+            if (!api.events[contract].hasOwnProperty(method)) continue;
+            api.events[contract][method].address = contracts[contract];
         }
     }
 
@@ -20951,9 +21477,7 @@ module.exports = {
             res = clone(result);
             if (returns && returns.slice(-2) === "[]") {
                 res = this.unmarshal(res, returns);
-                if (returns === "hash[]" || returns === "hash") {
-                    res = abi.hex(res);
-                }
+                if (returns === "hash[]") res = abi.hex(res);
             } else if (returns === "string") {
                 res = abi.raw_decode_hex(res);
             } else if (returns === "number") {
@@ -21824,13 +22348,13 @@ module.exports = {
      *    send: <true to sendTransaction, false to call (default)>
      * }
      */
-    invoke: function (itx, f) {
+    invoke: function (payload, f) {
         var tx, dataAbi, packaged, invocation, invoked, err;
-        if (itx) {
-            if (itx.send && itx.invocation && isFunction(itx.invocation.invoke)) {
-                return itx.invocation.invoke.call(itx.invocation.context, itx, f);
+        if (payload) {
+            if (payload.send && payload.invocation && isFunction(payload.invocation.invoke)) {
+                return payload.invocation.invoke.call(payload.invocation.context, payload, f);
             } else {
-                tx = clone(itx);
+                tx = clone(payload);
                 if (tx.params === undefined || tx.params === null) {
                     tx.params = [];
                 } else if (tx.params.constructor !== Array) {
@@ -21869,7 +22393,7 @@ module.exports = {
         if (!invoked) {
             err = clone(errors.TRANSACTION_FAILED);
             err.bubble = "!invoked";
-            err.tx = itx;
+            err.payload = payload;
             if (isFunction(f)) return f(err);
             return err;
         }
@@ -21988,7 +22512,7 @@ module.exports = {
             } else if (response.name && response.message && response.stack) {
                 response.error = response.name;
             } else if (!response.error) {
-                if (returns.indexOf("[]") > -1) {
+                if (returns && returns.indexOf("[]") > -1) {
                     if (response.length >= 194) {
                         response = "0x" + response.slice(130, 194);
                     }
@@ -22031,6 +22555,7 @@ module.exports = {
             return this.applyReturns(tx.returns, res);
         }
         this.invoke(tx, function (res) {
+            if (self.debug.tx) console.debug("invoked (fire):", res);
             if (res === undefined || res === null) {
                 return callback(errors.NO_RESPONSE);
             }
@@ -22148,9 +22673,17 @@ module.exports = {
         }
         onFailed = (isFunction(onFailed)) ? onFailed : noop;
         onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
+        if (self.debug.tx) console.debug("payload transact:", payload);
         this.fire(payload, function (callReturn) {
-            if (returns === "null") callReturn = null;
-            if (callReturn && callReturn.error) return onFailed(callReturn);
+            if (self.debug.tx) console.debug("callReturn:", callReturn);
+            if (callReturn === undefined || callReturn === null) {
+                return onFailed(errors.NULL_CALL_RETURN);
+            }
+            if (returns === "null" && callReturn.error === "0x") {
+                callReturn = null;
+            } else if (callReturn.error) {
+                return onFailed(callReturn);
+            }
             payload.send = true;
             delete payload.returns;
             self.invoke(payload, function (txHash) {
@@ -22158,7 +22691,7 @@ module.exports = {
                 if (!txHash) return onFailed(errors.NULL_RESPONSE);
                 if (txHash.error) return onFailed(txHash);
                 payload.returns = returns;
-                txHash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txHash)));
+                txHash = abi.format_int256(txHash);
 
                 // send the transaction hash and return value back
                 // to the client, using the onSent callback

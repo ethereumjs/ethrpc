@@ -146,9 +146,7 @@ module.exports = {
             res = clone(result);
             if (returns && returns.slice(-2) === "[]") {
                 res = this.unmarshal(res, returns);
-                if (returns === "hash[]" || returns === "hash") {
-                    res = abi.hex(res);
-                }
+                if (returns === "hash[]") res = abi.hex(res);
             } else if (returns === "string") {
                 res = abi.raw_decode_hex(res);
             } else if (returns === "number") {
@@ -1019,13 +1017,13 @@ module.exports = {
      *    send: <true to sendTransaction, false to call (default)>
      * }
      */
-    invoke: function (itx, f) {
+    invoke: function (payload, f) {
         var tx, dataAbi, packaged, invocation, invoked, err;
-        if (itx) {
-            if (itx.send && itx.invocation && isFunction(itx.invocation.invoke)) {
-                return itx.invocation.invoke.call(itx.invocation.context, itx, f);
+        if (payload) {
+            if (payload.send && payload.invocation && isFunction(payload.invocation.invoke)) {
+                return payload.invocation.invoke.call(payload.invocation.context, payload, f);
             } else {
-                tx = clone(itx);
+                tx = clone(payload);
                 if (tx.params === undefined || tx.params === null) {
                     tx.params = [];
                 } else if (tx.params.constructor !== Array) {
@@ -1064,7 +1062,7 @@ module.exports = {
         if (!invoked) {
             err = clone(errors.TRANSACTION_FAILED);
             err.bubble = "!invoked";
-            err.tx = itx;
+            err.payload = payload;
             if (isFunction(f)) return f(err);
             return err;
         }
@@ -1183,7 +1181,7 @@ module.exports = {
             } else if (response.name && response.message && response.stack) {
                 response.error = response.name;
             } else if (!response.error) {
-                if (returns.indexOf("[]") > -1) {
+                if (returns && returns.indexOf("[]") > -1) {
                     if (response.length >= 194) {
                         response = "0x" + response.slice(130, 194);
                     }
@@ -1226,6 +1224,7 @@ module.exports = {
             return this.applyReturns(tx.returns, res);
         }
         this.invoke(tx, function (res) {
+            if (self.debug.tx) console.debug("invoked (fire):", res);
             if (res === undefined || res === null) {
                 return callback(errors.NO_RESPONSE);
             }
@@ -1343,9 +1342,17 @@ module.exports = {
         }
         onFailed = (isFunction(onFailed)) ? onFailed : noop;
         onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
+        if (self.debug.tx) console.debug("payload transact:", payload);
         this.fire(payload, function (callReturn) {
-            if (returns === "null") callReturn = null;
-            if (callReturn && callReturn.error) return onFailed(callReturn);
+            if (self.debug.tx) console.debug("callReturn:", callReturn);
+            if (callReturn === undefined || callReturn === null) {
+                return onFailed(errors.NULL_CALL_RETURN);
+            }
+            if (returns === "null" && callReturn.error === "0x") {
+                callReturn = null;
+            } else if (callReturn.error) {
+                return onFailed(callReturn);
+            }
             payload.send = true;
             delete payload.returns;
             self.invoke(payload, function (txHash) {
@@ -1353,7 +1360,7 @@ module.exports = {
                 if (!txHash) return onFailed(errors.NULL_RESPONSE);
                 if (txHash.error) return onFailed(txHash);
                 payload.returns = returns;
-                txHash = abi.prefix_hex(abi.pad_left(abi.strip_0x(txHash)));
+                txHash = abi.format_int256(txHash);
 
                 // send the transaction hash and return value back
                 // to the client, using the onSent callback
