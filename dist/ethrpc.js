@@ -22074,7 +22074,7 @@ module.exports = {
         return this.transact({
             from: from,
             to: to,
-            value: abi.bignum(value).mul(this.ETHER).toFixed(),
+            value: abi.fix(value, "string"),
             returns: "null"
         }, onSent, onSuccess, onFailed);
     },
