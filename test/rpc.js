@@ -839,7 +839,7 @@ describe("RPC", function () {
                         rpc.fastforward(blocks, function (endBlock) {
                             assert.notProperty(endBlock, "error");
                             endBlock = parseInt(endBlock);
-                            assert.strictEqual(endBlock - startBlock, blocks);
+                            assert.isAtLeast(endBlock - startBlock, blocks);
                             done();
                         });
                     });
@@ -1296,6 +1296,36 @@ describe("RPC", function () {
                         done();
                     });
                 });
+                it("[sync] " + JSON.stringify(t), function () {
+                    this.timeout(TIMEOUT);
+                    rpc.txs[t.tx.hash] = {
+                        hash: t.tx.hash,
+                        payload: t.payload,
+                        count: t.count,
+                        status: "pending"
+                    };
+                    if (t.expected === "unconfirmed") {
+                        assert.throws(function () { rpc.checkBlockHash(t.tx); }, rpc.Error);
+                    } else {
+                        var res = rpc.checkBlockHash(t.tx);
+                        assert.strictEqual(rpc.txs[t.tx.hash].count, t.count + 1);
+                        assert.strictEqual(rpc.txs[t.tx.hash].status, t.expected);
+                        switch (t.expected) {
+                        case "confirmed":
+                            assert.isAbove(parseInt(res.blockHash, 16), 0);
+                            assert.isAbove(parseInt(res.blockNumber, 16), 0);
+                            assert.strictEqual(abi.encode(t.payload), res.input);
+                            assert.isAtMost(rpc.txs[t.tx.hash].count, rpc.TX_POLL_MAX);
+                            break;
+                        case "pending":
+                            assert.isNull(res);
+                            assert.isBelow(rpc.txs[t.tx.hash].count, rpc.TX_POLL_MAX);
+                            break;
+                        default:
+                            throw new Error("unexpected status");
+                        }
+                    }
+                });
             };
             test({
                 tx: {
@@ -1453,6 +1483,17 @@ describe("RPC", function () {
                         done();
                     });
                 });
+                it("[sync] " + JSON.stringify(t), function () {
+                    rpc.getTransactionReceipt = function (txHash, callback) {
+                        return t.receipt;
+                    };
+                    if (!t.receipt.logs.length) {
+                        assert.throws(function () { rpc.getLoggedReturnValue(t.txHash); }, rpc.Error);
+                    } else {
+                        var loggedReturnValue = rpc.getLoggedReturnValue(t.txHash);
+                        assert.strictEqual(loggedReturnValue, t.receipt.logs[0].data);
+                    }
+                });
             };
             test({
                 txHash: "0x5026ed5250f2362af5a8d87c9cb0cf2aec3133451fbcb381b8215d338b2c8bd6",
@@ -1538,6 +1579,29 @@ describe("RPC", function () {
                         }
                         done();
                     });
+                });
+                it("[sync] " + JSON.stringify(t), function () {
+                    rpc.getTransaction = function (txHash, callback) {
+                        return t.tx;
+                    };
+                    rpc.txs[t.txHash] = {status: "pending"};
+                    rpc.rawTxs = clone(t.rawTxs);
+                    if (t.expected === "failed") {
+                        assert.throws(function () { rpc.txNotify(t.txHash); }, rpc.Error);
+                    } else {
+                        var tx = rpc.txNotify(t.txHash);
+                        assert.strictEqual(rpc.txs[t.txHash].status, t.expected);
+                        switch (t.expected) {
+                        case "pending":
+                            assert.deepEqual(tx, t.tx);
+                            break;
+                        case "resubmitted":
+                            assert.isNull(tx);
+                            break;
+                        default:
+                            throw new Error("unexpected status");
+                        }
+                    }
                 });
             };
             test({
@@ -1699,6 +1763,24 @@ describe("RPC", function () {
                         done();
                     });
                 });
+                it("[sync] " + JSON.stringify(t), function () {
+                    rpc.getTransaction = function (txHash, callback) {
+                        return t.tx;
+                    };
+                    if (t.expected.storedTx) {
+                        t.expected.storedTx.count = 0;
+                        t.expected.storedTx.status = "pending";
+                    }
+                    rpc.txs[t.txHash] = clone(t.storedTx);
+                    if (t.expected.err) {
+                        assert.throws(function () {
+                            rpc.verifyTxSubmitted(t.payload, t.txHash);
+                        }, rpc.Error);
+                    } else {
+                        rpc.verifyTxSubmitted(t.payload, t.txHash);
+                        assert.deepEqual(rpc.txs[t.txHash], t.expected.storedTx);
+                    }
+                });
             };
             test({
                 payload: null,
@@ -1780,6 +1862,30 @@ describe("RPC", function () {
                         assert.deepEqual(minedTx, t.expected.minedTx);
                         done();
                     });
+                });
+                it("[sync] " + JSON.stringify(t), function () {
+                    rpc.txNotify = function (txHash, callback) {
+                        if (t.err.txNotify) throw new rpc.Error(t.err.txNotify);
+                        return t.tx;
+                    };
+                    rpc.checkBlockHash = function (tx, callback) {
+                        if (t.err.checkBlockHash) throw new rpc.Error(t.err.checkBlockHash);
+                        var minedTx = (t.err.checkBlockHash) ? undefined : tx;
+                        return minedTx;
+                    };
+                    if (t.err.txNotify || (t.tx && t.err.checkBlockHash)) {
+                        assert.throws(function () {
+                            rpc.pollForTxConfirmation(t.txHash);
+                        }, rpc.Error);
+                    } else {
+                        var minedTx = rpc.pollForTxConfirmation(t.txHash);
+                        if (t.tx === null) {
+                            assert.isNull(minedTx);
+                        } else {
+                            assert.deepEqual(minedTx, t.tx);
+                        }
+                        assert.deepEqual(minedTx, t.expected.minedTx);
+                    }
                 });
             };
             var exampleTx = {

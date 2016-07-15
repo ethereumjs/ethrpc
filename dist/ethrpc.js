@@ -16108,307 +16108,305 @@ module.exports={
 },{}],56:[function(require,module,exports){
 module.exports={
   "events": {
-    "BuyAndSellShares": {
-      "log_add_tx": {
-        "inputs": [
-          {
-            "indexed": true, 
-            "name": "market", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": true, 
-            "name": "sender", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "type", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "price", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "amount", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "outcome", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "tradeid", 
-            "type": "int256"
-          }
-        ], 
-        "name": "log_add_tx(int256,int256,int256,int256,int256,int256,int256)", 
-        "signature": "0x8dbed7bffe37a9907a92186110f23d8104f5967a71fb059f3b907ca9001fd160"
-      }, 
-      "log_cancel": {
-        "inputs": [
-          {
-            "indexed": true, 
-            "name": "market", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": true, 
-            "name": "sender", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "price", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "amount", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "tradeid", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "outcome", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "type", 
-            "type": "int256"
-          }
-        ], 
-        "name": "log_cancel(int256,int256,int256,int256,int256,int256,int256)", 
-        "signature": "0x9ecf4903f3efaf1549dc51545bd945f94d51923f37ce198a3b838125a2f397d5"
-      }
+    "Approval": {
+      "contract": "SendReputation", 
+      "inputs": [
+        {
+          "indexed": true, 
+          "name": "_owner", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "_spender", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "value", 
+          "type": "int256"
+        }
+      ], 
+      "name": "Approval(int256,int256,int256)", 
+      "signature": "0xe64e66bf3e94c88742c041103133494023640d143db88ec4aec44744744d85f1"
     }, 
-    "Consensus": {
-      "penalize": {
-        "inputs": [
-          {
-            "indexed": true, 
-            "name": "user", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "outcome", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "oldrep", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "repchange", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "newafterrep", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "p", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "reportValue", 
-            "type": "int256"
-          }
-        ], 
-        "name": "penalize(int256,int256,int256,int256,int256,int256,int256)", 
-        "signature": "0x3253564cd022a8ec496277f26ccdaddf64e75973423eda45df329f60b2a0c6a7"
-      }
+    "Transfer": {
+      "contract": "SendReputation", 
+      "inputs": [
+        {
+          "indexed": true, 
+          "name": "_from", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "_to", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "_value", 
+          "type": "int256"
+        }
+      ], 
+      "name": "Transfer(int256,int256,int256)", 
+      "signature": "0x66e05b8a99642b6a77335be485dc593f0217aee37e6180f32909449b16ed7eca"
     }, 
-    "CreateMarket": {
-      "marketCreated": {
-        "inputs": [
-          {
-            "indexed": false, 
-            "name": "marketID", 
-            "type": "int256"
-          }
-        ], 
-        "name": "marketCreated(int256)", 
-        "signature": "0x63f140d7adcc464732c9379020aa9e5ce1b1e350796814d780ea3ca41d62a36b"
-      }, 
-      "tradingFeeUpdated": {
-        "inputs": [
-          {
-            "indexed": false, 
-            "name": "marketID", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "tradingFee", 
-            "type": "int256"
-          }
-        ], 
-        "name": "tradingFeeUpdated(int256,int256)", 
-        "signature": "0xb8c735cc6495f8dac2581d532413dea78d7e03e0ff0880c32b4648c2145fba41"
-      }
+    "log_add_tx": {
+      "contract": "BuyAndSellShares", 
+      "inputs": [
+        {
+          "indexed": true, 
+          "name": "market", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "sender", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "type", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "price", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "amount", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "outcome", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "tradeid", 
+          "type": "int256"
+        }
+      ], 
+      "name": "log_add_tx(int256,int256,int256,int256,int256,int256,int256)", 
+      "signature": "0x8dbed7bffe37a9907a92186110f23d8104f5967a71fb059f3b907ca9001fd160"
     }, 
-    "MakeReports": {
-      "returnValue": {
-        "inputs": [
-          {
-            "indexed": false, 
-            "name": "x", 
-            "type": "int256"
-          }
-        ], 
-        "name": "returnValue(int256)", 
-        "signature": "0x8bc92e9868f513a8fbcf983ca23f542d05ea98a0e6e3c107c013a07651f59383"
-      }
+    "log_cancel": {
+      "contract": "BuyAndSellShares", 
+      "inputs": [
+        {
+          "indexed": true, 
+          "name": "market", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "sender", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "price", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "amount", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "tradeid", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "outcome", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "type", 
+          "type": "int256"
+        }
+      ], 
+      "name": "log_cancel(int256,int256,int256,int256,int256,int256,int256)", 
+      "signature": "0x9ecf4903f3efaf1549dc51545bd945f94d51923f37ce198a3b838125a2f397d5"
     }, 
-    "SendReputation": {
-      "Approval": {
-        "inputs": [
-          {
-            "indexed": true, 
-            "name": "_owner", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": true, 
-            "name": "_spender", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "value", 
-            "type": "int256"
-          }
-        ], 
-        "name": "Approval(int256,int256,int256)", 
-        "signature": "0xe64e66bf3e94c88742c041103133494023640d143db88ec4aec44744744d85f1"
-      }, 
-      "Transfer": {
-        "inputs": [
-          {
-            "indexed": true, 
-            "name": "_from", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": true, 
-            "name": "_to", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "_value", 
-            "type": "int256"
-          }
-        ], 
-        "name": "Transfer(int256,int256,int256)", 
-        "signature": "0x66e05b8a99642b6a77335be485dc593f0217aee37e6180f32909449b16ed7eca"
-      }
+    "log_fill_tx": {
+      "contract": "Trade", 
+      "inputs": [
+        {
+          "indexed": true, 
+          "name": "market", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "sender", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "owner", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "type", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "price", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "amount", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "tradeid", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "outcome", 
+          "type": "int256"
+        }
+      ], 
+      "name": "log_fill_tx(int256,int256,int256,int256,int256,int256,int256,int256)", 
+      "signature": "0x715b9a9cb6dfb4fa9cb1ebc2eba40d2a7bd66aa8cef75f87a77d1ff05d29a3b6"
     }, 
-    "Trade": {
-      "log_fill_tx": {
-        "inputs": [
-          {
-            "indexed": true, 
-            "name": "market", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": true, 
-            "name": "sender", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": true, 
-            "name": "owner", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "type", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "price", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "amount", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "tradeid", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "outcome", 
-            "type": "int256"
-          }
-        ], 
-        "name": "log_fill_tx(int256,int256,int256,int256,int256,int256,int256,int256)", 
-        "signature": "0x715b9a9cb6dfb4fa9cb1ebc2eba40d2a7bd66aa8cef75f87a77d1ff05d29a3b6"
-      }, 
-      "log_price": {
-        "inputs": [
-          {
-            "indexed": true, 
-            "name": "market", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "type", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "price", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "amount", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "timestamp", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": false, 
-            "name": "outcome", 
-            "type": "int256"
-          }, 
-          {
-            "indexed": true, 
-            "name": "trader", 
-            "type": "int256"
-          }
-        ], 
-        "name": "log_price(int256,int256,int256,int256,int256,int256,int256)", 
-        "signature": "0xf448ecd2d0b1133184bb354020b9e90e2810dbc78102637d9a054ed06e8506d3"
-      }
+    "log_price": {
+      "contract": "Trade", 
+      "inputs": [
+        {
+          "indexed": true, 
+          "name": "market", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "type", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "price", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "amount", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "timestamp", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "outcome", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "trader", 
+          "type": "int256"
+        }
+      ], 
+      "name": "log_price(int256,int256,int256,int256,int256,int256,int256)", 
+      "signature": "0xf448ecd2d0b1133184bb354020b9e90e2810dbc78102637d9a054ed06e8506d3"
+    }, 
+    "marketCreated": {
+      "contract": "CreateMarket", 
+      "inputs": [
+        {
+          "indexed": false, 
+          "name": "marketID", 
+          "type": "int256"
+        }
+      ], 
+      "name": "marketCreated(int256)", 
+      "signature": "0x63f140d7adcc464732c9379020aa9e5ce1b1e350796814d780ea3ca41d62a36b"
+    }, 
+    "penalize": {
+      "contract": "Consensus", 
+      "inputs": [
+        {
+          "indexed": true, 
+          "name": "user", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "outcome", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "oldrep", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "repchange", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "newafterrep", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "p", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "reportValue", 
+          "type": "int256"
+        }
+      ], 
+      "name": "penalize(int256,int256,int256,int256,int256,int256,int256)", 
+      "signature": "0x3253564cd022a8ec496277f26ccdaddf64e75973423eda45df329f60b2a0c6a7"
+    }, 
+    "returnValue": {
+      "contract": "MakeReports", 
+      "inputs": [
+        {
+          "indexed": false, 
+          "name": "x", 
+          "type": "int256"
+        }
+      ], 
+      "name": "returnValue(int256)", 
+      "signature": "0x8bc92e9868f513a8fbcf983ca23f542d05ea98a0e6e3c107c013a07651f59383"
+    }, 
+    "tradingFeeUpdated": {
+      "contract": "CreateMarket", 
+      "inputs": [
+        {
+          "indexed": false, 
+          "name": "marketID", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "tradingFee", 
+          "type": "int256"
+        }
+      ], 
+      "name": "tradingFeeUpdated(int256,int256)", 
+      "signature": "0xb8c735cc6495f8dac2581d532413dea78d7e03e0ff0880c32b4648c2145fba41"
     }
   }, 
   "functions": {
@@ -21310,12 +21308,9 @@ module.exports = function (network, contracts) {
             api.functions[contract][method].to = contracts[contract];
         }
     }
-    for (var contract in api.events) {
-        if (!api.events.hasOwnProperty(contract)) continue;
-        for (var method in api.events[contract]) {
-            if (!api.events[contract].hasOwnProperty(method)) continue;
-            api.events[contract][method].address = contracts[contract];
-        }
+    for (var event in api.events) {
+        if (!api.events.hasOwnProperty(event)) continue;
+        api.events[event].address = contracts[api.events[event].contract];
     }
 
     return api;
@@ -21365,6 +21360,12 @@ RPCError.prototype = Error.prototype;
 
 function isFunction(f) {
     return Object.prototype.toString.call(f) === "[object Function]";
+}
+
+function wait(delay) {
+    var until = new Date().getTime() + delay;
+    while (new Date().getTime() < until) {}
+    return;
 }
 
 var HOSTED_NODES = [
@@ -22579,19 +22580,37 @@ module.exports = {
             this.txs[tx.hash].status = "confirmed";
             clearTimeout(this.notifications[tx.hash]);
             delete this.notifications[tx.hash];
+            if (!isFunction(callback)) return tx;
             return callback(null, tx);
         }
         if (this.txs[tx.hash].count >= this.TX_POLL_MAX) {
             this.txs[tx.hash].status = "unconfirmed";
+            if (!isFunction(callback)) {
+                throw new Error(errors.TRANSACTION_NOT_CONFIRMED);
+            }
             return callback(errors.TRANSACTION_NOT_CONFIRMED);
         }
-        var self = this;
-        this.notifications[tx.hash] = setTimeout(function () {
-            if (self.txs[tx.hash].status === "pending") callback(null, null);
-        }, this.TX_POLL_INTERVAL);
+        if (!isFunction(callback)) {
+            wait(this.TX_POLL_INTERVAL);
+            if (this.txs[tx.hash].status === "pending") return null;
+        } else {
+            var self = this;
+            this.notifications[tx.hash] = setTimeout(function () {
+                if (self.txs[tx.hash].status === "pending") callback(null, null);
+            }, this.TX_POLL_INTERVAL);
+        }
     },
 
     getLoggedReturnValue: function (txHash, callback) {
+        if (!isFunction(callback)) {
+            var receipt = this.getTransactionReceipt(txHash);
+            if (!receipt || !receipt.logs || !receipt.logs.length ||
+                !receipt.logs[0] || receipt.logs[0].data === null ||
+                receipt.logs[0].data === undefined) {
+                throw new this.Error(errors.NULL_CALL_RETURN);
+            }
+            return receipt.logs[0].data;
+        }
         this.getTransactionReceipt(txHash, function (receipt) {
             if (!receipt || !receipt.logs || !receipt.logs.length ||
                 !receipt.logs[0] || receipt.logs[0].data === null ||
@@ -22604,6 +22623,31 @@ module.exports = {
 
     txNotify: function (txHash, callback) {
         var self = this;
+        if (!isFunction(callback)) {
+            var tx = this.getTransaction(txHash);
+            if (this.debug.tx) console.debug("txNotify.getTransaction:", tx);
+            if (tx) return tx;
+
+            this.txs[txHash].status = "failed";
+            if (this.debug.tx) console.debug("Raw transactions:", this.rawTxs);
+
+            // resubmit if this is a raw transaction and has a duplicate nonce
+            if (!this.rawTxs[txHash] || !this.rawTxs[txHash].tx) {
+                throw new this.Error(errors.TRANSACTION_NOT_FOUND);
+            }
+            var duplicateNonce;
+            for (var hash in this.rawTxs) {
+                if (!this.rawTxs.hasOwnProperty(hash)) continue;
+                if (this.rawTxs[hash].tx.nonce === this.rawTxs[txHash].tx.nonce &&
+                    JSON.stringify(this.rawTxs[hash].tx) !== JSON.stringify(this.rawTxs[txHash].tx)) {
+                    duplicateNonce = true;
+                    break;
+                }
+            }
+            if (!duplicateNonce) throw new this.Error(errors.TRANSACTION_NOT_FOUND);
+            this.txs[txHash].status = "resubmitted";
+            return null;
+        }
         this.getTransaction(txHash, function (tx) {
             if (self.debug.tx) console.debug("txNotify.getTransaction:", tx);
             if (tx) return callback(null, tx);
@@ -22632,6 +22676,21 @@ module.exports = {
 
     verifyTxSubmitted: function (payload, txHash, callback) {
         var self = this;
+        if (!isFunction(callback)) {
+            if (!payload || txHash === null || txHash === undefined) {
+                throw new this.Error(errors.TRANSACTION_FAILED);
+            }
+            if (this.txs[txHash]) throw new this.Error(errors.DUPLICATE_TRANSACTION);
+            var tx = this.getTransaction(txHash);
+            if (!tx) throw new this.Error(errors.TRANSACTION_FAILED);
+            this.txs[txHash] = {
+                hash: txHash,
+                payload: payload,
+                count: 0,
+                status: "pending"
+            };
+            return;
+        }
         if (!payload || txHash === null || txHash === undefined) {
             return callback(errors.TRANSACTION_FAILED);
         }
@@ -22652,6 +22711,13 @@ module.exports = {
     // (i.e., has a non-null blockHash field)
     pollForTxConfirmation: function (txHash, callback) {
         var self = this;
+        if (!isFunction(callback)) {
+            var tx = this.txNotify(txHash);
+            if (tx === null) return null;
+            var minedTx = this.checkBlockHash(tx);
+            if (minedTx !== null) return minedTx;
+            return this.pollForTxConfirmation(txHash);
+        }
         this.txNotify(txHash, function (err, tx) {
             if (err) return callback(err);
             if (tx === null) return callback(null, null);
@@ -22665,15 +22731,54 @@ module.exports = {
 
     transact: function (payload, onSent, onSuccess, onFailed) {
         var self = this;
+        if (this.debug.tx) console.debug("payload transact:", payload);
         var returns = payload.returns;
         payload.send = false;
+
+        // synchronous: block until the transaction is confirmed or fails
+        // (don't use this in the browser or you will be a sad panda)
         if (!isFunction(onSent)) {
+            var callReturn = this.fire(payload);
+            if (this.debug.tx) console.debug("callReturn:", callReturn);
+            if (callReturn === undefined || callReturn === null) {
+                throw new this.Error(errors.NULL_CALL_RETURN);
+            }
+            if (returns === "null" && callReturn.error === "0x") {
+                callReturn = null;
+            } else if (callReturn.error) {
+                throw new this.Error(callReturn);
+            }
             payload.send = true;
-            return this.invoke(payload);
+            delete payload.returns;
+            var txHash = this.invoke(payload);
+            if (this.debug.tx) console.debug("txHash:", txHash);
+            if (!txHash) throw new this.Error(errors.NULL_RESPONSE);
+            if (txHash.error) throw new this.Error(txHash);
+            payload.returns = returns;
+            txHash = abi.format_int256(txHash);
+            this.verifyTxSubmitted(payload, txHash);
+            var tx = this.pollForTxConfirmation(txHash);
+            if (tx === null) return this.transact(payload);
+            if (!payload.mutable) {
+                tx.callReturn = callReturn;
+                return tx;
+            }
+
+            // if mutable return value, then lookup logged return
+            // value in transaction receipt (after confirmation)
+            var loggedReturnValue = this.getLoggedReturnValue(txHash);
+            var e = this.errorCodes(payload.method, payload.returns, loggedReturnValue);
+            if (e && e.error) throw new Error(e);
+            tx.callReturn = this.applyReturns(payload.returns, loggedReturnValue);
+            return tx;
         }
+
+        // asynchronous / non-blocking:
+        //  - call onSent when the transaction is broadcast to the network
+        //  - call onSuccess when the transaction is successfully mined
+        //  - call onFailed if the transaction fails
         onFailed = (isFunction(onFailed)) ? onFailed : noop;
         onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
-        if (self.debug.tx) console.debug("payload transact:", payload);
         this.fire(payload, function (callReturn) {
             if (self.debug.tx) console.debug("callReturn:", callReturn);
             if (callReturn === undefined || callReturn === null) {
