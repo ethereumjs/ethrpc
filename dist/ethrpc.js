@@ -17,10 +17,13 @@ module.exports = {
 
     debug: false,
 
+    version: "0.5.0",
+
     constants: {
-        ONE: (new BigNumber(10)).toPower(18),
-        MOD: new BigNumber(2).toPower(256),
-        BYTES_32: new BigNumber(2).toPower(252)
+        ONE: new BigNumber(10).toPower(new BigNumber(18)),
+        BYTES_32: new BigNumber(2).toPower(new BigNumber(252)),
+        MAX: new BigNumber(2).toPower(new BigNumber(255)),
+        MOD: new BigNumber(2).toPower(new BigNumber(256))
     },
 
     abi: ethabi,
@@ -373,7 +376,7 @@ module.exports = {
                     }
             }
             if (bn !== undefined && bn !== null && bn.constructor === BigNumber) {
-                if (wrap && bn.gte(this.constants.BYTES_32)) {
+                if (wrap && bn.gte(this.constants.MAX)) {
                     bn = bn.sub(this.constants.MOD);
                 }
                 if (encoding) {
@@ -392,7 +395,7 @@ module.exports = {
         }
     },
 
-    fix: function (n, encode) {
+    fix: function (n, encode, wrap) {
         var fixed;
         if (n && n !== "0x" && !n.error && !n.message) {
             if (encode && n.constructor === String) {
@@ -410,7 +413,7 @@ module.exports = {
                 } else {
                     fixed = this.bignum(n).mul(this.constants.ONE).round();
                 }
-                if (fixed && fixed.gte(this.constants.BYTES_32)) {
+                if (wrap && fixed && fixed.gte(this.constants.MAX)) {
                     fixed = fixed.sub(this.constants.MOD);
                 }
                 if (encode) {
@@ -20807,19 +20810,19 @@ module.exports={
         "ExpiringEvents": "0x27567dac23fe3be89f41a5d724f6e903272377f7", 
         "Faucets": "0x5bf6b43d07e14500b3e4778dd0023867f9ef6859", 
         "ForkPenalize": "0x0d803b4410934550b074f57f55122dfeaec07704", 
-        "Forking": "0xe11d674d19633928a086e7813cb5201dff032445", 
+        "Forking": "0x8b09f112a796649be21dd2f366f7ec2cedc1aff0", 
         "FxpFunctions": "0x8c95444ae1158d100c47916a4993fb5fc7120e1e", 
         "Info": "0x7aeafdab70724be8197e463f915ffdca875af2ff", 
-        "MakeReports": "0x6beebeb4ec7524d9eecfff938530f90698dd3cf5", 
+        "MakeReports": "0x68f38103dd7117aa4f48e1d6ca96309a62103e0a", 
         "Markets": "0xd0e24e62c19dcfea860b3dee17aae2b452f8f76b", 
         "PenalizationCatchup": "0x391de4ed048a55fe10dc4de197d7fc1354d6cb6f", 
-        "PenalizeNotEnoughReports": "0x75a060dd28476323ee02792d0d614f55c4cfb8a3", 
+        "PenalizeNotEnoughReports": "0x37559e7ac8996ecde73a0ff540b80c2ea571007d", 
         "ProportionCorrect": "0xb71ee9e32e1526a76351ad85d867c8631d405dd9", 
         "Reporting": "0xa92cabf7894f84e30e7fc843eee79e1ef02cfd42", 
-        "ReportingThreshold": "0xcd49dba9bfd26e0fef8e540925212da3651a588c", 
-        "RoundTwo": "0xdbd7190d394f35ee910e6ae40ca07ee71421c8b0", 
-        "RoundTwoPenalize": "0x74afc3dc3f75134b5c84cf91a4197a6fa01a82cc", 
-        "SendReputation": "0x9195b1b495a1f8bd29550449b01cfb5bdf3f5f39", 
+        "ReportingThreshold": "0xa1403d56612f0d220fca243ef33bd7c9385d3e33", 
+        "RoundTwo": "0x0a88f1833724cb1031b4d922ee0629f67dbc3bcf", 
+        "RoundTwoPenalize": "0x9b47c87998df6ed34f1cd526a28f1a94d619370d", 
+        "SendReputation": "0x57c4287a96be06f7620deb1984c6820148338beb", 
         "SlashRep": "0xd60c8a0d8ed5bfa78aea6d6c7b254a6b722d1969", 
         "Trade": "0x94fe6678a4387eb175a7d5fadfed7fd83f76d4b1", 
         "Trades": "0x4dff0fa805d9ea5570873cc80d480681dde8e0c1"
@@ -20961,8 +20964,7 @@ module.exports={
         "-2": "reporter doesn't exist"
     },
     "submitReportHash": {
-        "-1": "invalid event",
-        "-2": "not in first half of period (commit phase)"
+        "-1": "invalid event"
     },
     "submitReport": {
         "0": "reporter doesn't exist or has <1 rep",
@@ -22574,7 +22576,7 @@ module.exports = {
         if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
         if (this.txs[tx.hash].count === undefined) this.txs[tx.hash].count = 0;
         ++this.txs[tx.hash].count;
-        if (this.debug.tx) console.debug("checkBlockHash:", tx);
+        if (this.debug.tx) console.debug("checkBlockHash:", tx.blockHash);
         if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
             tx.txHash = tx.hash;
             this.txs[tx.hash].status = "confirmed";
@@ -22625,7 +22627,6 @@ module.exports = {
         var self = this;
         if (!isFunction(callback)) {
             var tx = this.getTransaction(txHash);
-            if (this.debug.tx) console.debug("txNotify.getTransaction:", tx);
             if (tx) return tx;
 
             this.txs[txHash].status = "failed";
@@ -22649,7 +22650,6 @@ module.exports = {
             return null;
         }
         this.getTransaction(txHash, function (tx) {
-            if (self.debug.tx) console.debug("txNotify.getTransaction:", tx);
             if (tx) return callback(null, tx);
 
             self.txs[txHash].status = "failed";

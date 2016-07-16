@@ -1248,7 +1248,7 @@ module.exports = {
         if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
         if (this.txs[tx.hash].count === undefined) this.txs[tx.hash].count = 0;
         ++this.txs[tx.hash].count;
-        if (this.debug.tx) console.debug("checkBlockHash:", tx);
+        if (this.debug.tx) console.debug("checkBlockHash:", tx.blockHash);
         if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
             tx.txHash = tx.hash;
             this.txs[tx.hash].status = "confirmed";
@@ -1299,7 +1299,6 @@ module.exports = {
         var self = this;
         if (!isFunction(callback)) {
             var tx = this.getTransaction(txHash);
-            if (this.debug.tx) console.debug("txNotify.getTransaction:", tx);
             if (tx) return tx;
 
             this.txs[txHash].status = "failed";
@@ -1323,7 +1322,6 @@ module.exports = {
             return null;
         }
         this.getTransaction(txHash, function (tx) {
-            if (self.debug.tx) console.debug("txNotify.getTransaction:", tx);
             if (tx) return callback(null, tx);
 
             self.txs[txHash].status = "failed";
