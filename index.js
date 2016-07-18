@@ -54,8 +54,7 @@ module.exports = {
 
     debug: {
         tx: false,
-        broadcast: false,
-        logs: false
+        broadcast: false
     },
 
     // geth IPC endpoint (Node-only)
@@ -177,7 +176,9 @@ module.exports = {
     parse: function (origResponse, returns, callback) {
         var results, len, err;
         var response = clone(origResponse);
-        if (response && response.error) console.log("response:", response);
+        if ((response && response.error) || this.debug.broadcast) {
+            console.debug("[ethrpc] response:", response);
+        }
         try {
             if (response && typeof response === "string") {
                 response = JSON.parse(response);
@@ -352,7 +353,7 @@ module.exports = {
 
     ipcSend: function (command, returns, callback) {
         if (this.debug.broadcast) {
-            console.log("[ethrpc] IPC request to", this.ipcpath, "\n" + JSON.stringify(command));
+            console.debug("[ethrpc] IPC request to", this.ipcpath, "\n" + JSON.stringify(command));
         }
         this.ipcRequests[command.id] = {returns: returns, callback: callback};
         if (this.ipcStatus === 1) this.socket.write(JSON.stringify(command));
@@ -360,7 +361,7 @@ module.exports = {
 
     wsSend: function (command, returns, callback) {
         if (this.debug.broadcast) {
-            console.log("[ethrpc] WebSocket request to", this.wsUrl, "\n" + JSON.stringify(command));
+            console.debug("[ethrpc] WebSocket request to", this.wsUrl, "\n" + JSON.stringify(command));
         }
         this.wsRequests[command.id] = {returns: returns, callback: callback};
         if (this.websocket.readyState === this.websocket.OPEN) {
@@ -404,7 +405,7 @@ module.exports = {
             timeout = this.POST_TIMEOUT;
         }
         if (this.debug.broadcast) {
-            console.log("[ethrpc] Asynchronous HTTP request to", rpcUrl + "\n" + JSON.stringify(command));
+            console.debug("[ethrpc] Asynchronous HTTP request to", rpcUrl + "\n" + JSON.stringify(command));
         }
         request({
             url: rpcUrl,
@@ -520,18 +521,7 @@ module.exports = {
             default:
                 async.eachSeries(nodes, function (node, nextNode) {
                     if (!completed) {
-                        if (self.debug.logs) {
-                            console.log("nodes:", JSON.stringify(nodes));
-                            console.log("post", command.method, "to:", node);
-                        }
                         self.post(node, command, returns, function (res) {
-                            if (self.debug.logs) {
-                                if (res && res.constructor === BigNumber) {
-                                    console.log(node, "response:", abi.string(res));
-                                } else {
-                                    console.log(node, "response:", res);
-                                }
-                            }
                             if (node === nodes[nodes.length - 1] ||
                                 (res !== undefined && res !== null &&
                                 !res.error && res !== "0x")) {
@@ -551,10 +541,6 @@ module.exports = {
         } else {
             for (var j = 0, len = nodes.length; j < len; ++j) {
                 try {
-                    if (this.debug.logs) {
-                        console.log("nodes:", JSON.stringify(nodes));
-                        console.log("synchronous post", command.method, "to:", nodes[j]);
-                    }
                     result = this.postSync(nodes[j], command, returns);
                 } catch (e) {
                     if (this.nodes.local) {
@@ -1024,54 +1010,53 @@ module.exports = {
      * }
      */
     invoke: function (payload, f) {
-        var tx, dataAbi, packaged, invocation, invoked, err;
-        if (payload) {
-            if (payload.send && payload.invocation && isFunction(payload.invocation.invoke)) {
-                return payload.invocation.invoke.call(payload.invocation.context, payload, f);
-            } else {
-                tx = clone(payload);
-                if (tx.params === undefined || tx.params === null) {
-                    tx.params = [];
-                } else if (tx.params.constructor !== Array) {
-                    tx.params = [tx.params];
+        var tx, packaged, invocation;
+        if (!payload || payload.constructor !== Object) {
+            if (!isFunction(f)) return errors.TRANSACTION_FAILED;
+            return f(errors.TRANSACTION_FAILED);
+        }
+        if (payload.send && payload.invocation && isFunction(payload.invocation.invoke)) {
+            return payload.invocation.invoke.call(payload.invocation.context, payload, f);
+        }
+        tx = clone(payload);
+        if (tx.params === undefined || tx.params === null) {
+            tx.params = [];
+        } else if (tx.params.constructor !== Array) {
+            tx.params = [tx.params];
+        }
+        for (var j = 0, numParams = tx.params.length; j < numParams; ++j) {
+            if (tx.params[j] !== undefined && tx.params[j] !== null) {
+                if (tx.params[j].constructor === Number) {
+                    tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
                 }
-                for (var j = 0; j < tx.params.length; ++j) {
-                    if (tx.params[j] !== undefined && tx.params[j] !== null &&
-                        tx.params[j].constructor === Number) {
-                        tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
+                if (tx.signature[j] === "int256") {
+                    tx.params[j] = abi.unfork(tx.params[j], true);
+                } else if (tx.signature[j] === "int256[]" &&
+                    tx.params[j].constructor === Array && tx.params[j].length) {
+                    for (var k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
+                        tx.params[j][k] = abi.unfork(tx.params[j][k], true);
                     }
-                }
-                if (tx.to) tx.to = abi.format_address(tx.to);
-                if (tx.from) tx.from = abi.format_address(tx.from);
-                dataAbi = abi.encode(tx);
-                if (dataAbi) {
-                    packaged = {
-                        from: tx.from,
-                        to: tx.to,
-                        data: dataAbi,
-                        gas: tx.gas || this.DEFAULT_GAS,
-                        gasPrice: tx.gasPrice
-                    };
-                    if (tx.timeout) packaged.timeout = tx.timeout;
-                    if (tx.value) packaged.value = tx.value;
-                    if (tx.returns) packaged.returns = tx.returns;
-                    if (this.debug.broadcast) {
-                        packaged.debug = clone(tx);
-                        packaged.debug.batch = false;
-                    }
-                    invocation = (tx.send) ? this.sendTx : this.call;
-                    invoked = true;
-                    return invocation.call(this, packaged, f);
                 }
             }
         }
-        if (!invoked) {
-            err = clone(errors.TRANSACTION_FAILED);
-            err.bubble = "!invoked";
-            err.payload = payload;
-            if (isFunction(f)) return f(err);
-            return err;
+        if (tx.to) tx.to = abi.format_address(tx.to);
+        if (tx.from) tx.from = abi.format_address(tx.from);
+        packaged = {
+            from: tx.from,
+            to: tx.to,
+            data: abi.encode(tx),
+            gas: tx.gas || this.DEFAULT_GAS,
+            gasPrice: tx.gasPrice
+        };
+        if (tx.timeout) packaged.timeout = tx.timeout;
+        if (tx.value) packaged.value = tx.value;
+        if (tx.returns) packaged.returns = tx.returns;
+        if (this.debug.broadcast) {
+            packaged.debug = clone(tx);
+            packaged.debug.batch = false;
         }
+        invocation = (tx.send) ? this.sendTx : this.call;
+        return invocation.call(this, packaged, f);
     },
 
     /**
@@ -1081,7 +1066,7 @@ module.exports = {
         var self = this;
         var numCommands, rpclist, callbacks, tx, dataAbi, packaged, invocation, returns;
         if (txlist.constructor !== Array) {
-            if (this.debug.logs) {
+            if (this.debug.broadcast) {
                 console.warn("expected array for batch RPC, invoking instead");
             }
             return this.invoke(txlist, f);
@@ -1100,6 +1085,14 @@ module.exports = {
             for (var j = 0; j < tx.params.length; ++j) {
                 if (tx.params[j].constructor === Number) {
                     tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
+                }
+                if (tx.signature[j] === "int256") {
+                    tx.params[j] = abi.unfork(tx.params[j], true);
+                } else if (tx.signature[j] === "int256[]" &&
+                    tx.params[j].constructor === Array && tx.params[j].length) {
+                    for (var k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
+                        tx.params[j][k] = abi.unfork(tx.params[j][k], true);
+                    }
                 }
             }
             if (tx.from) tx.from = abi.format_address(tx.from);
@@ -1412,13 +1405,15 @@ module.exports = {
         if (!isFunction(onSent)) {
             var callReturn = this.fire(payload);
             if (this.debug.tx) console.debug("callReturn:", callReturn);
-            if (callReturn === undefined || callReturn === null) {
-                throw new this.Error(errors.NULL_CALL_RETURN);
-            }
-            if (returns === "null" && callReturn.error === "0x") {
-                callReturn = null;
-            } else if (callReturn.error) {
-                throw new this.Error(callReturn);
+            if (!payload.mutable) {
+                if (callReturn === undefined || callReturn === null) {
+                    throw new this.Error(errors.NULL_CALL_RETURN);
+                }
+                if (returns === "null" && callReturn.error === "0x") {
+                    callReturn = null;
+                } else if (callReturn.error) {
+                    throw new this.Error(callReturn);
+                }
             }
             payload.send = true;
             delete payload.returns;
@@ -1453,13 +1448,15 @@ module.exports = {
         onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
         this.fire(payload, function (callReturn) {
             if (self.debug.tx) console.debug("callReturn:", callReturn);
-            if (callReturn === undefined || callReturn === null) {
-                return onFailed(errors.NULL_CALL_RETURN);
-            }
-            if (returns === "null" && callReturn.error === "0x") {
-                callReturn = null;
-            } else if (callReturn.error) {
-                return onFailed(callReturn);
+            if (!payload.mutable) {
+                if (callReturn === undefined || callReturn === null) {
+                    return onFailed(errors.NULL_CALL_RETURN);
+                }
+                if (returns === "null" && callReturn.error === "0x") {
+                    callReturn = null;
+                } else if (callReturn.error) {
+                    return onFailed(callReturn);
+                }
             }
             payload.send = true;
             delete payload.returns;
