@@ -155,11 +155,11 @@ module.exports = {
             } else if (returns === "string") {
                 res = abi.raw_decode_hex(res);
             } else if (returns === "number") {
-                res = abi.string(res);
+                res = abi.string(res, true);
             } else if (returns === "int") {
-                res = parseInt(res, 16);
+                res = abi.number(res, true);
             } else if (returns === "bignumber") {
-                res = abi.bignum(res);
+                res = abi.bignum(res, null, true);
             } else if (returns === "unfix") {
                 res = abi.unfix(res, "string");
             } else if (returns === "null") {
@@ -1271,20 +1271,24 @@ module.exports = {
     getLoggedReturnValue: function (txHash, callback) {
         if (!isFunction(callback)) {
             var receipt = this.getTransactionReceipt(txHash);
-            if (!receipt || !receipt.logs || !receipt.logs.length ||
-                !receipt.logs[0] || receipt.logs[0].data === null ||
-                receipt.logs[0].data === undefined) {
+            if (!receipt || !receipt.logs || !receipt.logs.length) {
                 throw new this.Error(errors.NULL_CALL_RETURN);
             }
-            return receipt.logs[0].data;
+            var log = receipt.logs[receipt.logs.length - 1];
+            if (!log || log.data === null || log.data === undefined) {
+                throw new this.Error(errors.NULL_CALL_RETURN);
+            }
+            return log.data;
         }
         this.getTransactionReceipt(txHash, function (receipt) {
-            if (!receipt || !receipt.logs || !receipt.logs.length ||
-                !receipt.logs[0] || receipt.logs[0].data === null ||
-                receipt.logs[0].data === undefined) {
+            if (!receipt || !receipt.logs || !receipt.logs.length) {
                 return callback(errors.NULL_CALL_RETURN);
             }
-            callback(null, receipt.logs[0].data);
+            var log = receipt.logs[receipt.logs.length - 1];
+            if (!log || log.data === null || log.data === undefined) {
+                return callback(errors.NULL_CALL_RETURN);
+            }
+            callback(null, log.data);
         });
     },
 

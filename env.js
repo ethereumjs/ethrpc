@@ -1,13 +1,13 @@
-GLOBAL.rpc = require("ethrpc");
+global.rpc = require("ethrpc");
 
 rpc.nodes.hosted = [];
 rpc.setLocalNode("http://127.0.0.1:8545");
 rpc.wsUrl = "ws://127.0.0.1:8546";
 
-GLOBAL.COINBASE = rpc.coinbase();
-GLOBAL.NETWORK_ID = rpc.version();
-GLOBAL.contracts = require("augur-contracts")[NETWORK_ID];
-GLOBAL.payload = {
+global.COINBASE = rpc.coinbase();
+global.NETWORK_ID = rpc.version();
+global.contracts = require("augur-contracts")[NETWORK_ID];
+global.payload = {
     inputs: ["branch"],
     method: "reputationFaucet",
     returns: "number",
@@ -17,7 +17,7 @@ GLOBAL.payload = {
     from: "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
     params: [1010101]
 };
-GLOBAL.mutablePayload = {
+global.mutablePayload = {
     inputs: [
         "branch",
         "description",

@@ -1,6 +1,6 @@
 {
   "name": "ethrpc",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Ethereum JSON RPC",
   "main": "index.js",
   "scripts": {
@@ -20,8 +20,8 @@
   "homepage": "https://github.com/AugurProject/ethrpc#readme",
   "dependencies": {
     "async": "1.5.2",
-    "augur-abi": "0.5.2",
-    "augur-contracts": "1.4.4",
+    "augur-abi": "0.5.3",
+    "augur-contracts": "1.4.5",
     "bignumber.js": "2.3.0",
     "browser-request": "0.3.3",
     "clone": "1.0.2",
