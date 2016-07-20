@@ -1433,7 +1433,7 @@ module.exports = {
                         // if mutable return value, then lookup logged return
                         // value in transaction receipt (after confirmation)
                         self.getLoggedReturnValue(txHash, function (err, loggedReturnValue) {
-                            if (self.debug.tx) console.debug("loggedReturnValue:", loggedReturnValue);
+                            if (self.debug.tx) console.debug("loggedReturnValue:", err, loggedReturnValue);
                             if (err) return onFailed(err);
                             var e = self.errorCodes(payload.method, payload.returns, loggedReturnValue);
                             if (e && e.error) return onFailed(e);
