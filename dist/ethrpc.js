@@ -4688,7 +4688,7 @@ module.exports={
         "CloseMarketTwo": "0xee856109cd107e5521b86374dd53c8b2120ab14f", 
         "CollectFees": "0xa5f4f3b326e1719b9ece4058aceaf771a483d012", 
         "CompleteSets": "0x5485af8bf299235b7fd2e45f13be79cf6064df64", 
-        "CompositeGetters": "0xfba7b592ce1f533f106c20cee9c1bf72edaced4e", 
+        "CompositeGetters": "0x5bf41265bfda5db096099fecc18eb4554f4cc616", 
         "Consensus": "0xd75138a01cc0d56d6bfc4e00088458e501657579", 
         "ConsensusData": "0x9011169bf11bc061fdaaf42ec919c81df5b95210", 
         "CreateBranch": "0xbcfa90799eaf78ea417b94bb62ff2a4373689d6a", 
