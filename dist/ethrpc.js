@@ -4488,23 +4488,27 @@ module.exports={
       "checkHash": {
         "inputs": [
           "tradeHash", 
-          "sender"
+          "sender", 
+          "id"
         ], 
         "method": "checkHash", 
         "returns": "number", 
         "signature": [
+          "int256", 
           "int256", 
           "int256"
         ]
       }, 
       "commitTrade": {
         "inputs": [
-          "hash"
+          "hash", 
+          "id"
         ], 
         "method": "commitTrade", 
         "returns": "number", 
         "send": true, 
         "signature": [
+          "int256", 
           "int256"
         ]
       }, 
@@ -4622,9 +4626,15 @@ module.exports={
         ]
       }, 
       "zeroHash": {
+        "inputs": [
+          "id"
+        ], 
         "method": "zeroHash", 
         "returns": "number", 
-        "send": true
+        "send": true, 
+        "signature": [
+          "int256"
+        ]
       }
     }
   }
@@ -4671,14 +4681,14 @@ module.exports={
     "2": {
         "Backstops": "0x953e57d6abd49bf60d6a8403b50b241847b1e50d", 
         "Branches": "0x5ca040a9b17c85acbfa1fec9eead60457e1da872", 
-        "BuyAndSellShares": "0x770114a2beb82282226d8917f229df6977cd568d", 
+        "BuyAndSellShares": "0x3d3fbd1d793ad8e69fe4c9f7b5336aec6676cff3", 
         "Cash": "0x34a382fca0d3a6f318bbe565e4c77c86e3cfb448", 
         "CloseMarket": "0x857f6cd666934c05a32704109fbee92773454c1f", 
         "CloseMarketOne": "0xd8d75f35e05ff00065944041d4248c2bae18d418", 
         "CloseMarketTwo": "0xee856109cd107e5521b86374dd53c8b2120ab14f", 
         "CollectFees": "0xa5f4f3b326e1719b9ece4058aceaf771a483d012", 
         "CompleteSets": "0x5485af8bf299235b7fd2e45f13be79cf6064df64", 
-        "CompositeGetters": "0xc5318e0ae3ef2f6883d12f88ac16896074f22c0d", 
+        "CompositeGetters": "0xfba7b592ce1f533f106c20cee9c1bf72edaced4e", 
         "Consensus": "0xd75138a01cc0d56d6bfc4e00088458e501657579", 
         "ConsensusData": "0x9011169bf11bc061fdaaf42ec919c81df5b95210", 
         "CreateBranch": "0xbcfa90799eaf78ea417b94bb62ff2a4373689d6a", 
@@ -4702,8 +4712,8 @@ module.exports={
         "RoundTwoPenalize": "0x7d61418a1d9cbb5ec4a3abf1f8c946968dac24c3", 
         "SendReputation": "0xd91f2edf360a469080421997c5b77a2ea01fa514", 
         "SlashRep": "0xd60c8a0d8ed5bfa78aea6d6c7b254a6b722d1969", 
-        "Trade": "0x6dd4e090d133706c2bcc147a61bd80cc69275128", 
-        "Trades": "0x4dff0fa805d9ea5570873cc80d480681dde8e0c1"
+        "Trade": "0x1ff370645d7965cf52ca344964cab8bc91be7adf", 
+        "Trades": "0x1bca253519f1374aed3b85c1d7c22175a42d9042"
     }
 }
 },{}],3:[function(require,module,exports){
