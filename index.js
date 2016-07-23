@@ -578,7 +578,10 @@ module.exports = {
                     result = this.postSync(nodes[j], command, returns);
                 } catch (e) {
                     if (this.nodes.local) {
-                        throw new this.Error(errors.LOCAL_NODE_FAILURE);
+                        var err = errors.LOCAL_NODE_FAILURE;
+                        err.bubble = e;
+                        err.command = command;
+                        throw new this.Error(err);
                     }
                 }
                 if (result !== undefined) return result;
