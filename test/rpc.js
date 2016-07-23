@@ -160,6 +160,120 @@ describe("wsConnect", function () {
     });
 });
 
+describe("wsMessageAction", function () {
+    var test = function (t) {
+        it(JSON.stringify(t), function (done) {
+            if (t.msg.method === "eth_subscription") {
+                rpc.registerSubscriptionCallback(t.msg.params.subscription, function (result) {
+                    assert.strictEqual(result, t.expected);
+                    done();
+                });
+                rpc.wsMessageAction(t.msg);
+            } else if (t.msg.constructor === Array) {
+                var callbacksFired = [];
+                async.forEachOf(t.msg, function (msg, i, nextMsg) {
+                    callbacksFired.push(false);
+                    rpc.wsRequests[msg.id] = {
+                        callback: function (result) {
+                            callbacksFired[i] = true;
+                            assert.strictEqual(result, t.expected[i]);
+                            for (var j = 0; j < t.msg.length; ++j) {
+                                if (!callbacksFired[j]) return;
+                            }
+                            done();
+                        }
+                    };
+                    nextMsg();
+                }, function (err) {
+                    assert.isNull(err);
+                    rpc.wsMessageAction(t.msg);
+                });
+            } else {
+                rpc.wsRequests[t.msg.id] = {
+                    callback: function (result) {
+                        assert.strictEqual(result, t.expected);
+                        done();
+                    }
+                };
+                rpc.wsMessageAction(t.msg);
+            }
+        });
+    };
+    test({
+        msg: {
+            jsonrpc: "2.0",
+            id: 1,
+            result: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
+        },
+        expected: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
+    });
+    test({
+        msg: {
+            method: "eth_subscription",
+            params: {
+                subscription: "0x1",
+                result: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
+            },
+        },
+        expected: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
+    });
+    test({
+        msg: [{
+            jsonrpc: "2.0",
+            id: 1,
+            result: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
+        }, {
+            jsonrpc: "2.0",
+            id: 2,
+            result: "0x0000000000000000000000000000000000000000000000028c418afbbb5c0000"
+        }],
+        expected: [
+            "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000",
+            "0x0000000000000000000000000000000000000000000000028c418afbbb5c0000"
+        ]
+    });
+    test({
+        msg: [{
+            jsonrpc: "2.0",
+            id: 1,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000001"
+        }, {
+            jsonrpc: "2.0",
+            id: 2,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000002"
+        }, {
+            jsonrpc: "2.0",
+            id: 3,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000003"
+        }, {
+            jsonrpc: "2.0",
+            id: 4,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000004"
+        }, {
+            jsonrpc: "2.0",
+            id: 5,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000005"
+        }, {
+            jsonrpc: "2.0",
+            id: 6,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000006"
+        }, {
+            jsonrpc: "2.0",
+            id: 7,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000007"
+        }],
+        expected: [
+            "0x0000000000000000000000000000000000000000000000000000000000000001",
+            "0x0000000000000000000000000000000000000000000000000000000000000002",
+            "0x0000000000000000000000000000000000000000000000000000000000000003",
+            "0x0000000000000000000000000000000000000000000000000000000000000004",
+            "0x0000000000000000000000000000000000000000000000000000000000000005",
+            "0x0000000000000000000000000000000000000000000000000000000000000006",
+            "0x0000000000000000000000000000000000000000000000000000000000000007"
+        ]
+    });
+});
+
 describe("wsSend", function () {
     afterEach(function () { 
         rpc.websocket.close();
@@ -172,16 +286,37 @@ describe("wsSend", function () {
             rpc.wsConnect(function (connected) {
                 assert.isTrue(connected);
                 assert.strictEqual(rpc.websocket.readyState, rpc.websocket.OPEN);
-                var callback = function (res) {
-                    assert.strictEqual(rpc.websocket.readyState, rpc.websocket.OPEN);
-                    assert.isUndefined(rpc.wsRequests[t.command.id]);
-                    assert.strictEqual(res, t.expected);
-                    done();
-                };
-                rpc.wsSend(t.command, t.returns, callback);
-                assert.isObject(rpc.wsRequests[t.command.id]);
-                assert.strictEqual(rpc.wsRequests[t.command.id].returns, t.returns);
-                assert.strictEqual(rpc.wsRequests[t.command.id].callback, callback);
+                var callback;
+                if (t.command.constructor !== Array) {
+                    callback = function (res) {
+                        assert.strictEqual(rpc.websocket.readyState, rpc.websocket.OPEN);
+                        assert.isUndefined(rpc.wsRequests[t.command.id]);
+                        assert.strictEqual(res, t.expected);
+                        done();
+                    };
+                    rpc.wsSend(t.command, t.returns, callback);
+                    assert.isObject(rpc.wsRequests[t.command.id]);
+                    assert.strictEqual(rpc.wsRequests[t.command.id].returns, t.returns);
+                    assert.strictEqual(rpc.wsRequests[t.command.id].callback, callback);
+                } else {
+                    callback = [];
+                    async.forEachOf(t.command, function (command, i, nextCommand) {
+                        callback.push(function (res) {
+                            assert.strictEqual(rpc.websocket.readyState, rpc.websocket.OPEN);
+                            assert.isUndefined(rpc.wsRequests[command.id]);
+                            assert.strictEqual(res, t.expected[i]);
+                        });
+                        nextCommand();
+                    }, function (err) {
+                        assert.isNull(err);
+                        rpc.wsSend(t.command, t.returns, callback);
+                        for (var i = 0; i < t.command.length; ++i) {
+                            assert.isObject(rpc.wsRequests[t.command[i].id]);
+                            assert.strictEqual(rpc.wsRequests[t.command[i].id].returns, t.returns[i]);
+                        }
+                        done();
+                    });
+                }
             });
         });
     };
@@ -202,7 +337,7 @@ describe("wsSend", function () {
             method: "web3_sha3",
             params: [SHA3_INPUT]
         },
-        returns: "hash",
+        returns: "int256",
         expected: SHA3_DIGEST
     });
     test({
@@ -222,8 +357,23 @@ describe("wsSend", function () {
             method: "eth_protocolVersion",
             params: []
         },
-        returns: "hash",
+        returns: "int256",
         expected: PROTOCOL_VERSION
+    });
+    test({
+        command: [{
+            id: ++requests,
+            jsonrpc: "2.0",
+            method: "web3_sha3",
+            params: [SHA3_INPUT]
+        }, {
+            id: ++requests,
+            jsonrpc: "2.0",
+            method: "net_listening",
+            params: []
+        }],
+        returns: ["int256", "bool"],
+        expected: [SHA3_DIGEST, true]
     });
 });
 

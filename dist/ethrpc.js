@@ -45,6 +45,18 @@ module.exports={
       "name": "Transfer(int256,int256,int256)", 
       "signature": "0x66e05b8a99642b6a77335be485dc593f0217aee37e6180f32909449b16ed7eca"
     }, 
+    "closeMarketReturnValue": {
+      "contract": "CloseMarket", 
+      "inputs": [
+        {
+          "indexed": false, 
+          "name": "returnValue", 
+          "type": "int256"
+        }
+      ], 
+      "name": "closeMarketReturnValue(int256)", 
+      "signature": "0x12001df5d02ab705b944c0f9c4f14add3fab5b10a103f442b911f7a8b00eda7a"
+    }, 
     "log_add_tx": {
       "contract": "BuyAndSellShares", 
       "inputs": [
@@ -1094,6 +1106,7 @@ module.exports={
           "sender"
         ], 
         "method": "closeMarket", 
+        "mutable": true, 
         "returns": "number", 
         "send": true, 
         "signature": [
@@ -4694,13 +4707,13 @@ module.exports={
         "Branches": "0xb7ea151417bc5d1da98d0b9fcbf40cfb117365b4", 
         "BuyAndSellShares": "0x9c7615be3fd8dbb2bc43df602c460d5cc33954c6", 
         "Cash": "0xca2591192a379e04960941693fca04e51031aae4", 
-        "CloseMarket": "0xd68c8eca9d58bdf56ec30c2d47837da12f9bc0e8", 
+        "CloseMarket": "0x2baa265c61f077484669350f3c50f59a3746b727", 
         "CloseMarketOne": "0x660ba541bd81f76b53b6f47f93f91b2d450a1db0", 
         "CloseMarketTwo": "0x47a36d7161cae2334c46caf2a9cadba3e150a53f", 
         "CollectFees": "0xc452a66ea65b4ac76d87171ed969a4f07f6ad621", 
         "CompleteSets": "0x15c8df240ef26a69226c84588de21302dcd26b9c", 
         "CompositeGetters": "0x2b94719fa4fe3ca680a7edba668a5d86b7c1b3a6", 
-        "Consensus": "0x90236a526dcd40a8fbe4b139e2596d3983071598", 
+        "Consensus": "0x6c63af66786b184949d3b198aaf987f791394fb3", 
         "ConsensusData": "0x0f2fdb5399fad3ca0780f3de3d80b984a4b4cf6a", 
         "CreateBranch": "0x5f58749dfdbe0a367f30d84ab4c04145acea200c", 
         "CreateMarket": "0x1d4360f8273e6994b29f470f2f2aa12b7adad889", 
@@ -5407,49 +5420,48 @@ module.exports = {
         if ((response && response.error) || this.debug.broadcast) {
             console.debug("[ethrpc] response:", response);
         }
-        try {
-            if (response && typeof response === "string") {
+        if (response && typeof response === "string") {
+            try {
                 response = JSON.parse(response);
+            } catch (e) {
+                err = e;
+                if (e && e.name === "SyntaxError") {
+                    err = errors.INVALID_RESPONSE;
+                }
+                if (isFunction(callback)) return callback(err);
+                throw new this.Error(err);
             }
-            if (response !== undefined && typeof response === "object" && response !== null) {
-                if (response.error) {
-                    response = {
-                        error: response.error.code,
-                        message: response.error.message
-                    };
-                    if (!callback) return response;
-                    callback(response);
-                } else if (response.result !== undefined) {
-                    if (!callback) return response.result;
-                    callback(response.result);
-                } else if (response.constructor === Array && response.length) {
-                    len = response.length;
-                    results = new Array(len);
-                    for (var i = 0; i < len; ++i) {
-                        results[i] = response[i].result;
-                        if (response.error || (response[i] && response[i].error)) {
-                            if (this.debug.broadcast) {
-                                if (isFunction(callback)) return callback(response.error);
-                                throw new this.Error(response.error);
-                            }
+        }
+        if (response !== undefined && typeof response === "object" && response !== null) {
+            if (response.error) {
+                response = {
+                    error: response.error.code,
+                    message: response.error.message
+                };
+                if (!isFunction(callback)) return response;
+                return callback(response);
+            } else if (response.result !== undefined) {
+                if (!isFunction(callback)) return response.result;
+                return callback(response.result);
+            } else if (response.constructor === Array && response.length) {
+                len = response.length;
+                results = new Array(len);
+                for (var i = 0; i < len; ++i) {
+                    results[i] = response[i].result;
+                    if (response.error || (response[i] && response[i].error)) {
+                        if (this.debug.broadcast) {
+                            if (isFunction(callback)) return callback(response.error);
+                            throw new this.Error(response.error);
                         }
                     }
-                    if (!isFunction(callback)) return results;
-                    callback(results);
-
-                // no result or error field
-                } else {
-                    err = errors.NO_RESPONSE;
-                    err.bubble = response;
-                    if (isFunction(callback)) return callback(err);
-                    throw new this.Error(err);
                 }
+                if (!isFunction(callback)) return results;
+                return callback(results);
             }
-        } catch (e) {
-            err = e;
-            if (e && e.name === "SyntaxError") {
-                err = errors.INVALID_RESPONSE;
-            }
+
+            // no result or error field
+            err = errors.NO_RESPONSE;
+            err.bubble = response;
             if (isFunction(callback)) return callback(err);
             throw new this.Error(err);
         }
@@ -5532,6 +5544,30 @@ module.exports = {
         });
     },
 
+    wsMessageAction: function (msg) {
+        if (msg.constructor === Array) {
+            for (var i = 0, n = msg.length; i < n; ++i) {
+                this.wsMessageAction(msg[i]);
+            }
+        } else {
+            if (msg.id !== undefined && msg.id !== null) {
+                if (this.debug.broadcast) {
+                    console.debug("[ethrpc] matched message ID", msg.id, "to", this.wsRequests);
+                }
+                var req = this.wsRequests[msg.id];
+                delete this.wsRequests[msg.id];
+                return this.parse(msg, req.returns, req.callback);
+            } else if (msg.method === "eth_subscription" && msg.params &&
+                msg.params.subscription && msg.params.result &&
+                this.subscriptions[msg.params.subscription]) {
+                return this.subscriptions[msg.params.subscription](msg.params.result);
+            }
+            if (this.debug.broadcast) {
+                console.warn("[ethrpc] Unknown message received:", msg.data || msg);
+            }
+        }
+    },
+
     wsConnect: function (callback) {
         var self = this;
         var calledCallback = false;
@@ -5556,20 +5592,7 @@ module.exports = {
         };
         this.websocket.onmessage = function (msg) {
             if (msg && msg.data && typeof msg.data === "string") {
-                var res = JSON.parse(msg.data);
-                if (res.id !== undefined && res.id !== null) {
-                    var req = self.wsRequests[res.id];
-                    delete self.wsRequests[res.id];
-                    self.parse(res, req.returns, req.callback);
-                } else if (res.method === "eth_subscription" && res.params &&
-                    res.params.subscription && res.params.result &&
-                    self.subscriptions[res.params.subscription]) {
-                    self.subscriptions[res.params.subscription](res.params.result);
-                } else {
-                    if (self.debug.broadcast) {
-                        console.warn("unknown message received:", msg);
-                    }
-                }
+                return self.wsMessageAction(JSON.parse(msg.data));
             }
         };
         this.websocket.onopen = function () {
@@ -5588,12 +5611,36 @@ module.exports = {
     },
 
     wsSend: function (command, returns, callback) {
+        var self = this;
         if (this.debug.broadcast) {
             console.debug("[ethrpc] WebSocket request to", this.wsUrl, "\n" + JSON.stringify(command));
         }
-        this.wsRequests[command.id] = {returns: returns, callback: callback};
-        if (this.websocket.readyState === this.websocket.OPEN) {
-            this.websocket.send(JSON.stringify(command));
+        if (command.constructor === Array) {
+            var commandList = [];
+            for (var i = 0, n = command.length; i < n; ++i) {
+                commandList.push({command: command[i], returns: returns[i], callback: callback[i]});
+            }
+            async.each(commandList, function (thisCommand, nextCommand) {
+                if (!thisCommand.returns) {
+                    self.wsRequests[thisCommand.command.id] = {returns: thisCommand.returns, callback: thisCommand.callback};
+                } else {
+                    self.wsRequests[thisCommand.command.id] = {returns: thisCommand.returns, callback: function (res) {
+                        thisCommand.callback(self.applyReturns(thisCommand.returns, res));
+                    }};
+                }
+                nextCommand();
+            }, function (err) {
+                if (err) return console.error("wsSend failed:", err);
+                self.wsRequests[command.id] = {returns: returns, callback: callback};
+                if (self.websocket.readyState === self.websocket.OPEN) {
+                    self.websocket.send(JSON.stringify(command));
+                }
+            });
+        } else {
+            this.wsRequests[command.id] = {returns: returns, callback: callback};
+            if (this.websocket.readyState === this.websocket.OPEN) {
+                this.websocket.send(JSON.stringify(command));
+            }
         }
     },
 
@@ -5727,7 +5774,7 @@ module.exports = {
         nodes = this.selectNodes();
 
         // asynchronous request if callback exists
-        if (isFunction(callback)) {
+        if (callback) {
 
             // use websocket if available
             switch (this.wsStatus) {
@@ -6353,6 +6400,9 @@ module.exports = {
                 return rpclist;
             }
         }
+        if (this.wsUrl) {
+            return this.broadcast(rpclist, (f === true) ? callbacks : f);
+        }
         if (!f) {
             var res = this.broadcast(rpclist);
             var result = new Array(numCommands);
@@ -6662,7 +6712,13 @@ module.exports = {
                         // value in transaction receipt (after confirmation)
                         self.getLoggedReturnValue(txHash, function (err, loggedReturnValue) {
                             if (self.debug.tx) console.debug("loggedReturnValue:", err, loggedReturnValue);
-                            if (err) return onFailed(err);
+                            if (err) {
+                                payload.send = false;
+                                self.fire(payload, function (callReturn) {
+                                    console.debug("getLoggedReturnValue failed, fire returns:", callReturn);
+                                    return onFailed(err);
+                                });
+                            }
                             var e = self.errorCodes(payload.method, payload.returns, loggedReturnValue);
                             if (e && e.error) return onFailed(e);
                             tx.callReturn = self.applyReturns(payload.returns, loggedReturnValue);
