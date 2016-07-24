@@ -1502,23 +1502,22 @@ module.exports = {
         // synchronous: block until the transaction is confirmed or fails
         // (don't use this in the browser or you will be a sad panda)
         if (!isFunction(onSent)) {
-            var returns = payload.returns;
             var callReturn;
-            if (payload.mutable) {
+            if (payload.mutable || payload.returns === "null") {
                 callReturn = null;
             } else {
                 callReturn = this.fire(payload);
                 if (this.debug.tx) console.debug("callReturn:", callReturn);
                 if (callReturn === undefined || callReturn === null) {
                     throw new this.Error(errors.NULL_CALL_RETURN);
-                }
-                if (returns === "null" && callReturn.error === "0x") {
+                } else if (callReturn.error === "0x") {
                     callReturn = null;
                 } else if (callReturn.error) {
                     throw new this.Error(callReturn);
                 }
             }
             payload.send = true;
+            var returns = payload.returns;
             delete payload.returns;
             var txHash = this.invoke(payload);
             if (this.debug.tx) console.debug("txHash:", txHash);
@@ -1549,16 +1548,13 @@ module.exports = {
         //  - call onFailed if the transaction fails
         onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
         onFailed = (isFunction(onFailed)) ? onFailed : noop;
-        if (payload.mutable) {
+        if (payload.mutable || payload.returns === "null") {
             return asyncTransact(payload, null, onSent, onSuccess, onFailed);
         }
         this.fire(payload, function (callReturn) {
             if (self.debug.tx) console.debug("callReturn:", callReturn);
             if (callReturn === undefined || callReturn === null) {
                 return onFailed(errors.NULL_CALL_RETURN);
-            }
-            if (returns === "null" && callReturn.error === "0x") {
-                callReturn = null;
             } else if (callReturn.error) {
                 return onFailed(callReturn);
             }
