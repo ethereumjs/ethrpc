@@ -5717,9 +5717,6 @@ module.exports = {
             if (err) {
                 self.primaryNode = null;
                 if (self.nodes.local) {
-                    if (self.nodes.local === self.localnode) {
-                        self.nodes.local = null;
-                    }
                     e = errors.LOCAL_NODE_FAILURE;
                     e.bubble = err;
                     e.command = command;
