@@ -1250,7 +1250,8 @@ module.exports = {
         return response;
     },
 
-    fire: function (payload, callback) {
+    // callback/wrapper composition: callback(wrapper(result, aux))
+    fire: function (payload, callback, wrapper, aux) {
         var self = this;
         var tx = clone(payload);
         if (!isFunction(callback)) {
@@ -1260,7 +1261,9 @@ module.exports = {
             }
             var err = this.errorCodes(tx.method, tx.returns, res);
             if (err && err.error) throw new this.Error(err);
-            return this.applyReturns(tx.returns, res);
+            var converted = this.applyReturns(tx.returns, res);
+            if (isFunction(wrapper)) return wrapper(converted, aux);
+            return converted;
         }
         this.invoke(tx, function (res) {
             if (self.debug.tx) console.debug("invoked (fire):", res);
@@ -1269,7 +1272,9 @@ module.exports = {
             }
             var err = self.errorCodes(tx.method, tx.returns, res);
             if (err && err.error) return callback(err);
-            return callback(self.applyReturns(tx.returns, res));
+            var converted = self.applyReturns(tx.returns, res);
+            if (isFunction(wrapper)) converted = wrapper(converted, aux);
+            return callback(converted);
         });
     },
 

@@ -1287,7 +1287,6 @@ describe("RPC", function () {
                     });
                 });
             };
-
             test({
                 id: ++requests,
                 jsonrpc: "2.0",
@@ -1306,44 +1305,15 @@ describe("RPC", function () {
                 method: "eth_gasPrice",
                 params: []
             });
-
         });
 
-        var callbacks = {
-            onSent: function (res) {
-                assert.property(res, "txHash");
-                assert.property(res, "callReturn");
-                assert.strictEqual(res.txHash.length, 66);
-            },
-            onSuccess: function (res) {
-                assert.property(res, "txHash");
-                assert.property(res, "callReturn");
-                assert.property(res, "blockHash");
-                assert.property(res, "blockNumber");
-                assert.property(res, "nonce");
-                assert.property(res, "transactionIndex");
-                assert.property(res, "gas");
-                assert.property(res, "gasPrice");
-                assert.property(res, "input");
-                assert.strictEqual(res.txHash.length, 66);
-                assert.strictEqual(res.callReturn, "1");
-                assert.isAbove(parseInt(res.blockNumber), 0);
-                assert.isAbove(parseInt(res.nonce), 0);
-                assert.strictEqual(res.from, COINBASE);
-                assert.strictEqual(res.to, contracts.Faucets);
-                assert.strictEqual(abi.number(res.value), 0);
-            }
-        };
-
         describe("errorCodes", function () {
-
             var test = function (t) {
                 it(t.itx.method, function () {
                     var actual = rpc.errorCodes(t.itx.method, t.itx.returns, t.response);
                     assert.strictEqual(actual, t.expected);
                 });
             };
-
             test({
                 itx: {
                     to: contracts.Faucets,
@@ -1357,39 +1327,32 @@ describe("RPC", function () {
                 response: "1",
                 expected: "1"
             });
-
-
         });
 
         describe("applyReturns", function () {
-
             var test = function (t) {
                 it(t.result + "," + t.returns + " -> " + t.expected, function () {
                     var actual = rpc.applyReturns(t.returns, t.result);
                     assert.strictEqual(actual, t.expected);
                 });
             };
-
             test({
                 result: "1",
                 returns: "number",
                 expected: "1"
             });
-
         });
 
         describe("fire", function () {
-
             var test = function (t) {
                 it(JSON.stringify(t.payload), function (done) {
                     this.timeout(TIMEOUT);
                     rpc.fire(t.payload, function (res) {
                         assert.strictEqual(res, t.expected);
                         done();
-                    });
+                    }, t.wrapper, t.aux);
                 });
             };
-
             test({
                 payload: {
                     to: contracts.Faucets,
@@ -1398,11 +1361,37 @@ describe("RPC", function () {
                     inputs: ["branch"],
                     signature: ["int256"],
                     params: "0xf69b5",
-                    returns: "number"
+                    returns: "int"
                 },
-                expected: "1"
+                expected: 1
             });
-
+            test({
+                payload: {
+                    to: contracts.Faucets,
+                    from: COINBASE,
+                    method: "reputationFaucet",
+                    inputs: ["branch"],
+                    signature: ["int256"],
+                    params: "0xf69b5",
+                    returns: "int"
+                },
+                wrapper: function (x) { return 2*x; },
+                expected: 2
+            });
+            test({
+                payload: {
+                    to: contracts.Faucets,
+                    from: COINBASE,
+                    method: "reputationFaucet",
+                    inputs: ["branch"],
+                    signature: ["int256"],
+                    params: "0xf69b5",
+                    returns: "int"
+                },
+                wrapper: function (x, aux) { return aux*x; },
+                aux: 5,
+                expected: 5
+            });
         });
 
         describe("checkBlockHash", function () {
