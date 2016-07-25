@@ -17932,12 +17932,14 @@ module.exports={
         "inputs": [
           "branch", 
           "market", 
-          "tradingFee"
+          "tradingFee", 
+          "makerFees"
         ], 
         "method": "updateTradingFee", 
         "returns": "number", 
         "send": true, 
         "signature": [
+          "int256", 
           "int256", 
           "int256", 
           "int256"
@@ -20022,6 +20024,18 @@ module.exports={
           "int256"
         ]
       }, 
+      "setMakerFees": {
+        "inputs": [
+          "market", 
+          "makerFees"
+        ], 
+        "method": "setMakerFees", 
+        "returns": "int256", 
+        "signature": [
+          "int256", 
+          "int256"
+        ]
+      }, 
       "setPrice": {
         "inputs": [
           "market", 
@@ -20930,41 +20944,41 @@ module.exports={
         "Trades": "0x401a31250646bb68e2169bbdc0a8834d0f375ecb"
     }, 
     "2": {
-        "Backstops": "0xa2ac6ef02115a2bf2743432760e81939890a25b5", 
-        "Branches": "0xb7ea151417bc5d1da98d0b9fcbf40cfb117365b4", 
-        "BuyAndSellShares": "0xe5e416c0699106420e54d0e5d8753201129e7031", 
-        "Cash": "0xca2591192a379e04960941693fca04e51031aae4", 
-        "CloseMarket": "0x2baa265c61f077484669350f3c50f59a3746b727", 
-        "CloseMarketOne": "0x660ba541bd81f76b53b6f47f93f91b2d450a1db0", 
-        "CloseMarketTwo": "0x47a36d7161cae2334c46caf2a9cadba3e150a53f", 
-        "CollectFees": "0xc452a66ea65b4ac76d87171ed969a4f07f6ad621", 
-        "CompleteSets": "0xcf0f5a0e242090e764f4ea4aff2b443dd0cb4c9d", 
-        "CompositeGetters": "0x2b94719fa4fe3ca680a7edba668a5d86b7c1b3a6", 
-        "Consensus": "0x6c63af66786b184949d3b198aaf987f791394fb3", 
-        "ConsensusData": "0x0f2fdb5399fad3ca0780f3de3d80b984a4b4cf6a", 
-        "CreateBranch": "0x5f58749dfdbe0a367f30d84ab4c04145acea200c", 
-        "CreateMarket": "0x1d4360f8273e6994b29f470f2f2aa12b7adad889", 
-        "EventResolution": "0x5a5eb923bc11d6a0add6c25e42a4538a9abece03", 
-        "Events": "0xe59fe52605286adcf28cf7bd09e185e3956ecc9b", 
-        "ExpiringEvents": "0x341c0fdb0aacd27b5c67ba76f03bf9b9168e13f5", 
-        "Faucets": "0xade25ba83d0d50af1849ae5f0babc8ab78f943b5", 
-        "ForkPenalize": "0x0bf4a51bab506d808b0a16ea07fec0021cbd63e7", 
-        "Forking": "0x649d198148deaea0bf9fe6f791f1f757f0477824", 
-        "FxpFunctions": "0x76392853727bc3ff1bd2cb32f8514ea2efdb4ca9", 
-        "Info": "0x348d61b348e5ae8a9c1a7ff5d5d5d504f4892ad8", 
-        "MakeReports": "0x960712738bab34a3c9f02d5d7e8abc16abb2d861", 
-        "Markets": "0xaecd771f40705ec1edb1463d7002f047af5b05df", 
-        "PenalizationCatchup": "0x922d1ba60106116fe967657983dc4d062f7a9d2e", 
-        "PenalizeNotEnoughReports": "0x02ac92da923764e3e6066e13ce53a09e0ad1cd77", 
-        "ProportionCorrect": "0x751b418c97255fc5f0291daeb12384c1bcb1a887", 
-        "Reporting": "0x5e01114ea15cdbe85e286e65e6101c2f1ff58c60", 
-        "ReportingThreshold": "0xf02e7a2dd5c184fc113d691c97bef00d5327af80", 
-        "RoundTwo": "0xf497ed178ab344804546c573e496358134ef1365", 
-        "RoundTwoPenalize": "0xaff8b68e930e74574caaefd4ebf3664e23d3eed2", 
-        "SendReputation": "0xdf1e80450ad1f0f088210b34b3bbce486bfdb7d1", 
-        "SlashRep": "0x8c6f8d0d7f505c1a4b235bf39a7625cfbcdeff8e", 
-        "Trade": "0xf4b27c97c26cc72c9173b239e9a6350cbea5da98", 
-        "Trades": "0xbab4f1b6c234a37cef62f15d91593ce7510c5263"
+        "Backstops": "0xc8b338f48c80a8dae7a7152f962e9ca7f416882e", 
+        "Branches": "0x7527ae8d20708d50a2005fb53cf91cc294c6f389", 
+        "BuyAndSellShares": "0xba2aed1512fbeb937a72a9ee3e8e78b55f76c5b2", 
+        "Cash": "0x7d5c6a01380fa372944d86172e384deede4ccc54", 
+        "CloseMarket": "0x8c838f26245ac58fe50d3533c37579891176ded0", 
+        "CloseMarketOne": "0x55d582bf0927fdb161d60e77f9f87ac487c29a0b", 
+        "CloseMarketTwo": "0x586bbdc91ca260302ef2f6203d0924d7a19ca2a7", 
+        "CollectFees": "0xc46a6d22dc298568c7307267d5d3c64d091bbfe4", 
+        "CompleteSets": "0x082903620c90eb37497de0546b1730be0082fcf7", 
+        "CompositeGetters": "0xe73b19668e632a4a2cae1cd9de3a3e96633d513b", 
+        "Consensus": "0x338ea9637195970e82c2b76609944efe16bb2266", 
+        "ConsensusData": "0xc1ebb32c9e4721cf5c940e8b0725d6338e9f790a", 
+        "CreateBranch": "0x23232edbf6e403952b13afb40eed42ba6ef6d0c1", 
+        "CreateMarket": "0x76993f8c6a9de03c1842432d52809407f97dfc79", 
+        "EventResolution": "0x52fb4755f15d2b63a22a61357c0171a3faaf0904", 
+        "Events": "0xb6f6696265e2aa52d19420f58214fbf238b4d5cc", 
+        "ExpiringEvents": "0xf5f1a584881aa99c2421b3f77d14359ecc6d9965", 
+        "Faucets": "0x7a96d7b893375c7e979b3fa19e84e28cb9fc9aef", 
+        "ForkPenalize": "0xe43eb99d00e2d4e1aa158b4c1a4b052528d63d78", 
+        "Forking": "0x0da20fa13cfa6564c776e129645e707d8d67d482", 
+        "FxpFunctions": "0x16c219643a3993ad44c334feeb3fd7f6808736af", 
+        "Info": "0x62495cfb22a42da3c4a1a941df4f18a5ce387758", 
+        "MakeReports": "0x0552a24d5c60f13b90e2e531e310308175f6de28", 
+        "Markets": "0x2355e4fdee9f9bcc674c6dac2139bfd8630b5c66", 
+        "PenalizationCatchup": "0x55fbca974d100b8707827db60058d30a56e6139e", 
+        "PenalizeNotEnoughReports": "0xe102ee95029fe4e02cb20b9d5d9a2e46e6fe2f67", 
+        "ProportionCorrect": "0x4221cecf200b12d32e5fde46454b0cdf3c5c2a40", 
+        "Reporting": "0x0c3971fe2a5dcb15aab82a018a8554ed14038c65", 
+        "ReportingThreshold": "0x788f0aed6d79fa74601bbdababcd99f91d19a592", 
+        "RoundTwo": "0xeae85341f3448ead4865f0c4bd4c3596df8bd79d", 
+        "RoundTwoPenalize": "0xcfff950e594fe52d56e7acbeecbbd3e26fa886e7", 
+        "SendReputation": "0x5e77fca2b21b9c5983468df99bf2d2c84db1b7c1", 
+        "SlashRep": "0x7263d1f2bbf89315f2190d629fb418254aa1c8cd", 
+        "Trade": "0x9a6464b2b2006f8ae491b0418f455c30db448e15", 
+        "Trades": "0x111aad6997f68cae7f0fe09d64a122ddde4aff3d"
     }
 }
 },{}],57:[function(require,module,exports){
@@ -22906,111 +22920,123 @@ module.exports = {
         });
     },
 
-    transact: function (payload, onSent, onSuccess, onFailed) {
+    /**
+     * asynchronous / non-blocking transact:
+     *  - call onSent when the transaction is broadcast to the network
+     *  - call onSuccess when the transaction is successfully mined
+     *  - call onFailed if the transaction fails
+     */
+    transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed) {
         var self = this;
+        payload.send = true;
+        var returns = payload.returns;
+        delete payload.returns;
+        this.invoke(payload, function (txHash) {
+            if (self.debug.tx) console.debug("txHash:", txHash);
+            if (!txHash) return onFailed(errors.NULL_RESPONSE);
+            if (txHash.error) return onFailed(txHash);
+            payload.returns = returns;
+            txHash = abi.format_int256(txHash);
 
-        function asyncTransact(payload, callReturn, onSent, onSuccess, onFailed) {
-            payload.send = true;
-            var returns = payload.returns;
-            delete payload.returns;
-            self.invoke(payload, function (txHash) {
-                if (self.debug.tx) console.debug("txHash:", txHash);
-                if (!txHash) return onFailed(errors.NULL_RESPONSE);
-                if (txHash.error) return onFailed(txHash);
-                payload.returns = returns;
-                txHash = abi.format_int256(txHash);
+            // send the transaction hash and return value back
+            // to the client, using the onSent callback
+            onSent({txHash: txHash, callReturn: callReturn});
 
-                // send the transaction hash and return value back
-                // to the client, using the onSent callback
-                onSent({txHash: txHash, callReturn: callReturn});
-
-                self.verifyTxSubmitted(payload, txHash, function (err) {
+            self.verifyTxSubmitted(payload, txHash, function (err) {
+                if (err) return onFailed(err);
+                self.pollForTxConfirmation(txHash, function (err, tx) {
                     if (err) return onFailed(err);
-                    self.pollForTxConfirmation(txHash, function (err, tx) {
-                        if (err) return onFailed(err);
-                        if (tx === null) {
-                            return self.transact(payload, onSent, onSuccess, onFailed);
-                        }
-                        if (!payload.mutable) {
-                            tx.callReturn = callReturn;
-                            return onSuccess(tx);
-                        }
+                    if (tx === null) {
+                        return self.transact(payload, onSent, onSuccess, onFailed);
+                    }
+                    if (!payload.mutable) {
+                        tx.callReturn = callReturn;
+                        return onSuccess(tx);
+                    }
 
-                        // if mutable return value, then lookup logged return
-                        // value in transaction receipt (after confirmation)
-                        self.getLoggedReturnValue(txHash, function (err, loggedReturnValue) {
-                            if (self.debug.tx) console.debug("loggedReturnValue:", err, loggedReturnValue);
-                            if (err) {
-                                payload.send = false;
-                                self.fire(payload, function (callReturn) {
-                                    console.debug("getLoggedReturnValue failed, fire returns:", callReturn);
-                                    return onFailed(err);
-                                });
-                            }
-                            var e = self.errorCodes(payload.method, payload.returns, loggedReturnValue);
-                            if (e && e.error) return onFailed(e);
-                            tx.callReturn = self.applyReturns(payload.returns, loggedReturnValue);
-                            onSuccess(tx);
-                        });
+                    // if mutable return value, then lookup logged return
+                    // value in transaction receipt (after confirmation)
+                    self.getLoggedReturnValue(txHash, function (err, loggedReturnValue) {
+                        if (self.debug.tx) console.debug("loggedReturnValue:", err, loggedReturnValue);
+                        if (err) {
+                            payload.send = false;
+                            self.fire(payload, function (callReturn) {
+                                console.debug("getLoggedReturnValue failed, fire returns:", callReturn);
+                                return onFailed(err);
+                            });
+                        }
+                        var e = self.errorCodes(payload.method, payload.returns, loggedReturnValue);
+                        if (e && e.error) return onFailed(e);
+                        tx.callReturn = self.applyReturns(payload.returns, loggedReturnValue);
+                        onSuccess(tx);
                     });
                 });
             });
-        }
+        });
+    },
 
-        if (this.debug.tx) console.debug("payload transact:", payload);
-        payload.send = false;
-
-        // synchronous: block until the transaction is confirmed or fails
-        // (don't use this in the browser or you will be a sad panda)
-        if (!isFunction(onSent)) {
-            var callReturn;
-            if (payload.mutable || payload.returns === "null") {
+    /**
+     * synchronous transact: block until the transaction is confirmed or fails
+     * (don't use this in the browser or you will be a sad panda)
+     */
+    transactSync: function (payload) {
+        var callReturn;
+        if (payload.mutable || payload.returns === "null") {
+            callReturn = null;
+        } else {
+            callReturn = this.fire(payload);
+            if (this.debug.tx) console.debug("callReturn:", callReturn);
+            if (callReturn === undefined || callReturn === null) {
+                throw new this.Error(errors.NULL_CALL_RETURN);
+            } else if (callReturn.error === "0x") {
                 callReturn = null;
-            } else {
-                callReturn = this.fire(payload);
-                if (this.debug.tx) console.debug("callReturn:", callReturn);
-                if (callReturn === undefined || callReturn === null) {
-                    throw new this.Error(errors.NULL_CALL_RETURN);
-                } else if (callReturn.error === "0x") {
-                    callReturn = null;
-                } else if (callReturn.error) {
-                    throw new this.Error(callReturn);
-                }
+            } else if (callReturn.error) {
+                throw new this.Error(callReturn);
             }
-            payload.send = true;
-            var returns = payload.returns;
-            delete payload.returns;
-            var txHash = this.invoke(payload);
-            if (this.debug.tx) console.debug("txHash:", txHash);
-            if (!txHash) throw new this.Error(errors.NULL_RESPONSE);
-            if (txHash.error) throw new this.Error(txHash);
-            payload.returns = returns;
-            txHash = abi.format_int256(txHash);
-            this.verifyTxSubmitted(payload, txHash);
-            var tx = this.pollForTxConfirmation(txHash);
-            if (tx === null) return this.transact(payload);
-            if (!payload.mutable) {
-                tx.callReturn = callReturn;
-                return tx;
-            }
-
-            // if mutable return value, then lookup logged return
-            // value in transaction receipt (after confirmation)
-            var loggedReturnValue = this.getLoggedReturnValue(txHash);
-            var e = this.errorCodes(payload.method, payload.returns, loggedReturnValue);
-            if (e && e.error) throw new Error(e);
-            tx.callReturn = this.applyReturns(payload.returns, loggedReturnValue);
+        }
+        payload.send = true;
+        var returns = payload.returns;
+        delete payload.returns;
+        var txHash = this.invoke(payload);
+        if (this.debug.tx) console.debug("txHash:", txHash);
+        if (!txHash) throw new this.Error(errors.NULL_RESPONSE);
+        if (txHash.error) throw new this.Error(txHash);
+        payload.returns = returns;
+        txHash = abi.format_int256(txHash);
+        this.verifyTxSubmitted(payload, txHash);
+        var tx = this.pollForTxConfirmation(txHash);
+        if (tx === null) return this.transact(payload);
+        if (!payload.mutable) {
+            tx.callReturn = callReturn;
             return tx;
         }
 
-        // asynchronous / non-blocking:
-        //  - call onSent when the transaction is broadcast to the network
-        //  - call onSuccess when the transaction is successfully mined
-        //  - call onFailed if the transaction fails
+        // if mutable return value, then lookup logged return
+        // value in transaction receipt (after confirmation)
+        var loggedReturnValue = this.getLoggedReturnValue(txHash);
+        var e = this.errorCodes(payload.method, payload.returns, loggedReturnValue);
+        if (e && e.error) {
+            callReturn = this.fire(payload);
+            console.debug("getLoggedReturnValue failed, fire returns:", callReturn);
+            throw new Error(e);
+        }
+        tx.callReturn = this.applyReturns(payload.returns, loggedReturnValue);
+        return tx;
+    },
+
+    transact: function (payload, onSent, onSuccess, onFailed) {
+        var self = this;
+        if (this.debug.tx) console.debug("payload transact:", payload);
+        payload.send = false;
+
+        // synchronous / blocking transact sequence
+        if (!isFunction(onSent)) return this.transactSync(payload);
+
+        // asynchronous / non-blocking transact sequence
         onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
         onFailed = (isFunction(onFailed)) ? onFailed : noop;
         if (payload.mutable || payload.returns === "null") {
-            return asyncTransact(payload, null, onSent, onSuccess, onFailed);
+            return this.transactAsync(payload, null, onSent, onSuccess, onFailed);
         }
         this.fire(payload, function (callReturn) {
             if (self.debug.tx) console.debug("callReturn:", callReturn);
@@ -23019,7 +23045,7 @@ module.exports = {
             } else if (callReturn.error) {
                 return onFailed(callReturn);
             }
-            asyncTransact(payload, callReturn, onSent, onSuccess, onFailed);
+            self.transactAsync(payload, callReturn, onSent, onSuccess, onFailed);
         });
     }
 };

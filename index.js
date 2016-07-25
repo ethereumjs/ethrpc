@@ -1442,111 +1442,123 @@ module.exports = {
         });
     },
 
-    transact: function (payload, onSent, onSuccess, onFailed) {
+    /**
+     * asynchronous / non-blocking transact:
+     *  - call onSent when the transaction is broadcast to the network
+     *  - call onSuccess when the transaction is successfully mined
+     *  - call onFailed if the transaction fails
+     */
+    transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed) {
         var self = this;
+        payload.send = true;
+        var returns = payload.returns;
+        delete payload.returns;
+        this.invoke(payload, function (txHash) {
+            if (self.debug.tx) console.debug("txHash:", txHash);
+            if (!txHash) return onFailed(errors.NULL_RESPONSE);
+            if (txHash.error) return onFailed(txHash);
+            payload.returns = returns;
+            txHash = abi.format_int256(txHash);
 
-        function asyncTransact(payload, callReturn, onSent, onSuccess, onFailed) {
-            payload.send = true;
-            var returns = payload.returns;
-            delete payload.returns;
-            self.invoke(payload, function (txHash) {
-                if (self.debug.tx) console.debug("txHash:", txHash);
-                if (!txHash) return onFailed(errors.NULL_RESPONSE);
-                if (txHash.error) return onFailed(txHash);
-                payload.returns = returns;
-                txHash = abi.format_int256(txHash);
+            // send the transaction hash and return value back
+            // to the client, using the onSent callback
+            onSent({txHash: txHash, callReturn: callReturn});
 
-                // send the transaction hash and return value back
-                // to the client, using the onSent callback
-                onSent({txHash: txHash, callReturn: callReturn});
-
-                self.verifyTxSubmitted(payload, txHash, function (err) {
+            self.verifyTxSubmitted(payload, txHash, function (err) {
+                if (err) return onFailed(err);
+                self.pollForTxConfirmation(txHash, function (err, tx) {
                     if (err) return onFailed(err);
-                    self.pollForTxConfirmation(txHash, function (err, tx) {
-                        if (err) return onFailed(err);
-                        if (tx === null) {
-                            return self.transact(payload, onSent, onSuccess, onFailed);
-                        }
-                        if (!payload.mutable) {
-                            tx.callReturn = callReturn;
-                            return onSuccess(tx);
-                        }
+                    if (tx === null) {
+                        return self.transact(payload, onSent, onSuccess, onFailed);
+                    }
+                    if (!payload.mutable) {
+                        tx.callReturn = callReturn;
+                        return onSuccess(tx);
+                    }
 
-                        // if mutable return value, then lookup logged return
-                        // value in transaction receipt (after confirmation)
-                        self.getLoggedReturnValue(txHash, function (err, loggedReturnValue) {
-                            if (self.debug.tx) console.debug("loggedReturnValue:", err, loggedReturnValue);
-                            if (err) {
-                                payload.send = false;
-                                self.fire(payload, function (callReturn) {
-                                    console.debug("getLoggedReturnValue failed, fire returns:", callReturn);
-                                    return onFailed(err);
-                                });
-                            }
-                            var e = self.errorCodes(payload.method, payload.returns, loggedReturnValue);
-                            if (e && e.error) return onFailed(e);
-                            tx.callReturn = self.applyReturns(payload.returns, loggedReturnValue);
-                            onSuccess(tx);
-                        });
+                    // if mutable return value, then lookup logged return
+                    // value in transaction receipt (after confirmation)
+                    self.getLoggedReturnValue(txHash, function (err, loggedReturnValue) {
+                        if (self.debug.tx) console.debug("loggedReturnValue:", err, loggedReturnValue);
+                        if (err) {
+                            payload.send = false;
+                            self.fire(payload, function (callReturn) {
+                                console.debug("getLoggedReturnValue failed, fire returns:", callReturn);
+                                return onFailed(err);
+                            });
+                        }
+                        var e = self.errorCodes(payload.method, payload.returns, loggedReturnValue);
+                        if (e && e.error) return onFailed(e);
+                        tx.callReturn = self.applyReturns(payload.returns, loggedReturnValue);
+                        onSuccess(tx);
                     });
                 });
             });
-        }
+        });
+    },
 
-        if (this.debug.tx) console.debug("payload transact:", payload);
-        payload.send = false;
-
-        // synchronous: block until the transaction is confirmed or fails
-        // (don't use this in the browser or you will be a sad panda)
-        if (!isFunction(onSent)) {
-            var callReturn;
-            if (payload.mutable || payload.returns === "null") {
+    /**
+     * synchronous transact: block until the transaction is confirmed or fails
+     * (don't use this in the browser or you will be a sad panda)
+     */
+    transactSync: function (payload) {
+        var callReturn;
+        if (payload.mutable || payload.returns === "null") {
+            callReturn = null;
+        } else {
+            callReturn = this.fire(payload);
+            if (this.debug.tx) console.debug("callReturn:", callReturn);
+            if (callReturn === undefined || callReturn === null) {
+                throw new this.Error(errors.NULL_CALL_RETURN);
+            } else if (callReturn.error === "0x") {
                 callReturn = null;
-            } else {
-                callReturn = this.fire(payload);
-                if (this.debug.tx) console.debug("callReturn:", callReturn);
-                if (callReturn === undefined || callReturn === null) {
-                    throw new this.Error(errors.NULL_CALL_RETURN);
-                } else if (callReturn.error === "0x") {
-                    callReturn = null;
-                } else if (callReturn.error) {
-                    throw new this.Error(callReturn);
-                }
+            } else if (callReturn.error) {
+                throw new this.Error(callReturn);
             }
-            payload.send = true;
-            var returns = payload.returns;
-            delete payload.returns;
-            var txHash = this.invoke(payload);
-            if (this.debug.tx) console.debug("txHash:", txHash);
-            if (!txHash) throw new this.Error(errors.NULL_RESPONSE);
-            if (txHash.error) throw new this.Error(txHash);
-            payload.returns = returns;
-            txHash = abi.format_int256(txHash);
-            this.verifyTxSubmitted(payload, txHash);
-            var tx = this.pollForTxConfirmation(txHash);
-            if (tx === null) return this.transact(payload);
-            if (!payload.mutable) {
-                tx.callReturn = callReturn;
-                return tx;
-            }
-
-            // if mutable return value, then lookup logged return
-            // value in transaction receipt (after confirmation)
-            var loggedReturnValue = this.getLoggedReturnValue(txHash);
-            var e = this.errorCodes(payload.method, payload.returns, loggedReturnValue);
-            if (e && e.error) throw new Error(e);
-            tx.callReturn = this.applyReturns(payload.returns, loggedReturnValue);
+        }
+        payload.send = true;
+        var returns = payload.returns;
+        delete payload.returns;
+        var txHash = this.invoke(payload);
+        if (this.debug.tx) console.debug("txHash:", txHash);
+        if (!txHash) throw new this.Error(errors.NULL_RESPONSE);
+        if (txHash.error) throw new this.Error(txHash);
+        payload.returns = returns;
+        txHash = abi.format_int256(txHash);
+        this.verifyTxSubmitted(payload, txHash);
+        var tx = this.pollForTxConfirmation(txHash);
+        if (tx === null) return this.transact(payload);
+        if (!payload.mutable) {
+            tx.callReturn = callReturn;
             return tx;
         }
 
-        // asynchronous / non-blocking:
-        //  - call onSent when the transaction is broadcast to the network
-        //  - call onSuccess when the transaction is successfully mined
-        //  - call onFailed if the transaction fails
+        // if mutable return value, then lookup logged return
+        // value in transaction receipt (after confirmation)
+        var loggedReturnValue = this.getLoggedReturnValue(txHash);
+        var e = this.errorCodes(payload.method, payload.returns, loggedReturnValue);
+        if (e && e.error) {
+            callReturn = this.fire(payload);
+            console.debug("getLoggedReturnValue failed, fire returns:", callReturn);
+            throw new Error(e);
+        }
+        tx.callReturn = this.applyReturns(payload.returns, loggedReturnValue);
+        return tx;
+    },
+
+    transact: function (payload, onSent, onSuccess, onFailed) {
+        var self = this;
+        if (this.debug.tx) console.debug("payload transact:", payload);
+        payload.send = false;
+
+        // synchronous / blocking transact sequence
+        if (!isFunction(onSent)) return this.transactSync(payload);
+
+        // asynchronous / non-blocking transact sequence
         onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
         onFailed = (isFunction(onFailed)) ? onFailed : noop;
         if (payload.mutable || payload.returns === "null") {
-            return asyncTransact(payload, null, onSent, onSuccess, onFailed);
+            return this.transactAsync(payload, null, onSent, onSuccess, onFailed);
         }
         this.fire(payload, function (callReturn) {
             if (self.debug.tx) console.debug("callReturn:", callReturn);
@@ -1555,7 +1567,7 @@ module.exports = {
             } else if (callReturn.error) {
                 return onFailed(callReturn);
             }
-            asyncTransact(payload, callReturn, onSent, onSuccess, onFailed);
+            self.transactAsync(payload, callReturn, onSent, onSuccess, onFailed);
         });
     }
 };
