@@ -57,6 +57,8 @@ module.exports = {
         broadcast: false
     },
 
+    retryDroppedTxs: false,
+
     // geth IPC endpoint (Node-only)
     ipcpath: null,
     socket: null,
@@ -1336,55 +1338,60 @@ module.exports = {
         });
     },
 
+    checkDroppedTxForDuplicateNonce: function (txHash, callback) {
+        var duplicateNonce;
+        if (this.debug.tx) console.debug("Raw transactions:", this.rawTxs);
+        if (!this.rawTxs[txHash] || !this.rawTxs[txHash].tx) {
+            if (!isFunction(callback)) {
+                throw new this.Error(errors.TRANSACTION_NOT_FOUND);
+            }
+            return callback(errors.TRANSACTION_NOT_FOUND);
+        }
+        for (var hash in this.rawTxs) {
+            if (!this.rawTxs.hasOwnProperty(hash)) continue;
+            if (this.rawTxs[hash].tx.nonce === this.rawTxs[txHash].tx.nonce &&
+                JSON.stringify(this.rawTxs[hash].tx) !== JSON.stringify(this.rawTxs[txHash].tx)) {
+                duplicateNonce = true;
+                console.warn("Warning: duplicate nonce found on raw tx:", txHash);
+                break;
+            }
+        }
+        if (!duplicateNonce) {
+            if (!isFunction(callback)) {
+                throw new this.Error(errors.TRANSACTION_NOT_FOUND);
+            }
+            return callback(errors.TRANSACTION_NOT_FOUND);
+        }
+        if (!isFunction(callback)) return null;
+        callback(null);
+    },
+
     txNotify: function (txHash, callback) {
         var self = this;
         if (!isFunction(callback)) {
             var tx = this.getTransaction(txHash);
             if (tx) return tx;
+            this.txs[txHash].status = "failed";
 
-            // this.txs[txHash].status = "failed";
-            // if (this.debug.tx) console.debug("Raw transactions:", this.rawTxs);
+            // only resubmit if this is a raw transaction and has a duplicate nonce
+            if (!this.retryDroppedTxs) this.checkDroppedTxForDuplicateNonce(txHash);
 
-            // resubmit if this is a raw transaction and has a duplicate nonce
-            // if (!this.rawTxs[txHash] || !this.rawTxs[txHash].tx) {
-            //     throw new this.Error(errors.TRANSACTION_NOT_FOUND);
-            // }
-            // var duplicateNonce;
-            // for (var hash in this.rawTxs) {
-            //     if (!this.rawTxs.hasOwnProperty(hash)) continue;
-            //     if (this.rawTxs[hash].tx.nonce === this.rawTxs[txHash].tx.nonce &&
-            //         JSON.stringify(this.rawTxs[hash].tx) !== JSON.stringify(this.rawTxs[txHash].tx)) {
-            //         duplicateNonce = true;
-            //         break;
-            //     }
-            // }
-            // if (!duplicateNonce) throw new this.Error(errors.TRANSACTION_NOT_FOUND);
             this.txs[txHash].status = "resubmitted";
             return null;
         }
         this.getTransaction(txHash, function (tx) {
             if (tx) return callback(null, tx);
+            self.txs[txHash].status = "failed";
+            if (!self.retryDroppedTxs) {
 
-            // self.txs[txHash].status = "failed";
-            // if (self.debug.tx) console.debug("Raw transactions:", self.rawTxs);
-
-            // resubmit if this is a raw transaction and has a duplicate nonce
-            // if (!self.rawTxs[txHash] || !self.rawTxs[txHash].tx) {
-            //     return callback(errors.TRANSACTION_NOT_FOUND);
-            // }
-            // var duplicateNonce;
-            // for (var hash in self.rawTxs) {
-            //     if (!self.rawTxs.hasOwnProperty(hash)) continue;
-            //     if (self.rawTxs[hash].tx.nonce === self.rawTxs[txHash].tx.nonce &&
-            //         JSON.stringify(self.rawTxs[hash].tx) !== JSON.stringify(self.rawTxs[txHash].tx)) {
-            //         duplicateNonce = true;
-            //         break;
-            //     }
-            // }
-            // if (!duplicateNonce) return callback(errors.TRANSACTION_NOT_FOUND);
-            console.debug(" *** Re-submitting transaction:", txHash);
-            self.txs[txHash].status = "resubmitted";
-            return callback(null, null);
+                // only resubmit if this is a raw transaction and has a duplicate nonce
+                self.checkDroppedTxForDuplicateNonce(txHash, function (err) {
+                    if (err !== null) return callback(err);
+                    console.debug(" *** Re-submitting transaction:", txHash);
+                    self.txs[txHash].status = "resubmitted";
+                    return callback(null, null);
+                });
+            }
         });
     },
 
