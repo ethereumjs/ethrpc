@@ -20897,41 +20897,41 @@ module.exports={
 },{}],56:[function(require,module,exports){
 module.exports={
     "10101": {
-        "Backstops": "0x0d6100f462e8673897a8af2294a542905c2c4669", 
-        "Branches": "0xaa73c1abe075999ce7dd8fd7f311c26af4ecb412", 
-        "BuyAndSellShares": "0x45337ca8b048ef1c9e2d6a344d37363f3d61916e", 
-        "Cash": "0x653010f2b4d09e2fb3938e90d4914e3f3b52649f", 
-        "CloseMarket": "0xa460d3a8246acd3a40d7da09f79c1b3ed77613ac", 
-        "CloseMarketOne": "0x2c57feb0c6eb05993cf94a152a7a323c105db5d0", 
-        "CloseMarketTwo": "0xb4ad25d0f24839b2de7788ddb1a3868921a49086", 
-        "CollectFees": "0x27442a9c083e651f576030719b095e2cb1d59cce", 
-        "CompleteSets": "0x5c01ef538efc55616dcb977c68fa9c1f84005744", 
-        "CompositeGetters": "0x2924c7b2b8153151ba16568e9c522b1f885f7d80", 
-        "Consensus": "0x74060ea065bd19fae3c5f24aec81511ea8d1c404", 
-        "ConsensusData": "0x6575eb2dc9b2afca07f52480ae6e6e86fb364675", 
-        "CreateBranch": "0xd2a53aa4036276246927cd20172af948527b114e", 
-        "CreateMarket": "0xf8f9eb56210845d8334182dffd1736508755f6e4", 
-        "EventResolution": "0xcf0602a73d78c1269f45e042dcb6763aa6c54e8c", 
-        "Events": "0xb596f4df9ea33dfe729c3240f7b5384011dc4126", 
-        "ExpiringEvents": "0x60eaf6fbc260bb399d169d5ebc014dcbe049429f", 
-        "Faucets": "0x89904e30165ed8d32ca0d49b436cc10c86bebefe", 
-        "ForkPenalize": "0x4d395739be03348465a6c2a0d99ee246dfcd1a81", 
-        "Forking": "0x6c161e7817e4e6d298d8686e580f5294646933ce", 
-        "FxpFunctions": "0xe8a5ccc31fbc3b0f4fe6187ba7896f3878a9c4d6", 
-        "Info": "0x4e41f6b5733191d1f0f0fff26fcff61926885c85", 
-        "MakeReports": "0xbd6f40053cffb017b99cc0427b38611e404554f1", 
-        "Markets": "0xaf2751b0146ab6f846f9f399a3bf0ebb2e425463", 
-        "PenalizationCatchup": "0x0fc1c598469b6fefe3dccca1bb2b96641d215077", 
-        "PenalizeNotEnoughReports": "0x9440afa9204905b721aaf317bc4a3be7d1e824f9", 
-        "ProportionCorrect": "0x1fd628402b00f64562d0b56bb0dc88549f080210", 
-        "Reporting": "0x05ba0acf326532b53c738bf6b28ad523987aa9f5", 
-        "ReportingThreshold": "0x30a6160e55d9af16ef784632e3ddf709d3550abd", 
-        "RoundTwo": "0xb6f31bde9b0a0879866c82d268b4ca839b3bdbb2", 
-        "RoundTwoPenalize": "0x56678a73cbea68580649ed1b5c9b9369419b9bee", 
-        "SendReputation": "0xb1836ac3300b1f5f4445098df6e5c5fdfdd79674", 
-        "SlashRep": "0x9ab5dadbf6c2c3928f5420ea842183ac5e285252", 
-        "Trade": "0xd0473b70530a37743d63268ed9e8544c01c0a7a6", 
-        "Trades": "0x401a31250646bb68e2169bbdc0a8834d0f375ecb"
+        "Backstops": "0x8c19616de17acdfbc933b99d9f529a689d22098f", 
+        "Branches": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2", 
+        "BuyAndSellShares": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79", 
+        "Cash": "0x8f2c2267687cb0f047b28a1b6f945da6e101a0d7", 
+        "CloseMarket": "0x70a893eb9569041e97a3787f0c76a1eb6378d8b2", 
+        "CloseMarketOne": "0xe4714fcbdcdba49629bc408183ef40d120700b8d", 
+        "CloseMarketTwo": "0xe5b327630cfa7f4b2324f9066c897dceecfd88a3", 
+        "CollectFees": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e", 
+        "CompleteSets": "0x5069d883e31429c6dd1325d961f443007747c7a2", 
+        "CompositeGetters": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df", 
+        "Consensus": "0x9308cf21b5a11f182f9707ca284bbb71bb84f893", 
+        "ConsensusData": "0xbd19195b9e8a2d8ed14fc3a2823856b5c16f7f55", 
+        "CreateBranch": "0x35152caa07026203a1add680771afb690d872d7d", 
+        "CreateMarket": "0xcd6c7bc634257f82903b182142aae7156d72a200", 
+        "EventResolution": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7", 
+        "Events": "0x4a61f3db785f1e2a23ffefeafaceeef2df551667", 
+        "ExpiringEvents": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6", 
+        "Faucets": "0x7d4b581a0868204b7481c316b430a97fd292a2fb", 
+        "ForkPenalize": "0x509592c96eee7e19f6a34772fd8783cb072ca3c6", 
+        "Forking": "0xd2e9f7c2fd4635199b8cc9e8128fc4d27c693945", 
+        "FxpFunctions": "0x8a4e2993a9972ee035453bb5674816fc3a698718", 
+        "Info": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea", 
+        "MakeReports": "0x2e5a882aa53805f1a9da3cf18f73673bca98fa0f", 
+        "Markets": "0x708fdfe18bf28afe861a69e95419d183ace003eb", 
+        "PenalizationCatchup": "0xd15a6cfc462ae76b9ec590cab8b34bfa8e1302d7", 
+        "PenalizeNotEnoughReports": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd", 
+        "ProportionCorrect": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d", 
+        "Reporting": "0x482c57abdce592b39434e3f619ffc3db62ab6d01", 
+        "ReportingThreshold": "0x81a7621e9a286d061b3dea040888a51c96693b1c", 
+        "RoundTwo": "0xd70c6e1f3857d23bd96c3e4d2ec346fa7c3931f3", 
+        "RoundTwoPenalize": "0x031d9d02520cc708ea3c865278508c9cdb92bd51", 
+        "SendReputation": "0x448c01a2e1fd6c2ef133402c403d2f48c99993e7", 
+        "SlashRep": "0x9fe69262bbaa47f013b7dbd6ca5f01e17446c645", 
+        "Trade": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68", 
+        "Trades": "0x3f3276849a878a176b2f02dd48a483e8182a49e4"
     }, 
     "2": {
         "Backstops": "0x67902c540b7865e3a4fb546850b032aea40b76b4", 
@@ -21211,6 +21211,10 @@ module.exports={
     "TRANSACTION_INVALID": {
         "error": 412,
         "message": "transaction validation failed"
+    },
+    "TRANSACTION_RETRY_MAX_EXCEEDED": {
+        "error": 413,
+        "message": "maximum number of transaction retry attempts exceeded"
     },
     "HANDLE_TAKEN": {
         "error": 422,
@@ -21525,6 +21529,7 @@ module.exports = {
         broadcast: false
     },
 
+    // if set to true, dropped transactions are automatically resubmitted
     retryDroppedTxs: false,
 
     // geth IPC endpoint (Node-only)
@@ -21545,6 +21550,12 @@ module.exports = {
 
     // local ethereum node address
     localnode: "http://127.0.0.1:8545",
+
+    // Number of required confirmations for transact sequence
+    REQUIRED_CONFIRMATIONS: 5,
+
+    // Maximum number of retry attempts for dropped transactions
+    TX_RETRY_MAX: 3,
 
     // Maximum number of transaction verification attempts
     TX_POLL_MAX: 128,
@@ -22190,7 +22201,7 @@ module.exports = {
         if (isFunction(f)) {
             this.broadcast(this.marshal("blockNumber"), f);
         } else {
-            return parseInt(this.broadcast(this.marshal("blockNumber")));
+            return parseInt(this.broadcast(this.marshal("blockNumber")), 16);
         }
     },
 
@@ -22420,7 +22431,7 @@ module.exports = {
         var startBlock, endBlock, self = this;
         function fastforward() {
             self.blockNumber(function (blockNumber) {
-                blockNumber = parseInt(blockNumber);
+                blockNumber = parseInt(blockNumber, 16);
                 if (startBlock === undefined) {
                     startBlock = blockNumber;
                     endBlock = blockNumber + parseInt(blocks);
@@ -22749,19 +22760,7 @@ module.exports = {
      * Send-call-confirm callback sequence *
      ***************************************/
 
-    checkBlockHash: function (tx, callback) {
-        if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
-        if (this.txs[tx.hash].count === undefined) this.txs[tx.hash].count = 0;
-        ++this.txs[tx.hash].count;
-        if (this.debug.tx) console.debug("checkBlockHash:", tx.blockHash);
-        if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
-            tx.txHash = tx.hash;
-            this.txs[tx.hash].status = "confirmed";
-            clearTimeout(this.notifications[tx.hash]);
-            delete this.notifications[tx.hash];
-            if (!isFunction(callback)) return tx;
-            return callback(null, tx);
-        }
+    waitForNextPoll: function (tx, callback) {
         if (this.txs[tx.hash].count >= this.TX_POLL_MAX) {
             this.txs[tx.hash].status = "unconfirmed";
             if (!isFunction(callback)) {
@@ -22771,13 +22770,60 @@ module.exports = {
         }
         if (!isFunction(callback)) {
             wait(this.TX_POLL_INTERVAL);
-            if (this.txs[tx.hash].status === "pending") return null;
+            if (this.txs[tx.hash].status === "pending" || this.txs[tx.hash].status === "mined") {
+                return null;
+            }
         } else {
             var self = this;
             this.notifications[tx.hash] = setTimeout(function () {
-                if (self.txs[tx.hash].status === "pending") callback(null, null);
+                if (self.txs[tx.hash].status === "pending" || self.txs[tx.hash].status === "mined") {
+                    callback(null, null);
+                }
             }, this.TX_POLL_INTERVAL);
         }
+    },
+
+    completeTx: function (tx, callback) {
+        this.txs[tx.hash].status = "confirmed";
+        clearTimeout(this.notifications[tx.hash]);
+        delete this.notifications[tx.hash];
+        if (!isFunction(callback)) return tx;
+        return callback(null, tx);
+    },
+
+    checkConfirmations: function (tx, numConfirmations, callback) {
+        var self = this;
+        var minedBlockNumber = parseInt(tx.blockNumber, 16);
+        this.blockNumber(function (currentBlockNumber) {
+            if (self.debug.tx) {
+                console.log("confirmations:", parseInt(currentBlockNumber, 16) - minedBlockNumber);
+            }
+            if (parseInt(currentBlockNumber, 16) - minedBlockNumber >= numConfirmations) {
+                console.log("checkConfirmations complete");
+                return self.completeTx(tx, callback);
+            }
+            console.log("checkConfirmations incomplete, waiting for next poll...");
+            return self.waitForNextPoll(tx, callback);
+        });
+    },
+
+    checkBlockHash: function (tx, numConfirmations, callback) {
+        if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
+        if (this.txs[tx.hash].count === undefined) this.txs[tx.hash].count = 0;
+        ++this.txs[tx.hash].count;
+        if (this.debug.tx) console.debug("checkBlockHash:", tx.blockHash);
+        if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
+            tx.txHash = tx.hash;
+            if (!numConfirmations) {
+                this.txs[tx.hash].status = "mined";
+                clearTimeout(this.notifications[tx.hash]);
+                delete this.notifications[tx.hash];
+                if (!isFunction(callback)) return tx;
+                return callback(null, tx);
+            }
+            return this.checkConfirmations(tx, numConfirmations, callback);
+        }
+        return this.waitForNextPoll(tx, callback);
     },
 
     getLoggedReturnValue: function (txHash, callback) {
@@ -22860,6 +22906,9 @@ module.exports = {
                     return callback(null, null);
                 });
             }
+            console.debug(" *** Re-submitting transaction:", txHash);
+            self.txs[txHash].status = "resubmitted";
+            return callback(null, null);
         });
     },
 
@@ -22898,22 +22947,23 @@ module.exports = {
 
     // poll the network until the transaction is included in a block
     // (i.e., has a non-null blockHash field)
-    pollForTxConfirmation: function (txHash, callback) {
+    // TODO replace polling with block subscription (for websockets)
+    pollForTxConfirmation: function (txHash, numConfirmations, callback) {
         var self = this;
         if (!isFunction(callback)) {
             var tx = this.txNotify(txHash);
             if (tx === null) return null;
-            var minedTx = this.checkBlockHash(tx);
+            var minedTx = this.checkBlockHash(tx, numConfirmations);
             if (minedTx !== null) return minedTx;
-            return this.pollForTxConfirmation(txHash);
+            return this.pollForTxConfirmation(txHash, numConfirmations);
         }
         this.txNotify(txHash, function (err, tx) {
             if (err) return callback(err);
             if (tx === null) return callback(null, null);
-            self.checkBlockHash(tx, function (err, minedTx) {
+            self.checkBlockHash(tx, numConfirmations, function (err, minedTx) {
                 if (err) return callback(err);
                 if (minedTx !== null) return callback(null, minedTx);
-                self.pollForTxConfirmation(txHash, callback);
+                self.pollForTxConfirmation(txHash, numConfirmations, callback);
             });
         });
     },
@@ -22923,8 +22973,9 @@ module.exports = {
      *  - call onSent when the transaction is broadcast to the network
      *  - call onSuccess when the transaction is successfully mined
      *  - call onFailed if the transaction fails
+     *  - call onConfirmed when the transaction has REQUIRED_CONFIRMATIONS confirmations
      */
-    transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed) {
+    transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed, onConfirmed) {
         var self = this;
         payload.send = true;
         var returns = payload.returns;
@@ -22942,14 +22993,25 @@ module.exports = {
 
             self.verifyTxSubmitted(payload, txHash, function (err) {
                 if (err) return onFailed(err);
-                self.pollForTxConfirmation(txHash, function (err, tx) {
+                self.pollForTxConfirmation(txHash, null, function (err, tx) {
                     if (err) return onFailed(err);
                     if (tx === null) {
+                        payload.tries = (payload.tries) ? payload.tries + 1 : 1;
+                        if (payload.tries > self.TX_RETRY_MAX) {
+                            return onFailed(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
+                        }
                         return self.transact(payload, onSent, onSuccess, onFailed);
                     }
                     if (!payload.mutable) {
                         tx.callReturn = callReturn;
-                        return onSuccess(tx);
+                        onSuccess(tx);
+                        if (isFunction(onConfirmed)) {
+                            self.pollForTxConfirmation(txHash, self.REQUIRED_CONFIRMATIONS, function (err) {
+                                if (err) return onFailed(err);
+                                onConfirmed(tx);
+                            });
+                        }
+                        return;
                     }
 
                     // if mutable return value, then lookup logged return
@@ -22958,7 +23020,7 @@ module.exports = {
                         if (self.debug.tx) console.debug("loggedReturnValue:", err, loggedReturnValue);
                         if (err) {
                             payload.send = false;
-                            self.fire(payload, function (callReturn) {
+                            return self.fire(payload, function (callReturn) {
                                 console.debug("getLoggedReturnValue failed, fire returns:", callReturn);
                                 return onFailed(err);
                             });
@@ -22967,6 +23029,12 @@ module.exports = {
                         if (e && e.error) return onFailed(e);
                         tx.callReturn = self.applyReturns(payload.returns, loggedReturnValue);
                         onSuccess(tx);
+                        if (isFunction(onConfirmed)) {
+                            self.pollForTxConfirmation(txHash, self.REQUIRED_CONFIRMATIONS, function (err) {
+                                if (err) return onFailed(err);
+                                onConfirmed(tx);
+                            });
+                        }
                     });
                 });
             });
@@ -23002,8 +23070,14 @@ module.exports = {
         payload.returns = returns;
         txHash = abi.format_int256(txHash);
         this.verifyTxSubmitted(payload, txHash);
-        var tx = this.pollForTxConfirmation(txHash);
-        if (tx === null) return this.transact(payload);
+        var tx = this.pollForTxConfirmation(txHash, null);
+        if (tx === null) {
+            payload.tries = (payload.tries) ? payload.tries + 1 : 1;
+            if (payload.tries > this.TX_RETRY_MAX) {
+                throw new this.Error(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
+            }
+            return this.transact(payload);
+        }
         if (!payload.mutable) {
             tx.callReturn = callReturn;
             return tx;
@@ -23022,7 +23096,7 @@ module.exports = {
         return tx;
     },
 
-    transact: function (payload, onSent, onSuccess, onFailed) {
+    transact: function (payload, onSent, onSuccess, onFailed, onConfirmed) {
         var self = this;
         if (this.debug.tx) console.debug("payload transact:", payload);
         payload.send = false;
@@ -23034,7 +23108,7 @@ module.exports = {
         onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
         onFailed = (isFunction(onFailed)) ? onFailed : noop;
         if (payload.mutable || payload.returns === "null") {
-            return this.transactAsync(payload, null, onSent, onSuccess, onFailed);
+            return this.transactAsync(payload, null, onSent, onSuccess, onFailed, onConfirmed);
         }
         this.fire(payload, function (callReturn) {
             if (self.debug.tx) console.debug("callReturn:", callReturn);
@@ -23043,7 +23117,7 @@ module.exports = {
             } else if (callReturn.error) {
                 return onFailed(callReturn);
             }
-            self.transactAsync(payload, callReturn, onSent, onSuccess, onFailed);
+            self.transactAsync(payload, callReturn, onSent, onSuccess, onFailed, onConfirmed);
         });
     }
 };

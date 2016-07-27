@@ -57,6 +57,7 @@ module.exports = {
         broadcast: false
     },
 
+    // if set to true, dropped transactions are automatically resubmitted
     retryDroppedTxs: false,
 
     // geth IPC endpoint (Node-only)
@@ -77,6 +78,12 @@ module.exports = {
 
     // local ethereum node address
     localnode: "http://127.0.0.1:8545",
+
+    // Number of required confirmations for transact sequence
+    REQUIRED_CONFIRMATIONS: 5,
+
+    // Maximum number of retry attempts for dropped transactions
+    TX_RETRY_MAX: 3,
 
     // Maximum number of transaction verification attempts
     TX_POLL_MAX: 128,
@@ -722,7 +729,7 @@ module.exports = {
         if (isFunction(f)) {
             this.broadcast(this.marshal("blockNumber"), f);
         } else {
-            return parseInt(this.broadcast(this.marshal("blockNumber")));
+            return parseInt(this.broadcast(this.marshal("blockNumber")), 16);
         }
     },
 
@@ -952,7 +959,7 @@ module.exports = {
         var startBlock, endBlock, self = this;
         function fastforward() {
             self.blockNumber(function (blockNumber) {
-                blockNumber = parseInt(blockNumber);
+                blockNumber = parseInt(blockNumber, 16);
                 if (startBlock === undefined) {
                     startBlock = blockNumber;
                     endBlock = blockNumber + parseInt(blocks);
@@ -1281,19 +1288,7 @@ module.exports = {
      * Send-call-confirm callback sequence *
      ***************************************/
 
-    checkBlockHash: function (tx, callback) {
-        if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
-        if (this.txs[tx.hash].count === undefined) this.txs[tx.hash].count = 0;
-        ++this.txs[tx.hash].count;
-        if (this.debug.tx) console.debug("checkBlockHash:", tx.blockHash);
-        if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
-            tx.txHash = tx.hash;
-            this.txs[tx.hash].status = "confirmed";
-            clearTimeout(this.notifications[tx.hash]);
-            delete this.notifications[tx.hash];
-            if (!isFunction(callback)) return tx;
-            return callback(null, tx);
-        }
+    waitForNextPoll: function (tx, callback) {
         if (this.txs[tx.hash].count >= this.TX_POLL_MAX) {
             this.txs[tx.hash].status = "unconfirmed";
             if (!isFunction(callback)) {
@@ -1303,13 +1298,60 @@ module.exports = {
         }
         if (!isFunction(callback)) {
             wait(this.TX_POLL_INTERVAL);
-            if (this.txs[tx.hash].status === "pending") return null;
+            if (this.txs[tx.hash].status === "pending" || this.txs[tx.hash].status === "mined") {
+                return null;
+            }
         } else {
             var self = this;
             this.notifications[tx.hash] = setTimeout(function () {
-                if (self.txs[tx.hash].status === "pending") callback(null, null);
+                if (self.txs[tx.hash].status === "pending" || self.txs[tx.hash].status === "mined") {
+                    callback(null, null);
+                }
             }, this.TX_POLL_INTERVAL);
         }
+    },
+
+    completeTx: function (tx, callback) {
+        this.txs[tx.hash].status = "confirmed";
+        clearTimeout(this.notifications[tx.hash]);
+        delete this.notifications[tx.hash];
+        if (!isFunction(callback)) return tx;
+        return callback(null, tx);
+    },
+
+    checkConfirmations: function (tx, numConfirmations, callback) {
+        var self = this;
+        var minedBlockNumber = parseInt(tx.blockNumber, 16);
+        this.blockNumber(function (currentBlockNumber) {
+            if (self.debug.tx) {
+                console.log("confirmations:", parseInt(currentBlockNumber, 16) - minedBlockNumber);
+            }
+            if (parseInt(currentBlockNumber, 16) - minedBlockNumber >= numConfirmations) {
+                console.log("checkConfirmations complete");
+                return self.completeTx(tx, callback);
+            }
+            console.log("checkConfirmations incomplete, waiting for next poll...");
+            return self.waitForNextPoll(tx, callback);
+        });
+    },
+
+    checkBlockHash: function (tx, numConfirmations, callback) {
+        if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
+        if (this.txs[tx.hash].count === undefined) this.txs[tx.hash].count = 0;
+        ++this.txs[tx.hash].count;
+        if (this.debug.tx) console.debug("checkBlockHash:", tx.blockHash);
+        if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
+            tx.txHash = tx.hash;
+            if (!numConfirmations) {
+                this.txs[tx.hash].status = "mined";
+                clearTimeout(this.notifications[tx.hash]);
+                delete this.notifications[tx.hash];
+                if (!isFunction(callback)) return tx;
+                return callback(null, tx);
+            }
+            return this.checkConfirmations(tx, numConfirmations, callback);
+        }
+        return this.waitForNextPoll(tx, callback);
     },
 
     getLoggedReturnValue: function (txHash, callback) {
@@ -1392,6 +1434,9 @@ module.exports = {
                     return callback(null, null);
                 });
             }
+            console.debug(" *** Re-submitting transaction:", txHash);
+            self.txs[txHash].status = "resubmitted";
+            return callback(null, null);
         });
     },
 
@@ -1430,22 +1475,23 @@ module.exports = {
 
     // poll the network until the transaction is included in a block
     // (i.e., has a non-null blockHash field)
-    pollForTxConfirmation: function (txHash, callback) {
+    // TODO replace polling with block subscription (for websockets)
+    pollForTxConfirmation: function (txHash, numConfirmations, callback) {
         var self = this;
         if (!isFunction(callback)) {
             var tx = this.txNotify(txHash);
             if (tx === null) return null;
-            var minedTx = this.checkBlockHash(tx);
+            var minedTx = this.checkBlockHash(tx, numConfirmations);
             if (minedTx !== null) return minedTx;
-            return this.pollForTxConfirmation(txHash);
+            return this.pollForTxConfirmation(txHash, numConfirmations);
         }
         this.txNotify(txHash, function (err, tx) {
             if (err) return callback(err);
             if (tx === null) return callback(null, null);
-            self.checkBlockHash(tx, function (err, minedTx) {
+            self.checkBlockHash(tx, numConfirmations, function (err, minedTx) {
                 if (err) return callback(err);
                 if (minedTx !== null) return callback(null, minedTx);
-                self.pollForTxConfirmation(txHash, callback);
+                self.pollForTxConfirmation(txHash, numConfirmations, callback);
             });
         });
     },
@@ -1455,8 +1501,9 @@ module.exports = {
      *  - call onSent when the transaction is broadcast to the network
      *  - call onSuccess when the transaction is successfully mined
      *  - call onFailed if the transaction fails
+     *  - call onConfirmed when the transaction has REQUIRED_CONFIRMATIONS confirmations
      */
-    transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed) {
+    transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed, onConfirmed) {
         var self = this;
         payload.send = true;
         var returns = payload.returns;
@@ -1474,14 +1521,25 @@ module.exports = {
 
             self.verifyTxSubmitted(payload, txHash, function (err) {
                 if (err) return onFailed(err);
-                self.pollForTxConfirmation(txHash, function (err, tx) {
+                self.pollForTxConfirmation(txHash, null, function (err, tx) {
                     if (err) return onFailed(err);
                     if (tx === null) {
+                        payload.tries = (payload.tries) ? payload.tries + 1 : 1;
+                        if (payload.tries > self.TX_RETRY_MAX) {
+                            return onFailed(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
+                        }
                         return self.transact(payload, onSent, onSuccess, onFailed);
                     }
                     if (!payload.mutable) {
                         tx.callReturn = callReturn;
-                        return onSuccess(tx);
+                        onSuccess(tx);
+                        if (isFunction(onConfirmed)) {
+                            self.pollForTxConfirmation(txHash, self.REQUIRED_CONFIRMATIONS, function (err) {
+                                if (err) return onFailed(err);
+                                onConfirmed(tx);
+                            });
+                        }
+                        return;
                     }
 
                     // if mutable return value, then lookup logged return
@@ -1490,7 +1548,7 @@ module.exports = {
                         if (self.debug.tx) console.debug("loggedReturnValue:", err, loggedReturnValue);
                         if (err) {
                             payload.send = false;
-                            self.fire(payload, function (callReturn) {
+                            return self.fire(payload, function (callReturn) {
                                 console.debug("getLoggedReturnValue failed, fire returns:", callReturn);
                                 return onFailed(err);
                             });
@@ -1499,6 +1557,12 @@ module.exports = {
                         if (e && e.error) return onFailed(e);
                         tx.callReturn = self.applyReturns(payload.returns, loggedReturnValue);
                         onSuccess(tx);
+                        if (isFunction(onConfirmed)) {
+                            self.pollForTxConfirmation(txHash, self.REQUIRED_CONFIRMATIONS, function (err) {
+                                if (err) return onFailed(err);
+                                onConfirmed(tx);
+                            });
+                        }
                     });
                 });
             });
@@ -1534,8 +1598,14 @@ module.exports = {
         payload.returns = returns;
         txHash = abi.format_int256(txHash);
         this.verifyTxSubmitted(payload, txHash);
-        var tx = this.pollForTxConfirmation(txHash);
-        if (tx === null) return this.transact(payload);
+        var tx = this.pollForTxConfirmation(txHash, null);
+        if (tx === null) {
+            payload.tries = (payload.tries) ? payload.tries + 1 : 1;
+            if (payload.tries > this.TX_RETRY_MAX) {
+                throw new this.Error(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
+            }
+            return this.transact(payload);
+        }
         if (!payload.mutable) {
             tx.callReturn = callReturn;
             return tx;
@@ -1554,7 +1624,7 @@ module.exports = {
         return tx;
     },
 
-    transact: function (payload, onSent, onSuccess, onFailed) {
+    transact: function (payload, onSent, onSuccess, onFailed, onConfirmed) {
         var self = this;
         if (this.debug.tx) console.debug("payload transact:", payload);
         payload.send = false;
@@ -1566,7 +1636,7 @@ module.exports = {
         onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
         onFailed = (isFunction(onFailed)) ? onFailed : noop;
         if (payload.mutable || payload.returns === "null") {
-            return this.transactAsync(payload, null, onSent, onSuccess, onFailed);
+            return this.transactAsync(payload, null, onSent, onSuccess, onFailed, onConfirmed);
         }
         this.fire(payload, function (callReturn) {
             if (self.debug.tx) console.debug("callReturn:", callReturn);
@@ -1575,7 +1645,7 @@ module.exports = {
             } else if (callReturn.error) {
                 return onFailed(callReturn);
             }
-            self.transactAsync(payload, callReturn, onSent, onSuccess, onFailed);
+            self.transactAsync(payload, callReturn, onSent, onSuccess, onFailed, onConfirmed);
         });
     }
 };
