@@ -1399,10 +1399,16 @@ describe("RPC", function () {
                         count: t.count,
                         status: "pending"
                     };
-                    rpc.checkBlockHash(t.tx, function (err, res) {
+                    rpc.checkBlockHash(t.tx, null, function (err, res) {
                         assert.strictEqual(rpc.txs[t.tx.hash].count, t.count + 1);
                         assert.strictEqual(rpc.txs[t.tx.hash].status, t.expected);
                         switch (t.expected) {
+                        case "mined":
+                            assert.isAbove(parseInt(res.blockHash, 16), 0);
+                            assert.isAbove(parseInt(res.blockNumber, 16), 0);
+                            assert.strictEqual(abi.encode(t.payload), res.input);
+                            assert.isAtMost(rpc.txs[t.tx.hash].count, rpc.TX_POLL_MAX);
+                            break;
                         case "confirmed":
                             assert.isNull(err);
                             assert.isAbove(parseInt(res.blockHash, 16), 0);
@@ -1441,6 +1447,12 @@ describe("RPC", function () {
                         assert.strictEqual(rpc.txs[t.tx.hash].count, t.count + 1);
                         assert.strictEqual(rpc.txs[t.tx.hash].status, t.expected);
                         switch (t.expected) {
+                        case "mined":
+                            assert.isAbove(parseInt(res.blockHash, 16), 0);
+                            assert.isAbove(parseInt(res.blockNumber, 16), 0);
+                            assert.strictEqual(abi.encode(t.payload), res.input);
+                            assert.isAtMost(rpc.txs[t.tx.hash].count, rpc.TX_POLL_MAX);
+                            break;
                         case "confirmed":
                             assert.isAbove(parseInt(res.blockHash, 16), 0);
                             assert.isAbove(parseInt(res.blockNumber, 16), 0);
@@ -1481,7 +1493,7 @@ describe("RPC", function () {
                     returns: "number"
                 },
                 count: 0,
-                expected: "confirmed"
+                expected: "mined"
             });
             test({
                 tx: {
@@ -1533,7 +1545,7 @@ describe("RPC", function () {
                     returns: "number"
                 },
                 count: rpc.TX_POLL_MAX - 1,
-                expected: "confirmed"
+                expected: "mined"
             });
             test({
                 tx: {
@@ -1970,11 +1982,11 @@ describe("RPC", function () {
                     rpc.txNotify = function (txHash, callback) {
                         return callback(t.err.txNotify, t.tx);
                     };
-                    rpc.checkBlockHash = function (tx, callback) {
+                    rpc.checkBlockHash = function (tx, numConfirmations, callback) {
                         var minedTx = (t.err.checkBlockHash) ? undefined : tx;
                         return callback(t.err.checkBlockHash, minedTx);
                     };
-                    rpc.pollForTxConfirmation(t.txHash, function (err, minedTx) {
+                    rpc.pollForTxConfirmation(t.txHash, null, function (err, minedTx) {
                         if (t.err.txNotify) {
                             assert.deepEqual(err, t.err.txNotify);
                             assert.isUndefined(minedTx);

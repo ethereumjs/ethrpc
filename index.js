@@ -1327,10 +1327,8 @@ module.exports = {
                 console.log("confirmations:", parseInt(currentBlockNumber, 16) - minedBlockNumber);
             }
             if (parseInt(currentBlockNumber, 16) - minedBlockNumber >= numConfirmations) {
-                console.log("checkConfirmations complete");
                 return self.completeTx(tx, callback);
             }
-            console.log("checkConfirmations incomplete, waiting for next poll...");
             return self.waitForNextPoll(tx, callback);
         });
     },
@@ -1424,19 +1422,18 @@ module.exports = {
         this.getTransaction(txHash, function (tx) {
             if (tx) return callback(null, tx);
             self.txs[txHash].status = "failed";
-            if (!self.retryDroppedTxs) {
-
-                // only resubmit if this is a raw transaction and has a duplicate nonce
-                self.checkDroppedTxForDuplicateNonce(txHash, function (err) {
-                    if (err !== null) return callback(err);
-                    console.debug(" *** Re-submitting transaction:", txHash);
-                    self.txs[txHash].status = "resubmitted";
-                    return callback(null, null);
-                });
+            if (self.retryDroppedTxs) {
+                console.debug(" *** Re-submitting transaction:", txHash);
+                self.txs[txHash].status = "resubmitted";
+                return callback(null, null);
             }
-            console.debug(" *** Re-submitting transaction:", txHash);
-            self.txs[txHash].status = "resubmitted";
-            return callback(null, null);
+            // only resubmit if this is a raw transaction and has a duplicate nonce
+            self.checkDroppedTxForDuplicateNonce(txHash, function (err) {
+                if (err !== null) return callback(err);
+                console.debug(" *** Re-submitting transaction:", txHash);
+                self.txs[txHash].status = "resubmitted";
+                return callback(null, null);
+            });
         });
     },
 
