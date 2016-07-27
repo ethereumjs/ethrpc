@@ -516,7 +516,6 @@ describe("RPC", function () {
                 it(JSON.stringify(t.command) + " -> " + t.expected, function (done) {
                     this.timeout(TIMEOUT);
                     rpc.post(t.node, t.command, t.returns, function (res) {
-                        assert.notProperty(res, "error");
                         assert.strictEqual(res, t.expected);
                         done();
                     });
