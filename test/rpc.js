@@ -101,11 +101,11 @@ describe("wsConnect", function () {
     var test = function (t) {
         it(JSON.stringify(t), function (done) {
             rpc.wsUrl = t.wsUrl;
-            rpc.wsStatus = t.wsStatus;
+            rpc.rpcStatus.ws = t.rpcStatus.ws;
             rpc.wsConnect(function (connected) {
                 assert.strictEqual(connected, t.expected.connected);
                 assert.strictEqual(rpc.wsUrl, t.expected.wsUrl);
-                assert.strictEqual(rpc.wsStatus, t.expected.wsStatus);
+                assert.strictEqual(rpc.rpcStatus.ws, t.expected.rpcStatus.ws);
                 if (connected) {
                     assert.strictEqual(rpc.websocket.readyState, rpc.websocket.OPEN);
                 }
@@ -115,52 +115,52 @@ describe("wsConnect", function () {
     };
     test({
         wsUrl: "wss://ws.augur.net",
-        wsStatus: 0,
+        rpcStatus: {ws: 0},
         expected: {
             connected: true,
             wsUrl: "wss://ws.augur.net",
-            wsStatus: 1
+            rpcStatus: {ws: 1}
         }
     });
     test({
         wsUrl: "wss://ws.augur.net",
-        wsStatus: -1,
+        rpcStatus: {ws: -1},
         expected: {
             connected: true,
             wsUrl: "wss://ws.augur.net",
-            wsStatus: 1
+            rpcStatus: {ws: 1}
         }
     });
     test({
         wsUrl: "ws://127.0.0.2:1212",
-        wsStatus: 0,
+        rpcStatus: {ws: 0},
         expected: {
             connected: false,
             wsUrl: null,
-            wsStatus: -1
+            rpcStatus: {ws: -1}
         }
     });
     test({
         wsUrl: "ws://127.0.0.2:1212",
-        wsStatus: -1,
+        rpcStatus: {ws: -1},
         expected: {
             connected: false,
             wsUrl: null,
-            wsStatus: -1
+            rpcStatus: {ws: -1}
         }
     });
     test({
         wsUrl: null,
-        wsStatus: 0,
+        rpcStatus: {ws: 0},
         expected: {
             connected: false,
             wsUrl: null,
-            wsStatus: -1
+            rpcStatus: {ws: -1}
         }
     });
 });
 
-describe("wsMessageAction", function () {
+describe("messageAction", function () {
     var test = function (t) {
         it(JSON.stringify(t), function (done) {
             if (t.msg.method === "eth_subscription") {
@@ -168,12 +168,12 @@ describe("wsMessageAction", function () {
                     assert.strictEqual(result, t.expected);
                     done();
                 });
-                rpc.wsMessageAction(t.msg);
+                rpc.messageAction("ws", t.msg);
             } else if (t.msg.constructor === Array) {
                 var callbacksFired = [];
                 async.forEachOf(t.msg, function (msg, i, nextMsg) {
                     callbacksFired.push(false);
-                    rpc.wsRequests[msg.id] = {
+                    rpc.rpcRequests.ws[msg.id] = {
                         callback: function (result) {
                             callbacksFired[i] = true;
                             assert.strictEqual(result, t.expected[i]);
@@ -186,20 +186,21 @@ describe("wsMessageAction", function () {
                     nextMsg();
                 }, function (err) {
                     assert.isNull(err);
-                    rpc.wsMessageAction(t.msg);
+                    rpc.messageAction("ws", t.msg);
                 });
             } else {
-                rpc.wsRequests[t.msg.id] = {
+                rpc.rpcRequests.ws[t.msg.id] = {
                     callback: function (result) {
                         assert.strictEqual(result, t.expected);
                         done();
                     }
                 };
-                rpc.wsMessageAction(t.msg);
+                rpc.messageAction("ws", t.msg);
             }
         });
     };
     test({
+        type: "ws",
         msg: {
             jsonrpc: "2.0",
             id: 1,
@@ -208,6 +209,7 @@ describe("wsMessageAction", function () {
         expected: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
     });
     test({
+        type: "ws",
         msg: {
             method: "eth_subscription",
             params: {
@@ -218,6 +220,7 @@ describe("wsMessageAction", function () {
         expected: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
     });
     test({
+        type: "ws",
         msg: [{
             jsonrpc: "2.0",
             id: 1,
@@ -233,6 +236,84 @@ describe("wsMessageAction", function () {
         ]
     });
     test({
+        type: "ws",
+        msg: [{
+            jsonrpc: "2.0",
+            id: 1,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000001"
+        }, {
+            jsonrpc: "2.0",
+            id: 2,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000002"
+        }, {
+            jsonrpc: "2.0",
+            id: 3,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000003"
+        }, {
+            jsonrpc: "2.0",
+            id: 4,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000004"
+        }, {
+            jsonrpc: "2.0",
+            id: 5,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000005"
+        }, {
+            jsonrpc: "2.0",
+            id: 6,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000006"
+        }, {
+            jsonrpc: "2.0",
+            id: 7,
+            result: "0x0000000000000000000000000000000000000000000000000000000000000007"
+        }],
+        expected: [
+            "0x0000000000000000000000000000000000000000000000000000000000000001",
+            "0x0000000000000000000000000000000000000000000000000000000000000002",
+            "0x0000000000000000000000000000000000000000000000000000000000000003",
+            "0x0000000000000000000000000000000000000000000000000000000000000004",
+            "0x0000000000000000000000000000000000000000000000000000000000000005",
+            "0x0000000000000000000000000000000000000000000000000000000000000006",
+            "0x0000000000000000000000000000000000000000000000000000000000000007"
+        ]
+    });
+    test({
+        type: "ipc",
+        msg: {
+            jsonrpc: "2.0",
+            id: 1,
+            result: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
+        },
+        expected: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
+    });
+    test({
+        type: "ipc",
+        msg: {
+            method: "eth_subscription",
+            params: {
+                subscription: "0x1",
+                result: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
+            },
+        },
+        expected: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
+    });
+    test({
+        type: "ipc",
+        msg: [{
+            jsonrpc: "2.0",
+            id: 1,
+            result: "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000"
+        }, {
+            jsonrpc: "2.0",
+            id: 2,
+            result: "0x0000000000000000000000000000000000000000000000028c418afbbb5c0000"
+        }],
+        expected: [
+            "0x00000000000000000000000000000000000000000000021a72a75ef8d57ef000",
+            "0x0000000000000000000000000000000000000000000000028c418afbbb5c0000"
+        ]
+    });
+    test({
+        type: "ipc",
         msg: [{
             jsonrpc: "2.0",
             id: 1,
@@ -274,15 +355,282 @@ describe("wsMessageAction", function () {
     });
 });
 
-describe("wsSend", function () {
+describe("packageRequest", function () {
+    var test = function (t) {
+        it(JSON.stringify(t), function () {
+            var packaged = rpc.packageRequest(t.payload);
+            assert.deepEqual(packaged, t.packaged);
+        });
+    };
+    test({
+        payload: {
+          "from": "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+          "to": "0xc98fef1cae0c5e130b2580cb04aa7fbdf7bf736d",
+          "value": "1000000000000000000",
+          "send": true
+        },
+        packaged: {
+          "from": "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+          "to": "0xc98fef1cae0c5e130b2580cb04aa7fbdf7bf736d",
+          "data": "0x3af39c21",
+          "gas": "0x2fd618",
+          "value": "1000000000000000000"
+        }
+    });
+    test({
+        payload: {
+          "inputs": ["branch"],
+          "method": "fundNewAccount",
+          "returns": "number",
+          "send": false,
+          "signature": ["int256"],
+          "to": "0xe6c4afd17c291eaba28283be18466516e7cbe66d",
+          "from": "0xc98fef1cae0c5e130b2580cb04aa7fbdf7bf736d",
+          "params": ["0xf69b5"]
+        },
+        packaged: {
+          "from": "0xc98fef1cae0c5e130b2580cb04aa7fbdf7bf736d",
+          "to": "0xe6c4afd17c291eaba28283be18466516e7cbe66d",
+          "data": "0x5f92896e00000000000000000000000000000000000000000000000000000000000f69b5",
+          "gas": "0x2fd618",
+          "returns": "number"
+        }
+    });
+    test({
+        payload: {
+          "inputs": [
+            "branch"
+          ],
+          "method": "fundNewAccount",
+          "returns": "number",
+          "send": false,
+          "signature": [
+            "int256"
+          ],
+          "to": "0xe6c4afd17c291eaba28283be18466516e7cbe66d",
+          "from": "0xc98fef1cae0c5e130b2580cb04aa7fbdf7bf736d",
+          "params": [
+            "0xf69b5"
+          ],
+          "invocation": {
+            "context": {
+              "account": {
+                "name": "99b816c1c5e061f236af9a4f98620cb3e23bc984f42ef8a0e901d23e6a644e62",
+                "secureLoginID": "7WEFsCdBsBmBffCsx9z6pLzYpTVpgq8odSJSDXZmb4u4rzziA6CsEZ75mcDj694NznSyVnWaNb7yG1LwHyYsW5oqmMSMAhFa4yi6TaSDcovp6shb14ZYzA7shTmcU3UAuoT8oKucCHisdAdsZuKmC4gzCp6BanmtLXMeoXfndgRjcJQtfPB2nRXHK2enJp1tptyVWKnYnkyZsHrnZgfUNKBBSq2LdT53aYUSAo5Cqx791AZBU2Txu8KrAcVXbMQ2qcJqDmFmnA5L9PWHDmaZzY9v1ySsaq3RHxRokfKf7PCqyGCdvxU984hbrzq57kcw1FE3h9wAGK7tgWZQYHF1XJX3PUTBbadcso3dvNxCcfPjSBx99cFi6uoHJy8rw5V3sPbGhqEpyqcEMnKyUHChA9FDR6MtGPUdocaKLPTqzGAoYRomkNmt1BQCuN4yeaU9YdqCPXfjSX3uUU1WoThaig4nnkzyAMvAW2CaCNZeRCGJ4M79RYQpdHL5fsvtP6n6fSDwmZ7WRUwnsbM4RP8rK9F8waLVJThKSa3i8gbyBPEJ5os51jjrGytxWF72NAS6Rvc4EaaeQnGok56JuDJ6zsPuGyegrqrPnYnzikjqirw4qmW8aYcTkeLXhgTNpM58MvCVDnbmLWMb8VrEaZnmNksK694JVGS4w7yxFFeS5oH1YRZU78Nb5QA4hvtJQbJpXwRNXe1WuwUeAbkMMASTXW2uUUYjoRe7spPxUeK9qZ39vaE957HArRbF3h4MJbNwgtR26D9KbXx3mQFmRpiNJME1hTfW6SyNbe",
+                "privateKey": {
+                  "type": "Buffer",
+                  "data": [
+                    70,
+                    220,
+                    93,
+                    9,
+                    47,
+                    243,
+                    216,
+                    53,
+                    251,
+                    90,
+                    233,
+                    182,
+                    198,
+                    80,
+                    238,
+                    44,
+                    41,
+                    111,
+                    70,
+                    85,
+                    145,
+                    211,
+                    139,
+                    165,
+                    26,
+                    188,
+                    109,
+                    229,
+                    190,
+                    108,
+                    16,
+                    248
+                  ]
+                },
+                "address": "0xc98fef1cae0c5e130b2580cb04aa7fbdf7bf736d",
+                "keystore": {
+                  "address": "0xc98fef1cae0c5e130b2580cb04aa7fbdf7bf736d",
+                  "crypto": {
+                    "cipher": "aes-128-ctr",
+                    "ciphertext": "5cb054f93ece6768abf6592dca5f12712491a23a8b713b1d82a2fa9d487c652d",
+                    "cipherparams": {
+                      "iv": "df1cffbaee2919b60e78f7abf47fd46f"
+                    },
+                    "kdf": "pbkdf2",
+                    "kdfparams": {
+                      "c": 65536,
+                      "dklen": 32,
+                      "prf": "hmac-sha256",
+                      "salt": "a2cdda9e0fafefb8212fb81058c078d16c75b4eb3585df9b78d22f8d33f995dd"
+                    },
+                    "mac": "99dd350011d67c3ca57576fa30e241248f186ef3a7feee83ca4734041a86b054"
+                  },
+                  "version": 3,
+                  "id": "1cb3e775-d22e-4566-9393-8f6a0d52ecb0"
+                }
+              }
+            }
+          }
+        },
+        packaged: {
+          "from": "0xc98fef1cae0c5e130b2580cb04aa7fbdf7bf736d",
+          "to": "0xe6c4afd17c291eaba28283be18466516e7cbe66d",
+          "data": "0x5f92896e00000000000000000000000000000000000000000000000000000000000f69b5",
+          "gas": "0x2fd618",
+          "returns": "number"
+        }
+    });
+    test({
+        payload: {
+          "inputs": [
+            "branch",
+            "description",
+            "expDate",
+            "minValue",
+            "maxValue",
+            "numOutcomes",
+            "resolution"
+          ],
+          "method": "createEvent",
+          "send": true,
+          "signature": [
+            "int256",
+            "bytes",
+            "int256",
+            "int256",
+            "int256",
+            "int256",
+            "bytes"
+          ],
+          "to": "0x181ab5cfb79c3a4edd7b4556412b40453edeec32",
+          "from": "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+          "params": [
+            "0xf69b5",
+            "€lujksaaj0fqxdqrtmg3nmi",
+            1477161170,
+            "0xde0b6b3a7640000",
+            "0x1bc16d674ec80000",
+            2,
+            "https://www.google.com"
+          ]
+        },
+        packaged: {
+          "from": "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+          "to": "0x181ab5cfb79c3a4edd7b4556412b40453edeec32",
+          "data": "0x3c1f6f6300000000000000000000000000000000000000000000000000000000000f69b500000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000580bb0d20000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000001bc16d674ec80000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000019e282ac6c756a6b7361616a30667178647172746d67336e6d6900000000000000000000000000000000000000000000000000000000000000000000000000001668747470733a2f2f7777772e676f6f676c652e636f6d00000000000000000000",
+          "gas": "0x2fd618"
+        }
+    });
+    test({
+        payload: {
+          "inputs": [
+            "address",
+            "balance"
+          ],
+          "method": "setCash",
+          "returns": "number",
+          "send": false,
+          "signature": [
+            "int256",
+            "int256"
+          ],
+          "to": "0x63f021dbfeb3d81bfcd5b746965ff2e298931adb",
+          "from": "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+          "params": [
+            "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+            "0x52b7d2dcc80cd2e4000000"
+          ]
+        },
+        packaged: {
+          "from": "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+          "to": "0x63f021dbfeb3d81bfcd5b746965ff2e298931adb",
+          "data": "0x1d62e9220000000000000000000000007c0d52faab596c08f484e3478aebc6205f3f5d8c00000000000000000000000000000000000000000052b7d2dcc80cd2e4000000",
+          "gas": "0x2fd618",
+          "returns": "number"
+        }
+    });
+    test({
+        payload: {
+          "inputs": [
+            "branch",
+            "description",
+            "expDate",
+            "minValue",
+            "maxValue",
+            "numOutcomes",
+            "resolution",
+            "tradingFee",
+            "tag1",
+            "tag2",
+            "tag3",
+            "makerFees",
+            "extraInfo"
+          ],
+          "method": "createSingleEventMarket",
+          "mutable": true,
+          "send": true,
+          "signature": [
+            "int256",
+            "bytes",
+            "int256",
+            "int256",
+            "int256",
+            "int256",
+            "bytes",
+            "int256",
+            "int256",
+            "int256",
+            "int256",
+            "int256",
+            "bytes"
+          ],
+          "to": "0x181ab5cfb79c3a4edd7b4556412b40453edeec32",
+          "from": "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+          "params": [
+            "0xf69b5",
+            "Will Gary Johnson be included in at least one nationally televised Presidential debate in 2016, in which Hillary Clinton and Donald Trump also participate?",
+            2874005402,
+            "0xde0b6b3a7640000",
+            "0x1bc16d674ec80000",
+            2,
+            "",
+            "0x470de4df820000",
+            "0x706f6c6974696373000000000000000000000000000000000000000000000000",
+            "0x555320656c656374696f6e730000000000000000000000000000000000000000",
+            "0x707265736964656e7469616c2064656261746573000000000000000000000000",
+            "0x6f05b59d3b20000",
+            "Candidates must be polling at 15% or higher to be included in the Presidential debates."
+          ],
+          "gasPrice": "0x4a817c800",
+          "value": "0x78cad1e25d0000"
+        },
+        packaged: {
+          "from": "0x7c0d52faab596c08f484e3478aebc6205f3f5d8c",
+          "to": "0x181ab5cfb79c3a4edd7b4556412b40453edeec32",
+          "data": "0x47c7ea4200000000000000000000000000000000000000000000000000000000000f69b500000000000000000000000000000000000000000000000000000000000001a000000000000000000000000000000000000000000000000000000000ab4dd79a0000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000001bc16d674ec800000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000026000000000000000000000000000000000000000000000000000470de4df820000706f6c6974696373000000000000000000000000000000000000000000000000555320656c656374696f6e730000000000000000000000000000000000000000707265736964656e7469616c206465626174657300000000000000000000000000000000000000000000000000000000000000000000000006f05b59d3b2000000000000000000000000000000000000000000000000000000000000000002a0000000000000000000000000000000000000000000000000000000000000009b57696c6c2047617279204a6f686e736f6e20626520696e636c7564656420696e206174206c65617374206f6e65206e6174696f6e616c6c792074656c65766973656420507265736964656e7469616c2064656261746520696e20323031362c20696e2077686963682048696c6c61727920436c696e746f6e20616e6420446f6e616c64205472756d7020616c736f2070617274696369706174653f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005743616e64696461746573206d75737420626520706f6c6c696e6720617420313525206f722068696768657220746f20626520696e636c7564656420696e2074686520507265736964656e7469616c20646562617465732e000000000000000000",
+          "gas": "0x2fd618",
+          "gasPrice": "0x4a817c800",
+          "value": "0x78cad1e25d0000"
+        }
+    });
+});
+
+describe("send", function () {
     afterEach(function () { 
         rpc.websocket.close();
-        rpc.wsStatus = 0;
+        rpc.rpcStatus.ws = 0;
     });
     var test = function (t) {
         it(JSON.stringify(t), function (done) {
             rpc.wsUrl = "wss://ws.augur.net";
-            rpc.wsStatus = 0;
+            rpc.rpcStatus.ws = 0;
             rpc.wsConnect(function (connected) {
                 assert.isTrue(connected);
                 assert.strictEqual(rpc.websocket.readyState, rpc.websocket.OPEN);
@@ -290,29 +638,29 @@ describe("wsSend", function () {
                 if (t.command.constructor !== Array) {
                     callback = function (res) {
                         assert.strictEqual(rpc.websocket.readyState, rpc.websocket.OPEN);
-                        assert.isUndefined(rpc.wsRequests[t.command.id]);
+                        assert.isUndefined(rpc.rpcRequests.ws[t.command.id]);
                         assert.strictEqual(res, t.expected);
                         done();
                     };
-                    rpc.wsSend(t.command, t.returns, callback);
-                    assert.isObject(rpc.wsRequests[t.command.id]);
-                    assert.strictEqual(rpc.wsRequests[t.command.id].returns, t.returns);
-                    assert.strictEqual(rpc.wsRequests[t.command.id].callback, callback);
+                    rpc.send("ws", t.command, t.returns, callback);
+                    assert.isObject(rpc.rpcRequests.ws[t.command.id]);
+                    assert.strictEqual(rpc.rpcRequests.ws[t.command.id].returns, t.returns);
+                    assert.strictEqual(rpc.rpcRequests.ws[t.command.id].callback, callback);
                 } else {
                     callback = [];
                     async.forEachOf(t.command, function (command, i, nextCommand) {
                         callback.push(function (res) {
                             assert.strictEqual(rpc.websocket.readyState, rpc.websocket.OPEN);
-                            assert.isUndefined(rpc.wsRequests[command.id]);
+                            assert.isUndefined(rpc.rpcRequests.ws[command.id]);
                             assert.strictEqual(res, t.expected[i]);
                         });
                         nextCommand();
                     }, function (err) {
                         assert.isNull(err);
-                        rpc.wsSend(t.command, t.returns, callback);
+                        rpc.send("ws", t.command, t.returns, callback);
                         for (var i = 0; i < t.command.length; ++i) {
-                            assert.isObject(rpc.wsRequests[t.command[i].id]);
-                            assert.strictEqual(rpc.wsRequests[t.command[i].id].returns, t.returns[i]);
+                            assert.isObject(rpc.rpcRequests.ws[t.command[i].id]);
+                            assert.strictEqual(rpc.rpcRequests.ws[t.command[i].id].returns, t.returns[i]);
                         }
                         done();
                     });
@@ -383,17 +731,14 @@ describe("RPC", function () {
 
         before(function () {
             rpc.reset();
-            rpc.balancer = false;
             rpc.ipcpath = null;
-            rpc.excision = true;
             HOSTED_NODES = rpc.nodes.hosted.slice();
             rpc.wsUrl = wsUrl;
-            if (!wsUrl) rpc.wsStatus = -1;
+            if (!wsUrl) rpc.rpcStatus.ws = -1;
             rpc.useHostedNode();
         });
 
         describe("marshal", function () {
-
             var test = function (t) {
                 it(t.prefix + t.command + " -> " + JSON.stringify(t.expected), function () {
                     var actual = rpc.marshal(t.command, t.params || [], t.prefix);
@@ -401,7 +746,6 @@ describe("RPC", function () {
                     assert.deepEqual(actual, t.expected);
                 });
             };
-
             test({
                 prefix: "eth_",
                 command: "coinbase",
@@ -443,11 +787,9 @@ describe("RPC", function () {
                     params: []
                 }
             });
-
         });
 
         describe("broadcast", function () {
-
             var test = function (t) {
                 it(JSON.stringify(t.command) + " -> " + t.expected, function (done) {
                     this.timeout(TIMEOUT);
@@ -470,7 +812,6 @@ describe("RPC", function () {
                     });
                 });
             };
-
             test({
                 command: {
                     id: ++requests,
@@ -507,11 +848,9 @@ describe("RPC", function () {
                 },
                 expected: PROTOCOL_VERSION
             });
-
         });
 
         describe("post", function () {
-
             var test = function (t) {
                 it(JSON.stringify(t.command) + " -> " + t.expected, function (done) {
                     this.timeout(TIMEOUT);
@@ -521,7 +860,6 @@ describe("RPC", function () {
                     });
                 });
             };
-
             test({
                 node: "https://eth3.augur.net",
                 command: {
@@ -563,11 +901,9 @@ describe("RPC", function () {
                 },
                 expected: PROTOCOL_VERSION
             });
-
         });
 
         describe("postSync", function () {
-
             var test = function (t) {
                 it(JSON.stringify(t.command) + " -> " + t.expected, function (done) {
                     this.timeout(TIMEOUT);
@@ -580,7 +916,6 @@ describe("RPC", function () {
                     }
                 });
             };
-
             test({
                 node: "https://eth3.augur.net",
                 command: {
@@ -622,11 +957,9 @@ describe("RPC", function () {
                 },
                 expected: PROTOCOL_VERSION
             });
-
         });
 
         describe("listening", function () {
-
             var test = function (t) {
                 it(t.node + " -> " + t.listening, function (done) {
                     this.timeout(TIMEOUT);
@@ -639,16 +972,13 @@ describe("RPC", function () {
                     });
                 });
             };
-
             test({
                 node: "https://eth3.augur.net",
                 listening: true
             });
-
         });
 
         describe("version (network ID)", function () {
-
             var test = function (t) {
                 it(t.node + " -> " + t.version, function (done) {
                     this.timeout(TIMEOUT);
@@ -661,16 +991,13 @@ describe("RPC", function () {
                     });
                 });
             };
-
             test({
                 node: "https://eth3.augur.net",
                 version: NETWORK_ID
             });
-
         });
 
         describe("unlocked", function () {
-
             var test = function (t) {
                 it(t.node + " -> " + t.unlocked, function () {
                     this.timeout(TIMEOUT);
@@ -679,7 +1006,6 @@ describe("RPC", function () {
                     assert.strictEqual(rpc.unlocked(t.account), t.unlocked);
                 });
             };
-
             test({
                 node: "https://eth3.augur.net",
                 account: "0x00bae5113ee9f252cceb0001205b88fad175461a",
@@ -710,11 +1036,9 @@ describe("RPC", function () {
                 account: COINBASE,
                 unlocked: false
             });
-
         });
 
         describe("batch", function () {
-
             var test = function (res) {
                 assert.isArray(res);
                 assert.strictEqual(res.length, txList.length);
@@ -722,7 +1046,6 @@ describe("RPC", function () {
                     assert.strictEqual(parseInt(res[i]), parseInt(rpc.invoke(txList[i])));
                 }
             };
-
             var txList = [{
                 to: contracts.Faucets,
                 method: "reputationFaucet",
@@ -740,23 +1063,19 @@ describe("RPC", function () {
                 send: false,
                 gasPrice: "0x4a817c800"
             }];
-
             it("sync: return and match separate calls", function () {
                 rpc.reset();
                 test(rpc.batch(txList));
             });
-
             it("async: callback on whole array", function (done) {
                 rpc.reset();
                 rpc.batch(txList, function (r) {
                     test(r); done();
                 });
             });
-
         });
 
         describe("clear", function () {
-
             it("delete cached network/notification/transaction data", function (done) {
                 this.timeout(TIMEOUT);
                 rpc.reset();
@@ -767,11 +1086,9 @@ describe("RPC", function () {
                 assert.deepEqual(rpc.notifications, {});
                 setTimeout(done, 2000);
             });
-
         });
 
         describe("reset", function () {
-
             it("revert to default node list", function () {
                 rpc.nodes.hosted = ["https://eth0.augur.net"];
                 assert.isArray(rpc.nodes.hosted);
@@ -787,12 +1104,10 @@ describe("RPC", function () {
                 assert.isArray(rpc.nodes.hosted);
                 assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
                 assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
-            });  
-
+            });
         });
 
         describe("Ethereum bindings", function () {
-
             it("raw('eth_protocolVersion')", function (done) {
                 this.timeout(TIMEOUT);
                 assert.strictEqual(rpc.raw("eth_protocolVersion"), PROTOCOL_VERSION);
@@ -802,7 +1117,6 @@ describe("RPC", function () {
                     done();
                 });
             });
-
             it("eth('protocolVersion')", function (done) {
                 this.timeout(TIMEOUT);
                 assert.strictEqual(rpc.eth("protocolVersion"), PROTOCOL_VERSION);
@@ -812,7 +1126,6 @@ describe("RPC", function () {
                     done();
                 });
             });
-
             it("sha3/keccak-256", function () {
                 this.timeout(TIMEOUT);
                 var data = {
@@ -834,7 +1147,6 @@ describe("RPC", function () {
                 assert.strictEqual(rpc.sha3(data.ascii), expected.ascii);
                 assert.strictEqual(rpc.web3("sha3", abi.encode_hex(data.ascii)), rpc.sha3(data.ascii));
             });
-
             it("gasPrice", function (done) {
                 this.timeout(TIMEOUT);
                 assert.isAbove(parseInt(rpc.getGasPrice()), 0);
@@ -844,7 +1156,6 @@ describe("RPC", function () {
                     done();
                 });
             });
-
             it("blockNumber", function (done) {
                 this.timeout(TIMEOUT);
                 assert.isAbove(parseInt(rpc.blockNumber()), 0);
@@ -854,7 +1165,6 @@ describe("RPC", function () {
                     done();
                 });
             });
-
             it("balance/getBalance", function (done) {
                 this.timeout(TIMEOUT);
                 var coinbase = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
@@ -890,7 +1200,6 @@ describe("RPC", function () {
                     });
                 });
             });
-
             it("txCount/getTransactionCount", function (done) {
                 this.timeout(TIMEOUT);
                 var coinbase = "0xaff9cb4dcb19d13b84761c040c91d21dc6c991ec";
@@ -906,7 +1215,6 @@ describe("RPC", function () {
                     });
                 });
             });
-
             it("peerCount", function (done) {
                 this.timeout(TIMEOUT);
                 switch (NETWORK_ID) {
@@ -927,7 +1235,6 @@ describe("RPC", function () {
                     });
                 }
             });
-
             it("hashrate", function (done) {
                 this.timeout(TIMEOUT);
                 assert(rpc.hashrate() >= 0);
@@ -937,7 +1244,6 @@ describe("RPC", function () {
                     done();
                 });
             });
-
             it("mining", function (done) {
                 this.timeout(TIMEOUT);
                 switch (rpc.version()) {
@@ -958,7 +1264,6 @@ describe("RPC", function () {
                     });
                 }
             });
-
             it("clientVersion", function (done) {
                 this.timeout(TIMEOUT);
                 var clientVersion = rpc.clientVersion();
@@ -971,7 +1276,6 @@ describe("RPC", function () {
                     done();
                 });
             });
-
         });
 
         describe("fastforward", function () {
@@ -997,7 +1301,6 @@ describe("RPC", function () {
         });
 
         describe("getBlock", function () {
-
             var asserts = function (t, block) {
                 assert.property(block, "number");
                 assert.property(block, "parentHash");
@@ -1035,7 +1338,6 @@ describe("RPC", function () {
                 assert.strictEqual(parseInt(block.number), parseInt(t.blockNumber));
                 assert.strictEqual(block.hash, t.blockHash);
             };
-
             var test = function (t) {
                 it("[sync]  " + t.blockNumber + " -> " + t.blockHash, function () {
                     this.timeout(TIMEOUT);
@@ -1066,7 +1368,6 @@ describe("RPC", function () {
         });
 
         describe("getBlockByHash", function () {
-
             var asserts = function (t, block) {
                 assert.property(block, "number");
                 assert.property(block, "parentHash");
@@ -1104,7 +1405,6 @@ describe("RPC", function () {
                 assert.strictEqual(parseInt(block.number), parseInt(t.blockNumber));
                 assert.strictEqual(block.hash, t.blockHash);
             };
-
             var test = function (t) {
                 it("[sync]  " + t.blockHash + " -> " + t.blockNumber, function () {
                     this.timeout(TIMEOUT);
@@ -1118,7 +1418,6 @@ describe("RPC", function () {
                     });
                 });
             };
-
             test({
                 blockNumber: "0x1",
                 blockHash: "0xad47413137a753b2061ad9b484bf7b0fc061f654b951b562218e9f66505be6ce"
@@ -1135,13 +1434,11 @@ describe("RPC", function () {
 
         describe("invoke", function () {
             var encodedParams, returns;
-
             before(function () {
                 encodedParams = "0x7a66d7ca"+
                 "00000000000000000000000000000000000000000000000000000000000f69b5";
                 returns = "number";
             });
-
             it("[sync] invoke == call == broadcast", function () {
                 this.timeout(TIMEOUT);
                 var invokeResult = rpc.invoke({
@@ -1173,7 +1470,6 @@ describe("RPC", function () {
                 assert.strictEqual(invokeResult, callResult);
                 assert.strictEqual(invokeResult, broadcastResult);
             });
-
             it("[async] invoke == call == broadcast", function (done) {
                 this.timeout(TIMEOUT);
                 rpc.invoke({
@@ -1209,7 +1505,6 @@ describe("RPC", function () {
                     }); // call
                 }); // invoke
             });
-
             it("getBranches() -> hash[]", function (done) {
                 var branches = rpc.applyReturns("hash[]", rpc.invoke({
                     to: contracts.Branches,
@@ -1231,11 +1526,9 @@ describe("RPC", function () {
                     done();
                 });
             });
-
         });
 
         describe("useHostedNode", function () {
-
             it("switch to hosted node(s)", function () {
                 rpc.reset();
                 assert.isNull(rpc.nodes.local);
@@ -1244,58 +1537,57 @@ describe("RPC", function () {
                 rpc.useHostedNode();
                 assert.isNull(rpc.nodes.local);
             });
-
         });
 
-        describe("setLocalNode", function () {
-
-            after(function () { rpc.useHostedNode(); });
-
-            var test = function (command) {
-
-                it("[sync] local node failure", function () {
-                    this.timeout(TIMEOUT);
-                    rpc.reset();
-                    rpc.setLocalNode("http://127.0.0.0");
-                    assert.strictEqual(rpc.nodes.local, "http://127.0.0.0");
-                    assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
-                    assert.throws(function () { rpc.broadcast(command); }, Error, /410/);
-                });
-
-                it("[async] local node failure", function (done) {
-                    this.timeout(TIMEOUT);
-                    rpc.reset();
-                    rpc.setLocalNode("http://127.0.0.0");
-                    assert.strictEqual(rpc.nodes.local, "http://127.0.0.0");
-                    assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
-                    rpc.broadcast(command, function (err) {
-                        assert.isNotNull(err);
-                        assert.property(err, "error");
-                        assert.property(err, "message");
-                        assert.strictEqual(err.error, 410);
-                        done();
+        if (!wsUrl) {
+            describe("setLocalNode", function () {
+                after(function () { rpc.useHostedNode(); });
+                var test = function (command) {
+                    it("[sync] " + JSON.stringify(command), function () {
+                        this.timeout(TIMEOUT);
+                        rpc.reset();
+                        rpc.setLocalNode("http://127.0.0.0");
+                        assert.strictEqual(rpc.nodes.local, "http://127.0.0.0");
+                        assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
+                        assert.throws(function () { rpc.broadcast(command); }, Error, /410/);
                     });
+                    it("[async] " + JSON.stringify(command), function (done) {
+                        this.timeout(TIMEOUT);
+                        rpc.reset();
+                        rpc.setLocalNode("http://127.0.0.0");
+                        assert.strictEqual(rpc.nodes.local, "http://127.0.0.0");
+                        assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
+                        rpc.broadcast(command, function (err) {
+                            console.log("command:", command);
+                            console.log("err:", err);
+                            assert.isNotNull(err);
+                            assert.property(err, "error");
+                            assert.property(err, "message");
+                            assert.strictEqual(err.error, 410);
+                            done();
+                        });
+                    });
+                };
+                test({
+                    id: ++requests,
+                    jsonrpc: "2.0",
+                    method: "eth_coinbase",
+                    params: []
                 });
-            };
-            test({
-                id: ++requests,
-                jsonrpc: "2.0",
-                method: "eth_coinbase",
-                params: []
+                test({
+                    id: ++requests,
+                    jsonrpc: "2.0",
+                    method: "net_version",
+                    params: []
+                });
+                test({
+                    id: ++requests,
+                    jsonrpc: "2.0",
+                    method: "eth_gasPrice",
+                    params: []
+                });
             });
-            test({
-                id: ++requests,
-                jsonrpc: "2.0",
-                method: "net_version",
-                params: []
-            });
-            test({
-                id: ++requests,
-                jsonrpc: "2.0",
-                method: "eth_gasPrice",
-                params: []
-            });
-        });
+        }
 
         describe("errorCodes", function () {
             var test = function (t) {
