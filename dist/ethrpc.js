@@ -16243,7 +16243,7 @@ module.exports={
       "name": "Transfer(int256,int256,int256)", 
       "signature": "0x66e05b8a99642b6a77335be485dc593f0217aee37e6180f32909449b16ed7eca"
     }, 
-    "buyAndSellSharesReturnValue": {
+    "buyAndSellShares_logReturn": {
       "contract": "BuyAndSellShares", 
       "inputs": [
         {
@@ -16252,10 +16252,10 @@ module.exports={
           "type": "int256"
         }
       ], 
-      "name": "buyAndSellSharesReturnValue(int256)", 
-      "signature": "0x4363ec7f4cdb74de22356b0fd0efd40de1583e0a6063d274ca13639255274f5b"
+      "name": "buyAndSellShares_logReturn(int256)", 
+      "signature": "0x9fbb0d8110bee15417200d9e638635c9436990b24f565fa2ce74f50f870171b6"
     }, 
-    "closeMarketReturnValue": {
+    "closeMarket_logReturn": {
       "contract": "CloseMarket", 
       "inputs": [
         {
@@ -16264,10 +16264,10 @@ module.exports={
           "type": "int256"
         }
       ], 
-      "name": "closeMarketReturnValue(int256)", 
-      "signature": "0x12001df5d02ab705b944c0f9c4f14add3fab5b10a103f442b911f7a8b00eda7a"
+      "name": "closeMarket_logReturn(int256)", 
+      "signature": "0x7111c90bbf79fe51a8f95606c2c44137f600abeb3b5631db7d06ed168c13eea7"
     }, 
-    "completeSetsReturnValue": {
+    "completeSets_logReturn": {
       "contract": "CompleteSets", 
       "inputs": [
         {
@@ -16276,8 +16276,20 @@ module.exports={
           "type": "int256"
         }
       ], 
-      "name": "completeSetsReturnValue(int256)", 
-      "signature": "0x32348dd50bf89583815c8079ab320bd35e5c4d65691fbca91a16348a7f0cbfe2"
+      "name": "completeSets_logReturn(int256)", 
+      "signature": "0x70a46893aa026bc51efe8d9b9c21c4d63fe015bb03feeb700d0d5bc537d980f8"
+    }, 
+    "consensus_logReturn": {
+      "contract": "Consensus", 
+      "inputs": [
+        {
+          "indexed": false, 
+          "name": "returnValue", 
+          "type": "int256"
+        }
+      ], 
+      "name": "consensus_logReturn(int256)", 
+      "signature": "0x2c8fae543971d12ce9baeaa8ac11b4873683653fdcb1a6104f6e0c9d5c3ecf02"
     }, 
     "log_add_tx": {
       "contract": "BuyAndSellShares", 
@@ -16410,47 +16422,17 @@ module.exports={
       "name": "log_fill_tx(int256,int256,int256,int256,int256,int256,int256,int256)", 
       "signature": "0x715b9a9cb6dfb4fa9cb1ebc2eba40d2a7bd66aa8cef75f87a77d1ff05d29a3b6"
     }, 
-    "log_price": {
-      "contract": "Trade", 
+    "makeReports_logReturn": {
+      "contract": "MakeReports", 
       "inputs": [
         {
-          "indexed": true, 
-          "name": "market", 
-          "type": "int256"
-        }, 
-        {
           "indexed": false, 
-          "name": "type", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "price", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "amount", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "outcome", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "trader", 
+          "name": "returnValue", 
           "type": "int256"
         }
       ], 
-      "name": "log_price(int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0xf448ecd2d0b1133184bb354020b9e90e2810dbc78102637d9a054ed06e8506d3"
+      "name": "makeReports_logReturn(int256)", 
+      "signature": "0xc63250021b81c42e43223a77f306159f705fa6e54b1fbeaeeadaaa8340a38760"
     }, 
     "marketCreated": {
       "contract": "CreateMarket", 
@@ -16468,27 +16450,45 @@ module.exports={
       "contract": "Consensus", 
       "inputs": [
         {
-          "indexed": false, 
-          "name": "x", 
+          "indexed": true, 
+          "name": "user", 
           "type": "int256"
-        }
-      ], 
-      "name": "penalize(int256)", 
-      "signature": "0x47471d3c43bf6848bb5a5b5b607af9a50395288681419dd20aa0b89501cb476f"
-    }, 
-    "returnValue": {
-      "contract": "MakeReports", 
-      "inputs": [
+        }, 
         {
           "indexed": false, 
-          "name": "x", 
+          "name": "outcome", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "oldrep", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "repchange", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "newafterrep", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "p", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "reportValue", 
           "type": "int256"
         }
       ], 
-      "name": "returnValue(int256)", 
-      "signature": "0x8bc92e9868f513a8fbcf983ca23f542d05ea98a0e6e3c107c013a07651f59383"
+      "name": "penalize(int256,int256,int256,int256,int256,int256,int256)", 
+      "signature": "0x3253564cd022a8ec496277f26ccdaddf64e75973423eda45df329f60b2a0c6a7"
     }, 
-    "tradeArrayReturnValue": {
+    "trade_logArrayReturn": {
       "contract": "Trade", 
       "inputs": [
         {
@@ -16497,10 +16497,10 @@ module.exports={
           "type": "int256[]"
         }
       ], 
-      "name": "tradeArrayReturnValue(int256[])", 
-      "signature": "0xd7ce642fce46a6671b3eb36cf4beeb0d607384f3b8fe09ff9a2d8a0c5d9c0228"
+      "name": "trade_logArrayReturn(int256[])", 
+      "signature": "0x6a5b12f51adb25f3461c7108a9f5f8c509d374df9530d7dac8dfdd310929e39d"
     }, 
-    "tradeReturnValue": {
+    "trade_logReturn": {
       "contract": "Trade", 
       "inputs": [
         {
@@ -16509,8 +16509,8 @@ module.exports={
           "type": "int256"
         }
       ], 
-      "name": "tradeReturnValue(int256)", 
-      "signature": "0x34c6d329415f0bdc7259314b660b88f78542d86bd671077ccfba3deeceb4748b"
+      "name": "trade_logReturn(int256)", 
+      "signature": "0x1bbf36d9a7b2814880015722ce46ca5df561edceee37844559cf4dd31ecd5dfa"
     }, 
     "tradingFeeUpdated": {
       "contract": "CreateMarket", 
@@ -19479,6 +19479,7 @@ module.exports={
         ]
       }
     }, 
+    "LogReturn": {}, 
     "MakeReports": {
       "makeHash": {
         "inputs": [
@@ -20940,15 +20941,15 @@ module.exports={
     "2": {
         "Backstops": "0x6383e0617288f6c5c47b987770f245ccf5999d50", 
         "Branches": "0xee5d4cbd36b6ac8bec59fc77016b90622d557dfa", 
-        "BuyAndSellShares": "0x31dc6968b90634c3a3b6fd89d270aafb369e46df", 
+        "BuyAndSellShares": "0x54880a55093097d0ec7e3fbd60f5ad31f8e21449", 
         "Cash": "0xeecebff7ee0b308db51ded8041063d2169060819", 
-        "CloseMarket": "0xa1a02c01c8dd4f55461ab10c29a714314fc50270", 
+        "CloseMarket": "0x7944a6c3242c6d6641fac3be53898e5446a5b9d6", 
         "CloseMarketOne": "0xe2f0429316b2517db00c29b002152844f4380c5b", 
         "CloseMarketTwo": "0x1aabbe7d72e67d40bee1ea01a11c47aafff44c27", 
         "CollectFees": "0x51d136b60f8f0f0068e2a433c8305fa442bf9b18", 
-        "CompleteSets": "0xad87a3ca64be210d411961378e950255a16a7b2b", 
+        "CompleteSets": "0x38fb24dd43e2fe26049f12e7f9d261313d2c705d", 
         "CompositeGetters": "0xbead3baddbf90561d370711cfbc6626cdad85a23", 
-        "Consensus": "0x5a5e51acb05836a8aab09ef0d6bf5fad4aa37e50", 
+        "Consensus": "0xb77b6a8f75e7654271bbbaf77ecab141702e8fc9", 
         "ConsensusData": "0x2098e0e5ea5bdaf754eae0c5c2382a7331ef40da", 
         "CreateBranch": "0x3a63feffeffd88247ff970acf361def6fcb3f84a", 
         "CreateMarket": "0xea3fc35beafe2dff9efa562b903f4695c26a60dc", 
@@ -20957,21 +20958,21 @@ module.exports={
         "ExpiringEvents": "0x3110b442ac616668325802a2cca7d3aa4e6881f2", 
         "Faucets": "0x1a81f92640c002f2190bce5798d5756851581d7b", 
         "ForkPenalize": "0xcbbde7bef34b80e3d02c7de3642d01eb1cec4199", 
-        "Forking": "0x0cc2d0feb7620e51d172926bd0613ab82e98a348", 
+        "Forking": "0x10b12d2a5e5922c2435c9e5740dbc644bd3c838e", 
         "FxpFunctions": "0x55a262355e7dcd11555778bb990ab51334ff2734", 
         "Info": "0x74df892797f87423c2d7fb6b67440dece183d6e2", 
-        "MakeReports": "0xb31ddbff31721e5c8fffcf393458cfcb83599b43", 
+        "MakeReports": "0x7cebfcd8b8eb9195e7472188e44610213bf0ac12", 
         "Markets": "0xa754a1882b5f34993a889f6d26903ff3b0ea1560", 
         "PenalizationCatchup": "0x8ab8aa018e510e35026117d7ddba36fccbeee297", 
         "PenalizeNotEnoughReports": "0xa52ee580b07db40ad08e924f9db99868effe64ef", 
         "ProportionCorrect": "0x968ca5a86a22c7bc664933866af09bbd94a9b0f1", 
         "Reporting": "0x43c989384443dcaf872ed824621b2bcb7bcde1ea", 
         "ReportingThreshold": "0xc99872378e8649ccf979b1d1ec955b9a171e805e", 
-        "RoundTwo": "0xdafa962e6d693bc58c68106560f9ad99786dfb02", 
-        "RoundTwoPenalize": "0x0e3da2c0aca2e86e47e91d64fb00a7899866dc59", 
-        "SendReputation": "0xced1167ab40c40d0aad18ec5a80f5097ca812773", 
+        "RoundTwo": "0xe018bc890e743e92fbd7eed06cef2e6774236e43", 
+        "RoundTwoPenalize": "0xf7893739f437d350f8330e84fb02ccc927669e57", 
+        "SendReputation": "0xeb22baf269eac16e835dadf643ac69a1386e1131", 
         "SlashRep": "0x56094c9ed1c8efa5d9c95c36ee74b5237c8874ea", 
-        "Trade": "0xb51f9eb615b23bb51711cd9f0929b5a3d9386cbb", 
+        "Trade": "0xf4b6c847df304175206a1c2b1fa91b6d65d9dfff", 
         "Trades": "0x2914d5d2822a5c0f89494194a632032fe2a3fc74"
     }
 }
