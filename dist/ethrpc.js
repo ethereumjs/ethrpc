@@ -21962,13 +21962,14 @@ module.exports = {
     },
 
     // Post JSON-RPC command to all Ethereum nodes
-    broadcast: function (command, callback) {
-        var nodes, numCommands, returns, result, completed, self = this;
-        if (!command || (command.constructor === Object && !command.method) ||
-            (command.constructor === Array && !command.length)) {
+    broadcast: function (cmd, callback) {
+        var command, nodes, numCommands, returns, result, completed, self = this;
+        if (!cmd || (cmd.constructor === Object && !cmd.method) ||
+            (cmd.constructor === Array && !cmd.length)) {
             if (!callback) return null;
             return callback(null);
         }
+        command = clone(cmd);
 
         // make sure the ethereum node list isn't empty
         if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath && !this.wsUrl) {
@@ -22004,7 +22005,7 @@ module.exports = {
                 // [0] IPC socket closed / not connected: try to connect
                 case 0:
                     return this.ipcConnect(function (connected) {
-                        if (!connected) return self.broadcast(command, callback);
+                        if (!connected) return self.broadcast(cmd, callback);
                         self.send("ipc", command, returns, callback);
                     });
 
@@ -22027,7 +22028,7 @@ module.exports = {
             // [0] websocket closed / not connected: try to connect
             case 0:
                 this.wsConnect(function (connected) {
-                    if (!connected) return self.broadcast(command, callback);
+                    if (!connected) return self.broadcast(cmd, callback);
                     self.send("ws", command, returns, callback);
                 });
                 break;
@@ -22994,8 +22995,10 @@ module.exports = {
                         if (err) {
                             payload.send = false;
                             return self.fire(payload, function (callReturn) {
-                                console.debug("getLoggedReturnValue failed, fire returns:", callReturn);
-                                return onFailed(err);
+                                if (err.error !== errors.NULL_CALL_RETURN.error) {
+                                    return onFailed(err);
+                                }
+                                onFailed(self.errorCodes(payload.method, payload.returns, callReturn));
                             });
                         }
                         var e = self.errorCodes(payload.method, payload.returns, loggedReturnValue);
@@ -23062,8 +23065,10 @@ module.exports = {
         var e = this.errorCodes(payload.method, payload.returns, loggedReturnValue);
         if (e && e.error) {
             callReturn = this.fire(payload);
-            console.debug("getLoggedReturnValue failed, fire returns:", callReturn);
-            throw new Error(e);
+            if (e.error !== errors.NULL_CALL_RETURN.error) {
+                throw new Error(e);
+            }
+            throw new Error(this.errorCodes(payload.method, payload.returns, callReturn));
         }
         tx.callReturn = this.applyReturns(payload.returns, loggedReturnValue);
         return tx;
