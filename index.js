@@ -77,10 +77,10 @@ module.exports = {
     REQUIRED_CONFIRMATIONS: 5,
 
     // Maximum number of retry attempts for dropped transactions
-    TX_RETRY_MAX: 3,
+    TX_RETRY_MAX: 5,
 
     // Maximum number of transaction verification attempts
-    TX_POLL_MAX: 128,
+    TX_POLL_MAX: 1000,
 
     // Transaction polling interval
     TX_POLL_INTERVAL: 5000,
@@ -273,6 +273,7 @@ module.exports = {
             } else if (msg.method === "eth_subscription" && msg.params &&
                 msg.params.subscription && msg.params.result &&
                 this.subscriptions[msg.params.subscription]) {
+                // console.debug("eth_subscription message received:", JSON.stringify(msg, null, 2));
                 return this.subscriptions[msg.params.subscription](msg.params.result);
             }
             if (this.debug.broadcast) {
@@ -335,17 +336,18 @@ module.exports = {
         }
         this.websocket = new W3CWebSocket(this.wsUrl);
         this.websocket.onerror = function () {
-            if (self.debug.broadcast) {
+            // if (self.debug.broadcast) {
                 console.error("[ethrpc] WebSocket error", self.wsUrl, self.rpcStatus.ws);
-            }
+            // }
             self.rpcStatus.ws = -1;
             self.wsUrl = null;
         };
         this.websocket.onclose = function () {
-            if (self.rpcStatus.ws === 1) self.rpcStatus.ws = 0;
-            if (self.debug.broadcast) {
+            // if (self.debug.broadcast) {
                 console.warn("[ethrpc] WebSocket closed", self.wsUrl, self.rpcStatus.ws);
-            }
+            // }
+            var status = self.rpcStatus.ws;
+            if (status !== -1) self.rpcStatus.ws = 0;
             if (!calledCallback) callback(false);
         };
         this.websocket.onmessage = function (msg) {
