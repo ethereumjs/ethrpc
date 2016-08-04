@@ -73,6 +73,9 @@ module.exports = {
     // local ethereum node address
     localnode: "http://127.0.0.1:8545",
 
+    // reconnect websocket automatically
+    AUTO_RECONNECT: true,
+
     // Number of required confirmations for transact sequence
     REQUIRED_CONFIRMATIONS: 5,
 
@@ -246,6 +249,10 @@ module.exports = {
 
     subscriptions: {},
 
+    unregisterSubscriptionCallback: function (id) {
+        delete this.subscriptions[id];
+    },
+
     registerSubscriptionCallback: function (id, callback) {
         this.subscriptions[id] = callback;
     },
@@ -273,7 +280,6 @@ module.exports = {
             } else if (msg.method === "eth_subscription" && msg.params &&
                 msg.params.subscription && msg.params.result &&
                 this.subscriptions[msg.params.subscription]) {
-                // console.debug("eth_subscription message received:", JSON.stringify(msg, null, 2));
                 return this.subscriptions[msg.params.subscription](msg.params.result);
             }
             if (this.debug.broadcast) {
@@ -348,6 +354,12 @@ module.exports = {
             // }
             var status = self.rpcStatus.ws;
             if (status !== -1) self.rpcStatus.ws = 0;
+            if (status === 1 && self.AUTO_RECONNECT) {
+                console.debug("[ethrpc] WebSocket reconnecting...");
+                self.wsConnect(function (connected) {
+                    console.debug("[ethrpc] WebSocket reconnected:", connected);
+                });
+            }
             if (!calledCallback) callback(false);
         };
         this.websocket.onmessage = function (msg) {
