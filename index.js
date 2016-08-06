@@ -342,16 +342,16 @@ module.exports = {
         }
         this.websocket = new W3CWebSocket(this.wsUrl);
         this.websocket.onerror = function () {
-            // if (self.debug.broadcast) {
+            if (self.debug.broadcast) {
                 console.error("[ethrpc] WebSocket error", self.wsUrl, self.rpcStatus.ws);
-            // }
+            }
             self.rpcStatus.ws = -1;
             self.wsUrl = null;
         };
         this.websocket.onclose = function () {
-            // if (self.debug.broadcast) {
+            if (self.debug.broadcast) {
                 console.warn("[ethrpc] WebSocket closed", self.wsUrl, self.rpcStatus.ws);
-            // }
+            }
             var status = self.rpcStatus.ws;
             if (status !== -1) self.rpcStatus.ws = 0;
             if (status === 1 && self.AUTO_RECONNECT) {
