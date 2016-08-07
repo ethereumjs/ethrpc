@@ -355,9 +355,13 @@ module.exports = {
             var status = self.rpcStatus.ws;
             if (status !== -1) self.rpcStatus.ws = 0;
             if (status === 1 && self.AUTO_RECONNECT) {
-                console.debug("[ethrpc] WebSocket reconnecting...");
+                if (self.debug.broadcast) {
+                    console.debug("[ethrpc] WebSocket reconnecting...");
+                }
                 self.wsConnect(function (connected) {
-                    console.debug("[ethrpc] WebSocket reconnected:", connected);
+                    if (self.debug.broadcast) {
+                        console.debug("[ethrpc] WebSocket reconnected:", connected);
+                    }
                 });
             }
             if (!calledCallback) callback(false);
