@@ -17,7 +17,7 @@ module.exports = {
 
     debug: false,
 
-    version: "0.5.7",
+    version: "0.5.9",
 
     constants: {
         ONE: new BigNumber(10).toPower(new BigNumber(18)),
@@ -342,14 +342,10 @@ module.exports = {
                         bn = new BigNumber(n, 10);
                     } else {
                         n = n.toString();
-                        try {
+                        if (this.is_hex(n)) {
+                            bn = new BigNumber(n, 16);
+                        } else {
                             bn = new BigNumber(n, 10);
-                        } catch (exc) {
-                            if (this.is_hex(n)) {
-                                bn = new BigNumber(n, 16);
-                            } else {
-                                return n;
-                            }
                         }
                     }
                     break;
@@ -372,14 +368,10 @@ module.exports = {
                     }
                     break;
                 default:
-                    try {
+                    if (this.is_hex(n)) {
+                        bn = new BigNumber(n, 16);
+                    } else {
                         bn = new BigNumber(n, 10);
-                    } catch (ex) {
-                        try {
-                            bn = new BigNumber(n, 16);
-                        } catch (exc) {
-                            return n;
-                        }
                     }
             }
             if (bn !== undefined && bn !== null && bn.constructor === BigNumber) {
