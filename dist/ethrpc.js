@@ -21287,6 +21287,10 @@ module.exports={
     "CHECK_ORDER_BOOK_FAILED": {
         "error": 710,
         "message": "could not check order book using current prices"
+    },
+    "TRADE_FAILED": {
+        "error": 711,
+        "message": "trade failed, instead of success value (1), received "
     }
 }
 
