@@ -20987,7 +20987,7 @@ module.exports={
         "RoundTwoPenalize": "0x31820d3be1cd391775ce7255a219d52ab298e755", 
         "SendReputation": "0xd330305979d26dac29e6b0bafafc9f05bc472ad6", 
         "SlashRep": "0x2cd26dc9cfd42a0bdbaf5a67b5ddadbe3eed563d", 
-        "Trade": "0x84c0222cccf261cbf2050803473e3b6d7bf0792a", 
+        "Trade": "0x9332101c76d97ef0212f6c594f4a314e18a4cb9a", 
         "Trades": "0x51996ae37ab719f126a52ad015fa3c7304a7c136"
     }
 }
