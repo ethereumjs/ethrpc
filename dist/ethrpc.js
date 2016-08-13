@@ -21116,11 +21116,13 @@ module.exports={
         "-2": "Receiving address doesn't exist"
     },
     "short_sell": {
-        "-1": "oracle only branch",
-        "-2": "bad trade hash",
-        "-3": "trader doesn't exist / own shares in this market",
-        "-4": "must buy at least .00000001 in value",
-        "10": "insufficient balance"
+        "-1": "trade doesn't exist",
+        "-2": "invalid trade hash/commitment",
+        "-3": "must be a bid, not an ask",
+        "-4": "market is already resolved",
+        "-5": "can't pickup your own trade",
+        "-6": "can't trade on oracle only branch",
+        "-7": "not a large enough trade"
     },
     "slashRep": {
         "0": "not a valid claim",
@@ -21146,7 +21148,9 @@ module.exports={
         "-2": "bad trade hash",
         "-3": "trader doesn't exist / own shares in this market",
         "-4": "must buy at least .00000001 in value",
-        "10": "insufficient balance"
+        "-5": "can't pick up your own trade",
+        "10": "insufficient balance",
+        "22": "trade in same block prohibited"
     },
     "updateTradingFee": {
         "-1": "invalid trading fee: either fee is below the minimum trading fee or you are trying to raise the trading fee (trading fees can be lowered, but not raised)",
@@ -21291,6 +21295,10 @@ module.exports={
     "TRADE_FAILED": {
         "error": 711,
         "message": "trade failed, instead of success value (1), received "
+    },
+    "TRADE_NOT_FOUND": {
+        "error": 712,
+        "message": "trade not found"
     }
 }
 
