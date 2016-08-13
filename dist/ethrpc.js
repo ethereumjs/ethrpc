@@ -20963,7 +20963,7 @@ module.exports={
         "CloseMarketTwo": "0xce61229ccc4a7eca6a39c8240b29de0ee8d28848", 
         "CollectFees": "0x41b9e97513c627b9dab26e3743ccf6c47fac4abc", 
         "CompleteSets": "0xe231eb8225061ab49201afc639adac432319bef8", 
-        "CompositeGetters": "0xcaa919b0d758030b24df65709ee125e6b89cc5ae", 
+        "CompositeGetters": "0x5d10e242e0af6ee41c6e01ebe086c410a7f37111", 
         "Consensus": "0x369d6aa931f607bec2b9585cad2d9df9d60c3964", 
         "ConsensusData": "0x20008d15ff29341dfca3e76a7d642bb81bfd3e55", 
         "CreateBranch": "0x35f2ce06a32153a30b945599ddb705260d934945", 
@@ -20987,7 +20987,7 @@ module.exports={
         "RoundTwoPenalize": "0x31820d3be1cd391775ce7255a219d52ab298e755", 
         "SendReputation": "0xd330305979d26dac29e6b0bafafc9f05bc472ad6", 
         "SlashRep": "0x2cd26dc9cfd42a0bdbaf5a67b5ddadbe3eed563d", 
-        "Trade": "0x9332101c76d97ef0212f6c594f4a314e18a4cb9a", 
+        "Trade": "0xe51d312625499616d25f95cdac8803877eab43c7", 
         "Trades": "0x51996ae37ab719f126a52ad015fa3c7304a7c136"
     }
 }
@@ -21147,7 +21147,7 @@ module.exports={
         "-1": "oracle only branch",
         "-2": "bad trade hash",
         "-3": "trader doesn't exist / own shares in this market",
-        "-4": "must buy at least .00000001 in value",
+        "-4": "must trade at least 0.00000001 in value",
         "-5": "can't pick up your own trade",
         "10": "insufficient balance",
         "22": "trade in same block prohibited"
