@@ -21122,7 +21122,9 @@ module.exports={
         "-4": "market is already resolved",
         "-5": "can't pickup your own trade",
         "-6": "can't trade on oracle only branch",
-        "-7": "not a large enough trade"
+        "-7": "not a large enough trade",
+        "10": "insufficient balance",
+        "22": "trade in same block prohibited"
     },
     "slashRep": {
         "0": "not a valid claim",
