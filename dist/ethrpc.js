@@ -17441,12 +17441,14 @@ module.exports={
     "CompositeGetters": {
       "batchGetMarketInfo": {
         "inputs": [
-          "marketIDs"
+          "marketIDs", 
+          "account"
         ], 
         "method": "batchGetMarketInfo", 
         "returns": "hash[]", 
         "signature": [
-          "int256[]"
+          "int256[]", 
+          "int256"
         ]
       }, 
       "getMarketCreatorFeesCollected": {
@@ -17454,18 +17456,20 @@ module.exports={
           "market"
         ], 
         "method": "getMarketCreatorFeesCollected", 
-        "returns": "int256", 
+        "returns": "unfix", 
         "signature": [
           "int256"
         ]
       }, 
       "getMarketInfo": {
         "inputs": [
-          "marketID"
+          "marketID", 
+          "account"
         ], 
         "method": "getMarketInfo", 
         "returns": "hash[]", 
         "signature": [
+          "int256", 
           "int256"
         ]
       }, 
@@ -20973,7 +20977,7 @@ module.exports={
         "CloseMarketTwo": "0x94db3bc4184e320498455774b424802462458d3a", 
         "CollectFees": "0xbb57b07e50038086617d722739efdf0cb81569fd", 
         "CompleteSets": "0xb9bb5c2e404868469d8421db4964622f4163a116", 
-        "CompositeGetters": "0x6ee28ac73e3ebafbd357e46cc0c8bbbe6235e4a7", 
+        "CompositeGetters": "0x27c8fe512983c1bedce37f1e312acb92456a3c5b", 
         "Consensus": "0xfb262777af60c63de479ba9237861e89ca5dd8ba", 
         "ConsensusData": "0xc4cee1d39d0b793addfffd3b20ff20c064a88008", 
         "CreateBranch": "0x551a0bfeb54cfd2a0296ab60af657a1a8ae8937c", 
