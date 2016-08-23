@@ -58,7 +58,7 @@ module.exports = {
     },
 
     // if set to true, dropped transactions are automatically resubmitted
-    retryDroppedTxs: false,
+    retryDroppedTxs: true,
 
     // geth IPC endpoint (Node-only)
     ipcpath: null,
