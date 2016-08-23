@@ -921,12 +921,12 @@ module.exports = {
         return this.broadcast(this.marshal("subscribe", ["logs", options]), f);
     },
 
-    subscribeNewBlocks: function (options, f) {
+    subscribeNewHeads: function (options, f) {
         if (!f && isFunction(options)) {
             f = options;
             options = null;
         }
-        return this.broadcast(this.marshal("subscribe", ["newBlocks", options || {
+        return this.broadcast(this.marshal("subscribe", ["newHeads", options || {
             includeTransactions: false,
             transactionDetails: false
         }]), f);

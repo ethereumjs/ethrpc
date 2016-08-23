@@ -25,6 +25,7 @@ var TXHASH = "0xc52b258dec9e8374880b346f93669d7699d7e64d46c8b6072b19122ca9406461
 var NETWORK_ID = "2";
 contracts = contracts[NETWORK_ID];
 var HOSTED_NODES;
+rpc.retryDroppedTxs = false;
 
 describe("RPCError", function () {
     var test = function (t) {
