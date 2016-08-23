@@ -1414,14 +1414,14 @@ module.exports = {
             if (tx) return callback(null, tx);
             self.txs[txHash].status = "failed";
             if (self.retryDroppedTxs) {
-                console.debug(" *** Re-submitting transaction:", txHash);
+                if (self.debug.broadcast) console.debug(" *** Re-submitting transaction:", txHash);
                 self.txs[txHash].status = "resubmitted";
                 return callback(null, null);
             }
             // only resubmit if this is a raw transaction and has a duplicate nonce
             self.checkDroppedTxForDuplicateNonce(txHash, function (err) {
                 if (err !== null) return callback(err);
-                console.debug(" *** Re-submitting transaction:", txHash);
+                if (self.debug.broadcast) console.debug(" *** Re-submitting transaction:", txHash);
                 self.txs[txHash].status = "resubmitted";
                 return callback(null, null);
             });
