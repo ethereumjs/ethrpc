@@ -1,12 +1,13 @@
 {
   "name": "ethrpc",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "description": "Ethereum JSON RPC",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/rpc.js",
     "lint": "jshint index.js",
-    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/rpc.js"
+    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/rpc.js",
+    "link": "npm link augur-contracts"
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,7 @@
   "dependencies": {
     "async": "1.5.2",
     "augur-abi": "0.6.0",
-    "augur-contracts": "1.8.3",
+    "augur-contracts": "1.8.4",
     "bignumber.js": "2.3.0",
     "browser-request": "0.3.3",
     "clone": "1.0.2",
