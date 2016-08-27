@@ -17,7 +17,7 @@ module.exports = {
 
     debug: false,
 
-    version: "0.6.0",
+    version: "0.6.1",
 
     constants: {
         ONE: new BigNumber(10).toPower(new BigNumber(18)),
@@ -188,7 +188,7 @@ module.exports = {
     },
 
     unfork: function (forked, prefix) {
-        if (forked !== null && forked !== undefined) {
+        if (forked !== null && forked !== undefined && forked.constructor !== Object) {
             var unforked = this.bignum(forked);
             var superforked = unforked.plus(this.constants.MOD);
             if (superforked.gte(this.constants.BYTES_32) && superforked.lt(this.constants.MOD)) {
@@ -198,6 +198,8 @@ module.exports = {
             unforked = this.pad_left(unforked.toString(16));
             if (prefix) unforked = this.prefix_hex(unforked);
             return unforked;
+        } else {
+            throw new Error("abi.unfork failed (bad input): " + JSON.stringify(forked));
         }
     },
 
