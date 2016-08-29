@@ -17523,11 +17523,15 @@ module.exports={
         "inputs": [
           "branch", 
           "offset", 
-          "numMarketsToLoad"
+          "numMarketsToLoad", 
+          "volumeMin", 
+          "volumeMax"
         ], 
         "method": "getMarketsInfo", 
         "returns": "hash[]", 
         "signature": [
+          "int256", 
+          "int256", 
           "int256", 
           "int256", 
           "int256"
@@ -21023,7 +21027,7 @@ module.exports={
         "CloseMarketTwo": "0x80f9acac741e4eb6de981c11494658c54d591301", 
         "CollectFees": "0x432832594a49a1bd490042a4af603dc089c4b056", 
         "CompleteSets": "0xfecca16884908c46664637d13a51381bab675f22", 
-        "CompositeGetters": "0xe153f2cd6a959212a013a43b56fbb7c1a02d3f52", 
+        "CompositeGetters": "0x40e847fda473852f6e1749b88ea6a2ce4fcc84a8", 
         "Consensus": "0xe68918529dc9f11fc45bfe17d464472cbb104282", 
         "ConsensusData": "0x47b9359bd0489f7e4a61d4d55f26930469f4e291", 
         "CreateBranch": "0xa0b6bd39ba1f8c91a35553fa81c7f3182f7fa07d", 
