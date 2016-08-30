@@ -23,7 +23,10 @@ var keccak_256 = require("js-sha3").keccak_256;
 var errors = require("augur-contracts").errors;
 var abi = require("augur-abi");
 
-BigNumber.config({MODULO_MODE: BigNumber.EUCLID});
+BigNumber.config({
+    MODULO_MODE: BigNumber.EUCLID,
+    ROUNDING_MODE: BigNumber.ROUND_HALF_EVEN
+});
 
 function RPCError(err) {
     this.name = "RPCError";
