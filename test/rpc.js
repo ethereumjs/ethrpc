@@ -1906,12 +1906,12 @@ describe("RPC", function () {
                     rpc.getTransactionReceipt = function (txHash, callback) {
                         return callback(t.receipt);
                     };
-                    rpc.getLoggedReturnValue(t.txHash, function (err, loggedReturnValue) {
+                    rpc.getLoggedReturnValue(t.txHash, function (err, log) {
                         if (t.receipt.logs.length) {
                             assert.isNull(err);
-                            assert.strictEqual(loggedReturnValue, t.receipt.logs[0].data);
+                            assert.strictEqual(log.returnValue, t.receipt.logs[0].data);
                         } else {
-                            assert.isUndefined(loggedReturnValue);
+                            assert.isUndefined(log);
                             assert.deepEqual(err, errors.NULL_CALL_RETURN);
                         }
                         done();
@@ -1924,7 +1924,7 @@ describe("RPC", function () {
                     if (!t.receipt.logs.length) {
                         assert.throws(function () { rpc.getLoggedReturnValue(t.txHash); }, rpc.Error);
                     } else {
-                        var loggedReturnValue = rpc.getLoggedReturnValue(t.txHash);
+                        var loggedReturnValue = rpc.getLoggedReturnValue(t.txHash).returnValue;
                         assert.strictEqual(loggedReturnValue, t.receipt.logs[0].data);
                     }
                 });

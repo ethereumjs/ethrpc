@@ -96,7 +96,7 @@ module.exports = {
 
     DEFAULT_GAS: "0x2fd618",
 
-    ETHER: new BigNumber(10).toPower(18),
+    ETHER: new BigNumber(10, 10).toPower(18),
 
     Error: RPCError,
 
@@ -535,6 +535,10 @@ module.exports = {
             returns = this.strip(command);
         }
 
+        if (this.debug.broadcast) {
+            console.log("[ethrpc] broadcast: " + JSON.stringify(command, null, 2));
+        }
+
         // if we're on Node, use IPC if available and ipcpath is specified
         if (NODE_JS && this.ipcpath && command.method) {
             var loopback = this.nodes.local && (
@@ -872,16 +876,13 @@ module.exports = {
 
     // execute functions on contracts on the blockchain
     call: function (tx, f) {
-        tx.gas = tx.gas || this.DEFAULT_GAS;
         return this.broadcast(this.marshal("call", [tx, "latest"]), f);
     },
 
     sendTx: function (tx, f) {
-        tx.gas = tx.gas || this.DEFAULT_GAS;
         return this.broadcast(this.marshal("sendTransaction", tx), f);
     },
     sendTransaction: function (tx, f) {
-        tx.gas = tx.gas || this.DEFAULT_GAS;
         return this.broadcast(this.marshal("sendTransaction", tx), f);
     },
 
@@ -1098,6 +1099,7 @@ module.exports = {
         if (tx.timeout) packaged.timeout = tx.timeout;
         if (tx.value) packaged.value = tx.value;
         if (tx.returns) packaged.returns = tx.returns;
+        if (tx.nonce) packaged.nonce = tx.nonce;
         return packaged;
     },
 
@@ -1357,7 +1359,10 @@ module.exports = {
             if (!log || log.data === null || log.data === undefined) {
                 throw new this.Error(errors.NULL_CALL_RETURN);
             }
-            return log.data;
+            return {
+                returnValue: log.data,
+                gasUsed: new BigNumber(receipt.gasUsed, 16)
+            };
         }
         this.getTransactionReceipt(txHash, function (receipt) {
             if (self.debug.tx) console.debug("got receipt:", receipt);
@@ -1368,7 +1373,10 @@ module.exports = {
             if (!log || log.data === null || log.data === undefined) {
                 return callback(errors.NULL_CALL_RETURN);
             }
-            callback(null, log.data);
+            callback(null, {
+                returnValue: log.data,
+                gasUsed: new BigNumber(receipt.gasUsed, 16)
+            });
         });
     },
 
@@ -1434,7 +1442,7 @@ module.exports = {
     verifyTxSubmitted: function (payload, txHash, callback) {
         var self = this;
         if (!isFunction(callback)) {
-            if (!payload || txHash === null || txHash === undefined) {
+            if (!payload || ((!payload.mutable && payload.returns !== "null") && (txHash === null || txHash === undefined))) {
                 throw new this.Error(errors.TRANSACTION_FAILED);
             }
             if (this.txs[txHash]) throw new this.Error(errors.DUPLICATE_TRANSACTION);
@@ -1535,8 +1543,8 @@ module.exports = {
 
                     // if mutable return value, then lookup logged return
                     // value in transaction receipt (after confirmation)
-                    self.getLoggedReturnValue(txHash, function (err, loggedReturnValue) {
-                        if (self.debug.tx) console.debug("loggedReturnValue:", err, loggedReturnValue);
+                    self.getLoggedReturnValue(txHash, function (err, log) {
+                        if (self.debug.tx) console.debug("loggedReturnValue:", err, log.returnValue);
                         if (err) {
                             payload.send = false;
                             return self.fire(payload, function (callReturn) {
@@ -1546,9 +1554,13 @@ module.exports = {
                                 onFailed(self.errorCodes(payload.method, payload.returns, callReturn));
                             });
                         }
-                        var e = self.errorCodes(payload.method, payload.returns, loggedReturnValue);
-                        if (e && e.error) return onFailed(e);
-                        tx.callReturn = self.applyReturns(payload.returns, loggedReturnValue);
+                        var e = self.errorCodes(payload.method, payload.returns, log.returnValue);
+                        if (e && e.error) {
+                            e.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
+                            return onFailed(e);
+                        }
+                        tx.callReturn = self.applyReturns(payload.returns, log.returnValue);
+                        tx.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
                         onSuccess(tx);
                         if (isFunction(onConfirmed)) {
                             self.pollForTxConfirmation(txHash, self.REQUIRED_CONFIRMATIONS, function (err) {
@@ -1586,8 +1598,11 @@ module.exports = {
         delete payload.returns;
         var txHash = this.invoke(payload);
         if (this.debug.tx) console.debug("txHash:", txHash);
-        if (!txHash) throw new this.Error(errors.NULL_RESPONSE);
-        if (txHash.error) throw new this.Error(txHash);
+        if (!txHash && !payload.mutable && payload.returns !== "null") {
+            throw new this.Error(errors.NULL_RESPONSE);
+        } else if (txHash && txHash.error) {
+            throw new this.Error(txHash);
+        }
         payload.returns = returns;
         txHash = abi.format_int256(txHash);
         this.verifyTxSubmitted(payload, txHash);
@@ -1606,16 +1621,18 @@ module.exports = {
 
         // if mutable return value, then lookup logged return
         // value in transaction receipt (after confirmation)
-        var loggedReturnValue = this.getLoggedReturnValue(txHash);
-        var e = this.errorCodes(payload.method, payload.returns, loggedReturnValue);
+        var log = this.getLoggedReturnValue(txHash);
+        var e = this.errorCodes(payload.method, payload.returns, log.returnValue);
         if (e && e.error) {
-            callReturn = this.fire(payload);
+            e.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
             if (e.error !== errors.NULL_CALL_RETURN.error) {
                 throw new Error(e);
             }
+            callReturn = this.fire(payload);
             throw new Error(this.errorCodes(payload.method, payload.returns, callReturn));
         }
-        tx.callReturn = this.applyReturns(payload.returns, loggedReturnValue);
+        tx.callReturn = this.applyReturns(payload.returns, log.returnValue);
+        tx.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
         return tx;
     },
 
