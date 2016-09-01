@@ -16377,13 +16377,33 @@ module.exports={
       "contract": "CompleteSets", 
       "inputs": [
         {
+          "indexed": true, 
+          "name": "sender", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "market", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "type", 
+          "type": "int256"
+        }, 
+        {
           "indexed": false, 
           "name": "returnValue", 
           "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "numOutcomes", 
+          "type": "int256"
         }
       ], 
-      "name": "completeSets_logReturn(int256)", 
-      "signature": "0x70a46893aa026bc51efe8d9b9c21c4d63fe015bb03feeb700d0d5bc537d980f8"
+      "name": "completeSets_logReturn(int256,int256,int256,int256,int256)", 
+      "signature": "0x2e6b18139c987afb05efb85deddaa40262aa36c9ddebb9be215461cb22078175"
     }, 
     "consensus_logReturn": {
       "contract": "Consensus", 
@@ -17584,7 +17604,7 @@ module.exports={
         ], 
         "method": "buyCompleteSets", 
         "mutable": true, 
-        "returns": "number", 
+        "returns": "hash[]", 
         "send": true, 
         "signature": [
           "int256", 
@@ -17599,7 +17619,7 @@ module.exports={
         ], 
         "method": "sellCompleteSets", 
         "mutable": true, 
-        "returns": "number", 
+        "returns": "hash[]", 
         "send": true, 
         "signature": [
           "int256", 
@@ -21160,13 +21180,13 @@ module.exports={
     "2": {
         "Backstops": "0x569d4bd38aa5ff088fe3c8f9dcfec44addba62eb", 
         "Branches": "0x497e9d4d5eec6ae005e79e161e4f06a31109f3b7", 
-        "BuyAndSellShares": "0xa7290513a061bca7f01aedc1b8c9edf5130825f8", 
+        "BuyAndSellShares": "0x0213c7f85af139093a6b35cff8d7f4e02f041379", 
         "Cash": "0x044ad83bf7054789aa73adb0b50a8ed40e779f05", 
         "CloseMarket": "0x521e6197c08903352d6b94de3dca2df39a2a8b6a", 
         "CloseMarketOne": "0xeebd9569b934f098995cb1d12bb378cad5041773", 
         "CloseMarketTwo": "0x80f9acac741e4eb6de981c11494658c54d591301", 
         "CollectFees": "0x432832594a49a1bd490042a4af603dc089c4b056", 
-        "CompleteSets": "0xfecca16884908c46664637d13a51381bab675f22", 
+        "CompleteSets": "0xe72517b7872bdfc820a489294e1182547fffba99", 
         "CompositeGetters": "0x40e847fda473852f6e1749b88ea6a2ce4fcc84a8", 
         "Consensus": "0xe68918529dc9f11fc45bfe17d464472cbb104282", 
         "ConsensusData": "0x47b9359bd0489f7e4a61d4d55f26930469f4e291", 
