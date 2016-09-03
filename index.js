@@ -131,10 +131,8 @@ module.exports = {
                 position += stride;
             }
             if (array.length) {
-                if (parseInt(array[0]) === array.length - 1) {
-                    array.splice(0, 1);
-                } else if (parseInt(array[1]) === array.length - 2 ||
-                    parseInt(array[1]) / 32 === array.length - 2) {
+                if (parseInt(array[1], 16) === array.length - 2 ||
+                    parseInt(array[1], 16) / 32 === array.length - 2) {
                     array.splice(0, 2);
                 }
             }
