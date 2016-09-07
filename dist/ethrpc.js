@@ -21192,13 +21192,13 @@ module.exports={
     "2": {
         "Backstops": "0x569d4bd38aa5ff088fe3c8f9dcfec44addba62eb", 
         "Branches": "0x497e9d4d5eec6ae005e79e161e4f06a31109f3b7", 
-        "BuyAndSellShares": "0x674480390ba3eef8e5c0fe5483c3af9cf05a7521", 
+        "BuyAndSellShares": "0x61b9b76af602cde7a6abf0036c9cfd4b23fcc552", 
         "Cash": "0x044ad83bf7054789aa73adb0b50a8ed40e779f05", 
         "CloseMarket": "0x521e6197c08903352d6b94de3dca2df39a2a8b6a", 
         "CloseMarketOne": "0xeebd9569b934f098995cb1d12bb378cad5041773", 
         "CloseMarketTwo": "0x80f9acac741e4eb6de981c11494658c54d591301", 
         "CollectFees": "0x432832594a49a1bd490042a4af603dc089c4b056", 
-        "CompleteSets": "0xe72517b7872bdfc820a489294e1182547fffba99", 
+        "CompleteSets": "0xa6e7271ef58e108e4fecdb2c812abc50f90513f5", 
         "CompositeGetters": "0xfee435381e2c281fb48b0f33045702639220404c", 
         "Consensus": "0xe68918529dc9f11fc45bfe17d464472cbb104282", 
         "ConsensusData": "0x47b9359bd0489f7e4a61d4d55f26930469f4e291", 
@@ -21223,7 +21223,7 @@ module.exports={
         "RoundTwoPenalize": "0xbe15d0d952c21d5fb181dac9941764cce2e0c240", 
         "SendReputation": "0xc1dc9753a0f143bbdb605805cf27cac9489524b0", 
         "SlashRep": "0xaf0b38b11949930453c9ccaaddb284e8c7b662a5", 
-        "Trade": "0xdeebe2062823831949a255e59961e21948caae05", 
+        "Trade": "0x024892dfaec607abd60f1d7357624d3b74fb19a5", 
         "Trades": "0x1e997132f2aa4b8d52518e3935cccb59f42210f7"
     }
 }
@@ -21863,6 +21863,8 @@ module.exports = {
     txs: {},
 
     rawTxs: {},
+
+    rawTxMaxNonce: 0,
 
     notifications: {},
 
@@ -23162,6 +23164,7 @@ module.exports = {
         if (!isFunction(callback)) {
             var tx = this.getTransaction(txHash);
             if (tx) return tx;
+            --this.rawTxMaxNonce;
             this.txs[txHash].status = "failed";
 
             // only resubmit if this is a raw transaction and has a duplicate nonce
@@ -23172,6 +23175,7 @@ module.exports = {
         }
         this.getTransaction(txHash, function (tx) {
             if (tx) return callback(null, tx);
+            --self.rawTxMaxNonce;
             self.txs[txHash].status = "failed";
             if (self.retryDroppedTxs) {
                 if (self.debug.broadcast) console.debug(" *** Re-submitting transaction:", txHash);

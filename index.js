@@ -113,6 +113,8 @@ module.exports = {
 
     rawTxs: {},
 
+    rawTxMaxNonce: 0,
+
     notifications: {},
 
     gasPrice: 20000000000,
@@ -1411,6 +1413,7 @@ module.exports = {
         if (!isFunction(callback)) {
             var tx = this.getTransaction(txHash);
             if (tx) return tx;
+            --this.rawTxMaxNonce;
             this.txs[txHash].status = "failed";
 
             // only resubmit if this is a raw transaction and has a duplicate nonce
@@ -1421,6 +1424,7 @@ module.exports = {
         }
         this.getTransaction(txHash, function (tx) {
             if (tx) return callback(null, tx);
+            --self.rawTxMaxNonce;
             self.txs[txHash].status = "failed";
             if (self.retryDroppedTxs) {
                 if (self.debug.broadcast) console.debug(" *** Re-submitting transaction:", txHash);
