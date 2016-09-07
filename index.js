@@ -57,7 +57,8 @@ module.exports = {
 
     debug: {
         tx: false,
-        broadcast: false
+        broadcast: false,
+        nonce: false
     },
 
     // if set to true, dropped transactions are automatically resubmitted
