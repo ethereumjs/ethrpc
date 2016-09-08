@@ -17696,11 +17696,15 @@ module.exports={
       }, 
       "getOrderBook": {
         "inputs": [
-          "marketID"
+          "marketID", 
+          "offset", 
+          "numTradesToLoad"
         ], 
         "method": "getOrderBook", 
         "returns": "hash[]", 
         "signature": [
+          "int256", 
+          "int256", 
           "int256"
         ]
       }, 
@@ -21199,7 +21203,7 @@ module.exports={
         "CloseMarketTwo": "0x80f9acac741e4eb6de981c11494658c54d591301", 
         "CollectFees": "0x432832594a49a1bd490042a4af603dc089c4b056", 
         "CompleteSets": "0xa6e7271ef58e108e4fecdb2c812abc50f90513f5", 
-        "CompositeGetters": "0xfee435381e2c281fb48b0f33045702639220404c", 
+        "CompositeGetters": "0x56b7212e4920a12cf9f263f3965f7fcd495d0832", 
         "Consensus": "0xe68918529dc9f11fc45bfe17d464472cbb104282", 
         "ConsensusData": "0x47b9359bd0489f7e4a61d4d55f26930469f4e291", 
         "CreateBranch": "0xa0b6bd39ba1f8c91a35553fa81c7f3182f7fa07d", 
@@ -21808,7 +21812,8 @@ module.exports = {
 
     debug: {
         tx: false,
-        broadcast: false
+        broadcast: false,
+        nonce: false
     },
 
     // if set to true, dropped transactions are automatically resubmitted
