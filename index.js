@@ -1536,14 +1536,22 @@ module.exports = {
                         tx.timestamp = parseInt(block.timestamp, 16);
                         if (!payload.mutable) {
                             tx.callReturn = callReturn;
-                            onSuccess(tx);
-                            if (isFunction(onConfirmed)) {
-                                self.pollForTxConfirmation(txHash, self.REQUIRED_CONFIRMATIONS, function (err) {
-                                    if (err) return onFailed(err);
-                                    onConfirmed(tx);
-                                });
-                            }
-                            return;
+                            return self.getTransactionReceipt(txHash, function (receipt) {
+                                if (self.debug.tx) console.debug("got receipt:", receipt);
+                                if (receipt && receipt.gasUsed) {
+                                    tx.gasFees = new BigNumber(receipt.gasUsed, 16)
+                                        .times(new BigNumber(tx.gasPrice, 16))
+                                        .dividedBy(self.ETHER)
+                                        .toFixed();
+                                }
+                                onSuccess(tx);
+                                if (isFunction(onConfirmed)) {
+                                    self.pollForTxConfirmation(txHash, self.REQUIRED_CONFIRMATIONS, function (err) {
+                                        if (err) return onFailed(err);
+                                        onConfirmed(tx);
+                                    });
+                                }
+                            });
                         }
 
                         // if mutable return value, then lookup logged return
@@ -1623,6 +1631,14 @@ module.exports = {
         tx.timestamp = parseInt(this.getBlock(tx.blockNumber, false).timestamp, 16);
         if (!payload.mutable) {
             tx.callReturn = callReturn;
+            var receipt = this.getTransactionReceipt(txHash);
+            if (this.debug.tx) console.debug("got receipt:", receipt);
+            if (receipt && receipt.gasUsed) {
+                tx.gasFees = new BigNumber(receipt.gasUsed, 16)
+                    .times(new BigNumber(tx.gasPrice, 16))
+                    .dividedBy(this.ETHER)
+                    .toFixed();
+            }
             return tx;
         }
 
