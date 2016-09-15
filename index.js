@@ -1073,17 +1073,23 @@ module.exports = {
         } else if (tx.params.constructor !== Array) {
             tx.params = [tx.params];
         }
-        for (var j = 0, numParams = tx.params.length; j < numParams; ++j) {
-            if (tx.params[j] !== undefined && tx.params[j] !== null) {
-                if (tx.params[j].constructor === Number) {
-                    tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
-                }
-                if (tx.signature[j] === "int256") {
-                    tx.params[j] = abi.unfork(tx.params[j], true);
-                } else if (tx.signature[j] === "int256[]" &&
-                    tx.params[j].constructor === Array && tx.params[j].length) {
-                    for (var k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
-                        tx.params[j][k] = abi.unfork(tx.params[j][k], true);
+        var numParams = tx.params.length;
+        if (numParams) {
+            if (tx.signature && tx.signature.length !== numParams) {
+                throw new this.Error(errors.PARAMETER_NUMBER_ERROR);
+            }
+            for (var j = 0; j < numParams; ++j) {
+                if (tx.params[j] !== undefined && tx.params[j] !== null && tx.signature[j]) {
+                    if (tx.params[j].constructor === Number) {
+                        tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
+                    }
+                    if (tx.signature[j] === "int256") {
+                        tx.params[j] = abi.unfork(tx.params[j], true);
+                    } else if (tx.signature[j] === "int256[]" &&
+                        tx.params[j].constructor === Array && tx.params[j].length) {
+                        for (var k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
+                            tx.params[j][k] = abi.unfork(tx.params[j][k], true);
+                        }
                     }
                 }
             }
