@@ -698,6 +698,7 @@ module.exports = {
             }
         }
         this.notifications = {};
+        this.rawTxMaxNonce = -1;
     },
 
     // reset to default Ethereum nodes
