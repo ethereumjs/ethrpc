@@ -114,7 +114,7 @@ module.exports = {
 
     rawTxs: {},
 
-    rawTxMaxNonce: 0,
+    rawTxMaxNonce: -1,
 
     notifications: {},
 
