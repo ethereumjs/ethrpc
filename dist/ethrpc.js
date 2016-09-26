@@ -16395,10 +16395,15 @@ module.exports={
           "indexed": false, 
           "name": "type", 
           "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "cashRefund", 
+          "type": "int256"
         }
       ], 
-      "name": "log_cancel(int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x9ecf4903f3efaf1549dc51545bd945f94d51923f37ce198a3b838125a2f397d5"
+      "name": "log_cancel(int256,int256,int256,int256,int256,int256,int256,int256)", 
+      "signature": "0xf573f1f8bc82665c8e269027671f8892cb92df05d64505b4f0090198a52edfbf"
     }, 
     "log_fill_tx": {
       "contract": "Trade", 
@@ -21187,7 +21192,7 @@ module.exports={
     "2": {
         "Backstops": "0x569d4bd38aa5ff088fe3c8f9dcfec44addba62eb", 
         "Branches": "0x497e9d4d5eec6ae005e79e161e4f06a31109f3b7", 
-        "BuyAndSellShares": "0x61b9b76af602cde7a6abf0036c9cfd4b23fcc552", 
+        "BuyAndSellShares": "0x70630ee38affa41ea4ca94fe2893b3741a35cb95", 
         "Cash": "0x044ad83bf7054789aa73adb0b50a8ed40e779f05", 
         "CloseMarket": "0x521e6197c08903352d6b94de3dca2df39a2a8b6a", 
         "CloseMarketOne": "0xeebd9569b934f098995cb1d12bb378cad5041773", 
