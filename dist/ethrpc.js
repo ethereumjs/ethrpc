@@ -20378,7 +20378,8 @@ module.exports={
     "Register": {
       "register": {
         "method": "register", 
-        "returns": "int256"
+        "returns": "number", 
+        "send": true
       }
     }, 
     "Reporting": {
