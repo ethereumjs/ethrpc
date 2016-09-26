@@ -16590,17 +16590,12 @@ module.exports={
       "name": "penalize(int256,int256,int256,int256,int256,int256,int256)", 
       "signature": "0x3253564cd022a8ec496277f26ccdaddf64e75973423eda45df329f60b2a0c6a7"
     }, 
-    "session": {
-      "contract": "Sessions", 
+    "registration": {
+      "contract": "Register", 
       "inputs": [
         {
           "indexed": true, 
           "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "type", 
           "type": "int256"
         }, 
         {
@@ -16609,8 +16604,8 @@ module.exports={
           "type": "int256"
         }
       ], 
-      "name": "session(int256,int256,int256)", 
-      "signature": "0x19a49d2acfeb2c56bc742081b752ef527725fe0253f511d34d5364668b4475fe"
+      "name": "registration(int256,int256)", 
+      "signature": "0x44b6aeb7b38bb1ad04b4d0daf588cff086ff8829f0a34c30ddbb4d38695428de"
     }, 
     "trade_logArrayReturn": {
       "contract": "Trade", 
@@ -17603,6 +17598,18 @@ module.exports={
         "returns": "hash[]", 
         "signature": [
           "int256[]", 
+          "int256"
+        ]
+      }, 
+      "getAccountOrderBook": {
+        "inputs": [
+          "marketID", 
+          "account"
+        ], 
+        "method": "getAccountOrderBook", 
+        "returns": "int256[]", 
+        "signature": [
+          "int256", 
           "int256"
         ]
       }, 
@@ -20368,6 +20375,12 @@ module.exports={
         ]
       }
     }, 
+    "Register": {
+      "register": {
+        "method": "register", 
+        "returns": "int256"
+      }
+    }, 
     "Reporting": {
       "addDormantRep": {
         "inputs": [
@@ -20919,23 +20932,6 @@ module.exports={
         ]
       }
     }, 
-    "Sessions": {
-      "login": {
-        "method": "login", 
-        "returns": "number", 
-        "send": true
-      }, 
-      "logout": {
-        "method": "logout", 
-        "returns": "number", 
-        "send": true
-      }, 
-      "register": {
-        "method": "register", 
-        "returns": "number", 
-        "send": true
-      }
-    }, 
     "SlashRep": {
       "slashRep": {
         "inputs": [
@@ -21035,6 +21031,16 @@ module.exports={
         ], 
         "method": "getID", 
         "returns": "hash", 
+        "signature": [
+          "int256"
+        ]
+      }, 
+      "getTradeOwner": {
+        "inputs": [
+          "id"
+        ], 
+        "method": "getTradeOwner", 
+        "returns": "int256", 
         "signature": [
           "int256"
         ]
@@ -21140,42 +21146,42 @@ module.exports={
 },{}],56:[function(require,module,exports){
 module.exports={
     "10101": {
-        "Backstops": "0xf96f73daff5216c1b3a5399674d5f08ab5d00677", 
-        "Branches": "0x0b36aa73a7a9702338398ca6681954e12504dff6", 
-        "BuyAndSellShares": "0x80a82ca064fe69cb3805bb0e5995ddcc413f37c2", 
-        "Cash": "0xa7c69c6780900cf8842baeb30782b28315149f50", 
-        "CloseMarket": "0x1e6c2d4184271eafb1e0e84aceb4d57d9550b1ac", 
-        "CloseMarketOne": "0x5df49b831c1d311c5a78189bff078230f6764ac2", 
-        "CloseMarketTwo": "0x9d03429b195e86eeed976a79e5ba666ed2899fd3", 
-        "CollectFees": "0x9faaf4f58adc18e6968bdacab392d7e28d139443", 
-        "CompleteSets": "0x210b11e4050ca04790b3eab61af7815c130cea98", 
-        "CompositeGetters": "0x320a2efbf1fe71900169c3077c85067ed4ba30c2", 
-        "Consensus": "0x9865b08dda7423862964ed33c6771baf8ccd29c5", 
-        "ConsensusData": "0x236f61205850f0664f6a5209b802bd776cf2eac5", 
-        "CreateBranch": "0x66dc445307e2dc2f82c90b5c6dfb4c0e5a018bc4", 
-        "CreateMarket": "0x5c388823ed34d432291c6d19f565abdf3a4ab173", 
-        "EventResolution": "0xdc1c605aa1c06dc5e60618560d26c77787f6b027", 
-        "Events": "0xa564c436af5bc445b0317556c0ef024ab0e52aeb", 
-        "ExpiringEvents": "0x4fdc1b564f76e4f1755736c8358301d7955accbb", 
-        "Faucets": "0x81bf8f6a711985b8f3116e4bad3efc3b3da57914", 
-        "ForkPenalize": "0x57ce48c476ac801967f38eebf8d64711effefd76", 
-        "Forking": "0x2fcab7efcb9c1b8c0f31aa621bd82ef6a8ae454d", 
-        "FxpFunctions": "0xdbd084ea1cbadacb09510bf79cfab025270ef970", 
-        "Info": "0x9b38992f85d52316bab41a283430b06f85ded977", 
-        "MakeReports": "0x20fb0a7ccc66e7bfe3d231bca4be985e3d809d2f", 
-        "Markets": "0xc38a1ba2443a267a3b8b3082cf50421666b9efdc", 
-        "PenalizationCatchup": "0x1e1ed45192c106d8b9313b5e37b4887d915098ab", 
-        "PenalizeNotEnoughReports": "0x18811daedcb3bac4747ef0ff45f705689c9264c0", 
-        "ProportionCorrect": "0xe1dcfe836d8bf08a839efac43106472a596ca81a", 
-        "Reporting": "0x8a3625d7a4a3f993cf53e1bcd1b9df49e1c43a67", 
-        "ReportingThreshold": "0xb1e27d3c5cc4e235412942871a26a2d2b99dcace", 
-        "RoundTwo": "0x2a1bac7c3e13bfd5d9df2103363115146022b531", 
-        "RoundTwoPenalize": "0x3fc05b39dd449c0361359f1c491820f9afb35f66", 
-        "SendReputation": "0x2fc54625530bb7a0eb840c15bd3329b104fb4515", 
-        "Sessions": "0x483aa7040e0175cdcef256998ae7620a7e178cc1", 
-        "SlashRep": "0x19aaecfc471ea12e2d515c55e21948cb761d6a71", 
-        "Trade": "0xdee8ba48e445ba70e92726af5335dd44295dd0fd", 
-        "Trades": "0xc6084c1d97cb4eb032d16c5a8864db524115a003"
+        "Backstops": "0x6a592facbd32b04c429117c434fdc0b3ed4c45e9", 
+        "Branches": "0xd6f111f6ff805d1fcb804ae1ae244819f4083624", 
+        "BuyAndSellShares": "0xbc561d76e72c599a695b0fd461fe912716099e6e", 
+        "Cash": "0xe0c7f521a24f22eeaa4e7d6fd7b4372168957c40", 
+        "CloseMarket": "0x1527eeca77ebf5ea176fef3886c67c886ce2e49d", 
+        "CloseMarketOne": "0x2172719aee74883ca0a292187e43379b8d0b0a15", 
+        "CloseMarketTwo": "0x71a3b076606e80e8558798eafa4ac6927ab72a38", 
+        "CollectFees": "0xaf857fef2408aa808e577d17a0ca9070abd63f05", 
+        "CompleteSets": "0xb67a64d532828b0fafc49c05ecc01f56c5cdd36d", 
+        "CompositeGetters": "0x4dcd129ecd475b8ba99a4326d39864a9cf50a131", 
+        "Consensus": "0x3482344d1ddbfd671b7dea7de22fbb1364dcd26e", 
+        "ConsensusData": "0x71fef6e6ccade95fe42b8a06db242ca0cc411af1", 
+        "CreateBranch": "0x0920d1513057572be46580b7ef75d1d01a99a3e5", 
+        "CreateMarket": "0x87a5e6383bfaf81013ffc7e12d5f2bfa50220445", 
+        "EventResolution": "0x2e3b98b5c9d1d21df7a4a65dac851fcf763ebded", 
+        "Events": "0x3dc7e0e75787017cf1681f71f32fc7f3b8b53e02", 
+        "ExpiringEvents": "0x5a0d99f12b40a407708940ba690a830a8cc075d1", 
+        "Faucets": "0x2168d7c22f01b978ea9396cc443d1c4b73648012", 
+        "ForkPenalize": "0x20070e3c267d17eb7818ed6f0f1440be1fda6684", 
+        "Forking": "0xe308ec109bac5ca6c4407d12020737b1fa24b9f0", 
+        "FxpFunctions": "0x55256035e890449a8c0756071c4ac16ca81ebdf4", 
+        "Info": "0x8c15701224aff132963efcbc829158f829172369", 
+        "MakeReports": "0x1b1200650196cacf30cc17a6796a68fbfddd4828", 
+        "Markets": "0x69eaacb40598fef7ad89f6effe14391344007fad", 
+        "PenalizationCatchup": "0x535f7cd3381fc48a2fc386f0d4dbf6efaa5c5bbd", 
+        "PenalizeNotEnoughReports": "0x52d2d53170bfdef009a624764cd384743763b9d6", 
+        "ProportionCorrect": "0x07414b523bef5d3d11cd195350fddf16ca97c40b", 
+        "Register": "0x16894e644b59b6b9c401a1752a60d9295b09ee55", 
+        "Reporting": "0xea0522257c67aae3b2f9ce1bfeca20e76d063fcf", 
+        "ReportingThreshold": "0x6ca0f4e17b77b9c0d449ef2861355ebe6c711b7d", 
+        "RoundTwo": "0xef6abcef46c0871d3db0e602a003b99499e326db", 
+        "RoundTwoPenalize": "0xc1f513a64709200e30d3db0049fbdf73a88e16f6", 
+        "SendReputation": "0xc50146cac2a210fffc7d486354880b66bc5991cb", 
+        "SlashRep": "0x26ceb833ebc12a439359da7387d99568b447c8bb", 
+        "Trade": "0x3b83b10cb6ae9ecf6f3119e0c92ad229264fe437", 
+        "Trades": "0x68e9b831346211ab54b2d471d25be6d5f343608d"
     }, 
     "2": {
         "Backstops": "0x569d4bd38aa5ff088fe3c8f9dcfec44addba62eb", 
@@ -21205,12 +21211,12 @@ module.exports={
         "PenalizationCatchup": "0x6244830d9e7454b6c345967ed3db60f2e3de7d15", 
         "PenalizeNotEnoughReports": "0x6bc00b3939da27d8b46a593d8a5661b2cc9bc367", 
         "ProportionCorrect": "0x671dec0f24ce09b8f1444907ab675bc4e07b26f3", 
+        "Register": "0xc97dd45f17a0a2862f6a014f18f8c450eb75c827", 
         "Reporting": "0xa18d840b7517fdb6357c06825f5acabd9e19af01", 
         "ReportingThreshold": "0x9ea8f088099bc7b8d5fb5a4b01de8ad560366e48", 
         "RoundTwo": "0x8666e062d3337bf0c1ad4fbef44a3d24cfe5490d", 
         "RoundTwoPenalize": "0xbe15d0d952c21d5fb181dac9941764cce2e0c240", 
         "SendReputation": "0xc1dc9753a0f143bbdb605805cf27cac9489524b0", 
-        "Sessions": "0xda41d613542f0f3f05e54d21e6aabbb1acc265b8", 
         "SlashRep": "0xaf0b38b11949930453c9ccaaddb284e8c7b662a5", 
         "Trade": "0x1d730c812ddf968c4c06ef0f8cc129cbcf85162f", 
         "Trades": "0x1e997132f2aa4b8d52518e3935cccb59f42210f7"
@@ -21337,7 +21343,6 @@ module.exports={
         "-3": "not enough shares"
     },
     "sendReputation": {
-        "0": "not enough reputation",
         "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
         "-2": "Receiving address doesn't exist"
     },
@@ -21798,7 +21803,8 @@ module.exports = {
     debug: {
         tx: false,
         broadcast: false,
-        nonce: false
+        nonce: false,
+        sync: true
     },
 
     // if set to true, dropped transactions are automatically resubmitted
@@ -22186,7 +22192,7 @@ module.exports = {
         } else {
             timeout = this.POST_TIMEOUT;
         }
-        if (this.debug.broadcast) {
+        if (this.debug.sync) {
             console.warn("[ethrpc] Synchronous HTTP request to", rpcUrl + "\n" + JSON.stringify(command));
         }
         if (NODE_JS) {

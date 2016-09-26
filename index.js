@@ -58,7 +58,8 @@ module.exports = {
     debug: {
         tx: false,
         broadcast: false,
-        nonce: false
+        nonce: false,
+        sync: true
     },
 
     // if set to true, dropped transactions are automatically resubmitted
@@ -446,7 +447,7 @@ module.exports = {
         } else {
             timeout = this.POST_TIMEOUT;
         }
-        if (this.debug.broadcast) {
+        if (this.debug.sync) {
             console.warn("[ethrpc] Synchronous HTTP request to", rpcUrl + "\n" + JSON.stringify(command));
         }
         if (NODE_JS) {
