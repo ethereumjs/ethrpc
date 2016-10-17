@@ -23118,6 +23118,7 @@ module.exports = {
                     tx.tx.blockHash = onChainTx.blockHash;
                     tx.status = "mined";
                     tx.confirmations = self.block.number - tx.tx.blockNumber;
+                    self.updateMinedTx(tx);
                 }
             }
         });
