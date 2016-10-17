@@ -21832,10 +21832,7 @@ function wait(delay) {
     return;
 }
 
-var HOSTED_NODES = [
-    // "https://morden-state.ether.camp/api/v1/transaction/submit"
-    "https://eth3.augur.net"
-];
+var HOSTED_NODES = ["https://eth3.augur.net"];
 var HOSTED_WEBSOCKET = "wss://ws.augur.net";
 
 var noop = function () {};
@@ -21869,7 +21866,7 @@ module.exports = {
     AUTO_RECONNECT: true,
 
     // Number of required confirmations for transact sequence
-    REQUIRED_CONFIRMATIONS: 5,
+    REQUIRED_CONFIRMATIONS: 0,
 
     // Maximum number of retry attempts for dropped transactions
     TX_RETRY_MAX: 5,
@@ -21878,7 +21875,7 @@ module.exports = {
     TX_POLL_MAX: 1000,
 
     // Transaction polling interval
-    TX_POLL_INTERVAL: 5000,
+    TX_POLL_INTERVAL: 10000,
 
     // Default timeout for asynchronous POST
     POST_TIMEOUT: 30000,
@@ -22588,14 +22585,13 @@ module.exports = {
         );
     },
 
-    sendEther: function (to, value, from, onSent, onSuccess, onFailed, onConfirmed) {
+    sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
         if (to && to.constructor === Object && to.value) {
             value = to.value;
             if (to.from) from = to.from;
             if (to.onSent) onSent = to.onSent;
             if (to.onSuccess) onSuccess = to.onSuccess;
             if (to.onFailed) onFailed = to.onFailed;
-            if (to.onConfirmed) onConfirmed = to.onConfirmed;
             to = to.to;
         }
         return this.transact({
@@ -22604,7 +22600,7 @@ module.exports = {
             value: abi.fix(value, "hex"),
             returns: "null",
             gas: "0xcf08"
-        }, onSent, onSuccess, onFailed, onConfirmed);
+        }, onSent, onSuccess, onFailed);
     },
 
     sign: function (address, data, f) {
@@ -22654,6 +22650,18 @@ module.exports = {
     getBlockByNumber: function (number, full, f) {
         full = (full !== undefined) ? full : true;
         return this.broadcast(this.marshal("getBlockByNumber", [number, full]), f);
+    },
+    getUncle: function (blockNumber, index, f) {
+        return this.broadcast(this.marshal("getUncleByBlockNumberAndIndex", [blockNumber, index]), f);
+    },
+    getUncleByBlockHashAndIndex: function (blockHash, index, f) {
+        return this.broadcast(this.marshal("getUncleByBlockHashAndIndex", [blockHash, index]), f);
+    },
+    getUncleCount: function (blockNumber, f) {
+        return this.broadcast(this.marshal("getUncleCountByBlockNumber", blockNumber), f);
+    },
+    getUncleCountByBlockHash: function (blockHash, f) {
+        return this.broadcast(this.marshal("getUncleCountByBlockHash", blockHash), f);
     },
 
     version: function (f) {
@@ -22719,15 +22727,8 @@ module.exports = {
         return this.broadcast(this.marshal("subscribe", ["logs", options]), f);
     },
 
-    subscribeNewHeads: function (options, f) {
-        if (!f && isFunction(options)) {
-            f = options;
-            options = null;
-        }
-        return this.broadcast(this.marshal("subscribe", ["newHeads", options || {
-            includeTransactions: false,
-            transactionDetails: false
-        }]), f);
+    subscribeNewHeads: function (f) {
+        return this.broadcast(this.marshal("subscribe", "newHeads"), f);
     },    
 
     unsubscribe: function (label, f) {
@@ -23083,6 +23084,231 @@ module.exports = {
      * Send-call-confirm callback sequence *
      ***************************************/
 
+    blockFilter: {id: null, heartbeat: null},
+
+    block: null,
+
+    updatePendingTx: function (tx) {
+        var self = this;
+        this.getTx(tx.hash, function (onChainTx) {
+            tx.tx = abi.copy(onChainTx);
+
+            // if transaction is null, then it was dropped from the txpool
+            if (onChainTx === null) {
+                tx.payload.tries = (tx.payload.tries) ? tx.payload.tries + 1 : 1;
+
+                // if we have retries left, then resubmit the transaction
+                if (!self.retryDroppedTxs || tx.payload.tries > self.TX_RETRY_MAX) {
+                    tx.status = "failed";
+                    if (isFunction(tx.onFailed)) {
+                        tx.onFailed(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
+                    }
+                } else {
+                    --self.rawTxMaxNonce;
+                    tx.status = "resubmitted";
+                    if (self.debug.tx) console.debug("resubmitting tx:", tx.hash);
+                    self.transact(tx.payload, tx.onSent, tx.onSuccess, tx.onFailed);
+                }
+
+            // non-null transaction: transaction still alive and kicking!
+            // check if it has been mined yet (block number is non-null)
+            } else {
+                if (onChainTx.blockNumber) {
+                    tx.tx.blockNumber = parseInt(onChainTx.blockNumber, 16);
+                    tx.tx.blockHash = onChainTx.blockHash;
+                    tx.status = "mined";
+                    tx.confirmations = self.block.number - tx.tx.blockNumber;
+                }
+            }
+        });
+    },
+
+    updateMinedTx: function (tx) {
+        var self = this;
+        var onChainTx = tx.tx;
+        tx.confirmations = self.block.number - onChainTx.blockNumber;
+        if (self.debug.tx) console.debug("confirmations for", tx.hash, tx.confirmations);
+        if (tx.confirmations >= self.REQUIRED_CONFIRMATIONS) {
+            tx.status = "confirmed";
+            if (isFunction(tx.onSuccess)) {
+                self.getBlock(onChainTx.blockNumber, false, function (block) {
+                    if (block && block.timestamp) {
+                        onChainTx.timestamp = parseInt(block.timestamp, 16);
+                    }
+                    if (!tx.payload.mutable) {
+                        onChainTx.callReturn = tx.callReturn;
+                        self.getTransactionReceipt(tx.hash, function (receipt) {
+                            if (self.debug.tx) console.debug("got receipt:", receipt);
+                            if (receipt && receipt.gasUsed) {
+                                onChainTx.gasFees = new BigNumber(receipt.gasUsed, 16)
+                                    .times(new BigNumber(onChainTx.gasPrice, 16))
+                                    .dividedBy(self.ETHER)
+                                    .toFixed();
+                            }
+                            tx.onSuccess(onChainTx);
+                        });
+                    } else {
+                        self.getLoggedReturnValue(tx.hash, function (err, log) {
+                            if (self.debug.tx) console.debug("loggedReturnValue:", err, log);
+                            if (err) {
+                                tx.payload.send = false;
+                                self.fire(tx.payload, function (callReturn) {
+                                    if (isFunction(tx.onFailed)) {
+                                        if (err.error !== errors.NULL_CALL_RETURN.error) {
+                                            tx.onFailed(err);
+                                        } else {
+                                            tx.onFailed(self.errorCodes(tx.payload.method, tx.payload.returns, callReturn));
+                                        }
+                                    }
+                                });
+                            } else {
+                                var e = self.errorCodes(tx.payload.method, tx.payload.returns, log.returnValue);
+                                if (e && e.error) {
+                                    e.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
+                                    if (isFunction(tx.onFailed)) tx.onFailed(e);
+                                } else {
+                                    onChainTx.callReturn = self.applyReturns(tx.payload.returns, log.returnValue);
+                                    onChainTx.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
+                                    tx.onSuccess(onChainTx);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    },
+
+    updateTx: function (tx) {
+        switch (tx.status) {
+        case "pending":
+            this.updatePendingTx(tx);
+            break;
+        case "mined":
+            this.updateMinedTx(tx);
+            break;
+        default:
+            break;
+        }
+    },
+
+    onNewBlock: function (block) {
+        if (block) {
+
+            // newHeads push notification
+            if (block.number) {
+                this.block = abi.copy(block);
+                this.block.number = parseInt(this.block.number, 16);
+                var hashes = Object.keys(this.txs);
+                var numTxs = hashes.length;
+                for (var i = 0; i < numTxs; ++i) {
+                    this.updateTx(this.txs[hashes[i]]);
+                }
+
+            // regular (HTTP) block filter
+            } else if (block.constructor === Array && block.length) {
+                var self = this;
+                async.each(block, function (blockHash, nextBlock) {
+                    self.getBlockByHash(blockHash, false, function (thisBlock) {
+                        self.block = abi.copy(thisBlock);
+                        self.block.number = parseInt(self.block.number, 16);
+                        var hashes = Object.keys(self.txs);
+                        var numTxs = hashes.length;
+                        for (var i = 0; i < numTxs; ++i) {
+                            self.updateTx(self.txs[hashes[i]]);
+                        }
+                        nextBlock();
+                    });
+                });
+            }
+        }
+    },
+
+    verifyTxSubmitted: function (payload, txHash, callReturn, onSent, onSuccess, onFailed, callback) {
+        var self = this;
+        if (!isFunction(callback)) {
+            if (!payload || ((!payload.mutable && payload.returns !== "null") && (txHash === null || txHash === undefined))) {
+                throw new this.Error(errors.TRANSACTION_FAILED);
+            }
+            if (this.txs[txHash]) throw new this.Error(errors.DUPLICATE_TRANSACTION);
+            var tx = this.getTransaction(txHash);
+            if (!tx) throw new this.Error(errors.TRANSACTION_FAILED);
+            this.txs[txHash] = {
+                hash: txHash,
+                payload: payload,
+                tx: tx,
+                callReturn: callReturn,
+                count: 0,
+                status: "pending"
+            };
+            return;
+        }
+        if (!payload || txHash === null || txHash === undefined) {
+            return callback(errors.TRANSACTION_FAILED);
+        }
+        if (this.txs[txHash]) return callback(errors.DUPLICATE_TRANSACTION);
+        this.getTransaction(txHash, function (tx) {
+            if (!tx) return callback(errors.TRANSACTION_FAILED);
+            self.txs[txHash] = {
+                hash: txHash,
+                payload: payload,
+                tx: tx,
+                callReturn: callReturn,
+                onSent: onSent,
+                onSuccess: onSuccess,
+                onFailed: onFailed,
+                count: 0,
+                status: "pending"
+            };
+            callback(null);
+        });
+    },
+
+    /**
+     * asynchronous / non-blocking transact:
+     *  - call onSent when the transaction is broadcast to the network
+     *  - call onSuccess when the transaction has REQUIRED_CONFIRMATIONS
+     *  - call onFailed if the transaction fails
+     */
+    transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed) {
+        var self = this;
+        payload.send = true;
+        var returns = payload.returns;
+        delete payload.returns;
+        this.invoke(payload, function (txHash) {
+            if (self.debug.tx) console.debug("txHash:", txHash);
+            if (!txHash) return onFailed(errors.NULL_RESPONSE);
+            if (txHash.error) return onFailed(txHash);
+            payload.returns = returns;
+            txHash = abi.format_int256(txHash);
+
+            // send the transaction hash and return value back
+            // to the client, using the onSent callback
+            onSent({txHash: txHash, callReturn: callReturn});
+
+            self.verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, function (err) {
+                if (err) return onFailed(err);
+                if (self.blockFilter.id === null) {
+                    ((!self.wsUrl && !self.ipcpath) ?
+                        self.newBlockFilter.bind(self) :
+                        self.subscribeNewHeads.bind(self))(function (filterID) {
+                        if (filterID && !filterID.error) {
+                            self.blockFilter.id = filterID;
+                            var filterCallback = self.onNewBlock.bind(self);
+                            if (self.wsUrl || self.ipcpath) {
+                                self.registerSubscriptionCallback(filterID, filterCallback);
+                            } else {
+                                self.blockFilter.heartbeat = setInterval(function () {
+                                    self.getFilterChanges(filterID, filterCallback);
+                                }, self.TX_POLL_INTERVAL);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    },
+
     waitForNextPoll: function (tx, callback) {
         if (this.txs[tx.hash].count >= this.TX_POLL_MAX) {
             this.txs[tx.hash].status = "unconfirmed";
@@ -23240,42 +23466,8 @@ module.exports = {
         });
     },
 
-    verifyTxSubmitted: function (payload, txHash, callback) {
-        var self = this;
-        if (!isFunction(callback)) {
-            if (!payload || ((!payload.mutable && payload.returns !== "null") && (txHash === null || txHash === undefined))) {
-                throw new this.Error(errors.TRANSACTION_FAILED);
-            }
-            if (this.txs[txHash]) throw new this.Error(errors.DUPLICATE_TRANSACTION);
-            var tx = this.getTransaction(txHash);
-            if (!tx) throw new this.Error(errors.TRANSACTION_FAILED);
-            this.txs[txHash] = {
-                hash: txHash,
-                payload: payload,
-                count: 0,
-                status: "pending"
-            };
-            return;
-        }
-        if (!payload || txHash === null || txHash === undefined) {
-            return callback(errors.TRANSACTION_FAILED);
-        }
-        if (this.txs[txHash]) return callback(errors.DUPLICATE_TRANSACTION);
-        this.getTransaction(txHash, function (tx) {
-            if (!tx) return callback(errors.TRANSACTION_FAILED);
-            self.txs[txHash] = {
-                hash: txHash,
-                payload: payload,
-                count: 0,
-                status: "pending"
-            };
-            callback(null);
-        });
-    },
-
     // poll the network until the transaction is included in a block
     // (i.e., has a non-null blockHash field)
-    // TODO replace polling with block subscription (for websockets)
     pollForTxConfirmation: function (txHash, numConfirmations, callback) {
         var self = this;
         if (!isFunction(callback)) {
@@ -23292,96 +23484,6 @@ module.exports = {
                 if (err) return callback(err);
                 if (minedTx !== null) return callback(null, minedTx);
                 self.pollForTxConfirmation(txHash, numConfirmations, callback);
-            });
-        });
-    },
-
-    /**
-     * asynchronous / non-blocking transact:
-     *  - call onSent when the transaction is broadcast to the network
-     *  - call onSuccess when the transaction is successfully mined
-     *  - call onFailed if the transaction fails
-     *  - call onConfirmed when the transaction has REQUIRED_CONFIRMATIONS confirmations
-     */
-    transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed, onConfirmed) {
-        var self = this;
-        payload.send = true;
-        var returns = payload.returns;
-        delete payload.returns;
-        this.invoke(payload, function (txHash) {
-            if (self.debug.tx) console.debug("txHash:", txHash);
-            if (!txHash) return onFailed(errors.NULL_RESPONSE);
-            if (txHash.error) return onFailed(txHash);
-            payload.returns = returns;
-            txHash = abi.format_int256(txHash);
-
-            // send the transaction hash and return value back
-            // to the client, using the onSent callback
-            onSent({txHash: txHash, callReturn: callReturn});
-
-            self.verifyTxSubmitted(payload, txHash, function (err) {
-                if (err) return onFailed(err);
-                self.pollForTxConfirmation(txHash, null, function (err, tx) {
-                    if (err) return onFailed(err);
-                    if (tx === null) {
-                        payload.tries = (payload.tries) ? payload.tries + 1 : 1;
-                        if (payload.tries > self.TX_RETRY_MAX) {
-                            return onFailed(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
-                        }
-                        return self.transact(payload, onSent, onSuccess, onFailed);
-                    }
-                    self.getBlock(tx.blockNumber, false, function (block) {
-                        tx.timestamp = parseInt(block.timestamp, 16);
-                        if (!payload.mutable) {
-                            tx.callReturn = callReturn;
-                            return self.getTransactionReceipt(txHash, function (receipt) {
-                                if (self.debug.tx) console.debug("got receipt:", receipt);
-                                if (receipt && receipt.gasUsed) {
-                                    tx.gasFees = new BigNumber(receipt.gasUsed, 16)
-                                        .times(new BigNumber(tx.gasPrice, 16))
-                                        .dividedBy(self.ETHER)
-                                        .toFixed();
-                                }
-                                onSuccess(tx);
-                                if (isFunction(onConfirmed)) {
-                                    self.pollForTxConfirmation(txHash, self.REQUIRED_CONFIRMATIONS, function (err) {
-                                        if (err) return onFailed(err);
-                                        onConfirmed(tx);
-                                    });
-                                }
-                            });
-                        }
-
-                        // if mutable return value, then lookup logged return
-                        // value in transaction receipt (after confirmation)
-                        self.getLoggedReturnValue(txHash, function (err, log) {
-                            if (self.debug.tx) console.debug("loggedReturnValue:", err, log);
-                            if (err) {
-                                payload.send = false;
-                                return self.fire(payload, function (callReturn) {
-                                    if (err.error !== errors.NULL_CALL_RETURN.error) {
-                                        return onFailed(err);
-                                    }
-                                    onFailed(self.errorCodes(payload.method, payload.returns, callReturn));
-                                });
-                            }
-                            var e = self.errorCodes(payload.method, payload.returns, log.returnValue);
-                            if (e && e.error) {
-                                e.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
-                                return onFailed(e);
-                            }
-                            tx.callReturn = self.applyReturns(payload.returns, log.returnValue);
-                            tx.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
-                            onSuccess(tx);
-                            if (isFunction(onConfirmed)) {
-                                self.pollForTxConfirmation(txHash, self.REQUIRED_CONFIRMATIONS, function (err) {
-                                    if (err) return onFailed(err);
-                                    onConfirmed(tx);
-                                });
-                            }
-                        });
-                    });
-                });
             });
         });
     },
@@ -23417,7 +23519,7 @@ module.exports = {
         }
         payload.returns = returns;
         txHash = abi.format_int256(txHash);
-        this.verifyTxSubmitted(payload, txHash);
+        this.verifyTxSubmitted(payload, txHash, callReturn);
         var tx = this.pollForTxConfirmation(txHash, null);
         if (tx === null) {
             payload.tries = (payload.tries) ? payload.tries + 1 : 1;
@@ -23457,7 +23559,7 @@ module.exports = {
         return tx;
     },
 
-    transact: function (payload, onSent, onSuccess, onFailed, onConfirmed) {
+    transact: function (payload, onSent, onSuccess, onFailed) {
         var self = this;
         if (this.debug.tx) console.debug("payload transact:", payload);
         payload.send = false;
@@ -23469,7 +23571,7 @@ module.exports = {
         onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
         onFailed = (isFunction(onFailed)) ? onFailed : noop;
         if (payload.mutable || payload.returns === "null") {
-            return this.transactAsync(payload, null, onSent, onSuccess, onFailed, onConfirmed);
+            return this.transactAsync(payload, null, onSent, onSuccess, onFailed);
         }
         this.fire(payload, function (callReturn) {
             if (self.debug.tx) console.debug("callReturn:", callReturn);
@@ -23478,7 +23580,7 @@ module.exports = {
             } else if (callReturn.error) {
                 return onFailed(callReturn);
             }
-            self.transactAsync(payload, callReturn, onSent, onSuccess, onFailed, onConfirmed);
+            self.transactAsync(payload, callReturn, onSent, onSuccess, onFailed);
         });
     }
 };

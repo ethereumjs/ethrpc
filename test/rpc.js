@@ -2183,77 +2183,105 @@ describe("RPC", function () {
                     rpc.getTransaction = getTransaction;
                 });
                 it(JSON.stringify(t), function (done) {
-                    rpc.getTransaction = function (txHash, callback) {
+                    rpc.getTransaction = function (hash, callback) {
                         return callback(t.tx);
                     };
                     if (t.expected.storedTx) {
                         t.expected.storedTx.count = 0;
                         t.expected.storedTx.status = "pending";
+                        t.expected.tx = clone(t.tx);
                     }
-                    rpc.txs[t.txHash] = clone(t.storedTx);
-                    rpc.verifyTxSubmitted(t.payload, t.txHash, function (err) {
+                    rpc.txs[t.hash] = clone(t.storedTx);
+                    rpc.verifyTxSubmitted(t.payload, t.hash, t.callReturn, t.onSent, t.onSuccess, t.onFailed, function (err) {
                         assert.deepEqual(err, t.expected.err);
-                        assert.deepEqual(rpc.txs[t.txHash], t.expected.storedTx);
+                        console.log(rpc.txs[t.hash]);
+                        if (rpc.txs[t.hash]) {
+                            delete rpc.txs[t.hash].onSent;
+                            delete rpc.txs[t.hash].onFailed;
+                            delete rpc.txs[t.hash].onSuccess;
+                        }
+                        console.log(rpc.txs[t.hash]);
+                        assert.deepEqual(rpc.txs[t.hash], t.expected.storedTx);
                         done();
                     });
                 });
                 it("[sync] " + JSON.stringify(t), function () {
-                    rpc.getTransaction = function (txHash, callback) {
+                    rpc.getTransaction = function (hash, callback) {
                         return t.tx;
                     };
                     if (t.expected.storedTx) {
                         t.expected.storedTx.count = 0;
                         t.expected.storedTx.status = "pending";
+                        t.expected.tx = clone(t.tx);
                     }
-                    rpc.txs[t.txHash] = clone(t.storedTx);
+                    rpc.txs[t.hash] = clone(t.storedTx);
                     if (t.expected.err) {
                         assert.throws(function () {
-                            rpc.verifyTxSubmitted(t.payload, t.txHash);
+                            rpc.verifyTxSubmitted(t.payload, t.hash, t.callReturn);
                         }, rpc.Error);
                     } else {
-                        rpc.verifyTxSubmitted(t.payload, t.txHash);
-                        assert.deepEqual(rpc.txs[t.txHash], t.expected.storedTx);
+                        rpc.verifyTxSubmitted(t.payload, t.hash, t.callReturn);
+                        assert.deepEqual(rpc.txs[t.hash], t.expected.storedTx);
                     }
                 });
             };
             test({
                 payload: null,
-                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                hash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
                 tx: {nonce: "0x1"},
                 storedTx: undefined,
-                expected: {err: errors.TRANSACTION_FAILED, storedTx: undefined}
+                callReturn: "1",
+                expected: {
+                    err: errors.TRANSACTION_FAILED,
+                    storedTx: undefined
+                }
             });
             test({
                 payload: {nonce: "0x1"},
-                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                hash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
                 tx: null,
                 storedTx: undefined,
-                expected: {err: errors.TRANSACTION_FAILED, storedTx: undefined}
+                callReturn: "1",
+                expected: {
+                    err: errors.TRANSACTION_FAILED,
+                    storedTx: undefined
+                }
             });
             test({
                 payload: {nonce: "0x1"},
-                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                hash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
                 tx: {nonce: "0x1"},
                 storedTx: {payload: {nonce: "0x1"}, count: 0, status: "pending"},
-                expected: {err: errors.DUPLICATE_TRANSACTION, storedTx: {payload: {nonce: "0x1"}}}
+                callReturn: "1",
+                expected: {
+                    err: errors.DUPLICATE_TRANSACTION,
+                    storedTx: {payload: {nonce: "0x1"}}
+                }
             });
             test({
                 payload: {nonce: "0x1"},
-                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                hash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
                 tx: {nonce: "0x2"},
                 storedTx: {payload: {nonce: "0x3"}, count: 0, status: "pending"},
-                expected: {err: errors.DUPLICATE_TRANSACTION, storedTx: {payload: {nonce: "0x3"}}}
+                callReturn: "1",
+                expected: {
+                    err: errors.DUPLICATE_TRANSACTION,
+                    storedTx: {payload: {nonce: "0x3"}}
+                }
             });
             test({
                 payload: {nonce: "0x1"},
-                txHash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
+                hash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
                 tx: {nonce: "0x2"},
                 storedTx: undefined,
+                callReturn: "1",
                 expected: {
                     err: null,
                     storedTx: {
                         hash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
-                        payload: {nonce: "0x1"}
+                        payload: {nonce: "0x1"},
+                        callReturn: "1",
+                        tx: {nonce: "0x2"}
                     }
                 }
             });
