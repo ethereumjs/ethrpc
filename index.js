@@ -184,7 +184,7 @@ module.exports = {
     parse: function (origResponse, returns, callback) {
         var results, len, err;
         var response = clone(origResponse);
-        if ((response && response.error) || this.debug.broadcast) {
+        if ((this.debug.tx && (response && response.error)) || this.debug.broadcast) {
             console.debug("[ethrpc] response:", response);
         }
         if (response && typeof response === "string") {
@@ -283,8 +283,7 @@ module.exports = {
                 msg.params.subscription && msg.params.result &&
                 this.subscriptions[msg.params.subscription]) {
                 return this.subscriptions[msg.params.subscription](msg.params.result);
-            }
-            if (this.debug.broadcast) {
+            } else {
                 console.warn("[" + type + "] Unknown message received:", msg.data || msg);
             }
         }
@@ -331,7 +330,7 @@ module.exports = {
         });
         this.socket.connect({path: this.ipcpath}, function () {
             self.rpcStatus.ipc = 1;
-            callback(true);
+            self.resetNewBlockSubscription(callback);
         });
     },
 
@@ -376,8 +375,41 @@ module.exports = {
         this.websocket.onopen = function () {
             self.rpcStatus.ws = 1;
             calledCallback = true;
-            callback(true);
+            self.resetNewBlockSubscription(callback);
+            if (isFunction(self.resetCustomSubscription)) {
+                console.log("resetCustomSubscription:", self.resetCustomSubscription.toString());
+                self.resetCustomSubscription();
+            }
         };
+    },
+
+    resetCustomSubscription: null,
+
+    resetNewBlockSubscription: function (callback) {
+        var self = this;
+        if (this.blockFilter.id !== null) {
+            this.unregisterSubscriptionCallback(this.blockFilter.id);
+            this.unsubscribe(this.blockFilter.id, function () {
+                self.blockFilter.id = null;
+                self.subscribeNewHeads(function (filterID) {
+                    console.log("new subscription:", filterID);
+                    if (filterID && !filterID.error) {
+                        self.blockFilter.id = filterID;
+                        self.registerSubscriptionCallback(filterID, self.onNewBlock.bind(self));
+                    }
+                    callback(true);
+                });
+            });
+        } else {
+            this.subscribeNewHeads(function (filterID) {
+                console.log("subscribed:", filterID);
+                if (filterID && !filterID.error) {
+                    self.blockFilter.id = filterID;
+                    self.registerSubscriptionCallback(filterID, self.onNewBlock.bind(self));
+                }
+                callback(true);
+            });
+        }
     },
 
     send: function (type, command, returns, callback) {
@@ -1377,9 +1409,12 @@ module.exports = {
                                 });
                             } else {
                                 var e = self.errorCodes(tx.payload.method, tx.payload.returns, log.returnValue);
+                                if (self.debug.tx) console.debug("errorCodes:", e);
                                 if (e && e.error) {
                                     e.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
-                                    if (isFunction(tx.onFailed)) tx.onFailed(e);
+                                    if (isFunction(tx.onFailed)) {
+                                        tx.onFailed(e);
+                                    }
                                 } else {
                                     onChainTx.callReturn = self.applyReturns(tx.payload.returns, log.returnValue);
                                     onChainTx.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
@@ -1503,20 +1538,13 @@ module.exports = {
 
             self.verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, function (err) {
                 if (err) return onFailed(err);
-                if (self.blockFilter.id === null) {
-                    ((!self.wsUrl && !self.ipcpath) ?
-                        self.newBlockFilter.bind(self) :
-                        self.subscribeNewHeads.bind(self))(function (filterID) {
+                if (self.blockFilter.id === null && !self.wsUrl && !self.ipcpath) {
+                    self.newBlockFilter(function (filterID) {
                         if (filterID && !filterID.error) {
                             self.blockFilter.id = filterID;
-                            var filterCallback = self.onNewBlock.bind(self);
-                            if (self.wsUrl || self.ipcpath) {
-                                self.registerSubscriptionCallback(filterID, filterCallback);
-                            } else {
-                                self.blockFilter.heartbeat = setInterval(function () {
-                                    self.getFilterChanges(filterID, filterCallback);
-                                }, self.TX_POLL_INTERVAL);
-                            }
+                            self.blockFilter.heartbeat = setInterval(function () {
+                                self.getFilterChanges(filterID, self.onNewBlock.bind(self));
+                            }, self.TX_POLL_INTERVAL);
                         }
                     });
                 }
