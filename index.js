@@ -1408,6 +1408,7 @@ module.exports = {
 
     onNewBlock: function (block) {
         if (block) {
+            if (this.debug.tx) console.debug("new block:", block);
 
             // newHeads push notification
             if (block.number) {
