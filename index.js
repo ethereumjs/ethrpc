@@ -1443,10 +1443,10 @@ module.exports = {
 
     onNewBlock: function (block) {
         if (block) {
-            if (this.debug.tx) console.debug("new block:", block);
 
             // newHeads push notification
             if (block.number) {
+                if (this.debug.tx) console.debug("new block:", block.number);
                 this.block = abi.copy(block);
                 this.block.number = parseInt(this.block.number, 16);
                 var hashes = Object.keys(this.txs);
@@ -1457,6 +1457,7 @@ module.exports = {
 
             // regular (HTTP) block filter
             } else if (block.constructor === Array && block.length) {
+                if (this.debug.tx) console.debug("new block:", block);
                 var self = this;
                 async.each(block, function (blockHash, nextBlock) {
                     self.getBlockByHash(blockHash, false, function (thisBlock) {
