@@ -12,11 +12,12 @@ var contracts = require("augur-contracts");
 var errors = contracts.errors;
 var abi = require("augur-abi");
 var rpc = require("../");
+var DEBUG = false;
 
 require('it-each')({testPerIteration: true});
 
 var requests = 0;
-var TIMEOUT = 360000;
+var TIMEOUT = 720000;
 var COINBASE = "0x00bae5113ee9f252cceb0001205b88fad175461a";
 var SHA3_INPUT = "boom!";
 var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
@@ -26,6 +27,9 @@ var NETWORK_ID = "2";
 contracts = contracts[NETWORK_ID];
 var HOSTED_NODES;
 rpc.retryDroppedTxs = false;
+rpc.debug.sync = false;
+rpc.debug.tx = DEBUG;
+rpc.debug.broadcast = DEBUG;
 
 describe("RPCError", function () {
     var test = function (t) {
@@ -1105,6 +1109,75 @@ describe("RPC", function () {
                 assert.isArray(rpc.nodes.hosted);
                 assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
                 assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
+            });
+        });
+
+        describe("Whisper", function () {
+            var test = function (t) {
+                it(JSON.stringify(t), function (done) {
+                    this.timeout(TIMEOUT);
+
+                    // sync
+                    var whisperID = rpc.shh("newIdentity");
+                    assert(whisperID);
+                    var filterID = rpc.shh("newFilter", {topics: t.topics});
+                    assert.isNumber(parseInt(filterID, 16));
+                    assert.isTrue(rpc.shh("post", {
+                        from: whisperID,
+                        topics: t.topics,
+                        payload: t.payload,
+                        priority: t.priority,
+                        ttl: t.ttl
+                    }));
+                    var filterChanges = rpc.shh("getFilterChanges", filterID);
+                    assert.isArray(filterChanges);
+                    assert.lengthOf(filterChanges, 1);
+                    assert.strictEqual(abi.pad_left(filterChanges[0].payload), abi.pad_left(t.payload));
+
+                    // async
+                    rpc.shh("post", {
+                        from: whisperID,
+                        topics: t.topics,
+                        payload: t.payload,
+                        priority: t.priority,
+                        ttl: t.ttl
+                    }, function (result) {
+                        assert.isTrue(result);
+                        rpc.shh("getFilterChanges", filterID, function (filterChanges) {
+                            assert.isArray(filterChanges);
+                            assert.lengthOf(filterChanges, 1);
+                            assert.strictEqual(abi.pad_left(filterChanges[0].payload), abi.pad_left(t.payload));
+                            rpc.shh("post", {
+                                from: whisperID,
+                                topics: t.topics,
+                                payload: t.payload,
+                                priority: t.priority,
+                                ttl: t.ttl
+                            }, function (result) {
+                                assert.isTrue(result);
+                                rpc.shh("getMessages", filterID, function (messages) {
+                                    assert.strictEqual(abi.pad_left(messages[messages.length - 1].payload), abi.pad_left(t.payload));
+                                    rpc.shh("uninstallFilter", filterID, function (uninstalled) {
+                                        assert.isTrue(uninstalled);
+                                        done();
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            };
+            test({
+                payload: abi.prefix_hex(abi.encode_hex("hello world")),
+                topics: [abi.format_int256("0x1")],
+                priority: "0x64",
+                ttl: "0x64"
+            });
+            test({
+                payload: abi.prefix_hex(abi.encode_hex("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")),
+                topics: [abi.format_int256("0x1")],
+                priority: "0x64",
+                ttl: "0x64"
             });
         });
 
