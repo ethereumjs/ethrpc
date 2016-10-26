@@ -23170,12 +23170,14 @@ module.exports = {
                 // if we have retries left, then resubmit the transaction
                 if (!self.retryDroppedTxs || tx.payload.tries > self.TX_RETRY_MAX) {
                     tx.status = "failed";
+                    tx.locked = false;
                     if (isFunction(tx.onFailed)) {
                         tx.onFailed(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
                     }
                 } else {
                     --self.rawTxMaxNonce;
                     tx.status = "resubmitted";
+                    tx.locked = false;
                     if (self.debug.tx) console.debug("resubmitting tx:", tx.hash);
                     self.transact(tx.payload, tx.onSent, tx.onSuccess, tx.onFailed);
                 }
@@ -23189,6 +23191,8 @@ module.exports = {
                     tx.status = "mined";
                     tx.confirmations = self.block.number - tx.tx.blockNumber;
                     self.updateMinedTx(tx);
+                } else {
+                    tx.locked = false;
                 }
             }
         });
@@ -23216,6 +23220,7 @@ module.exports = {
                                     .dividedBy(self.ETHER)
                                     .toFixed();
                             }
+                            tx.locked = false;
                             tx.onSuccess(onChainTx);
                         });
                     } else {
@@ -23224,6 +23229,7 @@ module.exports = {
                             if (err) {
                                 tx.payload.send = false;
                                 self.fire(tx.payload, function (callReturn) {
+                                    tx.locked = false;
                                     if (isFunction(tx.onFailed)) {
                                         if (err.error !== errors.NULL_CALL_RETURN.error) {
                                             tx.onFailed(err);
@@ -23237,32 +23243,42 @@ module.exports = {
                                 if (self.debug.tx) console.debug("errorCodes:", e);
                                 if (e && e.error) {
                                     e.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
+                                    tx.locked = false;
                                     if (isFunction(tx.onFailed)) {
                                         tx.onFailed(e);
                                     }
                                 } else {
                                     onChainTx.callReturn = self.applyReturns(tx.payload.returns, log.returnValue);
                                     onChainTx.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
+                                    tx.locked = false;
                                     tx.onSuccess(onChainTx);
                                 }
                             }
                         });
                     }
                 });
+            } else {
+                tx.locked = false;
             }
+        } else {
+            tx.locked = false;
         }
     },
 
     updateTx: function (tx) {
-        switch (tx.status) {
-        case "pending":
-            this.updatePendingTx(tx);
-            break;
-        case "mined":
-            this.updateMinedTx(tx);
-            break;
-        default:
-            break;
+        if (!tx.locked) {
+            switch (tx.status) {
+            case "pending":
+                tx.locked = true;
+                this.updatePendingTx(tx);
+                break;
+            case "mined":
+                tx.locked = true;
+                this.updateMinedTx(tx);
+                break;
+            default:
+                break;
+            }
         }
     },
 
