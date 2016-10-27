@@ -22109,7 +22109,9 @@ module.exports = {
                 this.subscriptions[msg.params.subscription]) {
                 return this.subscriptions[msg.params.subscription](msg.params.result);
             } else {
-                console.warn("[" + type + "] Unknown message received:", msg.data || msg);
+                if (this.debug.broadcast) {
+                    console.warn("[" + type + "] Unknown message received:", msg.data || msg);
+                }
             }
         }
     },
@@ -22202,7 +22204,6 @@ module.exports = {
             calledCallback = true;
             self.resetNewBlockSubscription(callback);
             if (isFunction(self.resetCustomSubscription)) {
-                console.log("resetCustomSubscription:", self.resetCustomSubscription.toString());
                 self.resetCustomSubscription();
             }
         };
@@ -22210,31 +22211,39 @@ module.exports = {
 
     resetCustomSubscription: null,
 
-    resetNewBlockSubscription: function (callback) {
+    subscribeToNewBlockHeaders: function (callback) {
         var self = this;
-        if (this.blockFilter.id !== null) {
-            this.unregisterSubscriptionCallback(this.blockFilter.id);
-            this.unsubscribe(this.blockFilter.id, function () {
-                self.blockFilter.id = null;
-                self.subscribeNewHeads(function (filterID) {
-                    if (self.debug.broadcast) console.log("subscribed:", filterID);
-                    if (filterID && !filterID.error) {
-                        self.blockFilter.id = filterID;
-                        self.registerSubscriptionCallback(filterID, self.onNewBlock.bind(self));
-                    }
-                    callback(true);
-                });
-            });
-        } else {
-            this.subscribeNewHeads(function (filterID) {
-                if (self.debug.broadcast) console.log("subscribed:", filterID);
-                if (filterID && !filterID.error) {
-                    self.blockFilter.id = filterID;
-                    self.registerSubscriptionCallback(filterID, self.onNewBlock.bind(self));
+        this.subscribeNewHeads(function (filterID) {
+            if (self.debug.broadcast) console.log("subscribed:", filterID);
+            if (!filterID || filterID.error) {
+                console.error("error subscribing to new blocks", filterID);
+                return callback(false);
+            }
+            self.blockFilter.id = filterID;
+            self.registerSubscriptionCallback(filterID, self.onNewBlock.bind(self));
+            if (!self.block) return callback(true);
+            self.blockNumber(function (blockNumber) {
+                var blockGap = parseInt(blockNumber, 16) - self.block.number;
+                if (!blockGap) return callback(true);
+                console.debug("Block gap", blockGap, "found, catching up...");
+                for (var i = 1; i <= blockGap; ++i) {
+                    self.onNewBlock({number: "0x" + (self.block.number + i).toString(16)});
                 }
                 callback(true);
             });
+        });
+    },
+
+    resetNewBlockSubscription: function (callback) {
+        var self = this;
+        if (this.blockFilter.id === null) {
+            return this.subscribeToNewBlockHeaders(callback);
         }
+        this.unregisterSubscriptionCallback(this.blockFilter.id);
+        this.unsubscribe(this.blockFilter.id, function () {
+            self.blockFilter.id = null;
+            self.subscribeToNewBlockHeaders(callback);
+        });
     },
 
     send: function (type, command, returns, callback) {
@@ -22489,8 +22498,6 @@ module.exports = {
         } else {
             action = (prefix || "eth_") + command.toString();
         }
-
-        // direct-to-geth
         payload = {
             id: this.requests++,
             jsonrpc: "2.0",

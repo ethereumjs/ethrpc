@@ -1156,6 +1156,7 @@ describe("RPC", function () {
                             }, function (result) {
                                 assert.isTrue(result);
                                 rpc.shh("getMessages", filterID, function (messages) {
+                                    console.log('messages:', JSON.stringify(messages, null, 2));
                                     assert.strictEqual(abi.pad_left(messages[messages.length - 1].payload), abi.pad_left(t.payload));
                                     rpc.shh("uninstallFilter", filterID, function (uninstalled) {
                                         assert.isTrue(uninstalled);
