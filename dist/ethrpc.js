@@ -17391,6 +17391,7 @@ module.exports={
     }, 
     "Cash": {
       "addCash": {
+        "fixed": [1], 
         "inputs": [
           "ID", 
           "amount"
@@ -17430,6 +17431,7 @@ module.exports={
         ]
       }, 
       "send": {
+        "fixed": [1], 
         "inputs": [
           "recver", 
           "value"
@@ -17443,6 +17445,7 @@ module.exports={
         ]
       }, 
       "sendFrom": {
+        "fixed": [1], 
         "inputs": [
           "recver", 
           "value", 
@@ -17458,6 +17461,7 @@ module.exports={
         ]
       }, 
       "setCash": {
+        "fixed": [1], 
         "inputs": [
           "address", 
           "balance"
@@ -17483,6 +17487,7 @@ module.exports={
         ]
       }, 
       "withdrawEther": {
+        "fixed": [1],
         "inputs": [
           "to", 
           "value"
@@ -17582,6 +17587,7 @@ module.exports={
     }, 
     "CompleteSets": {
       "buyCompleteSets": {
+        "fixed": [1], 
         "gas": 698875, 
         "inputs": [
           "market", 
@@ -17597,6 +17603,7 @@ module.exports={
         ]
       }, 
       "sellCompleteSets": {
+        "fixed": [1], 
         "gas": 535220, 
         "inputs": [
           "market", 
@@ -17667,6 +17674,7 @@ module.exports={
           "account"
         ], 
         "method": "getMarketInfo", 
+        "parser": "validateMarketInfo", 
         "returns": "hash[]", 
         "signature": [
           "int256", 
@@ -17714,6 +17722,7 @@ module.exports={
           "numTradesToLoad"
         ], 
         "method": "getOrderBook", 
+        "parser": "parseOrderBook", 
         "returns": "hash[]", 
         "signature": [
           "int256", 
@@ -17727,6 +17736,7 @@ module.exports={
           "account"
         ], 
         "method": "getPositionInMarket", 
+        "parser": "parsePositionInMarket", 
         "returns": "int256[]", 
         "signature": [
           "int256", 
@@ -18336,6 +18346,7 @@ module.exports={
           "event"
         ], 
         "method": "getEventInfo", 
+        "parser": "parseEventInfo", 
         "returns": "hash[]", 
         "signature": [
           "int256"
@@ -18407,6 +18418,7 @@ module.exports={
           "marketIndex"
         ], 
         "method": "getMarket", 
+        "parser": "parseMarket", 
         "returns": "int256", 
         "signature": [
           "int256", 
@@ -18418,6 +18430,7 @@ module.exports={
           "event"
         ], 
         "method": "getMarkets", 
+        "parser": "parseMarkets",
         "returns": "hash[]", 
         "signature": [
           "int256"
@@ -19762,6 +19775,7 @@ module.exports={
         ]
       }, 
       "submitReport": {
+        "fixed": [3], 
         "inputs": [
           "event", 
           "salt", 
@@ -19797,6 +19811,7 @@ module.exports={
         ]
       }, 
       "validateReport": {
+        "fixed": [3, 7], 
         "inputs": [
           "eventID", 
           "branch", 
@@ -21054,6 +21069,7 @@ module.exports={
         ]
       }, 
       "fill_trade": {
+        "fixed": [1], 
         "inputs": [
           "id", 
           "fill"
@@ -21111,6 +21127,7 @@ module.exports={
           "id"
         ], 
         "method": "get_trade", 
+        "parser": "parseTradeInfo", 
         "returns": "hash[]", 
         "signature": [
           "int256"
@@ -21142,6 +21159,7 @@ module.exports={
         ]
       }, 
       "saveTrade": {
+        "fixed": [3, 4], 
         "inputs": [
           "trade_id", 
           "type", 
@@ -21165,6 +21183,7 @@ module.exports={
         ]
       }, 
       "update_trade": {
+        "fixed": [1], 
         "inputs": [
           "id", 
           "price"
