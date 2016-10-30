@@ -577,6 +577,9 @@ module.exports = {
 
         if (this.debug.broadcast) {
             console.log("[ethrpc] broadcast: " + JSON.stringify(command, null, 2));
+            console.log(" - HTTP: " + JSON.stringify(this.nodes, null, 2));
+            console.log(" - WS:   " + this.wsUrl);
+            console.log(" - IPC:  " + this.ipcpath);
         }
 
         // if we're on Node, use IPC if available and ipcpath is specified

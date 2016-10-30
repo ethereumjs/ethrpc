@@ -1132,7 +1132,9 @@ describe("RPC", function () {
                     var filterChanges = rpc.shh("getFilterChanges", filterID);
                     assert.isArray(filterChanges);
                     assert.lengthOf(filterChanges, 1);
-                    assert.strictEqual(abi.pad_left(filterChanges[0].payload), abi.pad_left(t.payload));
+                    assert.include(filterChanges.map(function (filterChange) {
+                        return abi.pad_left(filterChange.payload);
+                    }), abi.pad_left(t.payload));
 
                     // async
                     rpc.shh("post", {
@@ -1146,7 +1148,9 @@ describe("RPC", function () {
                         rpc.shh("getFilterChanges", filterID, function (filterChanges) {
                             assert.isArray(filterChanges);
                             assert.lengthOf(filterChanges, 1);
-                            assert.strictEqual(abi.pad_left(filterChanges[0].payload), abi.pad_left(t.payload));
+                            assert.include(filterChanges.map(function (filterChange) {
+                                return abi.pad_left(filterChange.payload);
+                            }), abi.pad_left(t.payload));
                             rpc.shh("post", {
                                 from: whisperID,
                                 topics: t.topics,
@@ -1156,8 +1160,9 @@ describe("RPC", function () {
                             }, function (result) {
                                 assert.isTrue(result);
                                 rpc.shh("getMessages", filterID, function (messages) {
-                                    console.log('messages:', JSON.stringify(messages, null, 2));
-                                    assert.strictEqual(abi.pad_left(messages[messages.length - 1].payload), abi.pad_left(t.payload));
+                                    assert.include(messages.map(function (message) {
+                                        return abi.pad_left(message.payload);
+                                    }), abi.pad_left(t.payload));
                                     rpc.shh("uninstallFilter", filterID, function (uninstalled) {
                                         assert.isTrue(uninstalled);
                                         done();
