@@ -1472,7 +1472,7 @@ module.exports = {
 
             // newHeads push notification
             if (block.number) {
-                if (this.debug.tx) console.debug("new block:", block.number);
+                if (this.debug.tx) console.debug("new block:", parseInt(block.number, 16));
                 this.block = abi.copy(block);
                 this.block.number = parseInt(this.block.number, 16);
                 var hashes = Object.keys(this.txs);
