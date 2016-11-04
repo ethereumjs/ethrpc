@@ -400,7 +400,7 @@ module.exports = {
             self.blockNumber(function (blockNumber) {
                 var blockGap = parseInt(blockNumber, 16) - self.block.number;
                 if (!blockGap) return callback(true);
-                console.debug("Block gap", blockGap, "found, catching up...");
+                if (self.debug.tx) console.debug("Block gap", blockGap, "found, catching up...");
                 for (var i = 1; i <= blockGap; ++i) {
                     self.onNewBlock({number: "0x" + (self.block.number + i).toString(16)});
                 }
