@@ -18985,7 +18985,7 @@ module.exports={
           "sender"
         ], 
         "method": "getEthicReport", 
-        "returns": "number", 
+        "returns": "unfix", 
         "signature": [
           "int256", 
           "int256", 
