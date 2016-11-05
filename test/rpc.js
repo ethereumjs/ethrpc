@@ -2251,8 +2251,12 @@ describe("RPC", function () {
         describe("verifyTxSubmitted", function () {
             var test = function (t) {
                 var getTransaction;
+                var updateTx;
+                var rpcBlockNumber;
                 before(function () {
                     getTransaction = rpc.getTransaction;
+                    updateTx = rpc.updateTx;
+                    rpcBlockNumber = rpc.blockNumber;
                 });
                 beforeEach(function () {
                     rpc.txs = {};
@@ -2260,10 +2264,15 @@ describe("RPC", function () {
                 });
                 after(function () {
                     rpc.getTransaction = getTransaction;
+                    rpc.updateTx = updateTx;
+                    rpc.blockNumber = rpcBlockNumber;
                 });
                 it(JSON.stringify(t), function (done) {
-                    rpc.getTransaction = function (hash, callback) {
-                        return callback(t.tx);
+                    rpc.blockNumber = function (callback) {
+                        return callback("0x9");
+                    }
+                    rpc.updateTx = function (tx) {
+                        rpc.txs[t.hash].tx = t.tx;
                     };
                     if (t.expected.storedTx) {
                         t.expected.storedTx.count = 0;
@@ -2273,13 +2282,11 @@ describe("RPC", function () {
                     rpc.txs[t.hash] = clone(t.storedTx);
                     rpc.verifyTxSubmitted(t.payload, t.hash, t.callReturn, t.onSent, t.onSuccess, t.onFailed, function (err) {
                         assert.deepEqual(err, t.expected.err);
-                        console.log(rpc.txs[t.hash]);
                         if (rpc.txs[t.hash]) {
                             delete rpc.txs[t.hash].onSent;
                             delete rpc.txs[t.hash].onFailed;
                             delete rpc.txs[t.hash].onSuccess;
                         }
-                        console.log(rpc.txs[t.hash]);
                         assert.deepEqual(rpc.txs[t.hash], t.expected.storedTx);
                         done();
                     });
@@ -2308,17 +2315,6 @@ describe("RPC", function () {
                 payload: null,
                 hash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
                 tx: {nonce: "0x1"},
-                storedTx: undefined,
-                callReturn: "1",
-                expected: {
-                    err: errors.TRANSACTION_FAILED,
-                    storedTx: undefined
-                }
-            });
-            test({
-                payload: {nonce: "0x1"},
-                hash: "0x3eac75fab91ae9c9222f7a2ea041cb8ec3de48060d99c5b25045fc7ea609fc08",
-                tx: null,
                 storedTx: undefined,
                 callReturn: "1",
                 expected: {

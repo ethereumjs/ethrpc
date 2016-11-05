@@ -1452,6 +1452,10 @@ module.exports = {
 
     updateTx: function (tx) {
         if (!tx.locked) {
+            if (tx.tx === undefined) {
+                tx.locked = true;
+                return this.updatePendingTx(tx);
+            }
             switch (tx.status) {
             case "pending":
                 tx.locked = true;
@@ -1508,35 +1512,43 @@ module.exports = {
                 throw new this.Error(errors.TRANSACTION_FAILED);
             }
             if (this.txs[txHash]) throw new this.Error(errors.DUPLICATE_TRANSACTION);
-            var tx = this.getTransaction(txHash);
-            if (!tx) throw new this.Error(errors.TRANSACTION_FAILED);
             this.txs[txHash] = {
                 hash: txHash,
                 payload: payload,
-                tx: tx,
                 callReturn: callReturn,
                 count: 0,
                 status: "pending"
             };
+            var tx = this.getTransaction(txHash);
+            if (!tx) throw new this.Error(errors.TRANSACTION_FAILED);
+            this.txs[txHash].tx = tx;
             return;
         }
         if (!payload || txHash === null || txHash === undefined) {
+            console.error("payload undefined or txhash null/undefined:", payload, txHash);
             return callback(errors.TRANSACTION_FAILED);
         }
         if (this.txs[txHash]) return callback(errors.DUPLICATE_TRANSACTION);
-        this.getTransaction(txHash, function (tx) {
-            if (!tx) return callback(errors.TRANSACTION_FAILED);
-            self.txs[txHash] = {
-                hash: txHash,
-                payload: payload,
-                tx: tx,
-                callReturn: callReturn,
-                onSent: onSent,
-                onSuccess: onSuccess,
-                onFailed: onFailed,
-                count: 0,
-                status: "pending"
-            };
+        this.txs[txHash] = {
+            hash: txHash,
+            payload: payload,
+            callReturn: callReturn,
+            onSent: onSent,
+            onSuccess: onSuccess,
+            onFailed: onFailed,
+            count: 0,
+            status: "pending"
+        };
+        if (this.block && this.block.number) {
+            this.updateTx(this.txs[txHash]);
+            return callback(null);
+        }
+        this.blockNumber(function (blockNumber) {
+            if (!blockNumber || blockNumber.error) {
+                return callback(blockNumber || "rpc.blockNumber lookup failed");
+            }
+            self.block = {number: parseInt(blockNumber, 16)};
+            self.updateTx(self.txs[txHash]);
             callback(null);
         });
     },
