@@ -16766,7 +16766,7 @@ module.exports={
           "event"
         ], 
         "method": "getFinal", 
-        "returns": "int256", 
+        "returns": "number", 
         "signature": [
           "int256"
         ]
@@ -16868,7 +16868,7 @@ module.exports={
           "event"
         ], 
         "method": "getRoundTwo", 
-        "returns": "int256", 
+        "returns": "number", 
         "signature": [
           "int256"
         ]
@@ -16880,6 +16880,7 @@ module.exports={
         ], 
         "method": "increaseBondPaid", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -16892,6 +16893,7 @@ module.exports={
         ], 
         "method": "setBondAmount", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -16916,6 +16918,7 @@ module.exports={
         ], 
         "method": "setBondReturned", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256"
         ]
@@ -16938,6 +16941,7 @@ module.exports={
         ], 
         "method": "setForkBondPoster", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -16949,6 +16953,7 @@ module.exports={
         ], 
         "method": "setForkedOverEthicality", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256"
         ]
@@ -16959,6 +16964,7 @@ module.exports={
         ], 
         "method": "setMoved", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256"
         ]
@@ -16970,6 +16976,7 @@ module.exports={
         ], 
         "method": "setOriginalBranch", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -17022,6 +17029,7 @@ module.exports={
         ], 
         "method": "setResolved", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -17048,6 +17056,7 @@ module.exports={
         ], 
         "method": "setRoundTwoRefund", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -17062,6 +17071,7 @@ module.exports={
         ], 
         "method": "addMarketToBranch", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -17259,6 +17269,7 @@ module.exports={
         ], 
         "method": "initializeBranch", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -17276,6 +17287,7 @@ module.exports={
         ], 
         "method": "setBaseReporters", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -17288,6 +17300,7 @@ module.exports={
         ], 
         "method": "setEventForkedOver", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -17299,6 +17312,7 @@ module.exports={
         ], 
         "method": "setForkPeriod", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256"
         ]
@@ -17311,6 +17325,7 @@ module.exports={
         ], 
         "method": "setInitialBalance", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18047,7 +18062,8 @@ module.exports={
           "period"
         ], 
         "method": "setPenalizedUpTo", 
-        "returns": "int256", 
+        "returns": "number", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19605,7 +19621,7 @@ module.exports={
           "event"
         ], 
         "method": "proportionCorrectForkEvent", 
-        "returns": "int256", 
+        "returns": "unfix", 
         "signature": [
           "int256"
         ]
@@ -20447,7 +20463,7 @@ module.exports={
           "event"
         ], 
         "method": "proportionCorrect", 
-        "returns": "int256", 
+        "returns": "unfix", 
         "signature": [
           "int256"
         ]
@@ -21660,6 +21676,10 @@ module.exports={
     "TRADE_NOT_FOUND": {
         "error": 712,
         "message": "trade not found"
+    },
+    "REPORT_NOT_FOUND": {
+        "error": 812,
+        "message": "report not found"
     }
 }
 
