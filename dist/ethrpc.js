@@ -17992,6 +17992,7 @@ module.exports={
         ], 
         "method": "setBaseReportersLastPeriod", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18005,6 +18006,7 @@ module.exports={
         ], 
         "method": "setFeeFirst", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18019,6 +18021,7 @@ module.exports={
         ], 
         "method": "setFeesCollected", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18033,6 +18036,7 @@ module.exports={
         ], 
         "method": "setNotEnoughPenalized", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18048,6 +18052,7 @@ module.exports={
         ], 
         "method": "setPenalized", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18077,6 +18082,7 @@ module.exports={
           "balance"
         ], 
         "method": "setPeriodBalance", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18090,6 +18096,7 @@ module.exports={
         ], 
         "method": "setRefund", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18103,6 +18110,7 @@ module.exports={
         ], 
         "method": "setSlashed", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18257,6 +18265,7 @@ module.exports={
         ], 
         "method": "determineWinningOutcomes", 
         "returns": "int256[]", 
+        "send": true, 
         "signature": [
           "int256"
         ]
@@ -18270,6 +18279,7 @@ module.exports={
         ], 
         "method": "resolveBinary", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18288,6 +18298,7 @@ module.exports={
         ], 
         "method": "resolveCategoricalOrScalar", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18306,6 +18317,7 @@ module.exports={
         ], 
         "method": "addMarket", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18317,6 +18329,7 @@ module.exports={
         ], 
         "method": "addPast24", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256"
         ]
@@ -18471,7 +18484,7 @@ module.exports={
           "event"
         ], 
         "method": "getMaxValue", 
-        "returns": "number", 
+        "returns": "unfix", 
         "signature": [
           "int256"
         ]
@@ -18481,7 +18494,7 @@ module.exports={
           "event"
         ], 
         "method": "getMinValue", 
-        "returns": "number", 
+        "returns": "unfix", 
         "signature": [
           "int256"
         ]
@@ -18491,7 +18504,7 @@ module.exports={
           "event"
         ], 
         "method": "getNumMarkets", 
-        "returns": "int256", 
+        "returns": "number", 
         "signature": [
           "int256"
         ]
@@ -18636,6 +18649,7 @@ module.exports={
         ], 
         "method": "setBond", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18648,6 +18662,7 @@ module.exports={
         ], 
         "method": "setBranch", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18660,6 +18675,7 @@ module.exports={
         ], 
         "method": "setEthics", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18672,6 +18688,7 @@ module.exports={
         ], 
         "method": "setEventPushedUp", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18684,6 +18701,7 @@ module.exports={
         ], 
         "method": "setExpiration", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18695,6 +18713,7 @@ module.exports={
         ], 
         "method": "setForkDone", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256"
         ]
@@ -18706,6 +18725,7 @@ module.exports={
         ], 
         "method": "setForkEthicality", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18718,6 +18738,7 @@ module.exports={
         ], 
         "method": "setForkOutcome", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18729,6 +18750,7 @@ module.exports={
         ], 
         "method": "setForked", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256"
         ]
@@ -18740,6 +18762,7 @@ module.exports={
         ], 
         "method": "setOriginalExpiration", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18765,6 +18788,7 @@ module.exports={
         ], 
         "method": "setRejected", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18777,6 +18801,7 @@ module.exports={
         ], 
         "method": "setThreshold", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18789,6 +18814,7 @@ module.exports={
         ], 
         "method": "setUncaughtOutcome", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18801,6 +18827,7 @@ module.exports={
         ], 
         "method": "setmode", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18834,6 +18861,7 @@ module.exports={
         ], 
         "method": "addRepEvent", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18850,6 +18878,7 @@ module.exports={
         ], 
         "method": "addReportToEvent", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18864,6 +18893,7 @@ module.exports={
         ], 
         "method": "addReportersPaidSoFar", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18876,6 +18906,7 @@ module.exports={
         ], 
         "method": "addRoundTwo", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -18890,6 +18921,7 @@ module.exports={
         ], 
         "method": "addToWeightOfReport", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18905,6 +18937,7 @@ module.exports={
         ], 
         "method": "adjustPeriodShareValueOutstanding", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -18919,6 +18952,7 @@ module.exports={
         ], 
         "method": "deleteEvent", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19215,7 +19249,7 @@ module.exports={
           "sender"
         ], 
         "method": "getReport", 
-        "returns": "unfix", 
+        "returns": "int256", 
         "signature": [
           "int256", 
           "int256", 
@@ -19308,6 +19342,7 @@ module.exports={
         ], 
         "method": "moveEvent", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -19320,6 +19355,7 @@ module.exports={
         ], 
         "method": "refundCost", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -19332,6 +19368,7 @@ module.exports={
         ], 
         "method": "removeEvent", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -19346,6 +19383,7 @@ module.exports={
         ], 
         "method": "setAfterRep", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19362,6 +19400,7 @@ module.exports={
         ], 
         "method": "setBeforeRep", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19377,6 +19416,7 @@ module.exports={
         ], 
         "method": "setCurrentMode", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19391,6 +19431,7 @@ module.exports={
         ], 
         "method": "setCurrentModeItems", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19409,6 +19450,7 @@ module.exports={
         ], 
         "method": "setEncryptedReport", 
         "returns": "number", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19429,6 +19471,7 @@ module.exports={
         ], 
         "method": "setEthicReport", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19445,6 +19488,7 @@ module.exports={
         ], 
         "method": "setEventRequired", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19460,6 +19504,7 @@ module.exports={
         ], 
         "method": "setLesserReportNum", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19473,6 +19518,7 @@ module.exports={
         ], 
         "method": "setNumEventsToReportOn", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256"
         ]
@@ -19486,6 +19532,7 @@ module.exports={
         ], 
         "method": "setNumReportsEvent", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19502,6 +19549,7 @@ module.exports={
         ], 
         "method": "setPeriodDormantRep", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19518,6 +19566,7 @@ module.exports={
         ], 
         "method": "setPeriodRepConstant", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19535,6 +19584,7 @@ module.exports={
         ], 
         "method": "setReport", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19553,6 +19603,7 @@ module.exports={
         ], 
         "method": "setReportHash", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19575,6 +19626,7 @@ module.exports={
         ], 
         "method": "claimInitialRep", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -19611,6 +19663,7 @@ module.exports={
         ], 
         "method": "penalizeOnForkedEvent", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -19646,6 +19699,7 @@ module.exports={
         ], 
         "method": "fork", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -19658,6 +19712,7 @@ module.exports={
         ], 
         "method": "move_event", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256"
         ]
@@ -19669,6 +19724,7 @@ module.exports={
         ], 
         "method": "resolveForkEvent", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -19681,6 +19737,7 @@ module.exports={
         ], 
         "method": "resolveForkedEvent", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -19692,6 +19749,7 @@ module.exports={
         ], 
         "method": "resolve_fork", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256"
         ]
@@ -19883,6 +19941,7 @@ module.exports={
         ], 
         "method": "addFees", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -19895,6 +19954,7 @@ module.exports={
         ], 
         "method": "addToMarketsHash", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -19908,6 +19968,7 @@ module.exports={
         ], 
         "method": "addTrade", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -20250,6 +20311,7 @@ module.exports={
         ], 
         "method": "initializeMarket", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256[]", 
@@ -20355,6 +20417,7 @@ module.exports={
         ], 
         "method": "setMakerFees", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -20368,6 +20431,7 @@ module.exports={
         ], 
         "method": "setPrice", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -20382,6 +20446,7 @@ module.exports={
         ], 
         "method": "setPushedForward", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256", 
@@ -20395,6 +20460,7 @@ module.exports={
         ], 
         "method": "setTradingFee", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -20407,6 +20473,7 @@ module.exports={
         ], 
         "method": "setTradingPeriod", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256"
@@ -20419,6 +20486,7 @@ module.exports={
         ], 
         "method": "setWinningOutcomes", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256", 
           "int256[]"
@@ -20832,7 +20900,7 @@ module.exports={
           "event"
         ], 
         "method": "getEventCanReportOn", 
-        "returns": "int256", 
+        "returns": "number", 
         "signature": [
           "int256", 
           "int256", 
@@ -20862,6 +20930,7 @@ module.exports={
         ], 
         "method": "setReportingThreshold", 
         "returns": "int256", 
+        "send": true, 
         "signature": [
           "int256"
         ]
