@@ -101,6 +101,10 @@ module.exports = {
 
     errors: errors,
 
+    DEFAULT_HOSTED_NODES: HOSTED_NODES.slice(),
+
+    DEFAULT_HOSTED_WEBSOCKET: HOSTED_WEBSOCKET,
+
     nodes: {
         hosted: HOSTED_NODES.slice(),
         local: null
@@ -745,8 +749,8 @@ module.exports = {
 
     // reset to default Ethereum nodes
     reset: function (deleteData) {
-        this.nodes.hosted = HOSTED_NODES.slice();
-        this.wsUrl = process.env.GETH_WEBSOCKET_URL || HOSTED_WEBSOCKET;
+        this.nodes.hosted = this.DEFAULT_HOSTED_NODES.slice();
+        this.wsUrl = process.env.GETH_WEBSOCKET_URL || this.DEFAULT_HOSTED_WEBSOCKET;
         if (deleteData) this.clear();
     },
 
