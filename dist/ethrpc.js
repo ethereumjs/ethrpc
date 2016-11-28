@@ -17116,6 +17116,7 @@ module.exports={
           "branch"
         ], 
         "method": "getEventForkedOver", 
+        "parser": "parseMarket", 
         "returns": "int256", 
         "signature": [
           "int256"
@@ -17148,6 +17149,7 @@ module.exports={
           "branch"
         ], 
         "method": "getMarketsInBranch", 
+        "parser": "parseMarkets", 
         "returns": "hash[]", 
         "signature": [
           "int256"
@@ -17680,6 +17682,7 @@ module.exports={
           "reporter"
         ], 
         "method": "getEventsWithSubmittedReport", 
+        "parser": "parseMarkets", 
         "returns": "int256[]", 
         "signature": [
           "int256", 
@@ -17718,6 +17721,7 @@ module.exports={
           "last"
         ], 
         "method": "getMarketsCreatedByMarketCreator", 
+        "parser": "parseMarkets", 
         "returns": "int256[]", 
         "signature": [
           "int256", 
@@ -19050,6 +19054,7 @@ module.exports={
           "eventIndex"
         ], 
         "method": "getEvent", 
+        "parser": "parseMarket", 
         "returns": "hash", 
         "signature": [
           "int256", 
@@ -19075,6 +19080,7 @@ module.exports={
           "expDateIndex"
         ], 
         "method": "getEvents", 
+        "parser": "parseMarkets", 
         "returns": "hash[]", 
         "signature": [
           "int256", 
@@ -19089,6 +19095,7 @@ module.exports={
           "end"
         ], 
         "method": "getEventsRange", 
+        "parser": "parseMarkets", 
         "returns": "int256[]", 
         "signature": [
           "int256", 
@@ -20093,6 +20100,7 @@ module.exports={
           "index"
         ], 
         "method": "getMarketEvent", 
+        "parser": "parseMarket", 
         "returns": "int256", 
         "signature": [
           "int256", 
@@ -20104,6 +20112,7 @@ module.exports={
           "market"
         ], 
         "method": "getMarketEvents", 
+        "parser": "parseMarkets", 
         "returns": "hash[]", 
         "signature": [
           "int256"
@@ -20916,6 +20925,7 @@ module.exports={
           "start"
         ], 
         "method": "getEventsToReportOn", 
+        "parser": "parseMarkets", 
         "returns": "int256[]", 
         "signature": [
           "int256", 
@@ -22110,6 +22120,9 @@ module.exports = {
 
     requests: 1,
 
+    // Hook for transaction callbacks
+    txRelay: null,
+
     txs: {},
 
     rawTxs: {},
@@ -22119,6 +22132,22 @@ module.exports = {
     notifications: {},
 
     gasPrice: 20000000000,
+
+    registerTxRelay: function (txRelay) {
+        this.txRelay = txRelay;
+    },
+
+    unregisterTxRelay: function () {
+        this.txRelay = null;
+    },
+
+    wrapTxRelayCallback: function (status, callback) {
+        var self = this;
+        return function (response) {
+            if (isFunction(callback)) callback(response);
+            self.txRelay({status: status, payload: response});
+        };
+    },
 
     unmarshal: function (string, returns, stride, init) {
         var elements, array, position;
@@ -23575,7 +23604,7 @@ module.exports = {
 
             // send the transaction hash and return value back
             // to the client, using the onSent callback
-            onSent({txHash: txHash, callReturn: callReturn});
+            onSent({hash: txHash, txHash: txHash, callReturn: callReturn});
 
             self.verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, function (err) {
                 if (err) return onFailed(err);
@@ -23852,19 +23881,26 @@ module.exports = {
         if (!isFunction(onSent)) return this.transactSync(payload);
 
         // asynchronous / non-blocking transact sequence
-        onSuccess = (isFunction(onSuccess)) ? onSuccess : noop;
-        onFailed = (isFunction(onFailed)) ? onFailed : noop;
+        var cb = (isFunction(this.txRelay)) ? {
+            sent: this.wrapTxRelayCallback("sent", onSent),
+            success: this.wrapTxRelayCallback("success", onSuccess),
+            failed: this.wrapTxRelayCallback("failed", onFailed)
+        } : {
+            sent: onSent,
+            success: (isFunction(onSuccess)) ? onSuccess : noop,
+            failed: (isFunction(onFailed)) ? onFailed : noop
+        };
         if (payload.mutable || payload.returns === "null") {
-            return this.transactAsync(payload, null, onSent, onSuccess, onFailed);
+            return this.transactAsync(payload, null, cb.sent, cb.success, cb.failed);
         }
         this.fire(payload, function (callReturn) {
             if (self.debug.tx) console.debug("callReturn:", callReturn);
             if (callReturn === undefined || callReturn === null) {
-                return onFailed(errors.NULL_CALL_RETURN);
+                return cb.failed(errors.NULL_CALL_RETURN);
             } else if (callReturn.error) {
-                return onFailed(callReturn);
+                return cb.failed(callReturn);
             }
-            self.transactAsync(payload, callReturn, onSent, onSuccess, onFailed);
+            self.transactAsync(payload, callReturn, cb.sent, cb.success, cb.failed);
         });
     }
 };
