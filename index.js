@@ -133,11 +133,16 @@ module.exports = {
         this.txRelay = null;
     },
 
-    wrapTxRelayCallback: function (status, callback) {
+    wrapTxRelayCallback: function (status, payload, callback) {
         var self = this;
         return function (response) {
             if (isFunction(callback)) callback(response);
-            self.txRelay({status: status, payload: response});
+            self.txRelay({
+                type: payload.method || "sendEther",
+                status: status,
+                data: payload,
+                response: response
+            });
         };
     },
 
@@ -1874,9 +1879,9 @@ module.exports = {
 
         // asynchronous / non-blocking transact sequence
         var cb = (isFunction(this.txRelay)) ? {
-            sent: this.wrapTxRelayCallback("sent", onSent),
-            success: this.wrapTxRelayCallback("success", onSuccess),
-            failed: this.wrapTxRelayCallback("failed", onFailed)
+            sent: this.wrapTxRelayCallback("sent", payload, onSent),
+            success: this.wrapTxRelayCallback("success", payload, onSuccess),
+            failed: this.wrapTxRelayCallback("failed", payload, onFailed)
         } : {
             sent: onSent,
             success: (isFunction(onSuccess)) ? onSuccess : noop,
