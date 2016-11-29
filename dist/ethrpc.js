@@ -21450,7 +21450,7 @@ module.exports={
         "CloseMarketTwo": "0x9fe69262bbaa47f013b7dbd6ca5f01e17446c645", 
         "CollectFees": "0x5069d883e31429c6dd1325d961f443007747c7a2", 
         "CompleteSets": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6", 
-        "CompositeGetters": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df", 
+        "CompositeGetters": "0x7c8c360e897ecf0fc377a1eace3ce5ebcc12fa70", 
         "Consensus": "0x9308cf21b5a11f182f9707ca284bbb71bb84f893", 
         "ConsensusData": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2", 
         "CreateBranch": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7", 
@@ -21604,6 +21604,16 @@ module.exports={
     "sendReputation": {
         "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
         "-2": "Receiving address doesn't exist"
+    },
+    "shortAsk": {
+        "0": "market doesn't exist",
+        "-1": "amount/price bad",
+        "-2": "oracle only branch",
+        "-3": "bad outcome to trade",
+        "-4": "not enough shares",
+        "-5": "best bid exceeds ask price",
+        "10": "insufficient balance",
+        "21": "trade already exists"
     },
     "short_sell": {
         "-1": "trade doesn't exist",

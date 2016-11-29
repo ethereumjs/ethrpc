@@ -1,6 +1,6 @@
 {
   "name": "ethrpc",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Ethereum JSON RPC",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   "dependencies": {
     "async": "1.5.2",
     "augur-abi": "0.6.4",
-    "augur-contracts": "2.3.7",
+    "augur-contracts": "2.3.9",
     "bignumber.js": "2.3.0",
     "browser-request": "0.3.3",
     "clone": "1.0.2",
