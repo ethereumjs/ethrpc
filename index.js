@@ -115,6 +115,9 @@ module.exports = {
     // Hook for transaction callbacks
     txRelay: null,
 
+    // Do not call txRelay for these methods
+    excludedFromTxRelay: {},
+
     txs: {},
 
     rawTxs: {},
@@ -137,13 +140,39 @@ module.exports = {
         var self = this;
         return function (response) {
             if (isFunction(callback)) callback(response);
-            self.txRelay({
-                type: payload.method || "sendEther",
-                status: status,
-                data: payload,
-                response: response
-            });
+            if (payload.method && !self.excludedFromTxRelay[payload.method]) {
+                self.txRelay({
+                    type: payload.label || payload.method,
+                    status: status,
+                    data: payload,
+                    response: response
+                });
+            }
         };
+    },
+
+    excludeFromTxRelay: function (method) {
+        if (method) {
+            if (method.constructor === Array && method.length) {
+                for (var i = 0, numMethods = method.length; i < numMethods; ++i) {
+                    this.excludedFromTxRelay[method[i]] = true;
+                }
+            } else {
+                this.excludedFromTxRelay[method] = true;
+            }
+        }
+    },
+
+    includeInTxRelay: function (method) {
+        if (method) {
+            if (method.constructor === Array && method.length) {
+                for (var i = 0, numMethods = method.length; i < numMethods; ++i) {
+                    this.excludedFromTxRelay[method[i]] = false;
+                }
+            } else {
+                this.excludedFromTxRelay[method] = false;
+            }
+        }
     },
 
     unmarshal: function (string, returns, stride, init) {
@@ -869,9 +898,9 @@ module.exports = {
     },
 
     sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
-        if (to && to.constructor === Object && to.value) {
+        if (to && to.constructor === Object) {
             value = to.value;
-            if (to.from) from = to.from;
+            from = to.from;
             if (to.onSent) onSent = to.onSent;
             if (to.onSuccess) onSuccess = to.onSuccess;
             if (to.onFailed) onFailed = to.onFailed;
