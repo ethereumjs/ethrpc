@@ -23,7 +23,7 @@ var SHA3_INPUT = "boom!";
 var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
 var PROTOCOL_VERSION = "0x3f";
 var TXHASH = "0xc52b258dec9e8374880b346f93669d7699d7e64d46c8b6072b19122ca9406461";
-var NETWORK_ID = "2";
+var NETWORK_ID = "3";
 contracts = contracts[NETWORK_ID];
 var HOSTED_NODES;
 rpc.retryDroppedTxs = false;
@@ -1432,18 +1432,18 @@ describe("RPC", function () {
                 });
             };
 
-            // expected block hashes for network 2
+            // expected block hashes for network 3
             test({
                 blockNumber: "0x1",
-                blockHash: "0xad47413137a753b2061ad9b484bf7b0fc061f654b951b562218e9f66505be6ce"
+                blockHash: "0x41800b5c3f1717687d85fc9018faac0a6e90b39deaa0b99e7fe4fe796ddeb26a"
             });
             test({
                 blockNumber: "0x1b4",
-                blockHash: "0xcc69010c942bb0d8232024dc32aa4404a1173da56c1b6abdead40a2bd8930d34"
+                blockHash: "0x4a89e885e0a6cc17b78d790320833299b550d47c36287b0d8d4fda97684a777a"
             });
             test({
                 blockNumber: "0x24f2",
-                blockHash: "0x4d5d0d6ce0073cbe085589827152a83e4d54365d15eb4c0ae29118fc21f02d92"
+                blockHash: "0xb834d7896445bafda400ae577c38e1085cf1e27b888e8f33a66a13b65120b027"
             });
         });
 
@@ -1500,15 +1500,15 @@ describe("RPC", function () {
             };
             test({
                 blockNumber: "0x1",
-                blockHash: "0xad47413137a753b2061ad9b484bf7b0fc061f654b951b562218e9f66505be6ce"
+                blockHash: "0x41800b5c3f1717687d85fc9018faac0a6e90b39deaa0b99e7fe4fe796ddeb26a"
             });
             test({
                 blockNumber: "0x1b4",
-                blockHash: "0xcc69010c942bb0d8232024dc32aa4404a1173da56c1b6abdead40a2bd8930d34"
+                blockHash: "0x4a89e885e0a6cc17b78d790320833299b550d47c36287b0d8d4fda97684a777a"
             });
             test({
                 blockNumber: "0x24f2",
-                blockHash: "0x4d5d0d6ce0073cbe085589827152a83e4d54365d15eb4c0ae29118fc21f02d92"
+                blockHash: "0xb834d7896445bafda400ae577c38e1085cf1e27b888e8f33a66a13b65120b027"
             });
         });
 
