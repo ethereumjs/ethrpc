@@ -634,7 +634,7 @@ module.exports = {
 
         if (this.debug.broadcast) {
             console.log("[ethrpc] broadcast: " + JSON.stringify(command, null, 2));
-            console.log(" - HTTP: " + JSON.stringify(this.nodes, null, 2));
+            console.log(" - HTTP: " + JSON.stringify(this.nodes));
             console.log(" - WS:   " + this.wsUrl);
             console.log(" - IPC:  " + this.ipcpath);
         }
