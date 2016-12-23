@@ -379,7 +379,7 @@ describe("packageRequest", function () {
           "to": "0xc98fef1cae0c5e130b2580cb04aa7fbdf7bf736d",
           "data": "0x3af39c21",
           "gas": "0x2fd618",
-          "value": "1000000000000000000"
+          "value": "0xde0b6b3a7640000"
         }
     });
     test({
