@@ -1206,13 +1206,13 @@ module.exports = {
             from: tx.from,
             to: tx.to,
             data: abi.encode(tx),
-            gas: tx.gas || this.DEFAULT_GAS
+            gas: tx.gas ? abi.hex(tx.gas) : this.DEFAULT_GAS
         };
-        if (tx.gasPrice) packaged.gasPrice = tx.gasPrice;
-        if (tx.timeout) packaged.timeout = tx.timeout;
-        if (tx.value) packaged.value = tx.value;
+        if (tx.gasPrice) packaged.gasPrice = abi.hex(tx.gasPrice);
+        if (tx.timeout) packaged.timeout = abi.hex(tx.timeout);
+        if (tx.value) packaged.value = abi.hex(tx.value);
         if (tx.returns) packaged.returns = tx.returns;
-        if (tx.nonce) packaged.nonce = tx.nonce;
+        if (tx.nonce) packaged.nonce = abi.hex(tx.nonce);
         return packaged;
     },
 
