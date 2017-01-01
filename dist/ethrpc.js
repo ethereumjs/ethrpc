@@ -94,11 +94,6 @@ module.exports={
         }, 
         {
           "indexed": false, 
-          "name": "lastPeriodRepBalance", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
           "name": "repGain", 
           "type": "int256"
         }, 
@@ -128,8 +123,8 @@ module.exports={
           "type": "int256"
         }
       ], 
-      "name": "collectedFees(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0xc81e036aceff1b9ec18111ca6754e12887ad248f60557e154c5ba9a383c24c69"
+      "name": "collectedFees(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
+      "signature": "0xcde4a27ca173f91b1dd9076223820f857c157515fd27e19adfcd4f5f4af9ab48"
     }, 
     "completeSets_logReturn": {
       "contract": "CompleteSets", 
@@ -1236,7 +1231,7 @@ module.exports={
         ], 
         "label": "Get Base Reporters", 
         "method": "getBaseReporters", 
-        "returns": "int256", 
+        "returns": "number", 
         "signature": [
           "int256"
         ]
@@ -1514,12 +1509,16 @@ module.exports={
     }, 
     "BuyAndSellShares": {
       "buy": {
+        "events": [
+          "log_add_tx"
+        ], 
         "gas": 725202, 
         "inputs": [
           "amount", 
           "price", 
           "market", 
-          "outcome"
+          "outcome", 
+          "minimumTradeSize"
         ], 
         "label": "Bid", 
         "method": "buy", 
@@ -1530,10 +1529,14 @@ module.exports={
           "int256", 
           "int256", 
           "int256", 
+          "int256", 
           "int256"
         ]
       }, 
       "cancel": {
+        "events": [
+          "log_cancel"
+        ], 
         "gas": 288060, 
         "inputs": [
           "trade_id"
@@ -1548,12 +1551,16 @@ module.exports={
         ]
       }, 
       "sell": {
+        "events": [
+          "log_add_tx"
+        ], 
         "gas": 696759, 
         "inputs": [
           "amount", 
           "price", 
           "market", 
-          "outcome"
+          "outcome", 
+          "minimumTradeSize"
         ], 
         "label": "Ask", 
         "method": "sell", 
@@ -1564,22 +1571,29 @@ module.exports={
           "int256", 
           "int256", 
           "int256", 
+          "int256", 
           "int256"
         ]
       }, 
       "shortAsk": {
+        "events": [
+          "completeSets_logReturn", 
+          "log_add_tx"
+        ], 
         "gas": 1500000, 
         "inputs": [
           "amount", 
           "price", 
           "market", 
-          "outcome"
+          "outcome", 
+          "minimumTradeSize"
         ], 
         "label": "Short Ask", 
         "method": "shortAsk", 
         "mutable": true, 
         "returns": "int256", 
         "signature": [
+          "int256", 
           "int256", 
           "int256", 
           "int256", 
@@ -1618,6 +1632,9 @@ module.exports={
       }, 
       "depositEther": {
         "description": "Convert Ether to tradeable Ether token", 
+        "events": [
+          "deposit"
+        ], 
         "label": "Deposit Ether", 
         "method": "depositEther", 
         "returns": "number", 
@@ -1703,6 +1720,9 @@ module.exports={
       }, 
       "withdrawEther": {
         "description": "Convert tradeable Ether token to Ether", 
+        "events": [
+          "withdraw"
+        ], 
         "fixed": [
           1
         ], 
@@ -1722,6 +1742,9 @@ module.exports={
     }, 
     "CloseMarket": {
       "claimProceeds": {
+        "events": [
+          "payout"
+        ], 
         "inputs": [
           "branch", 
           "market"
@@ -1755,12 +1778,14 @@ module.exports={
     }, 
     "CollectFees": {
       "collectFees": {
-        "description": "Collect Reporting fees for previous Reporting cycle", 
+        "events": [
+          "collectedFees"
+        ], 
         "inputs": [
           "branch", 
           "sender"
         ], 
-        "label": "Collect Reporting Fees", 
+        "label": "Reporting Payment", 
         "method": "collectFees", 
         "returns": "number", 
         "send": true, 
@@ -1772,6 +1797,9 @@ module.exports={
     }, 
     "CompleteSets": {
       "buyCompleteSets": {
+        "events": [
+          "completeSets_logReturn"
+        ], 
         "fixed": [
           1
         ], 
@@ -1791,6 +1819,9 @@ module.exports={
         ]
       }, 
       "sellCompleteSets": {
+        "events": [
+          "completeSets_logReturn"
+        ], 
         "fixed": [
           1
         ], 
@@ -1961,6 +1992,9 @@ module.exports={
         ]
       }, 
       "penalizeWrong": {
+        "events": [
+          "penalize"
+        ], 
         "inputs": [
           "branch", 
           "event"
@@ -2365,6 +2399,9 @@ module.exports={
         ]
       }, 
       "createMarket": {
+        "events": [
+          "marketCreated"
+        ], 
         "inputs": [
           "branch", 
           "description", 
@@ -2394,6 +2431,9 @@ module.exports={
         ]
       }, 
       "createSingleEventMarket": {
+        "events": [
+          "marketCreated"
+        ], 
         "inputs": [
           "branch", 
           "description", 
@@ -2445,6 +2485,9 @@ module.exports={
         ]
       }, 
       "updateTradingFee": {
+        "events": [
+          "tradingFeeUpdated"
+        ], 
         "inputs": [
           "branch", 
           "market", 
@@ -2775,7 +2818,7 @@ module.exports={
         ], 
         "label": "Get Past24", 
         "method": "getPast24", 
-        "returns": "int256", 
+        "returns": "number", 
         "signature": [
           "int256"
         ]
@@ -4009,6 +4052,10 @@ module.exports={
         ]
       }, 
       "fork": {
+        "events": [
+          "penalizationCaughtUp", 
+          "collectedFees"
+        ], 
         "inputs": [
           "event", 
           "branch", 
@@ -4196,6 +4243,10 @@ module.exports={
         ]
       }, 
       "submitReport": {
+        "events": [
+          "penalizationCaughtUp", 
+          "submittedReportHash"
+        ], 
         "fixed": [
           3
         ], 
@@ -4218,6 +4269,10 @@ module.exports={
         ]
       }, 
       "submitReportHash": {
+        "events": [
+          "penalizationCaughtUp", 
+          "submittedReportHash"
+        ], 
         "inputs": [
           "event", 
           "reportHash", 
@@ -4878,6 +4933,9 @@ module.exports={
     }, 
     "Payout": {
       "oneOutcome": {
+        "events": [
+          "payout"
+        ], 
         "inputs": [
           "market", 
           "winningOutcome", 
@@ -4897,6 +4955,9 @@ module.exports={
         ]
       }, 
       "twoOutcomes": {
+        "events": [
+          "payout"
+        ], 
         "inputs": [
           "market", 
           "winningOutcome", 
@@ -4916,6 +4977,9 @@ module.exports={
     }, 
     "PenalizationCatchup": {
       "penalizationCatchup": {
+        "events": [
+          "penalizationCaughtUp"
+        ], 
         "inputs": [
           "branch", 
           "sender"
@@ -4964,6 +5028,9 @@ module.exports={
     "Register": {
       "register": {
         "description": "Write registration timestamp to the blockchain", 
+        "events": [
+          "registration"
+        ], 
         "label": "Register New Account", 
         "method": "register", 
         "returns": "number", 
@@ -5409,6 +5476,10 @@ module.exports={
         ]
       }, 
       "roundTwoPostBond": {
+        "events": [
+          "penalizationCaughtUp", 
+          "collectedFees"
+        ], 
         "inputs": [
           "branch", 
           "event", 
@@ -5475,6 +5546,9 @@ module.exports={
         ]
       }, 
       "approve": {
+        "events": [
+          "Approval"
+        ], 
         "inputs": [
           "branch", 
           "spender", 
@@ -5490,6 +5564,10 @@ module.exports={
         ]
       }, 
       "convertToActiveRep": {
+        "events": [
+          "penalizationCaughtUp", 
+          "collectedFees"
+        ], 
         "inputs": [
           "branch", 
           "value"
@@ -5503,6 +5581,10 @@ module.exports={
         ]
       }, 
       "convertToDormantRep": {
+        "events": [
+          "penalizationCaughtUp", 
+          "collectedFees"
+        ], 
         "inputs": [
           "branch", 
           "value"
@@ -5516,6 +5598,10 @@ module.exports={
         ]
       }, 
       "sendReputation": {
+        "events": [
+          "penalizationCaughtUp", 
+          "collectedFees"
+        ], 
         "inputs": [
           "branch", 
           "recver", 
@@ -5532,6 +5618,9 @@ module.exports={
         ]
       }, 
       "transfer": {
+        "events": [
+          "Transfer"
+        ], 
         "inputs": [
           "branch", 
           "recver", 
@@ -5547,6 +5636,9 @@ module.exports={
         ]
       }, 
       "transferFrom": {
+        "events": [
+          "Transfer"
+        ], 
         "inputs": [
           "branch", 
           "from", 
@@ -5589,6 +5681,10 @@ module.exports={
     }, 
     "Trade": {
       "short_sell": {
+        "events": [
+          "log_short_fill_tx", 
+          "trade_logArrayReturn"
+        ], 
         "gas": 1059796, 
         "inputs": [
           "buyer_trade_id", 
@@ -5605,6 +5701,10 @@ module.exports={
         ]
       }, 
       "trade": {
+        "events": [
+          "trade_logArrayReturn", 
+          "log_fill_tx"
+        ], 
         "gas": 787421, 
         "inputs": [
           "max_value", 
@@ -5918,41 +6018,41 @@ module.exports={
         "Trades": "0xa546d6e0913b4e47962fd0efcf0cbe3112aee11b"
     }, 
     "3": {
-        "Backstops": "0x017a3f0917d43840b28c89671b2328ec9f58d53d", 
-        "Branches": "0x787b8d0030a4de6d62c1805ecb1a85c0aaaf6de0", 
-        "BuyAndSellShares": "0xb489d3aaf2a0a3b29efcd2027903f20ad514e1de", 
-        "Cash": "0xb06d7455d0bd7f53e2d487c95ae68626683f285f", 
-        "CloseMarket": "0x2c452a8592b56759a49fd5b49c158ba661595ae5", 
-        "CollectFees": "0xb6ca441b3cbcf33f133c91a2cc1585eee644ba22", 
-        "CompleteSets": "0xbf91d748f94408d6d66ac45669501d7e879c5bac", 
-        "CompositeGetters": "0xb84c03a0b4efcc68810b1940f212b5032ceb3930", 
-        "Consensus": "0x85c8d384a239e52e851ba56fff62d194ea561894", 
-        "ConsensusData": "0xa18aef3fc69f47e487f08e43ba59616fa003976a", 
-        "CreateBranch": "0xe1a2ea3ebfee1228d16ad453db1cf6cefed42554", 
-        "CreateMarket": "0x0c8516602ce9117b01b484d644db4294d5c68a9d", 
-        "EventResolution": "0x824a94c01c4038d54c438317894a50a6a5fe3163", 
-        "Events": "0xa7247ba0b6aaa9b8e335b90beb124b2eeb507c27", 
-        "ExpiringEvents": "0x39eae01133d83500c7ffb2a29bac4900505ea4a2", 
-        "Faucets": "0x34ec10825c3db9cc4e2d60f490a31010153ef149", 
-        "ForkPenalize": "0xcd117d674a63304829ccde088ad464e345c47cb6", 
-        "Forking": "0xf419769205c553e8ad9d583354d891f588ac4d95", 
-        "FxpFunctions": "0x1af28b519de52b59982f1eaf7bdc6849ecc5404f", 
-        "Info": "0x71641929320a6680b67828e56f70c873a5690f24", 
-        "MakeReports": "0xc145a01a2b555d44e8f485c35db1fafac4822d94", 
-        "Markets": "0x0944a6298d5191b0f45abc72762b6e24c2ffcf32", 
-        "Payout": "0x30838c4a3526524dfed25056d170b9e50f3905dd", 
-        "PenalizationCatchup": "0x889835407055cb6a25b672d0c8a4df44eeacccef", 
-        "PenalizeNotEnoughReports": "0xb897353dac7b5daf6920b4b47871e18f3ab566f6", 
-        "ProportionCorrect": "0xa126500e9edc6afea7dcaa70824df1ced72c1a17", 
-        "Register": "0xfbe86e9f9dcdb8d6bce0ccad8b4331328bdf66b2", 
-        "Reporting": "0x828a5c2da0c3e1d314b266edb10aae4a744eb7af", 
-        "ReportingThreshold": "0x2729d36a6f80deaa40fadb2fff505d8f642711e9", 
-        "RoundTwo": "0xac8c12c43213f98158ab616628a6fa213da8ab13", 
-        "RoundTwoPenalize": "0x4178f0e71b7cd929c3fa9518926c2f3c2ab16e23", 
-        "SendReputation": "0x4edd75cd15117e164ec899269fa67d1bd3b6674a", 
-        "SlashRep": "0x07440b7282267fae98a829cee1ac385500dbe32e", 
-        "Trade": "0xe23a06c44a10494d4e21feb6a7da099b097e360c", 
-        "Trades": "0xe95229977b12a25081836dce78d8cecd3ad4ce81"
+        "Backstops": "0xbf13b3100d30ff203319ef04a3825ac76948fccb", 
+        "Branches": "0x5c4e1ef4ee5e7ec7ae5cd0703360be599da6e6be", 
+        "BuyAndSellShares": "0x3b3b6f64185c89c2702838dc45821bb95cba7ea1", 
+        "Cash": "0x256bf3dfebcb738e5a105ca8bb7998daa871ca47", 
+        "CloseMarket": "0x4cdf48236bb007bf432f4458d272c00149c476ac", 
+        "CollectFees": "0x9a0d7b4c74b8f8b0fa2fc0404762ad29d4604e94", 
+        "CompleteSets": "0xb68a5bc9c02f6369c71abcf78444b81a539b8ed1", 
+        "CompositeGetters": "0x89e86a4f3659d7bd1c78dd9c499c96ff63fc07bd", 
+        "Consensus": "0xad5bf84afcd679c75674515d7c144533cebae590", 
+        "ConsensusData": "0x9735e26f6db89cb00148d5913c5223e1bb671a1f", 
+        "CreateBranch": "0x1b219aa965ac249b8bf7bfec2f5b33ba0e4cf842", 
+        "CreateMarket": "0x1f7aa12230c32236e0338387df500de20cd07f1f", 
+        "EventResolution": "0x45e426e7ec4d6da03ed46bd0cb7079d10510b3cb", 
+        "Events": "0x0cb246f37171c42a47febea5cd7dfb317c070b10", 
+        "ExpiringEvents": "0x8746063fb232f06917dd24b3c5c42615f59a97fe", 
+        "Faucets": "0x6d62de52473e9f14ba43a45a2b5c0fcd8a7660bc", 
+        "ForkPenalize": "0x0b9f10d4263b1bd04d9d649c4db884c9d5904484", 
+        "Forking": "0xff6693c781bce3e038ac869654e77bf716023e29", 
+        "FxpFunctions": "0x4210e14c1db89cc6b6585506253963ec8c4d06eb", 
+        "Info": "0xe056eda5ccf6f13d79c68b2710ce3d318deef75a", 
+        "MakeReports": "0xc4ac3d1acf15c811860437959b96e34838287839", 
+        "Markets": "0xcd995a4d1a829fb151c46a52efa56fa83c4c8dd7", 
+        "Payout": "0x6fff5cb642443b335d0db8bfbb916b8330fe7ae4", 
+        "PenalizationCatchup": "0xc3907b4acb01ef8f6cd702547ddafb85a7e06557", 
+        "PenalizeNotEnoughReports": "0x97661f6816327ecb2869a75c75a608a716428502", 
+        "ProportionCorrect": "0x0d6d216fa37a87cddca4fd90b7d0319082be4c09", 
+        "Register": "0x46304cf79558ec6465f3fd6d691d5c0c7a393270", 
+        "Reporting": "0xaaf983e676d114495c3c37e73cceccd8365302e4", 
+        "ReportingThreshold": "0xffdd203a3f51412273d6d75f4cf88f448bd14fe6", 
+        "RoundTwo": "0x4cc6ddb201eb5e884ca248386090b804c85d08a8", 
+        "RoundTwoPenalize": "0xfd01599337f400359c4d77dbf86bcb2dca078fdf", 
+        "SendReputation": "0x1f82ab64458a8e943ccf794e95749c646e415217", 
+        "SlashRep": "0xdba480cf81ef6e62c5812f266fdbdf553e090e3a", 
+        "Trade": "0x1ed9cc7c6231fe840956ce8591e2fac9e3de0e05", 
+        "Trades": "0xbd227f1b40663733f0cecd0d630e4d3cbffb14bb"
     }, 
     "9000": {
         "Backstops": "0x708fdfe18bf28afe861a69e95419d183ace003eb", 
