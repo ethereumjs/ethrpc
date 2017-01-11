@@ -18,10 +18,15 @@ module.exports={
           "indexed": false, 
           "name": "value", 
           "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "timestamp", 
+          "type": "int256"
         }
       ], 
-      "name": "Approval(int256,int256,int256)", 
-      "signature": "0xe64e66bf3e94c88742c041103133494023640d143db88ec4aec44744744d85f1"
+      "name": "Approval(int256,int256,int256,int256)", 
+      "signature": "0xb3a0644aa1a804a19f7ab4bf836f497fe9864488c91b39df7e6e6dd8f8f08b61"
     }, 
     "Transfer": {
       "contract": "SendReputation", 
@@ -40,10 +45,15 @@ module.exports={
           "indexed": false, 
           "name": "_value", 
           "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "timestamp", 
+          "type": "int256"
         }
       ], 
-      "name": "Transfer(int256,int256,int256)", 
-      "signature": "0x66e05b8a99642b6a77335be485dc593f0217aee37e6180f32909449b16ed7eca"
+      "name": "Transfer(int256,int256,int256,int256)", 
+      "signature": "0xa5c50eea168b70b2f404cc28da30eade9ed5ab2beb48debd7856878bde2e6096"
     }, 
     "buyAndSellShares_logReturn": {
       "contract": "BuyAndSellShares", 
@@ -68,6 +78,28 @@ module.exports={
       ], 
       "name": "closeMarket_logReturn(int256)", 
       "signature": "0x7111c90bbf79fe51a8f95606c2c44137f600abeb3b5631db7d06ed168c13eea7"
+    }, 
+    "closedMarket": {
+      "contract": "CloseMarket", 
+      "inputs": [
+        {
+          "indexed": true, 
+          "name": "market", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "branch", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "sender", 
+          "type": "int256"
+        }
+      ], 
+      "name": "closedMarket(int256,int256,int256)", 
+      "signature": "0x32c2330374d337682bae09f8332c0cc2ca58d413047a81c2282ad2c3641b4d92"
     }, 
     "collectedFees": {
       "contract": "CollectFees", 
@@ -197,6 +229,38 @@ module.exports={
       "name": "deposit(int256,int256,int256)", 
       "signature": "0x26c0012e46d4069376ba870705277dc83bb702e2b282b4779a16fceec2479de0"
     }, 
+    "fundedAccount": {
+      "contract": "Faucets", 
+      "inputs": [
+        {
+          "indexed": true, 
+          "name": "branch", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "sender", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "cashBalance", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "repBalance", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "timestamp", 
+          "type": "int256"
+        }
+      ], 
+      "name": "fundedAccount(int256,int256,int256,int256,int256)", 
+      "signature": "0xe86de3de21f900509377e1239ba6e244650b70db18f42d2cd7df914b395060b7"
+    }, 
     "log_add_tx": {
       "contract": "BuyAndSellShares", 
       "inputs": [
@@ -237,12 +301,22 @@ module.exports={
         }, 
         {
           "indexed": false, 
+          "name": "isShortAsk", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
           "name": "timestamp", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "tradeGroupID", 
           "type": "int256"
         }
       ], 
-      "name": "log_add_tx(int256,int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x331abc0b32c392f5cdc23a50af9497ab6b82f29ec2274cc33a409e7ab3aedc6c"
+      "name": "log_add_tx(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
+      "signature": "0x3922406b6c1bc74fdedc2f7b5f84f64655e6a78d29229166b493c9b738a5e40e"
     }, 
     "log_cancel": {
       "contract": "BuyAndSellShares", 
@@ -358,10 +432,20 @@ module.exports={
           "indexed": false, 
           "name": "onChainPrice", 
           "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "tradeHash", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "tradeGroupID", 
+          "type": "int256"
         }
       ], 
-      "name": "log_fill_tx(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x1a21ddb7264e8586c0581bcd71b256134b55b55bc25fd26441fd7db77c55ad27"
+      "name": "log_fill_tx(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
+      "signature": "0xe054ca76966cd4f17c6c6a8e55f1c6352cb2b58b760f658e013353f1613d32c7"
     }, 
     "log_short_fill_tx": {
       "contract": "Trade", 
@@ -425,10 +509,20 @@ module.exports={
           "indexed": false, 
           "name": "onChainPrice", 
           "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "tradeHash", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "tradeGroupID", 
+          "type": "int256"
         }
       ], 
-      "name": "log_short_fill_tx(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x3a74f0bffaa1e0ba0e1fbbfe53846e4d33da8820d706ee0b02d169dc9a116aae"
+      "name": "log_short_fill_tx(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
+      "signature": "0x3572c2b345009b4c449540a9d7fe10a7464ae662d6bb1bae9fea96ce21a8ebb1"
     }, 
     "makeReports_logReturn": {
       "contract": "MakeReports", 
@@ -636,6 +730,33 @@ module.exports={
       ], 
       "name": "registration(int256,int256)", 
       "signature": "0x44b6aeb7b38bb1ad04b4d0daf588cff086ff8829f0a34c30ddbb4d38695428de"
+    }, 
+    "sentCash": {
+      "contract": "Cash", 
+      "inputs": [
+        {
+          "indexed": true, 
+          "name": "_from", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": true, 
+          "name": "_to", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "_value", 
+          "type": "int256"
+        }, 
+        {
+          "indexed": false, 
+          "name": "timestamp", 
+          "type": "int256"
+        }
+      ], 
+      "name": "sentCash(int256,int256,int256,int256)", 
+      "signature": "0x27fc4539f0a547270e2eb3d44c9889a9dd0d9fe116324eb14204ad6d54d6e047"
     }, 
     "submittedReport": {
       "contract": "MakeReports", 
@@ -1510,7 +1631,8 @@ module.exports={
     "BuyAndSellShares": {
       "buy": {
         "events": [
-          "log_add_tx"
+          "log_add_tx", 
+          "sentCash"
         ], 
         "gas": 725202, 
         "inputs": [
@@ -1518,7 +1640,8 @@ module.exports={
           "price", 
           "market", 
           "outcome", 
-          "minimumTradeSize"
+          "minimumTradeSize", 
+          "tradeGroupID"
         ], 
         "label": "Bid", 
         "method": "buy", 
@@ -1526,6 +1649,7 @@ module.exports={
         "returns": "int256", 
         "send": true, 
         "signature": [
+          "int256", 
           "int256", 
           "int256", 
           "int256", 
@@ -1552,7 +1676,8 @@ module.exports={
       }, 
       "sell": {
         "events": [
-          "log_add_tx"
+          "log_add_tx", 
+          "sentCash"
         ], 
         "gas": 696759, 
         "inputs": [
@@ -1560,7 +1685,9 @@ module.exports={
           "price", 
           "market", 
           "outcome", 
-          "minimumTradeSize"
+          "minimumTradeSize", 
+          "isShortAsk", 
+          "tradeGroupID"
         ], 
         "label": "Ask", 
         "method": "sell", 
@@ -1572,12 +1699,15 @@ module.exports={
           "int256", 
           "int256", 
           "int256", 
+          "int256", 
+          "int256", 
           "int256"
         ]
       }, 
       "shortAsk": {
         "events": [
           "completeSets_logReturn", 
+          "sentCash", 
           "log_add_tx"
         ], 
         "gas": 1500000, 
@@ -1586,13 +1716,15 @@ module.exports={
           "price", 
           "market", 
           "outcome", 
-          "minimumTradeSize"
+          "minimumTradeSize", 
+          "tradeGroupID"
         ], 
         "label": "Short Ask", 
         "method": "shortAsk", 
         "mutable": true, 
         "returns": "int256", 
         "signature": [
+          "int256", 
           "int256", 
           "int256", 
           "int256", 
@@ -1653,6 +1785,9 @@ module.exports={
         ]
       }, 
       "send": {
+        "events": [
+          "sentCash"
+        ], 
         "fixed": [
           1
         ], 
@@ -1670,6 +1805,9 @@ module.exports={
         ]
       }, 
       "sendFrom": {
+        "events": [
+          "sentCash"
+        ], 
         "fixed": [
           1
         ], 
@@ -1759,6 +1897,9 @@ module.exports={
         ]
       }, 
       "closeMarket": {
+        "events": [
+          "closedMarket"
+        ], 
         "inputs": [
           "branch", 
           "market", 
@@ -1798,7 +1939,8 @@ module.exports={
     "CompleteSets": {
       "buyCompleteSets": {
         "events": [
-          "completeSets_logReturn"
+          "completeSets_logReturn", 
+          "sentCash"
         ], 
         "fixed": [
           1
@@ -1993,7 +2135,8 @@ module.exports={
       }, 
       "penalizeWrong": {
         "events": [
-          "penalize"
+          "penalize", 
+          "closedMarket"
         ], 
         "inputs": [
           "branch", 
@@ -2353,6 +2496,9 @@ module.exports={
     }, 
     "CreateBranch": {
       "createSubbranch": {
+        "events": [
+          "sentCash"
+        ], 
         "inputs": [
           "description", 
           "periodLength", 
@@ -2400,6 +2546,7 @@ module.exports={
       }, 
       "createMarket": {
         "events": [
+          "sentCash", 
           "marketCreated"
         ], 
         "inputs": [
@@ -2432,6 +2579,7 @@ module.exports={
       }, 
       "createSingleEventMarket": {
         "events": [
+          "sentCash", 
           "marketCreated"
         ], 
         "inputs": [
@@ -2471,6 +2619,9 @@ module.exports={
         ]
       }, 
       "pushMarketForward": {
+        "events": [
+          "sentCash"
+        ], 
         "inputs": [
           "branch", 
           "market"
@@ -2486,7 +2637,8 @@ module.exports={
       }, 
       "updateTradingFee": {
         "events": [
-          "tradingFeeUpdated"
+          "tradingFeeUpdated", 
+          "sentCash"
         ], 
         "inputs": [
           "branch", 
@@ -3988,6 +4140,10 @@ module.exports={
         ]
       }, 
       "fundNewAccount": {
+        "events": [
+          "sentCash", 
+          "fundedAccount"
+        ], 
         "inputs": [
           "branch"
         ], 
@@ -4053,6 +4209,8 @@ module.exports={
       }, 
       "fork": {
         "events": [
+          "Transfer", 
+          "sentCash", 
           "penalizationCaughtUp", 
           "collectedFees"
         ], 
@@ -5477,6 +5635,7 @@ module.exports={
       }, 
       "roundTwoPostBond": {
         "events": [
+          "Transfer", 
           "penalizationCaughtUp", 
           "collectedFees"
         ], 
@@ -5599,8 +5758,9 @@ module.exports={
       }, 
       "sendReputation": {
         "events": [
-          "penalizationCaughtUp", 
-          "collectedFees"
+          "Transfer", 
+          "collectedFees", 
+          "penalizationCaughtUp"
         ], 
         "inputs": [
           "branch", 
@@ -5683,12 +5843,14 @@ module.exports={
       "short_sell": {
         "events": [
           "log_short_fill_tx", 
-          "trade_logArrayReturn"
+          "trade_logArrayReturn", 
+          "sentCash"
         ], 
         "gas": 1059796, 
         "inputs": [
           "buyer_trade_id", 
-          "max_amount"
+          "max_amount", 
+          "tradeGroupID"
         ], 
         "label": "Short sell", 
         "method": "short_sell", 
@@ -5696,6 +5858,7 @@ module.exports={
         "returns": "hash[]", 
         "send": true, 
         "signature": [
+          "int256", 
           "int256", 
           "int256"
         ]
@@ -5709,7 +5872,8 @@ module.exports={
         "inputs": [
           "max_value", 
           "max_amount", 
-          "trade_ids"
+          "trade_ids", 
+          "tradeGroupID"
         ], 
         "label": "Trade", 
         "method": "trade", 
@@ -5719,7 +5883,8 @@ module.exports={
         "signature": [
           "int256", 
           "int256", 
-          "int256[]"
+          "int256[]", 
+          "int256"
         ]
       }
     }, 
@@ -6018,41 +6183,41 @@ module.exports={
         "Trades": "0xa546d6e0913b4e47962fd0efcf0cbe3112aee11b"
     }, 
     "3": {
-        "Backstops": "0xbf13b3100d30ff203319ef04a3825ac76948fccb", 
-        "Branches": "0x5c4e1ef4ee5e7ec7ae5cd0703360be599da6e6be", 
-        "BuyAndSellShares": "0x3b3b6f64185c89c2702838dc45821bb95cba7ea1", 
-        "Cash": "0x256bf3dfebcb738e5a105ca8bb7998daa871ca47", 
-        "CloseMarket": "0x4cdf48236bb007bf432f4458d272c00149c476ac", 
-        "CollectFees": "0x9a0d7b4c74b8f8b0fa2fc0404762ad29d4604e94", 
-        "CompleteSets": "0xb68a5bc9c02f6369c71abcf78444b81a539b8ed1", 
-        "CompositeGetters": "0x89e86a4f3659d7bd1c78dd9c499c96ff63fc07bd", 
-        "Consensus": "0xad5bf84afcd679c75674515d7c144533cebae590", 
-        "ConsensusData": "0x9735e26f6db89cb00148d5913c5223e1bb671a1f", 
-        "CreateBranch": "0x1b219aa965ac249b8bf7bfec2f5b33ba0e4cf842", 
-        "CreateMarket": "0x1f7aa12230c32236e0338387df500de20cd07f1f", 
-        "EventResolution": "0x45e426e7ec4d6da03ed46bd0cb7079d10510b3cb", 
-        "Events": "0x0cb246f37171c42a47febea5cd7dfb317c070b10", 
-        "ExpiringEvents": "0x8746063fb232f06917dd24b3c5c42615f59a97fe", 
-        "Faucets": "0x6d62de52473e9f14ba43a45a2b5c0fcd8a7660bc", 
-        "ForkPenalize": "0x0b9f10d4263b1bd04d9d649c4db884c9d5904484", 
-        "Forking": "0xff6693c781bce3e038ac869654e77bf716023e29", 
-        "FxpFunctions": "0x4210e14c1db89cc6b6585506253963ec8c4d06eb", 
-        "Info": "0xe056eda5ccf6f13d79c68b2710ce3d318deef75a", 
-        "MakeReports": "0xc4ac3d1acf15c811860437959b96e34838287839", 
-        "Markets": "0xcd995a4d1a829fb151c46a52efa56fa83c4c8dd7", 
-        "Payout": "0x6fff5cb642443b335d0db8bfbb916b8330fe7ae4", 
-        "PenalizationCatchup": "0xc3907b4acb01ef8f6cd702547ddafb85a7e06557", 
-        "PenalizeNotEnoughReports": "0x97661f6816327ecb2869a75c75a608a716428502", 
-        "ProportionCorrect": "0x0d6d216fa37a87cddca4fd90b7d0319082be4c09", 
-        "Register": "0x46304cf79558ec6465f3fd6d691d5c0c7a393270", 
-        "Reporting": "0xaaf983e676d114495c3c37e73cceccd8365302e4", 
-        "ReportingThreshold": "0xffdd203a3f51412273d6d75f4cf88f448bd14fe6", 
-        "RoundTwo": "0x4cc6ddb201eb5e884ca248386090b804c85d08a8", 
-        "RoundTwoPenalize": "0xfd01599337f400359c4d77dbf86bcb2dca078fdf", 
-        "SendReputation": "0x1f82ab64458a8e943ccf794e95749c646e415217", 
-        "SlashRep": "0xdba480cf81ef6e62c5812f266fdbdf553e090e3a", 
-        "Trade": "0x1ed9cc7c6231fe840956ce8591e2fac9e3de0e05", 
-        "Trades": "0xbd227f1b40663733f0cecd0d630e4d3cbffb14bb"
+        "Backstops": "0x39233db6a46688838c0e6f3f666a6e2c54691ba8", 
+        "Branches": "0x3dd807ac7da5b24f5c00f841a74bdf1e5974be6f", 
+        "BuyAndSellShares": "0x110ed15b8ebd5bd19dd8d8fbf0e5f3fe6d5a5100", 
+        "Cash": "0xf3f2504a84a7c994528b17771e84d2c742e0fd00", 
+        "CloseMarket": "0x2cf1709843785a51d36b9844abed063041a5ad3d", 
+        "CollectFees": "0x40313fad2710dad2061ee906848be0dba3ae06fa", 
+        "CompleteSets": "0x03db7bf1febd987d99f639798c339a213423c24d", 
+        "CompositeGetters": "0x3821cdacda6dfb08a8ffc5373a223697f49c69c9", 
+        "Consensus": "0xbdb5a0e136918196f5c07d5d330794344344c6fe", 
+        "ConsensusData": "0x627c2cc8fc12fbeb0b77184b921c0df68d873897", 
+        "CreateBranch": "0x28870f9ba569198953d55bfd06d6faf28c03512b", 
+        "CreateMarket": "0x281899d86f2209bd33ad9e47f696e7059dceb42f", 
+        "EventResolution": "0x320b8e9db5f61902d30017206225faca63ce99d9", 
+        "Events": "0x4f06980ea73befdf02e71e648338b771fc94d05d", 
+        "ExpiringEvents": "0xec2afe624a2c093cdebc9f9ac0ab3392958cd5d3", 
+        "Faucets": "0x3eab9164d7164e228ac537ba734b61765c96b8db", 
+        "ForkPenalize": "0xb73bac0b4bcae01506c29331ca718041f27e4a76", 
+        "Forking": "0xe5cd2da1c476d18054ceef3adee348b66ad67434", 
+        "FxpFunctions": "0x6327a4a763653e4c90e22ded4f7b6b50926af689", 
+        "Info": "0xfb241a2ed08c6be004abca9a4ef1a97f3f11a400", 
+        "MakeReports": "0xc3e5c24ab41281dbd2c79ededbc1f212a7223ca1", 
+        "Markets": "0x1253aa148cddc4479ae1c7814866f029da1bb6d5", 
+        "Payout": "0x28334992a8ed76ab390f7c795d8bdb51b9cfe3cd", 
+        "PenalizationCatchup": "0xc823018ea0398b203179a793f9943c4e1a425b57", 
+        "PenalizeNotEnoughReports": "0x5c412cdc23835d84f63940fb55073e2e37203d47", 
+        "ProportionCorrect": "0x21bba22c6ce9cf511c12e6848625f50a3856769a", 
+        "Register": "0xc0b6a445951d432b182b494f71dccb681f4b3d06", 
+        "Reporting": "0xce8d6a17ae5f2aade25323d73a26a49034ea26b6", 
+        "ReportingThreshold": "0x2dcbb0c8d9ec956fe1ddd3abfde1b0c404855fa9", 
+        "RoundTwo": "0x20f90841a002cf7db14aea8b8c31cdc08a49d49a", 
+        "RoundTwoPenalize": "0x7a2e426268029ca8a94936d6710fa905f152acd3", 
+        "SendReputation": "0x01b6900f6b28cfda2d6b4917aed15362c9216be1", 
+        "SlashRep": "0x1c33d47ad5ebcead9309d8e8d0ede6ea9cc3f834", 
+        "Trade": "0x3e83bae48eda16ed7e0f93876308340a86318151", 
+        "Trades": "0xb2628263ce4ef07d094860a1997ab733635482d8"
     }, 
     "9000": {
         "Backstops": "0x708fdfe18bf28afe861a69e95419d183ace003eb", 
@@ -10215,7 +10380,7 @@ module.exports = {
 
     debug: false,
 
-    version: "0.6.4",
+    version: "1.0.0",
 
     constants: {
         ONE: new BigNumber(10).toPower(new BigNumber(18)),
@@ -10469,6 +10634,7 @@ module.exports = {
         if (s === undefined || s === null || s === "0x") return s;
         if (Buffer.isBuffer(s)) s = s.toString("hex");
         if (s.constructor !== String) s = s.toString(16);
+        if (s.slice(0, 1) === "-") s = this.unfork(s);
         s = this.strip_0x(s);
         if (s.length > 64) {
             if (this.debug) {
@@ -10669,6 +10835,10 @@ module.exports = {
         } else {
             return n;
         }
+    },
+
+    unfix_signed: function (n, encode) {
+        return this.unfix(this.hex(n, true), encode);
     },
 
     string: function (n, wrap) {
