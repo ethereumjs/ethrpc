@@ -2959,7 +2959,7 @@ module.exports={
         ], 
         "label": "Get Outcome", 
         "method": "getOutcome", 
-        "returns": "unfix", 
+        "returns": "number", 
         "signature": [
           "int256"
         ]
@@ -3036,7 +3036,7 @@ module.exports={
         ], 
         "label": "Get Uncaught Outcome", 
         "method": "getUncaughtOutcome", 
-        "returns": "unfix", 
+        "returns": "number", 
         "signature": [
           "int256"
         ]
@@ -6144,80 +6144,42 @@ module.exports={
         "Trade": "0x031d9d02520cc708ea3c865278508c9cdb92bd51", 
         "Trades": "0x448c01a2e1fd6c2ef133402c403d2f48c99993e7"
     }, 
-    "2": {
-        "Backstops": "0xe7b15def7af9b21efaf23107aa674068a887f91b", 
-        "Branches": "0x6364bfeee536565269b17f4ba760c039c5c28ed8", 
-        "BuyAndSellShares": "0xd996967fd46e7cae18e3ae8ffc4b4f000f11f454", 
-        "Cash": "0xa470f24e2f44b1373a201b8b876361352a5044ca", 
-        "CloseMarket": "0x80f0e40ef1623ebd2d0a64e52f9637d01120e775", 
-        "CloseMarketOne": "0xedfab60ec675321f23560bb14b2b0ee093c9820e", 
-        "CloseMarketTwo": "0xbec7e28f2002a6ddf13bea948daac81024757265", 
-        "CollectFees": "0x8bcf8f4eb99193d66c864fe01e879936b26ab3f1", 
-        "CompleteSets": "0xfbb64e5b58205a66f5072e054a8ef3a63283c563", 
-        "CompositeGetters": "0xc57896bc165fa62045dd302734b542ff8bc8722f", 
-        "Consensus": "0x809b336f070a5f0b054a7b09cf032be6d2718237", 
-        "ConsensusData": "0x4c14bbcee01169cc943168bf8e7c9514cb1d9724", 
-        "CreateBranch": "0xbe301475b9616c528d1f59cc4b3e1ed1a3a011fd", 
-        "CreateMarket": "0xfbff48fd7633182e9185e0bfb33574b3550f878e", 
-        "EventResolution": "0x1f6b2d8eedd938caccb0806ff3e0a0c25061dba6", 
-        "Events": "0xd63945d6a1a8970e4314f4d5ad91f31b3546e02d", 
-        "ExpiringEvents": "0xfc4570a6427ca4324dd363dcf1ad3f6a06ede423", 
-        "Faucets": "0xd2594eca97608c71fad50c49ff01ea580f2e0182", 
-        "ForkPenalize": "0x5d348800bd486b841b0588a9b58ee48a2f95ff53", 
-        "Forking": "0x997534dee63572f7c0ef22a02ae36e7490920a14", 
-        "FxpFunctions": "0xf58e7a722acb67e0c2051ca2e1e589ce994cf005", 
-        "Info": "0x7df74be4d0987e0c54bbf8464880886ef72c6454", 
-        "MakeReports": "0x9abab8c867e3550a7516f0ac58139c0c35439271", 
-        "Markets": "0x523b175058c2d95addc60b3ae2b1eabb4e66d9b3", 
-        "PenalizationCatchup": "0x0a34aed359d6a1d87bfa3dd6de5506886b324246", 
-        "PenalizeNotEnoughReports": "0xc8c562b70bc3cf800ada4cb911573a3861e33179", 
-        "ProportionCorrect": "0x45773b4de356cdf5544f8016d7c0c3bd8f2b5b6f", 
-        "Register": "0x07b3b68db6cecc3f21dbf8619048c1b1fdda858b", 
-        "Reporting": "0x5903ca079125de5a16d67c6e1511e8124f5a121d", 
-        "ReportingThreshold": "0xda8defe3149549b30965c2c2dcb972206f01eca4", 
-        "RoundTwo": "0xea88e08fbfe6efcd63192ea98b500e135f1457a2", 
-        "RoundTwoPenalize": "0xabcf47a605cbaba390025fcc86c02d9cc38aaf6f", 
-        "SendReputation": "0xd580b44476b80ed2ec59363a9a3df196538deef9", 
-        "SlashRep": "0x033309178ab10e4869cb3a9ef97bfa4684844132", 
-        "Trade": "0xf22f08f6a893725c0161fb30667b902781aa9dc8", 
-        "Trades": "0xa546d6e0913b4e47962fd0efcf0cbe3112aee11b"
-    }, 
     "3": {
-        "Backstops": "0x39233db6a46688838c0e6f3f666a6e2c54691ba8", 
-        "Branches": "0x3dd807ac7da5b24f5c00f841a74bdf1e5974be6f", 
-        "BuyAndSellShares": "0x110ed15b8ebd5bd19dd8d8fbf0e5f3fe6d5a5100", 
-        "Cash": "0xf3f2504a84a7c994528b17771e84d2c742e0fd00", 
-        "CloseMarket": "0x2cf1709843785a51d36b9844abed063041a5ad3d", 
-        "CollectFees": "0x40313fad2710dad2061ee906848be0dba3ae06fa", 
-        "CompleteSets": "0x03db7bf1febd987d99f639798c339a213423c24d", 
-        "CompositeGetters": "0x3821cdacda6dfb08a8ffc5373a223697f49c69c9", 
-        "Consensus": "0xbdb5a0e136918196f5c07d5d330794344344c6fe", 
-        "ConsensusData": "0x627c2cc8fc12fbeb0b77184b921c0df68d873897", 
-        "CreateBranch": "0x28870f9ba569198953d55bfd06d6faf28c03512b", 
-        "CreateMarket": "0x281899d86f2209bd33ad9e47f696e7059dceb42f", 
-        "EventResolution": "0x320b8e9db5f61902d30017206225faca63ce99d9", 
-        "Events": "0x4f06980ea73befdf02e71e648338b771fc94d05d", 
-        "ExpiringEvents": "0xec2afe624a2c093cdebc9f9ac0ab3392958cd5d3", 
-        "Faucets": "0x3eab9164d7164e228ac537ba734b61765c96b8db", 
-        "ForkPenalize": "0xb73bac0b4bcae01506c29331ca718041f27e4a76", 
-        "Forking": "0xe5cd2da1c476d18054ceef3adee348b66ad67434", 
-        "FxpFunctions": "0x6327a4a763653e4c90e22ded4f7b6b50926af689", 
-        "Info": "0xfb241a2ed08c6be004abca9a4ef1a97f3f11a400", 
-        "MakeReports": "0xc3e5c24ab41281dbd2c79ededbc1f212a7223ca1", 
-        "Markets": "0x1253aa148cddc4479ae1c7814866f029da1bb6d5", 
-        "Payout": "0x28334992a8ed76ab390f7c795d8bdb51b9cfe3cd", 
-        "PenalizationCatchup": "0xc823018ea0398b203179a793f9943c4e1a425b57", 
-        "PenalizeNotEnoughReports": "0x5c412cdc23835d84f63940fb55073e2e37203d47", 
-        "ProportionCorrect": "0x21bba22c6ce9cf511c12e6848625f50a3856769a", 
-        "Register": "0xc0b6a445951d432b182b494f71dccb681f4b3d06", 
-        "Reporting": "0xce8d6a17ae5f2aade25323d73a26a49034ea26b6", 
-        "ReportingThreshold": "0x2dcbb0c8d9ec956fe1ddd3abfde1b0c404855fa9", 
-        "RoundTwo": "0x20f90841a002cf7db14aea8b8c31cdc08a49d49a", 
-        "RoundTwoPenalize": "0x7a2e426268029ca8a94936d6710fa905f152acd3", 
-        "SendReputation": "0x01b6900f6b28cfda2d6b4917aed15362c9216be1", 
-        "SlashRep": "0x1c33d47ad5ebcead9309d8e8d0ede6ea9cc3f834", 
-        "Trade": "0x3e83bae48eda16ed7e0f93876308340a86318151", 
-        "Trades": "0xb2628263ce4ef07d094860a1997ab733635482d8"
+        "Backstops": "0x5f6623608a6dedff51c6258a1ac271b28ef79f07", 
+        "Branches": "0x6854670653257ac1329983a76cef7ccc7ff67674", 
+        "BuyAndSellShares": "0xce7da26e82cc7bcf6eefcc6761c27f37fe7550c0", 
+        "Cash": "0xe1f39399f38071ef38e4541a1615f1ef70ff5e18", 
+        "CloseMarket": "0xb1f9ebf616c79f0cdb30dc48b1a089598fa29f34", 
+        "CollectFees": "0xa5716c2b7fbbc9588ced046fedb71610d99f5d04", 
+        "CompleteSets": "0x0082b66b5ef1c857cc6d869e423343e7bfb03d8a", 
+        "CompositeGetters": "0x68d04b32e4dbf6844ee9a8f5419456048c56004e", 
+        "Consensus": "0xb86b84209aa3f7acaf9f1f7fc9e6dcca7e65db9e", 
+        "ConsensusData": "0x0862bd1a0901219bf81309f883f67ee82073a8b6", 
+        "CreateBranch": "0x16af93de362f97b96693f5b2c3a3bba3a27ae2b2", 
+        "CreateMarket": "0x049fd37576d74efe855452c9c61578df41554ff0", 
+        "EventResolution": "0x19e1fc9cbaf968e1eb035385c62221238968d7a0", 
+        "Events": "0xd7b6f43b43090b597caba32faacdb8841512fc65", 
+        "ExpiringEvents": "0x043ac01ed52d549accb0f1f7616fc34fb5657b51", 
+        "Faucets": "0x5a5874d5268519e2233e2f6e14f32eceaedd59aa", 
+        "ForkPenalize": "0xdeb142a7691923c301be4a89509f736a86bb681f", 
+        "Forking": "0x40fe8524eb4e141c12c16412afe4bab5c94551de", 
+        "FxpFunctions": "0xa1b1d11bd71e30aed95602fcbc7ed6be8ea8b7d2", 
+        "Info": "0x5ded30c21f6ac3e2567ee6052d2f2aa48a167bcd", 
+        "MakeReports": "0x123c6edfcde7cf8eff3928782456b42014118204", 
+        "Markets": "0x3b063fafcba91081219cd85df7acd390191609bb", 
+        "Payout": "0x3ec1b5396fd39101bfe5b3670f904807c996535e", 
+        "PenalizationCatchup": "0x80989ad93e2cd3bef55f97f770ee184138478ae0", 
+        "PenalizeNotEnoughReports": "0x1c2ac827157f6250ff65f6294bfde77f1713e34c", 
+        "ProportionCorrect": "0x425a2e7b655f2625b0eef9c2c6300db98b29464a", 
+        "Register": "0xd209c792467417d71e5ab38440c9cc2769fc8e37", 
+        "Reporting": "0x87cb32509f665364b6b53afbe1141cf37cdd2d4a", 
+        "ReportingThreshold": "0x30924e8620e38407c24f4954fc8c8dddc27b1443", 
+        "RoundTwo": "0xf19a64c011fe95492d190325731873bc3bb28bde", 
+        "RoundTwoPenalize": "0x13dc24a2cd15acaed004cf011a7d283aa798e202", 
+        "SendReputation": "0x7f3eff49bfc9757a4eea1204f8b54abfdbe24cd7", 
+        "SlashRep": "0x92395ed2899261ed61fba48131eb80f0d4917e8a", 
+        "Trade": "0xccf55a273ae3230c128732afb9abd8675a662d98", 
+        "Trades": "0x9fae2352f99dd6e829fa9c6bf3ee4de4f568f68a"
     }, 
     "9000": {
         "Backstops": "0x708fdfe18bf28afe861a69e95419d183ace003eb", 
@@ -6259,331 +6221,331 @@ module.exports={
 }
 },{}],3:[function(require,module,exports){
 module.exports={
-    "0x": "no response or bad input",
-    "buy": {
-        "0": "market doesn't exist",
-        "-1": "amount/price bad",
-        "-2": "oracle-only branch",
-        "-4": "not enough money",
-        "-5": "bid price exceeds best ask",
-        "21": "trade already exists"
-    },
-    "buyCompleteSets": {
-        "0": "market not found",
-        "-1": "oracle-only branch",
-        "-3": "not enough cash"
-    },
-    "cashFaucet": {
-        "-1": "Hey, you're not broke!"
-    },
-    "claimProceeds": {
-        "0": "reporting not done",
-        "-1": "trader doesn't exist",
-        "-8": "invalid branch"
-    },
-    "closeMarket": {
-        "0": "fail/trading not over yet/event not expired or closed already",
-        "-1": "Market has no cash anyway / already closed",
-        "-2": "0 outcome / not reported on yet",
-        "-3": "not final round 2 event",
-        "-5": "Event forked and not final yet",
-        "-6": "bonded pushed forward market not ready to be resolved",
-        "-7": "event not reportable >.99",
-        "-8": "market isn't in branch"
-    },
-    "collectFees": {
-        "-1": "rep redistribution/rewards/penalizations in consensus not done yet"
-    },
-    "createEvent": {
-        "-1": "we're either already past that date, branch doesn't exist, or description is bad",
-        "0": "not enough money to pay fees or event already exists",
-        "-2": "max value < min value",
-        "-9": "would expire during non-reporting fork period"
-    },
-    "createSingleEventMarket": {
-        "0": "not enough money to pay fees or event already exists",
-        "-1": "we're either already past that date, branch doesn't exist, or description is bad, or bad input or parent doesn't exist",
-        "-2": "max value < min value",
-        "-3": "too many outcomes",
-        "-4": "not enough money",
-        "-5": "fee too low",
-        "-6": "duplicate events",
-        "-7": "event already expired",
-        "-8": "market already exists",
-        "-9": "would expire during non-reporting fork period"
-    },
-    "createMarket": {
-        "-1": "bad input or parent doesn't exist",
-        "-2": "too many events",
-        "-3": "too many outcomes",
-        "-4": "not enough money",
-        "-5": "fee too low",
-        "-6": "duplicate events",
-        "-7": "event already expired",
-        "-8": "market already exists",
-        "-9": "would expire during non-reporting fork period"
-    },
-    "createSubbranch": {
-        "-1": "bad input or parent doesn't exist",
-        "-2": "no money for creation fee or branch already exists"
-    },
-    "penalizationCatchup": {
-        "-1": "not in first half of reporting period",
-        "-2": "doesn't need to be penalized/caught up",
-        "-3": "user isn't behind or reported in the last period (and should thus use the penalization functions in consensus.se)"
-    },
-    "penalizeOnForkedEvent": {
-        "-2": "already past first half of new period and needed to penalize before then",
-        "-4": "fork event isn't resolved yet",
-        "-5": "already done for all events in this period"
-    },
-    "penalizeRoundTwoWrong": {
-        "0": "event is a fork event",
-        "-1": "need to penalize in round 2 penalize function",
-        "-2": "already past first half of new period and needed to penalize before then",
-        "-4": "in fork period only thing that rbcr is done on is the round 2 event in the original branch via round 2 penalize",
-        "-5": "already done for all events in this period",
-        "-6": "forked events should be penalized using the fork penalization function"
-    },
-    "penalizeWrong": {
-        "0": "event is a fork event",
-        "-1": "need to penalize in round 2 penalize function",
-        "-2": "already past first half of new period and needed to penalize before then",
-        "-4": "in fork period only thing that rbcr is done on is the round 2 event in the original branch via round 2 penalize",
-        "-6": "forked events should be penalized using the fork penalization function",
-        "-7": "no outcome"
-    },
-    "proveReporterDidntReportEnough": {
-        "-1": "already done",
-        "-2": "not in right part of period"
-    },
-    "pushMarketForward": {
-        "-1": "fork period cannot be the current or previous period",
-        "-2": "market is already closed or pushed forward",
-        "-3": "not enough cash to post early resolution bond",
-        "-4": "early resolution already attempted or outcome already exists"
-    },
-    "sell": {
-        "0": "market doesn't exist",
-        "-1": "amount/price bad",
-        "-2": "oracle only branch",
-        "-3": "bad outcome to trade",
-        "-4": "not enough shares",
-        "-5": "best bid exceeds ask price",
-        "10": "insufficient balance",
-        "21": "trade already exists"
-    },
-    "sellCompleteSets": {
-        "-1": "oracle-only branch",
-        "-2": "not a participant in this market",
-        "-3": "not enough shares"
-    },
-    "sendReputation": {
-        "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
-        "-2": "Receiving address doesn't exist"
-    },
-    "shortAsk": {
-        "0": "market doesn't exist",
-        "-1": "amount/price bad",
-        "-2": "oracle only branch",
-        "-3": "bad outcome to trade",
-        "-4": "not enough shares",
-        "-5": "best bid exceeds ask price",
-        "10": "insufficient balance",
-        "21": "trade already exists"
-    },
-    "short_sell": {
-        "-1": "trade doesn't exist",
-        "-2": "invalid trade hash/commitment",
-        "-3": "must be a bid, not an ask",
-        "-4": "market is already resolved",
-        "-5": "can't pickup your own trade",
-        "-6": "can't trade on oracle only branch",
-        "-7": "not a large enough trade",
-        "10": "insufficient balance",
-        "22": "trade in same block prohibited"
-    },
-    "slashRep": {
-        "0": "not a valid claim",
-        "-2": "reporter doesn't exist"
-    },
-    "submitReportHash": {
-        "-1": "invalid event",
-        "-3": "not eligible to report on this event"
-    },
-    "submitReport": {
-        "0": "reporter doesn't exist or has <1 rep",
-        "-1": "has already reported",
-        "-2": "not in second half of period [reveal part]",
-        "-3": "hash doesn't match",
-        "-4": "bad report",
-        "-5": "invalid event",
-        "-6": "already resolved",
-        "-7": "<48 hr left in period, too late to report, able to put up readj. bonds though",
-        "-8": "fees couldn't be collected",
-        "-9": "need to pay not reporting bond"
-    },
-    "trade": {
-        "-1": "oracle only branch",
-        "-2": "bad trade hash",
-        "-3": "trader doesn't exist / own shares in this market",
-        "-4": "must trade at least 0.00000001 in value",
-        "-5": "can't pick up your own trade",
-        "10": "insufficient balance",
-        "22": "trade in same block prohibited"
-    },
-    "updateTradingFee": {
-        "-1": "invalid trading fee: either fee is below the minimum trading fee or you are trying to raise the trading fee (trading fees can be lowered, but not raised)",
-        "-4": "sender's address does not match the market creator's address"
-    },
-    "GAS_LIMIT_EXCEEDED": {
-        "error": 40,
-        "message": "trade exceeds the current block gas limit"
-    },
-    "WRONG_NUMBER_OF_OUTCOMES": {
-        "error": 41,
-        "message": "the number of initial fair prices does not match this market's number of outcomes"
-    },
-    "INSUFFICIENT_LIQUIDITY": {
-        "error": 42,
-        "message": "insufficient liquidity to generate order book"
-    },
-    "INITIAL_PRICE_OUT_OF_BOUNDS": {
-        "error": 43,
-        "message": "one or more initial fair prices are out-of-bounds"
-    },
-    "PRICE_WIDTH_OUT_OF_BOUNDS": {
-        "error": 44,
-        "message": "price width is too large for one or more initial fair prices"
-    },
-    "DB_DELETE_FAILED": {
-        "error": 97,
-        "message": "database delete failed"
-    },
-    "DB_WRITE_FAILED": {
-        "error": 98,
-        "message": "database write failed"
-    },
-    "DB_READ_FAILED": {
-        "error": 99,
-        "message": "database read failed"
-    },
-    "INVALID_CONTRACT_PARAMETER": {
-        "error": 400,
-        "message": "cannot send object parameter to contract"
-    },
-    "NOT_LOGGED_IN": {
-        "error": 401,
-        "message": "not logged in"
-    },
-    "PARAMETER_NUMBER_ERROR": {
-        "error": 402,
-        "message": "wrong number of parameters"
-    },
-    "BAD_CREDENTIALS": {
-        "error": 403,
-        "message": "incorrect handle or password"
-    },
-    "TRANSACTION_NOT_FOUND": {
-        "error": 404,
-        "message": "transaction not found"
-    },
-    "PASSWORD_TOO_SHORT": {
-        "error": 405,
-        "message": "password must be at least 6 characters long"
-    },
-    "NULL_CALL_RETURN": {
-        "error": 406,
-        "message": "expected contract call to return value, received null"
-    },
-    "NULL_RESPONSE": {
-        "error": 407,
-        "message": "expected transaction hash from Ethereum node, received null"
-    },
-    "NO_RESPONSE": {
-        "error": 408,
-        "message": "no response"
-    },
-    "INVALID_RESPONSE": {
-        "error": 409,
-        "message": "could not parse response from Ethereum node"
-    },
-    "LOCAL_NODE_FAILURE": {
-        "error": 410,
-        "message": "RPC request to local Ethereum node failed"
-    },
-    "HOSTED_NODE_FAILURE": {
-        "error": 411,
-        "message": "RPC request to hosted nodes failed"
-    },
-    "TRANSACTION_INVALID": {
-        "error": 412,
-        "message": "transaction validation failed"
-    },
-    "TRANSACTION_RETRY_MAX_EXCEEDED": {
-        "error": 413,
-        "message": "maximum number of transaction retry attempts exceeded"
-    },
-    "HANDLE_TAKEN": {
-        "error": 422,
-        "message": "handle already taken"
-    },
-    "FILTER_NOT_CREATED": {
-        "error": 450,
-        "message": "filter could not be created"
-    },
-    "TRANSACTION_FAILED": {
-        "error": 500,
-        "message": "transaction failed"
-    },
-    "TRANSACTION_NOT_CONFIRMED": {
-        "error": 501,
-        "message": "polled network but could not confirm transaction"
-    },
-    "DUPLICATE_TRANSACTION": {
-        "error": 502,
-        "message": "duplicate transaction"
-    },
-    "RAW_TRANSACTION_ERROR": {
-        "error": 503,
-        "message": "error sending client-side transaction"
-    },
-    "RLP_ENCODING_ERROR": {
-        "error": 504,
-        "message": "RLP encoding error"
-    },
-    "TRANSACTION_RECEIPT_NOT_FOUND": {
-        "error": 505,
-        "message": "transaction receipt not found"
-    },
-    "RPC_TIMEOUT": {
-        "error": 599,
-        "message": "timed out while waiting for Ethereum network response"
-    },
-    "LOOPBACK_NOT_FOUND": {
-        "error": 650,
-        "message": "loopback interface required for synchronous local commands"
-    },
-    "ETHEREUM_NOT_FOUND": {
-        "error": 651,
-        "message": "no active ethereum node(s) found"
-    },
-    "CHECK_ORDER_BOOK_FAILED": {
-        "error": 710,
-        "message": "could not check order book using current prices"
-    },
-    "TRADE_FAILED": {
-        "error": 711,
-        "message": "trade failed, instead of success value (1), received "
-    },
-    "TRADE_NOT_FOUND": {
-        "error": 712,
-        "message": "trade not found"
-    },
-    "REPORT_NOT_FOUND": {
-        "error": 812,
-        "message": "report not found"
-    }
+  "0x": "no response or bad input",
+  "buy": {
+    "0": "market doesn't exist",
+    "-1": "amount/price bad",
+    "-2": "oracle-only branch",
+    "-4": "not enough money",
+    "-5": "bid price exceeds best ask",
+    "21": "trade already exists"
+  },
+  "buyCompleteSets": {
+    "0": "market not found",
+    "-1": "oracle-only branch",
+    "-3": "not enough cash"
+  },
+  "cashFaucet": {
+    "-1": "Hey, you're not broke!"
+  },
+  "claimProceeds": {
+    "0": "reporting not done",
+    "-1": "trader doesn't exist",
+    "-8": "invalid branch"
+  },
+  "closeMarket": {
+    "0": "fail/trading not over yet/event not expired or closed already",
+    "-1": "Market has no cash anyway / already closed",
+    "-2": "0 outcome / not reported on yet",
+    "-3": "not final round 2 event",
+    "-5": "Event forked and not final yet",
+    "-6": "bonded pushed forward market not ready to be resolved",
+    "-7": "event not reportable >.99",
+    "-8": "market isn't in branch"
+  },
+  "collectFees": {
+    "-1": "rep redistribution/rewards/penalizations in consensus not done yet"
+  },
+  "createEvent": {
+    "-1": "we're either already past that date, branch doesn't exist, or description is bad",
+    "0": "not enough money to pay fees or event already exists",
+    "-2": "max value < min value",
+    "-9": "would expire during non-reporting fork period"
+  },
+  "createSingleEventMarket": {
+    "0": "not enough money to pay fees or event already exists",
+    "-1": "we're either already past that date, branch doesn't exist, or description is bad, or bad input or parent doesn't exist",
+    "-2": "max value < min value",
+    "-3": "too many outcomes",
+    "-4": "not enough money",
+    "-5": "fee too low",
+    "-6": "duplicate events",
+    "-7": "event already expired",
+    "-8": "market already exists",
+    "-9": "would expire during non-reporting fork period"
+  },
+  "createMarket": {
+    "-1": "bad input or parent doesn't exist",
+    "-2": "too many events",
+    "-3": "too many outcomes",
+    "-4": "not enough money",
+    "-5": "fee too low",
+    "-6": "duplicate events",
+    "-7": "event already expired",
+    "-8": "market already exists",
+    "-9": "would expire during non-reporting fork period"
+  },
+  "createSubbranch": {
+    "-1": "bad input or parent doesn't exist",
+    "-2": "no money for creation fee or branch already exists"
+  },
+  "penalizationCatchup": {
+    "-1": "not in first half of reporting period",
+    "-2": "doesn't need to be penalized/caught up",
+    "-3": "user isn't behind or reported in the last period (and should thus use the penalization functions in consensus.se)"
+  },
+  "penalizeOnForkedEvent": {
+    "-2": "already past first half of new period and needed to penalize before then",
+    "-4": "fork event isn't resolved yet",
+    "-5": "already done for all events in this period"
+  },
+  "penalizeRoundTwoWrong": {
+    "0": "event is a fork event",
+    "-1": "need to penalize in round 2 penalize function",
+    "-2": "already past first half of new period and needed to penalize before then",
+    "-4": "in fork period only thing that rbcr is done on is the round 2 event in the original branch via round 2 penalize",
+    "-5": "already done for all events in this period",
+    "-6": "forked events should be penalized using the fork penalization function"
+  },
+  "penalizeWrong": {
+    "0": "event is a fork event",
+    "-1": "need to penalize in round 2 penalize function",
+    "-2": "already past first half of new period and needed to penalize before then",
+    "-4": "in fork period only thing that rbcr is done on is the round 2 event in the original branch via round 2 penalize",
+    "-6": "forked events should be penalized using the fork penalization function",
+    "-7": "no outcome"
+  },
+  "proveReporterDidntReportEnough": {
+    "-1": "already done",
+    "-2": "not in right part of period"
+  },
+  "pushMarketForward": {
+    "-1": "fork period cannot be the current or previous period",
+    "-2": "market is already closed or pushed forward",
+    "-3": "not enough cash to post early resolution bond",
+    "-4": "early resolution already attempted or outcome already exists"
+  },
+  "sell": {
+    "0": "market doesn't exist",
+    "-1": "amount/price bad",
+    "-2": "oracle only branch",
+    "-3": "bad outcome to trade",
+    "-4": "not enough shares",
+    "-5": "best bid exceeds ask price",
+    "10": "insufficient balance",
+    "21": "trade already exists"
+  },
+  "sellCompleteSets": {
+    "-1": "oracle-only branch",
+    "-2": "not a participant in this market",
+    "-3": "not enough shares"
+  },
+  "sendReputation": {
+    "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
+    "-2": "Receiving address doesn't exist"
+  },
+  "shortAsk": {
+    "0": "market doesn't exist",
+    "-1": "amount/price bad",
+    "-2": "oracle only branch",
+    "-3": "bad outcome to trade",
+    "-4": "not enough shares",
+    "-5": "best bid exceeds ask price",
+    "10": "insufficient balance",
+    "21": "trade already exists"
+  },
+  "short_sell": {
+    "-1": "trade doesn't exist",
+    "-2": "invalid trade hash/commitment",
+    "-3": "must be a bid, not an ask",
+    "-4": "market is already resolved",
+    "-5": "can't pickup your own trade",
+    "-6": "can't trade on oracle only branch",
+    "-7": "not a large enough trade",
+    "10": "insufficient balance",
+    "22": "trade in same block prohibited"
+  },
+  "slashRep": {
+    "0": "not a valid claim",
+    "-2": "reporter doesn't exist"
+  },
+  "submitReportHash": {
+    "-1": "invalid event",
+    "-3": "not eligible to report on this event"
+  },
+  "submitReport": {
+    "0": "reporter doesn't exist or has <1 rep",
+    "-1": "has already reported",
+    "-2": "not in second half of period [reveal part]",
+    "-3": "hash doesn't match",
+    "-4": "bad report",
+    "-5": "invalid event",
+    "-6": "already resolved",
+    "-7": "<48 hr left in period, too late to report, able to put up readj. bonds though",
+    "-8": "fees couldn't be collected",
+    "-9": "need to pay not reporting bond"
+  },
+  "trade": {
+    "-1": "oracle only branch",
+    "-2": "bad trade hash",
+    "-3": "trader doesn't exist / own shares in this market",
+    "-4": "must trade at least 0.00000001 in value",
+    "-5": "can't pick up your own trade",
+    "10": "insufficient balance",
+    "22": "trade in same block prohibited"
+  },
+  "updateTradingFee": {
+    "-1": "invalid trading fee: either fee is below the minimum trading fee or you are trying to raise the trading fee (trading fees can be lowered, but not raised)",
+    "-4": "sender's address does not match the market creator's address"
+  },
+  "GAS_LIMIT_EXCEEDED": {
+    "error": 40,
+    "message": "trade exceeds the current block gas limit"
+  },
+  "WRONG_NUMBER_OF_OUTCOMES": {
+    "error": 41,
+    "message": "the number of initial fair prices does not match this market's number of outcomes"
+  },
+  "INSUFFICIENT_LIQUIDITY": {
+    "error": 42,
+    "message": "insufficient liquidity to generate order book"
+  },
+  "INITIAL_PRICE_OUT_OF_BOUNDS": {
+    "error": 43,
+    "message": "one or more initial fair prices are out-of-bounds"
+  },
+  "PRICE_WIDTH_OUT_OF_BOUNDS": {
+    "error": 44,
+    "message": "price width is too large for one or more initial fair prices"
+  },
+  "DB_DELETE_FAILED": {
+    "error": 97,
+    "message": "database delete failed"
+  },
+  "DB_WRITE_FAILED": {
+    "error": 98,
+    "message": "database write failed"
+  },
+  "DB_READ_FAILED": {
+    "error": 99,
+    "message": "database read failed"
+  },
+  "INVALID_CONTRACT_PARAMETER": {
+    "error": 400,
+    "message": "cannot send object parameter to contract"
+  },
+  "NOT_LOGGED_IN": {
+    "error": 401,
+    "message": "not logged in"
+  },
+  "PARAMETER_NUMBER_ERROR": {
+    "error": 402,
+    "message": "wrong number of parameters"
+  },
+  "BAD_CREDENTIALS": {
+    "error": 403,
+    "message": "incorrect handle or password"
+  },
+  "TRANSACTION_NOT_FOUND": {
+    "error": 404,
+    "message": "transaction not found"
+  },
+  "PASSWORD_TOO_SHORT": {
+    "error": 405,
+    "message": "password must be at least 6 characters long"
+  },
+  "NULL_CALL_RETURN": {
+    "error": 406,
+    "message": "expected contract call to return value, received null"
+  },
+  "NULL_RESPONSE": {
+    "error": 407,
+    "message": "expected transaction hash from Ethereum node, received null"
+  },
+  "NO_RESPONSE": {
+    "error": 408,
+    "message": "no response"
+  },
+  "INVALID_RESPONSE": {
+    "error": 409,
+    "message": "could not parse response from Ethereum node"
+  },
+  "LOCAL_NODE_FAILURE": {
+    "error": 410,
+    "message": "RPC request to local Ethereum node failed"
+  },
+  "HOSTED_NODE_FAILURE": {
+    "error": 411,
+    "message": "RPC request to hosted nodes failed"
+  },
+  "TRANSACTION_INVALID": {
+    "error": 412,
+    "message": "transaction validation failed"
+  },
+  "TRANSACTION_RETRY_MAX_EXCEEDED": {
+    "error": 413,
+    "message": "maximum number of transaction retry attempts exceeded"
+  },
+  "HANDLE_TAKEN": {
+    "error": 422,
+    "message": "handle already taken"
+  },
+  "FILTER_NOT_CREATED": {
+    "error": 450,
+    "message": "filter could not be created"
+  },
+  "TRANSACTION_FAILED": {
+    "error": 500,
+    "message": "transaction failed"
+  },
+  "TRANSACTION_NOT_CONFIRMED": {
+    "error": 501,
+    "message": "polled network but could not confirm transaction"
+  },
+  "DUPLICATE_TRANSACTION": {
+    "error": 502,
+    "message": "duplicate transaction"
+  },
+  "RAW_TRANSACTION_ERROR": {
+    "error": 503,
+    "message": "error sending client-side transaction"
+  },
+  "RLP_ENCODING_ERROR": {
+    "error": 504,
+    "message": "RLP encoding error"
+  },
+  "TRANSACTION_RECEIPT_NOT_FOUND": {
+    "error": 505,
+    "message": "transaction receipt not found"
+  },
+  "RPC_TIMEOUT": {
+    "error": 599,
+    "message": "timed out while waiting for Ethereum network response"
+  },
+  "LOOPBACK_NOT_FOUND": {
+    "error": 650,
+    "message": "loopback interface required for synchronous local commands"
+  },
+  "ETHEREUM_NOT_FOUND": {
+    "error": 651,
+    "message": "no active ethereum node(s) found"
+  },
+  "CHECK_ORDER_BOOK_FAILED": {
+    "error": 710,
+    "message": "could not check order book using current prices"
+  },
+  "TRADE_FAILED": {
+    "error": 711,
+    "message": "trade failed, instead of success value (1), received "
+  },
+  "TRADE_NOT_FOUND": {
+    "error": 712,
+    "message": "trade not found"
+  },
+  "REPORT_NOT_FOUND": {
+    "error": 812,
+    "message": "report not found"
+  }
 }
 
 },{}],4:[function(require,module,exports){
@@ -6768,22 +6730,22 @@ var clone = require("clone");
 
 module.exports = function (network, contracts) {
 
-    contracts = contracts || require("./contracts")[network || "2"];
-    var api = clone(require("./api"));
+  contracts = contracts || require("./contracts")[network || "3"];
+  var api = clone(require("./api"));
 
-    for (var contract in api.functions) {
-        if (!api.functions.hasOwnProperty(contract)) continue;
-        for (var method in api.functions[contract]) {
-            if (!api.functions[contract].hasOwnProperty(method)) continue;
-            api.functions[contract][method].to = contracts[contract];
-        }
+  for (var contract in api.functions) {
+    if (!api.functions.hasOwnProperty(contract)) continue;
+    for (var method in api.functions[contract]) {
+      if (!api.functions[contract].hasOwnProperty(method)) continue;
+      api.functions[contract][method].to = contracts[contract];
     }
-    for (var event in api.events) {
-        if (!api.events.hasOwnProperty(event)) continue;
-        api.events[event].address = contracts[api.events[event].contract];
-    }
+  }
+  for (var event in api.events) {
+    if (!api.events.hasOwnProperty(event)) continue;
+    api.events[event].address = contracts[api.events[event].contract];
+  }
 
-    return api;
+  return api;
 };
 
 },{"./api":1,"./contracts":2,"clone":5}],7:[function(require,module,exports){
@@ -6804,12 +6766,12 @@ global.ethrpc = ethrpc;
 var NODE_JS = (typeof module !== "undefined") && process && !process.browser;
 var net, request, syncRequest;
 if (NODE_JS) {
-    net = require("net");
-    request = require("request");
-    syncRequest = require("sync-request");
-    console.debug = console.log;
+  net = require("net");
+  request = require("request");
+  syncRequest = require("sync-request");
+  console.debug = console.log;
 } else {
-    request = require("browser-request");
+  request = require("browser-request");
 }
 var async = require("async");
 var clone = require("clone");
@@ -6820,25 +6782,25 @@ var errors = require("augur-contracts").errors;
 var abi = require("augur-abi");
 
 BigNumber.config({
-    MODULO_MODE: BigNumber.EUCLID,
-    ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN
+  MODULO_MODE: BigNumber.EUCLID,
+  ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN
 });
 
 function RPCError(err) {
-    this.name = "RPCError";
-    this.message = JSON.stringify(err);
+  this.name = "RPCError";
+  this.message = JSON.stringify(err);
 }
 
 RPCError.prototype = Error.prototype;
 
 function isFunction(f) {
-    return Object.prototype.toString.call(f) === "[object Function]";
+  return Object.prototype.toString.call(f) === "[object Function]";
 }
 
 function wait(delay) {
-    var until = new Date().getTime() + delay;
-    while (new Date().getTime() < until) {}
-    return;
+  var until = new Date().getTime() + delay;
+  while (new Date().getTime() < until) {}
+  return;
 }
 
 var HOSTED_NODES = ["https://eth3.augur.net"];
@@ -6848,1883 +6810,1883 @@ var noop = function () {};
 
 module.exports = {
 
-    debug: {
-        tx: false,
-        broadcast: false,
-        nonce: false,
-        sync: true
-    },
+  debug: {
+    tx: false,
+    broadcast: false,
+    nonce: false,
+    sync: true
+  },
 
-    // if set to true, dropped transactions are automatically resubmitted
-    retryDroppedTxs: true,
+  // if set to true, dropped transactions are automatically resubmitted
+  retryDroppedTxs: true,
 
-    // geth IPC endpoint (Node-only)
-    ipcpath: null,
-    socket: null,
+  // geth IPC endpoint (Node-only)
+  ipcpath: null,
+  socket: null,
 
-    // geth websocket endpoint
-    wsUrl: process.env.GETH_WEBSOCKET_URL || HOSTED_WEBSOCKET,
+  // geth websocket endpoint
+  wsUrl: process.env.GETH_WEBSOCKET_URL || HOSTED_WEBSOCKET,
 
-    // active websocket (if connected)
-    websocket: null,
+  // active websocket (if connected)
+  websocket: null,
 
-    // local ethereum node address
-    localnode: "http://127.0.0.1:8545",
+  // local ethereum node address
+  localnode: "http://127.0.0.1:8545",
 
-    // reconnect websocket automatically
-    AUTO_RECONNECT: true,
+  // reconnect websocket automatically
+  AUTO_RECONNECT: true,
 
-    // Number of required confirmations for transact sequence
-    REQUIRED_CONFIRMATIONS: 0,
+  // Number of required confirmations for transact sequence
+  REQUIRED_CONFIRMATIONS: 0,
 
-    // Maximum number of retry attempts for dropped transactions
-    TX_RETRY_MAX: 5,
+  // Maximum number of retry attempts for dropped transactions
+  TX_RETRY_MAX: 5,
 
-    // Maximum number of transaction verification attempts
-    TX_POLL_MAX: 1000,
+  // Maximum number of transaction verification attempts
+  TX_POLL_MAX: 1000,
 
-    // Transaction polling interval
-    TX_POLL_INTERVAL: 10000,
+  // Transaction polling interval
+  TX_POLL_INTERVAL: 10000,
 
-    // Default timeout for asynchronous POST
-    POST_TIMEOUT: 30000,
+  // Default timeout for asynchronous POST
+  POST_TIMEOUT: 30000,
 
-    DEFAULT_GAS: "0x2fd618",
+  DEFAULT_GAS: "0x2fd618",
 
-    ETHER: new BigNumber(10, 10).toPower(18),
+  ETHER: new BigNumber(10, 10).toPower(18),
 
-    Error: RPCError,
+  Error: RPCError,
 
-    errors: errors,
+  errors: errors,
 
-    DEFAULT_HOSTED_NODES: HOSTED_NODES.slice(),
+  DEFAULT_HOSTED_NODES: HOSTED_NODES.slice(),
 
-    DEFAULT_HOSTED_WEBSOCKET: HOSTED_WEBSOCKET,
+  DEFAULT_HOSTED_WEBSOCKET: HOSTED_WEBSOCKET,
 
-    nodes: {
-        hosted: HOSTED_NODES.slice(),
-        local: null
-    },
+  nodes: {
+    hosted: HOSTED_NODES.slice(),
+    local: null
+  },
 
-    requests: 1,
+  requests: 1,
 
-    // Hook for transaction callbacks
-    txRelay: null,
+  // Hook for transaction callbacks
+  txRelay: null,
 
-    // Do not call txRelay for these methods
-    excludedFromTxRelay: {},
+  // Do not call txRelay for these methods
+  excludedFromTxRelay: {},
 
-    txs: {},
+  txs: {},
 
-    rawTxs: {},
+  rawTxs: {},
 
-    rawTxMaxNonce: -1,
+  rawTxMaxNonce: -1,
 
-    notifications: {},
+  notifications: {},
 
-    gasPrice: 20000000000,
+  gasPrice: 20000000000,
 
-    registerTxRelay: function (txRelay) {
-        this.txRelay = txRelay;
-    },
+  registerTxRelay: function (txRelay) {
+    this.txRelay = txRelay;
+  },
 
-    unregisterTxRelay: function () {
-        this.txRelay = null;
-    },
+  unregisterTxRelay: function () {
+    this.txRelay = null;
+  },
 
-    wrapTxRelayCallback: function (status, payload, callback) {
-        var self = this;
-        return function (response) {
-            if (isFunction(callback)) callback(response);
-            if (payload.method && !self.excludedFromTxRelay[payload.method]) {
-                self.txRelay({
-                    type: payload.label || payload.method,
-                    status: status,
-                    data: payload,
-                    response: response
-                });
-            }
-        };
-    },
+  wrapTxRelayCallback: function (status, payload, callback) {
+    var self = this;
+    return function (response) {
+      if (isFunction(callback)) callback(response);
+      if (payload.method && !self.excludedFromTxRelay[payload.method]) {
+        self.txRelay({
+          type: payload.label || payload.method,
+          status: status,
+          data: payload,
+          response: response
+        });
+      }
+    };
+  },
 
-    excludeFromTxRelay: function (method) {
-        if (method) {
-            if (method.constructor === Array && method.length) {
-                for (var i = 0, numMethods = method.length; i < numMethods; ++i) {
-                    this.excludedFromTxRelay[method[i]] = true;
-                }
-            } else {
-                this.excludedFromTxRelay[method] = true;
-            }
+  excludeFromTxRelay: function (method) {
+    if (method) {
+      if (method.constructor === Array && method.length) {
+        for (var i = 0, numMethods = method.length; i < numMethods; ++i) {
+          this.excludedFromTxRelay[method[i]] = true;
         }
-    },
+      } else {
+        this.excludedFromTxRelay[method] = true;
+      }
+    }
+  },
 
-    includeInTxRelay: function (method) {
-        if (method) {
-            if (method.constructor === Array && method.length) {
-                for (var i = 0, numMethods = method.length; i < numMethods; ++i) {
-                    this.excludedFromTxRelay[method[i]] = false;
-                }
-            } else {
-                this.excludedFromTxRelay[method] = false;
-            }
+  includeInTxRelay: function (method) {
+    if (method) {
+      if (method.constructor === Array && method.length) {
+        for (var i = 0, numMethods = method.length; i < numMethods; ++i) {
+          this.excludedFromTxRelay[method[i]] = false;
         }
-    },
+      } else {
+        this.excludedFromTxRelay[method] = false;
+      }
+    }
+  },
 
-    unmarshal: function (string, returns, stride, init) {
-        var elements, array, position;
-        if (string && string.length >= 66) {
-            stride = stride || 64;
-            elements = Math.ceil((string.length - 2) / stride);
-            array = new Array(elements);
-            position = init || 2;
-            for (var i = 0; i < elements; ++i) {
-                array[i] = abi.prefix_hex(
+  unmarshal: function (string, returns, stride, init) {
+    var elements, array, position;
+    if (string && string.length >= 66) {
+      stride = stride || 64;
+      elements = Math.ceil((string.length - 2) / stride);
+      array = new Array(elements);
+      position = init || 2;
+      for (var i = 0; i < elements; ++i) {
+        array[i] = abi.prefix_hex(
                     string.slice(position, position + stride)
                 );
-                position += stride;
-            }
-            if (array.length) {
-                if (parseInt(array[1], 16) === array.length - 2 ||
+        position += stride;
+      }
+      if (array.length) {
+        if (parseInt(array[1], 16) === array.length - 2 ||
                     parseInt(array[1], 16) / 32 === array.length - 2) {
-                    array.splice(0, 2);
-                }
-            }
-            for (i = 0; i < array.length; ++i) {
-                if (returns === "number[]") {
-                    array[i] = abi.string(array[i]);
-                } else if (returns === "unfix[]") {
-                    array[i] = abi.unfix(array[i], "string");
-                }
-            }
-            return array;
-        } else {
-            return string;
+          array.splice(0, 2);
         }
-    },
+      }
+      for (i = 0; i < array.length; ++i) {
+        if (returns === "number[]") {
+          array[i] = abi.string(array[i]);
+        } else if (returns === "unfix[]") {
+          array[i] = abi.unfix(array[i], "string");
+        }
+      }
+      return array;
+    } else {
+      return string;
+    }
+  },
 
-    applyReturns: function (returns, result) {
-        var res;
-        if (!returns) return result;
-        if (result && result !== "0x") {
-            if (result.error) return result;
-            returns = returns.toLowerCase();
-            res = clone(result);
-            if (returns && returns.slice(-2) === "[]") {
-                res = this.unmarshal(res, returns);
-                if (returns === "hash[]") res = abi.hex(res);
-            } else if (returns === "string") {
-                res = abi.raw_decode_hex(res);
-            } else if (returns === "number") {
-                res = abi.string(res, true);
-            } else if (returns === "int") {
-                res = abi.number(res, true);
-            } else if (returns === "bignumber") {
-                res = abi.bignum(res, null, true);
-            } else if (returns === "unfix") {
-                res = abi.unfix(res, "string");
-            } else if (returns === "null") {
-                res = null;
-            } else if (returns === "address" || returns === "address[]") {
-                res = abi.format_address(res);
-            }
-        } else {
-            res = result;
-        }
-        return res;
-    },
+  applyReturns: function (returns, result) {
+    var res;
+    if (!returns) return result;
+    if (result && result !== "0x") {
+      if (result.error) return result;
+      returns = returns.toLowerCase();
+      res = clone(result);
+      if (returns && returns.slice(-2) === "[]") {
+        res = this.unmarshal(res, returns);
+        if (returns === "hash[]") res = abi.hex(res);
+      } else if (returns === "string") {
+        res = abi.raw_decode_hex(res);
+      } else if (returns === "number") {
+        res = abi.string(res, true);
+      } else if (returns === "int") {
+        res = abi.number(res, true);
+      } else if (returns === "bignumber") {
+        res = abi.bignum(res, null, true);
+      } else if (returns === "unfix") {
+        res = abi.unfix(res, "string");
+      } else if (returns === "null") {
+        res = null;
+      } else if (returns === "address" || returns === "address[]") {
+        res = abi.format_address(res);
+      }
+    } else {
+      res = result;
+    }
+    return res;
+  },
 
-    parse: function (origResponse, returns, callback) {
-        var results, len, err;
-        var response = clone(origResponse);
-        if ((this.debug.tx && (response && response.error)) || this.debug.broadcast) {
-            console.debug("[ethrpc] response:", response);
+  parse: function (origResponse, returns, callback) {
+    var results, len, err;
+    var response = clone(origResponse);
+    if ((this.debug.tx && (response && response.error)) || this.debug.broadcast) {
+      console.debug("[ethrpc] response:", response);
+    }
+    if (response && typeof response === "string") {
+      try {
+        response = JSON.parse(response);
+      } catch (e) {
+        err = e;
+        if (e && e.name === "SyntaxError") {
+          err = errors.INVALID_RESPONSE;
         }
-        if (response && typeof response === "string") {
-            try {
-                response = JSON.parse(response);
-            } catch (e) {
-                err = e;
-                if (e && e.name === "SyntaxError") {
-                    err = errors.INVALID_RESPONSE;
-                }
-                if (isFunction(callback)) return callback(err);
-                throw new this.Error(err);
+        if (isFunction(callback)) return callback(err);
+        throw new this.Error(err);
+      }
+    }
+    if (response !== undefined && typeof response === "object" && response !== null) {
+      if (response.error) {
+        response = {
+          error: response.error.code,
+          message: response.error.message
+        };
+        if (!isFunction(callback)) return response;
+        return callback(response);
+      } else if (response.result !== undefined) {
+        if (!isFunction(callback)) return response.result;
+        return callback(response.result);
+      } else if (response.constructor === Array && response.length) {
+        len = response.length;
+        results = new Array(len);
+        for (var i = 0; i < len; ++i) {
+          results[i] = response[i].result;
+          if (response.error || (response[i] && response[i].error)) {
+            if (this.debug.broadcast) {
+              if (isFunction(callback)) return callback(response.error);
+              throw new this.Error(response.error);
             }
+          }
         }
-        if (response !== undefined && typeof response === "object" && response !== null) {
-            if (response.error) {
-                response = {
-                    error: response.error.code,
-                    message: response.error.message
-                };
-                if (!isFunction(callback)) return response;
-                return callback(response);
-            } else if (response.result !== undefined) {
-                if (!isFunction(callback)) return response.result;
-                return callback(response.result);
-            } else if (response.constructor === Array && response.length) {
-                len = response.length;
-                results = new Array(len);
-                for (var i = 0; i < len; ++i) {
-                    results[i] = response[i].result;
-                    if (response.error || (response[i] && response[i].error)) {
-                        if (this.debug.broadcast) {
-                            if (isFunction(callback)) return callback(response.error);
-                            throw new this.Error(response.error);
-                        }
-                    }
-                }
-                if (!isFunction(callback)) return results;
-                return callback(results);
-            }
+        if (!isFunction(callback)) return results;
+        return callback(results);
+      }
 
             // no result or error field
-            err = errors.NO_RESPONSE;
-            err.bubble = response;
-            if (isFunction(callback)) return callback(err);
-            throw new this.Error(err);
+      err = errors.NO_RESPONSE;
+      err.bubble = response;
+      if (isFunction(callback)) return callback(err);
+      throw new this.Error(err);
+    }
+  },
+
+  strip: function (tx) {
+    var returns;
+    if (tx.method === "eth_coinbase") return "address";
+    if (tx.params !== undefined && tx.params.length && tx.params[0]) {
+      if (tx.params[0].returns) {
+        returns = tx.params[0].returns;
+        delete tx.params[0].returns;
+      }
+      if (tx.params[0].invocation) {
+        delete tx.params[0].invocation;
+      }
+    }
+    return returns;
+  },
+
+  subscriptions: {},
+
+  unregisterSubscriptionCallback: function (id) {
+    delete this.subscriptions[id];
+  },
+
+  registerSubscriptionCallback: function (id, callback) {
+    this.subscriptions[id] = callback;
+  },
+
+  rpcRequests: {ipc: {}, ws: {}},
+
+  // initial value 0
+  // if connection fails: -1
+  // if connection succeeds: 1
+  rpcStatus: {ipc: 0, ws: 0},
+
+  messageAction: function (type, msg) {
+    if (msg.constructor === Array) {
+      for (var i = 0, n = msg.length; i < n; ++i) {
+        this.messageAction(type, msg[i]);
+      }
+    } else {
+      if (msg.id !== undefined && msg.id !== null) {
+        if (this.debug.broadcast) {
+          console.debug("[" + type + "] matched message ID", msg.id, "to", this.rpcRequests[type]);
         }
-    },
-
-    strip: function (tx) {
-        var returns;
-        if (tx.method === "eth_coinbase") return "address";
-        if (tx.params !== undefined && tx.params.length && tx.params[0]) {
-            if (tx.params[0].returns) {
-                returns = tx.params[0].returns;
-                delete tx.params[0].returns;
-            }
-            if (tx.params[0].invocation) {
-                delete tx.params[0].invocation;
-            }
-        }
-        return returns;
-    },
-
-    subscriptions: {},
-
-    unregisterSubscriptionCallback: function (id) {
-        delete this.subscriptions[id];
-    },
-
-    registerSubscriptionCallback: function (id, callback) {
-        this.subscriptions[id] = callback;
-    },
-
-    rpcRequests: {ipc: {}, ws: {}},
-
-    // initial value 0
-    // if connection fails: -1
-    // if connection succeeds: 1
-    rpcStatus: {ipc: 0, ws: 0},
-
-    messageAction: function (type, msg) {
-        if (msg.constructor === Array) {
-            for (var i = 0, n = msg.length; i < n; ++i) {
-                this.messageAction(type, msg[i]);
-            }
-        } else {
-            if (msg.id !== undefined && msg.id !== null) {
-                if (this.debug.broadcast) {
-                    console.debug("[" + type + "] matched message ID", msg.id, "to", this.rpcRequests[type]);
-                }
-                var req = this.rpcRequests[type][msg.id];
-                delete this.rpcRequests[type][msg.id];
-                return this.parse(msg, req.returns, req.callback);
-            } else if (msg.method === "eth_subscription" && msg.params &&
+        var req = this.rpcRequests[type][msg.id];
+        delete this.rpcRequests[type][msg.id];
+        return this.parse(msg, req.returns, req.callback);
+      } else if (msg.method === "eth_subscription" && msg.params &&
                 msg.params.subscription && msg.params.result &&
                 this.subscriptions[msg.params.subscription]) {
-                return this.subscriptions[msg.params.subscription](msg.params.result);
-            } else {
-                if (this.debug.broadcast) {
-                    console.warn("[" + type + "] Unknown message received:", msg.data || msg);
-                }
-            }
-        }
-    },
-
-    ipcConnect: function (callback) {
-        var self = this;
-        var received = "";
-        this.socket = new net.Socket();
-        this.socket.setEncoding("utf8");
-        this.socket.on("data", function (data) {
-            var parsed;
-            try {
-                parsed = JSON.parse(data);
-            } catch (exc) {
-                if (self.debug.broadcast) console.debug(exc);
-                received += data;
-                try {
-                    parsed = JSON.parse(received);
-                } catch (ex) {
-                    if (self.debug.broadcast) console.debug(ex);
-                }
-            }
-            if (parsed) {
-                received = "";
-                return self.messageAction("ipc", parsed);
-            }
-        });
-        this.socket.on("end", function () { received = ""; });
-        this.socket.on("error", function (err) {
-            self.rpcStatus.ipc = -1;
-            self.socket.destroy();
-            received = "";
-            if (self.debug.broadcast) {
-                console.error("[ethrpc] IPC socket error", self.ipcpath, self.rpcStatus.ipc, err);
-            }
-        });
-        this.socket.on("close", function (err) {
-            self.rpcStatus.ipc = (err) ? -1 : 0;
-            received = "";
-            if (self.debug.broadcast) {
-                console.warn("[ethrpc] IPC socket closed", self.ipcpath, self.rpcStatus.ipc);
-            }
-        });
-        this.socket.connect({path: this.ipcpath}, function () {
-            self.rpcStatus.ipc = 1;
-            self.resetNewBlockSubscription(callback);
-        });
-    },
-
-    wsConnect: function (callback) {
-        var self = this;
-        var calledCallback = false;
-        if (!this.wsUrl) {
-            this.rpcStatus.ws = -1;
-            return callback(false);
-        }
-        this.websocket = new W3CWebSocket(this.wsUrl);
-        this.websocket.onerror = function () {
-            if (self.debug.broadcast) {
-                console.error("[ethrpc] WebSocket error", self.wsUrl, self.rpcStatus.ws);
-            }
-            self.rpcStatus.ws = -1;
-            self.wsUrl = null;
-        };
-        this.websocket.onclose = function () {
-            if (self.debug.broadcast) {
-                console.warn("[ethrpc] WebSocket closed", self.wsUrl, self.rpcStatus.ws);
-            }
-            var status = self.rpcStatus.ws;
-            if (status !== -1) self.rpcStatus.ws = 0;
-            if (status === 1 && self.AUTO_RECONNECT) {
-                if (self.debug.broadcast) {
-                    console.debug("[ethrpc] WebSocket reconnecting...");
-                }
-                self.wsConnect(function (connected) {
-                    if (self.debug.broadcast) {
-                        console.debug("[ethrpc] WebSocket reconnected:", connected);
-                    }
-                });
-            }
-            if (!calledCallback) callback(false);
-        };
-        this.websocket.onmessage = function (msg) {
-            if (msg && msg.data && typeof msg.data === "string") {
-                return self.messageAction("ws", JSON.parse(msg.data));
-            }
-        };
-        this.websocket.onopen = function () {
-            self.rpcStatus.ws = 1;
-            calledCallback = true;
-            self.resetNewBlockSubscription(callback);
-            if (isFunction(self.resetCustomSubscription)) {
-                self.resetCustomSubscription();
-            }
-        };
-    },
-
-    resetCustomSubscription: null,
-
-    subscribeToNewBlockHeaders: function (callback) {
-        var self = this;
-        this.subscribeNewHeads(function (filterID) {
-            if (self.debug.broadcast) console.log("subscribed:", filterID);
-            if (!filterID || filterID.error) {
-                console.error("error subscribing to new blocks", filterID);
-                return callback(false);
-            }
-            self.blockFilter.id = filterID;
-            self.registerSubscriptionCallback(filterID, self.onNewBlock.bind(self));
-            if (!self.block) return callback(true);
-            self.blockNumber(function (blockNumber) {
-                var blockGap = parseInt(blockNumber, 16) - self.block.number;
-                if (!blockGap) return callback(true);
-                if (self.debug.tx) console.debug("Block gap", blockGap, "found, catching up...");
-                for (var i = 1; i <= blockGap; ++i) {
-                    self.onNewBlock({number: "0x" + (self.block.number + i).toString(16)});
-                }
-                callback(true);
-            });
-        });
-    },
-
-    resetNewBlockSubscription: function (callback) {
-        var self = this;
-        if (this.blockFilter.id === null) {
-            return this.subscribeToNewBlockHeaders(callback);
-        }
-        this.unregisterSubscriptionCallback(this.blockFilter.id);
-        this.unsubscribe(this.blockFilter.id, function () {
-            self.blockFilter.id = null;
-            self.subscribeToNewBlockHeaders(callback);
-        });
-    },
-
-    send: function (type, command, returns, callback) {
-        var self = this;
+        return this.subscriptions[msg.params.subscription](msg.params.result);
+      } else {
         if (this.debug.broadcast) {
-            if (type === "ws") {
-                console.debug("[ethrpc] WebSocket request to", this.wsUrl, "\n" + JSON.stringify(command));
-            } else if (type === "ipc") {
-                console.debug("[ethrpc] IPC request to", this.ipcpath, "\n" + JSON.stringify(command));
-            }
+          console.warn("[" + type + "] Unknown message received:", msg.data || msg);
         }
-        if (command.constructor === Array) {
-            var commandList = [];
-            for (var i = 0, n = command.length; i < n; ++i) {
-                commandList.push({command: command[i], returns: returns[i], callback: callback[i]});
-            }
-            async.each(commandList, function (thisCommand, nextCommand) {
-                if (!thisCommand.returns) {
-                    self.rpcRequests[type][thisCommand.command.id] = {
-                        returns: thisCommand.returns,
-                        callback: thisCommand.callback
-                    };
-                } else {
-                    self.rpcRequests[type][thisCommand.command.id] = {
-                        returns: thisCommand.returns,
-                        callback: function (res) {
-                            thisCommand.callback(self.applyReturns(thisCommand.returns, res));
-                        }
-                    };
-                }
-                nextCommand();
-            }, function (err) {
-                if (err) return console.error("[" + type + "] send failed:", err);
-                self.rpcRequests[type][command.id] = {returns: returns, callback: callback};
-                if (type === "ws") {
-                    if (self.websocket.readyState === self.websocket.OPEN) {
-                        self.websocket.send(JSON.stringify(command));
-                    }
-                } else if (type === "ipc") {
-                    if (self.rpcStatus.ipc === 1) {
-                        self.socket.write(JSON.stringify(command));
-                    }
-                }
-            });
-        } else {
-            this.rpcRequests[type][command.id] = {returns: returns, callback: callback};
-            if (type === "ws") {
-                if (this.websocket.readyState === this.websocket.OPEN) {
-                    this.websocket.send(JSON.stringify(command));
-                }
-            } else if (type === "ipc") {
-                if (this.rpcStatus.ipc === 1) {
-                    this.socket.write(JSON.stringify(command));
-                }
-            }
-        }
-    },
+      }
+    }
+  },
 
-    postSync: function (rpcUrl, command, returns) {
-        var timeout, req = null;
-        if (command.timeout) {
-            timeout = command.timeout;
-            delete command.timeout;
-        } else {
-            timeout = this.POST_TIMEOUT;
+  ipcConnect: function (callback) {
+    var self = this;
+    var received = "";
+    this.socket = new net.Socket();
+    this.socket.setEncoding("utf8");
+    this.socket.on("data", function (data) {
+      var parsed;
+      try {
+        parsed = JSON.parse(data);
+      } catch (exc) {
+        if (self.debug.broadcast) console.debug(exc);
+        received += data;
+        try {
+          parsed = JSON.parse(received);
+        } catch (ex) {
+          if (self.debug.broadcast) console.debug(ex);
         }
-        if (this.debug.sync) {
-            console.warn("[ethrpc] Synchronous HTTP request to", rpcUrl + "\n" + JSON.stringify(command));
-        }
-        if (NODE_JS) {
-            req = syncRequest("POST", rpcUrl, {json: command, timeout: timeout});
-            var response = req.getBody().toString();
-            return this.parse(response, returns);
-        }
-        if (window.XMLHttpRequest) {
-            req = new window.XMLHttpRequest();
-        } else {
-            req = new window.ActiveXObject("Microsoft.XMLHTTP");
-        }
-        req.open("POST", rpcUrl, false);
-        req.setRequestHeader("Content-type", "application/json");
-        req.send(JSON.stringify(command));
-        return this.parse(req.responseText, returns);
-    },
+      }
+      if (parsed) {
+        received = "";
+        return self.messageAction("ipc", parsed);
+      }
+    });
+    this.socket.on("end", function () { received = ""; });
+    this.socket.on("error", function (err) {
+      self.rpcStatus.ipc = -1;
+      self.socket.destroy();
+      received = "";
+      if (self.debug.broadcast) {
+        console.error("[ethrpc] IPC socket error", self.ipcpath, self.rpcStatus.ipc, err);
+      }
+    });
+    this.socket.on("close", function (err) {
+      self.rpcStatus.ipc = (err) ? -1 : 0;
+      received = "";
+      if (self.debug.broadcast) {
+        console.warn("[ethrpc] IPC socket closed", self.ipcpath, self.rpcStatus.ipc);
+      }
+    });
+    this.socket.connect({path: this.ipcpath}, function () {
+      self.rpcStatus.ipc = 1;
+      self.resetNewBlockSubscription(callback);
+    });
+  },
 
-    post: function (rpcUrl, command, returns, callback) {
-        var timeout, self = this;
-        if (command.timeout) {
-            timeout = command.timeout;
-            delete command.timeout;
-        } else {
-            timeout = this.POST_TIMEOUT;
+  wsConnect: function (callback) {
+    var self = this;
+    var calledCallback = false;
+    if (!this.wsUrl) {
+      this.rpcStatus.ws = -1;
+      return callback(false);
+    }
+    this.websocket = new W3CWebSocket(this.wsUrl);
+    this.websocket.onerror = function () {
+      if (self.debug.broadcast) {
+        console.error("[ethrpc] WebSocket error", self.wsUrl, self.rpcStatus.ws);
+      }
+      self.rpcStatus.ws = -1;
+      self.wsUrl = null;
+    };
+    this.websocket.onclose = function () {
+      if (self.debug.broadcast) {
+        console.warn("[ethrpc] WebSocket closed", self.wsUrl, self.rpcStatus.ws);
+      }
+      var status = self.rpcStatus.ws;
+      if (status !== -1) self.rpcStatus.ws = 0;
+      if (status === 1 && self.AUTO_RECONNECT) {
+        if (self.debug.broadcast) {
+          console.debug("[ethrpc] WebSocket reconnecting...");
         }
-        if (this.debug.broadcast) {
-            console.debug("[ethrpc] Asynchronous HTTP request to", rpcUrl + "\n" + JSON.stringify(command));
-        }
-        request({
-            url: rpcUrl,
-            method: 'POST',
-            json: command,
-            timeout: timeout
-        }, function (err, response, body) {
-            var e;
-            if (err) {
-                self.primaryNode = null;
-                if (self.nodes.local) {
-                    e = errors.LOCAL_NODE_FAILURE;
-                    e.bubble = err;
-                    e.command = command;
-                    return callback(e);
-                }
-                console.warn("[ethrpc] asynchronous RPC timed out", rpcUrl, command);
-                e = errors.RPC_TIMEOUT;
-                e.bubble = err;
-                e.command = command;
-                callback(e);
-            } else if (response.statusCode === 200) {
-                self.parse(body, returns, callback);
-            }
+        self.wsConnect(function (connected) {
+          if (self.debug.broadcast) {
+            console.debug("[ethrpc] WebSocket reconnected:", connected);
+          }
         });
-    },
+      }
+      if (!calledCallback) callback(false);
+    };
+    this.websocket.onmessage = function (msg) {
+      if (msg && msg.data && typeof msg.data === "string") {
+        return self.messageAction("ws", JSON.parse(msg.data));
+      }
+    };
+    this.websocket.onopen = function () {
+      self.rpcStatus.ws = 1;
+      calledCallback = true;
+      self.resetNewBlockSubscription(callback);
+      if (isFunction(self.resetCustomSubscription)) {
+        self.resetCustomSubscription();
+      }
+    };
+  },
 
-    selectNodes: function () {
-        if (this.nodes.local) return [this.nodes.local];
-        return this.nodes.hosted.slice();
-    },
+  resetCustomSubscription: null,
+
+  subscribeToNewBlockHeaders: function (callback) {
+    var self = this;
+    this.subscribeNewHeads(function (filterID) {
+      if (self.debug.broadcast) console.log("subscribed:", filterID);
+      if (!filterID || filterID.error) {
+        console.error("error subscribing to new blocks", filterID);
+        return callback(false);
+      }
+      self.blockFilter.id = filterID;
+      self.registerSubscriptionCallback(filterID, self.onNewBlock.bind(self));
+      if (!self.block) return callback(true);
+      self.blockNumber(function (blockNumber) {
+        var blockGap = parseInt(blockNumber, 16) - self.block.number;
+        if (!blockGap) return callback(true);
+        if (self.debug.tx) console.debug("Block gap", blockGap, "found, catching up...");
+        for (var i = 1; i <= blockGap; ++i) {
+          self.onNewBlock({number: "0x" + (self.block.number + i).toString(16)});
+        }
+        callback(true);
+      });
+    });
+  },
+
+  resetNewBlockSubscription: function (callback) {
+    var self = this;
+    if (this.blockFilter.id === null) {
+      return this.subscribeToNewBlockHeaders(callback);
+    }
+    this.unregisterSubscriptionCallback(this.blockFilter.id);
+    this.unsubscribe(this.blockFilter.id, function () {
+      self.blockFilter.id = null;
+      self.subscribeToNewBlockHeaders(callback);
+    });
+  },
+
+  send: function (type, command, returns, callback) {
+    var self = this;
+    if (this.debug.broadcast) {
+      if (type === "ws") {
+        console.debug("[ethrpc] WebSocket request to", this.wsUrl, "\n" + JSON.stringify(command));
+      } else if (type === "ipc") {
+        console.debug("[ethrpc] IPC request to", this.ipcpath, "\n" + JSON.stringify(command));
+      }
+    }
+    if (command.constructor === Array) {
+      var commandList = [];
+      for (var i = 0, n = command.length; i < n; ++i) {
+        commandList.push({command: command[i], returns: returns[i], callback: callback[i]});
+      }
+      async.each(commandList, function (thisCommand, nextCommand) {
+        if (!thisCommand.returns) {
+          self.rpcRequests[type][thisCommand.command.id] = {
+            returns: thisCommand.returns,
+            callback: thisCommand.callback
+          };
+        } else {
+          self.rpcRequests[type][thisCommand.command.id] = {
+            returns: thisCommand.returns,
+            callback: function (res) {
+              thisCommand.callback(self.applyReturns(thisCommand.returns, res));
+            }
+          };
+        }
+        nextCommand();
+      }, function (err) {
+        if (err) return console.error("[" + type + "] send failed:", err);
+        self.rpcRequests[type][command.id] = {returns: returns, callback: callback};
+        if (type === "ws") {
+          if (self.websocket.readyState === self.websocket.OPEN) {
+            self.websocket.send(JSON.stringify(command));
+          }
+        } else if (type === "ipc") {
+          if (self.rpcStatus.ipc === 1) {
+            self.socket.write(JSON.stringify(command));
+          }
+        }
+      });
+    } else {
+      this.rpcRequests[type][command.id] = {returns: returns, callback: callback};
+      if (type === "ws") {
+        if (this.websocket.readyState === this.websocket.OPEN) {
+          this.websocket.send(JSON.stringify(command));
+        }
+      } else if (type === "ipc") {
+        if (this.rpcStatus.ipc === 1) {
+          this.socket.write(JSON.stringify(command));
+        }
+      }
+    }
+  },
+
+  postSync: function (rpcUrl, command, returns) {
+    var timeout, req = null;
+    if (command.timeout) {
+      timeout = command.timeout;
+      delete command.timeout;
+    } else {
+      timeout = this.POST_TIMEOUT;
+    }
+    if (this.debug.sync) {
+      console.warn("[ethrpc] Synchronous HTTP request to", rpcUrl + "\n" + JSON.stringify(command));
+    }
+    if (NODE_JS) {
+      req = syncRequest("POST", rpcUrl, {json: command, timeout: timeout});
+      var response = req.getBody().toString();
+      return this.parse(response, returns);
+    }
+    if (window.XMLHttpRequest) {
+      req = new window.XMLHttpRequest();
+    } else {
+      req = new window.ActiveXObject("Microsoft.XMLHTTP");
+    }
+    req.open("POST", rpcUrl, false);
+    req.setRequestHeader("Content-type", "application/json");
+    req.send(JSON.stringify(command));
+    return this.parse(req.responseText, returns);
+  },
+
+  post: function (rpcUrl, command, returns, callback) {
+    var timeout, self = this;
+    if (command.timeout) {
+      timeout = command.timeout;
+      delete command.timeout;
+    } else {
+      timeout = this.POST_TIMEOUT;
+    }
+    if (this.debug.broadcast) {
+      console.debug("[ethrpc] Asynchronous HTTP request to", rpcUrl + "\n" + JSON.stringify(command));
+    }
+    request({
+      url: rpcUrl,
+      method: 'POST',
+      json: command,
+      timeout: timeout
+    }, function (err, response, body) {
+      var e;
+      if (err) {
+        self.primaryNode = null;
+        if (self.nodes.local) {
+          e = errors.LOCAL_NODE_FAILURE;
+          e.bubble = err;
+          e.command = command;
+          return callback(e);
+        }
+        console.warn("[ethrpc] asynchronous RPC timed out", rpcUrl, command);
+        e = errors.RPC_TIMEOUT;
+        e.bubble = err;
+        e.command = command;
+        callback(e);
+      } else if (response.statusCode === 200) {
+        self.parse(body, returns, callback);
+      }
+    });
+  },
+
+  selectNodes: function () {
+    if (this.nodes.local) return [this.nodes.local];
+    return this.nodes.hosted.slice();
+  },
 
     // Post JSON-RPC command to all Ethereum nodes
-    broadcast: function (cmd, callback) {
-        var command, nodes, numCommands, returns, result, completed, self = this;
-        if (!cmd || (cmd.constructor === Object && !cmd.method) ||
+  broadcast: function (cmd, callback) {
+    var command, nodes, numCommands, returns, result, completed, self = this;
+    if (!cmd || (cmd.constructor === Object && !cmd.method) ||
             (cmd.constructor === Array && !cmd.length)) {
-            if (!callback) return null;
-            return callback(null);
-        }
-        command = clone(cmd);
+      if (!callback) return null;
+      return callback(null);
+    }
+    command = clone(cmd);
 
         // make sure the ethereum node list isn't empty
-        if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath && !this.wsUrl) {
-            if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
-            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
-        }
+    if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath && !this.wsUrl) {
+      if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
+      throw new this.Error(errors.ETHEREUM_NOT_FOUND);
+    }
 
-        // parse batched commands and strip "returns" and "invocation" fields
-        if (command.constructor === Array) {
-            numCommands = command.length;
-            returns = new Array(numCommands);
-            for (var i = 0; i < numCommands; ++i) {
-                returns[i] = this.strip(command[i]);
-            }
+    // parse batched commands and strip "returns" and "invocation" fields
+    if (command.constructor === Array) {
+      numCommands = command.length;
+      returns = new Array(numCommands);
+      for (var i = 0; i < numCommands; ++i) {
+        returns[i] = this.strip(command[i]);
+      }
 
-        // parse commands and strip "returns" and "invocation" fields
-        } else {
-            returns = this.strip(command);
-        }
+      // parse commands and strip "returns" and "invocation" fields
+    } else {
+      returns = this.strip(command);
+    }
 
-        if (this.debug.broadcast) {
-            console.log("[ethrpc] broadcast: " + JSON.stringify(command, null, 2));
-            console.log(" - HTTP: " + JSON.stringify(this.nodes));
-            console.log(" - WS:   " + this.wsUrl);
-            console.log(" - IPC:  " + this.ipcpath);
-        }
+    if (this.debug.broadcast) {
+      console.log("[ethrpc] broadcast: " + JSON.stringify(command, null, 2));
+      console.log(" - HTTP: " + JSON.stringify(this.nodes));
+      console.log(" - WS:   " + this.wsUrl);
+      console.log(" - IPC:  " + this.ipcpath);
+    }
 
-        // if we're on Node, use IPC if available and ipcpath is specified
-        if (NODE_JS && this.ipcpath && command.method) {
-            var loopback = this.nodes.local && (
+    // if we're on Node, use IPC if available and ipcpath is specified
+    if (NODE_JS && this.ipcpath && command.method) {
+      var loopback = this.nodes.local && (
                 (this.nodes.local.indexOf("127.0.0.1") > -1 ||
                 this.nodes.local.indexOf("localhost") > -1));
-            if (!isFunction(callback) && !loopback) {
-                throw new this.Error(errors.LOOPBACK_NOT_FOUND);
-            }
-            if (isFunction(callback)) {
-                if (!this.ipcpath) this.rpcStatus.ipc = -1;
-                switch (this.rpcStatus.ipc) {
+      if (!isFunction(callback) && !loopback) {
+        throw new this.Error(errors.LOOPBACK_NOT_FOUND);
+      }
+      if (isFunction(callback)) {
+        if (!this.ipcpath) this.rpcStatus.ipc = -1;
+        switch (this.rpcStatus.ipc) {
 
-                // [0] IPC socket closed / not connected: try to connect
-                case 0:
-                    return this.ipcConnect(function (connected) {
-                        if (!connected) return self.broadcast(cmd, callback);
-                        self.send("ipc", command, returns, callback);
-                    });
+          // [0] IPC socket closed / not connected: try to connect
+          case 0:
+            return this.ipcConnect(function (connected) {
+              if (!connected) return self.broadcast(cmd, callback);
+              self.send("ipc", command, returns, callback);
+            });
 
-                // [1] IPC socket connected
-                case 1:
-                    return this.send("ipc", command, returns, callback);
-                }
-            }
+          // [1] IPC socket connected
+          case 1:
+            return this.send("ipc", command, returns, callback);
         }
+      }
+    }
 
-        // select local / hosted node(s) to receive RPC
-        nodes = this.selectNodes();
+    // select local / hosted node(s) to receive RPC
+    nodes = this.selectNodes();
 
-        // asynchronous request if callback exists
-        if (callback) {
+    // asynchronous request if callback exists
+    if (callback) {
 
-            // use websocket if available
-            switch (this.rpcStatus.ws) {
+      // use websocket if available
+      switch (this.rpcStatus.ws) {
 
-            // [0] websocket closed / not connected: try to connect
-            case 0:
-                this.wsConnect(function (connected) {
-                    if (!connected) return self.broadcast(cmd, callback);
-                    self.send("ws", command, returns, callback);
-                });
-                break;
+        // [0] websocket closed / not connected: try to connect
+        case 0:
+          this.wsConnect(function (connected) {
+            if (!connected) return self.broadcast(cmd, callback);
+            self.send("ws", command, returns, callback);
+          });
+          break;
 
-            // [1] websocket connected
-            case 1:
-                this.send("ws", command, returns, callback);
-                break;
+        // [1] websocket connected
+        case 1:
+          this.send("ws", command, returns, callback);
+          break;
 
-            // [-1] websocket errored or unavailable: fallback to HTTP RPC
-            default:
-                async.eachSeries(nodes, function (node, nextNode) {
-                    if (!completed) {
-                        self.post(node, command, returns, function (res) {
-                            if (node === nodes[nodes.length - 1] ||
+        // [-1] websocket errored or unavailable: fallback to HTTP RPC
+        default:
+          async.eachSeries(nodes, function (node, nextNode) {
+            if (!completed) {
+              self.post(node, command, returns, function (res) {
+                if (node === nodes[nodes.length - 1] ||
                                 (res !== undefined && res !== null &&
                                 !res.error && res !== "0x")) {
-                                completed = true;
-                                return nextNode({output: res});
-                            }
-                            nextNode();
-                        });
-                    }
-                }, function (res) {
-                    if (!res && res.output === undefined) return callback();
-                    callback(res.output);
-                });
+                  completed = true;
+                  return nextNode({output: res});
+                }
+                nextNode();
+              });
             }
+          }, function (res) {
+            if (!res && res.output === undefined) return callback();
+            callback(res.output);
+          });
+      }
 
-        // use synchronous http if no callback provided
-        } else {
-            for (var j = 0, len = nodes.length; j < len; ++j) {
-                try {
-                    result = this.postSync(nodes[j], command, returns);
-                } catch (e) {
-                    if (this.nodes.local) {
-                        var err = errors.LOCAL_NODE_FAILURE;
-                        err.bubble = e;
-                        err.command = command;
-                        throw new this.Error(err);
-                    }
-                }
-                if (result !== undefined) return result;
-            }
-            throw new this.Error(errors.NO_RESPONSE);
+      // use synchronous http if no callback provided
+    } else {
+      for (var j = 0, len = nodes.length; j < len; ++j) {
+        try {
+          result = this.postSync(nodes[j], command, returns);
+        } catch (e) {
+          if (this.nodes.local) {
+            var err = errors.LOCAL_NODE_FAILURE;
+            err.bubble = e;
+            err.command = command;
+            throw new this.Error(err);
+          }
         }
-    },
+        if (result !== undefined) return result;
+      }
+      throw new this.Error(errors.NO_RESPONSE);
+    }
+  },
 
-    marshal: function (command, params, prefix) {
-        var payload, action;
-        if (prefix === "null") {
-            action = command.toString();
-        } else {
-            action = (prefix || "eth_") + command.toString();
+  marshal: function (command, params, prefix) {
+    var payload, action;
+    if (prefix === "null") {
+      action = command.toString();
+    } else {
+      action = (prefix || "eth_") + command.toString();
+    }
+    payload = {
+      id: this.requests++,
+      jsonrpc: "2.0",
+      method: action
+    };
+    if (params !== undefined && params !== null) {
+      if (params.constructor === Object) {
+        if (this.debug.broadcast && params.debug) {
+          payload.debug = clone(params.debug);
+          delete params.debug;
         }
-        payload = {
-            id: this.requests++,
-            jsonrpc: "2.0",
-            method: action
-        };
-        if (params !== undefined && params !== null) {
-            if (params.constructor === Object) {
-                if (this.debug.broadcast && params.debug) {
-                    payload.debug = clone(params.debug);
-                    delete params.debug;
-                }
-                if (params.timeout) {
-                    payload.timeout = params.timeout;
-                    delete params.timeout;
-                }
-                if (JSON.stringify(params) === "{}") {
-                    params = [];
-                }
-            }
-            if (params.constructor === Array) {
-                for (var i = 0, len = params.length; i < len; ++i) {
-                    if (params[i] !== null && params[i] !== undefined &&
+        if (params.timeout) {
+          payload.timeout = params.timeout;
+          delete params.timeout;
+        }
+        if (JSON.stringify(params) === "{}") {
+          params = [];
+        }
+      }
+      if (params.constructor === Array) {
+        for (var i = 0, len = params.length; i < len; ++i) {
+          if (params[i] !== null && params[i] !== undefined &&
                         params[i].constructor === Number) {
-                        params[i] = abi.prefix_hex(params[i].toString(16));
-                    }
-                }
-                payload.params = params;
-            } else {
-                payload.params = [params];
-            }
-        } else {
-            payload.params = [];
+            params[i] = abi.prefix_hex(params[i].toString(16));
+          }
         }
-        return payload;
-    },
+        payload.params = params;
+      } else {
+        payload.params = [params];
+      }
+    } else {
+      payload.params = [];
+    }
+    return payload;
+  },
 
-    setLocalNode: function (urlstr) {
-        this.nodes.local = urlstr || this.localnode;
-    },
+  setLocalNode: function (urlstr) {
+    this.nodes.local = urlstr || this.localnode;
+  },
 
-    useHostedNode: function (host) {
-        this.nodes.local = null;
-        if (host) {
-            if (host.constructor === Object) {
-                if (host.http) this.nodes.hosted = [host.http];
-                if (host.ws) this.wsUrl = host.ws;
-            } else {
-                this.nodes.hosted = [host];
-            }
-        }
-    },
+  useHostedNode: function (host) {
+    this.nodes.local = null;
+    if (host) {
+      if (host.constructor === Object) {
+        if (host.http) this.nodes.hosted = [host.http];
+        if (host.ws) this.wsUrl = host.ws;
+      } else {
+        this.nodes.hosted = [host];
+      }
+    }
+  },
 
-    // delete cached network, notification, and transaction data
-    clear: function () {
-        this.txs = {};
-        for (var n in this.notifications) {
-            if (!this.notifications.hasOwnProperty(n)) continue;
-            if (this.notifications[n]) {
-                clearTimeout(this.notifications[n]);
-            }
-        }
-        this.notifications = {};
-        this.rawTxs = {};
-        this.txs = {};
-        this.rawTxMaxNonce = -1;
-    },
+  // delete cached network, notification, and transaction data
+  clear: function () {
+    this.txs = {};
+    for (var n in this.notifications) {
+      if (!this.notifications.hasOwnProperty(n)) continue;
+      if (this.notifications[n]) {
+        clearTimeout(this.notifications[n]);
+      }
+    }
+    this.notifications = {};
+    this.rawTxs = {};
+    this.txs = {};
+    this.rawTxMaxNonce = -1;
+  },
 
-    // reset to default Ethereum nodes
-    reset: function (deleteData) {
-        this.nodes.hosted = this.DEFAULT_HOSTED_NODES.slice();
-        this.wsUrl = process.env.GETH_WEBSOCKET_URL || this.DEFAULT_HOSTED_WEBSOCKET;
-        if (deleteData) this.clear();
-    },
+  // reset to default Ethereum nodes
+  reset: function (deleteData) {
+    this.nodes.hosted = this.DEFAULT_HOSTED_NODES.slice();
+    this.wsUrl = process.env.GETH_WEBSOCKET_URL || this.DEFAULT_HOSTED_WEBSOCKET;
+    if (deleteData) this.clear();
+  },
 
-    /******************************
-     * Ethereum JSON-RPC bindings *
-     ******************************/
+  /******************************
+   * Ethereum JSON-RPC bindings *
+   ******************************/
 
-    raw: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "null"), f);
-    },
+  raw: function (command, params, f) {
+    return this.broadcast(this.marshal(command, params, "null"), f);
+  },
 
-    eth: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params), f);
-    },
+  eth: function (command, params, f) {
+    return this.broadcast(this.marshal(command, params), f);
+  },
 
-    net: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "net_"), f);
-    },
+  net: function (command, params, f) {
+    return this.broadcast(this.marshal(command, params, "net_"), f);
+  },
 
-    web3: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "web3_"), f);
-    },
+  web3: function (command, params, f) {
+    return this.broadcast(this.marshal(command, params, "web3_"), f);
+  },
 
-    shh: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "shh_"), f);
-    },
+  shh: function (command, params, f) {
+    return this.broadcast(this.marshal(command, params, "shh_"), f);
+  },
 
-    miner: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "miner_"), f);
-    },
+  miner: function (command, params, f) {
+    return this.broadcast(this.marshal(command, params, "miner_"), f);
+  },
 
-    admin: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "admin_"), f);
-    },
+  admin: function (command, params, f) {
+    return this.broadcast(this.marshal(command, params, "admin_"), f);
+  },
 
-    personal: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "personal_"), f);
-    },
+  personal: function (command, params, f) {
+    return this.broadcast(this.marshal(command, params, "personal_"), f);
+  },
 
-    txpool: function (command, params, f) {
-        return this.broadcast(this.marshal(command, params, "txpool_"), f);
-    },
+  txpool: function (command, params, f) {
+    return this.broadcast(this.marshal(command, params, "txpool_"), f);
+  },
 
-    sha3: function (data, isHex) {
-        if (isHex) data = abi.decode_hex(data);
-        return abi.prefix_hex(keccak_256(data));
-    },
+  sha3: function (data, isHex) {
+    if (isHex) data = abi.decode_hex(data);
+    return abi.prefix_hex(keccak_256(data));
+  },
 
-    getGasPrice: function (f) {
-        return this.broadcast(this.marshal("gasPrice"), f);
-    },
+  getGasPrice: function (f) {
+    return this.broadcast(this.marshal("gasPrice"), f);
+  },
 
-    blockNumber: function (f) {
-        if (isFunction(f)) {
-            this.broadcast(this.marshal("blockNumber"), f);
-        } else {
-            return parseInt(this.broadcast(this.marshal("blockNumber")), 16);
-        }
-    },
+  blockNumber: function (f) {
+    if (isFunction(f)) {
+      this.broadcast(this.marshal("blockNumber"), f);
+    } else {
+      return parseInt(this.broadcast(this.marshal("blockNumber")), 16);
+    }
+  },
 
-    coinbase: function (f) {
-        return this.broadcast(this.marshal("coinbase"), f);
-    },
+  coinbase: function (f) {
+    return this.broadcast(this.marshal("coinbase"), f);
+  },
 
-    balance: function (address, block, f) {
-        if (!f && isFunction(block)) {
-            f = block;
-            block = null;
-        }
-        block = block || "latest";
-        return this.broadcast(this.marshal("getBalance", [address, block]), f);
-    },
-    getBalance: function (address, block, f) {
-        if (!f && isFunction(block)) {
-            f = block;
-            block = null;
-        }
-        block = block || "latest";
-        return this.broadcast(this.marshal("getBalance", [address, block]), f);
-    },
+  balance: function (address, block, f) {
+    if (!f && isFunction(block)) {
+      f = block;
+      block = null;
+    }
+    block = block || "latest";
+    return this.broadcast(this.marshal("getBalance", [address, block]), f);
+  },
+  getBalance: function (address, block, f) {
+    if (!f && isFunction(block)) {
+      f = block;
+      block = null;
+    }
+    block = block || "latest";
+    return this.broadcast(this.marshal("getBalance", [address, block]), f);
+  },
 
-    txCount: function (address, f) {
-        return this.broadcast(this.marshal("getTransactionCount", [address, "latest"]), f);
-    },
-    getTransactionCount: function (address, f) {
-        return this.broadcast(this.marshal("getTransactionCount", [address, "latest"]), f);
-    },
-    pendingTxCount: function (address, f) {
-        return this.broadcast(
+  txCount: function (address, f) {
+    return this.broadcast(this.marshal("getTransactionCount", [address, "latest"]), f);
+  },
+  getTransactionCount: function (address, f) {
+    return this.broadcast(this.marshal("getTransactionCount", [address, "latest"]), f);
+  },
+  pendingTxCount: function (address, f) {
+    return this.broadcast(
             this.marshal("getTransactionCount", [address, "pending"]), f
         );
-    },
+  },
 
-    sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
-        if (to && to.constructor === Object) {
-            value = to.value;
-            from = to.from;
-            if (to.onSent) onSent = to.onSent;
-            if (to.onSuccess) onSuccess = to.onSuccess;
-            if (to.onFailed) onFailed = to.onFailed;
-            to = to.to;
-        }
-        return this.transact({
-            from: from,
-            to: to,
-            value: abi.fix(value, "hex"),
-            returns: "null",
-            gas: "0xcf08"
-        }, onSent, onSuccess, onFailed);
-    },
+  sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
+    if (to && to.constructor === Object) {
+      value = to.value;
+      from = to.from;
+      if (to.onSent) onSent = to.onSent;
+      if (to.onSuccess) onSuccess = to.onSuccess;
+      if (to.onFailed) onFailed = to.onFailed;
+      to = to.to;
+    }
+    return this.transact({
+      from: from,
+      to: to,
+      value: abi.fix(value, "hex"),
+      returns: "null",
+      gas: "0xcf08"
+    }, onSent, onSuccess, onFailed);
+  },
 
-    sign: function (address, data, f) {
-        return this.broadcast(this.marshal("sign", [address, data]), f);
-    },
+  sign: function (address, data, f) {
+    return this.broadcast(this.marshal("sign", [address, data]), f);
+  },
 
-    getTx: function (hash, f) {
-        return this.broadcast(this.marshal("getTransactionByHash", hash), f);
-    },
-    getTransaction: function (hash, f) {
-        return this.broadcast(this.marshal("getTransactionByHash", hash), f);
-    },
+  getTx: function (hash, f) {
+    return this.broadcast(this.marshal("getTransactionByHash", hash), f);
+  },
+  getTransaction: function (hash, f) {
+    return this.broadcast(this.marshal("getTransactionByHash", hash), f);
+  },
 
-    peerCount: function (f) {
-        if (isFunction(f)) {
-            this.broadcast(this.marshal("peerCount", [], "net_"), f);
-        } else {
-            return parseInt(this.broadcast(this.marshal("peerCount", [], "net_")));
-        }
-    },
+  peerCount: function (f) {
+    if (isFunction(f)) {
+      this.broadcast(this.marshal("peerCount", [], "net_"), f);
+    } else {
+      return parseInt(this.broadcast(this.marshal("peerCount", [], "net_")));
+    }
+  },
 
-    accounts: function (f) {
-        return this.broadcast(this.marshal("accounts"), f);
-    },
+  accounts: function (f) {
+    return this.broadcast(this.marshal("accounts"), f);
+  },
 
-    mining: function (f) {
-        return this.broadcast(this.marshal("mining"), f);
-    },
+  mining: function (f) {
+    return this.broadcast(this.marshal("mining"), f);
+  },
 
-    hashrate: function (f) {
-        if (isFunction(f)) {
-            this.broadcast(this.marshal("hashrate"), f);
-        } else {
-            return parseInt(this.broadcast(this.marshal("hashrate")));
-        }
-    },
+  hashrate: function (f) {
+    if (isFunction(f)) {
+      this.broadcast(this.marshal("hashrate"), f);
+    } else {
+      return parseInt(this.broadcast(this.marshal("hashrate")));
+    }
+  },
 
-    getBlockByHash: function (hash, full, f) {
-        full = (full !== undefined) ? full : true;
-        return this.broadcast(this.marshal("getBlockByHash", [hash, full]), f);
-    },
+  getBlockByHash: function (hash, full, f) {
+    full = (full !== undefined) ? full : true;
+    return this.broadcast(this.marshal("getBlockByHash", [hash, full]), f);
+  },
 
-    getBlock: function (number, full, f) {
-        full = (full !== undefined) ? full : true;
-        return this.broadcast(this.marshal("getBlockByNumber", [number, full]), f);
-    },
-    getBlockByNumber: function (number, full, f) {
-        full = (full !== undefined) ? full : true;
-        return this.broadcast(this.marshal("getBlockByNumber", [number, full]), f);
-    },
-    getUncle: function (blockNumber, index, f) {
-        return this.broadcast(this.marshal("getUncleByBlockNumberAndIndex", [blockNumber, index]), f);
-    },
-    getUncleByBlockHashAndIndex: function (blockHash, index, f) {
-        return this.broadcast(this.marshal("getUncleByBlockHashAndIndex", [blockHash, index]), f);
-    },
-    getUncleCount: function (blockNumber, f) {
-        return this.broadcast(this.marshal("getUncleCountByBlockNumber", blockNumber), f);
-    },
-    getUncleCountByBlockHash: function (blockHash, f) {
-        return this.broadcast(this.marshal("getUncleCountByBlockHash", blockHash), f);
-    },
+  getBlock: function (number, full, f) {
+    full = (full !== undefined) ? full : true;
+    return this.broadcast(this.marshal("getBlockByNumber", [number, full]), f);
+  },
+  getBlockByNumber: function (number, full, f) {
+    full = (full !== undefined) ? full : true;
+    return this.broadcast(this.marshal("getBlockByNumber", [number, full]), f);
+  },
+  getUncle: function (blockNumber, index, f) {
+    return this.broadcast(this.marshal("getUncleByBlockNumberAndIndex", [blockNumber, index]), f);
+  },
+  getUncleByBlockHashAndIndex: function (blockHash, index, f) {
+    return this.broadcast(this.marshal("getUncleByBlockHashAndIndex", [blockHash, index]), f);
+  },
+  getUncleCount: function (blockNumber, f) {
+    return this.broadcast(this.marshal("getUncleCountByBlockNumber", blockNumber), f);
+  },
+  getUncleCountByBlockHash: function (blockHash, f) {
+    return this.broadcast(this.marshal("getUncleCountByBlockHash", blockHash), f);
+  },
 
-    version: function (f) {
-        return this.broadcast(this.marshal("version", [], "net_"), f);
-    },
-    netVersion: function (f) {
-        return this.broadcast(this.marshal("version", [], "net_"), f);
-    },
+  version: function (f) {
+    return this.broadcast(this.marshal("version", [], "net_"), f);
+  },
+  netVersion: function (f) {
+    return this.broadcast(this.marshal("version", [], "net_"), f);
+  },
 
     // estimate a transaction's gas cost
-    estimateGas: function (tx, f) {
-        return this.broadcast(this.marshal("estimateGas", tx), f);
-    },
+  estimateGas: function (tx, f) {
+    return this.broadcast(this.marshal("estimateGas", tx), f);
+  },
 
     // execute functions on contracts on the blockchain
-    call: function (tx, f) {
-        return this.broadcast(this.marshal("call", [tx, "latest"]), f);
-    },
+  call: function (tx, f) {
+    return this.broadcast(this.marshal("call", [tx, "latest"]), f);
+  },
 
-    sendTx: function (tx, f) {
-        return this.broadcast(this.marshal("sendTransaction", tx), f);
-    },
-    sendTransaction: function (tx, f) {
-        return this.broadcast(this.marshal("sendTransaction", tx), f);
-    },
+  sendTx: function (tx, f) {
+    return this.broadcast(this.marshal("sendTransaction", tx), f);
+  },
+  sendTransaction: function (tx, f) {
+    return this.broadcast(this.marshal("sendTransaction", tx), f);
+  },
 
     // sendRawTx(RLP(tx.signed(privateKey))) -> txhash
-    sendRawTx: function (rawTx, f) {
-        return this.broadcast(this.marshal("sendRawTransaction", abi.prefix_hex(rawTx)), f);
-    },
-    sendRawTransaction: function (rawTx, f) {
-        return this.broadcast(this.marshal("sendRawTransaction", abi.prefix_hex(rawTx)), f);
-    },
+  sendRawTx: function (rawTx, f) {
+    return this.broadcast(this.marshal("sendRawTransaction", abi.prefix_hex(rawTx)), f);
+  },
+  sendRawTransaction: function (rawTx, f) {
+    return this.broadcast(this.marshal("sendRawTransaction", abi.prefix_hex(rawTx)), f);
+  },
 
-    receipt: function (txhash, f) {
-        return this.broadcast(this.marshal("getTransactionReceipt", txhash), f);
-    },
-    getTransactionReceipt: function (txhash, f) {
-        return this.broadcast(this.marshal("getTransactionReceipt", txhash), f);
-    },
+  receipt: function (txhash, f) {
+    return this.broadcast(this.marshal("getTransactionReceipt", txhash), f);
+  },
+  getTransactionReceipt: function (txhash, f) {
+    return this.broadcast(this.marshal("getTransactionReceipt", txhash), f);
+  },
 
-    clientVersion: function (f) {
-        return this.broadcast(this.marshal("clientVersion", [], "web3_"), f);
-    },
+  clientVersion: function (f) {
+    return this.broadcast(this.marshal("clientVersion", [], "web3_"), f);
+  },
 
-    compileSerpent: function (code, f) {
-        return this.broadcast(this.marshal("compileSerpent", code), f);
-    },
+  compileSerpent: function (code, f) {
+    return this.broadcast(this.marshal("compileSerpent", code), f);
+  },
 
-    compileSolidity: function (code, f) {
-        return this.broadcast(this.marshal("compileSolidity", code), f);
-    },
+  compileSolidity: function (code, f) {
+    return this.broadcast(this.marshal("compileSolidity", code), f);
+  },
 
-    compileLLL: function (code, f) {
-        return this.broadcast(this.marshal("compileLLL", code), f);
-    },
+  compileLLL: function (code, f) {
+    return this.broadcast(this.marshal("compileLLL", code), f);
+  },
 
-    subscribe: function (label, options, f) {
-        return this.broadcast(this.marshal("subscribe", [label, options]), f);
-    },
+  subscribe: function (label, options, f) {
+    return this.broadcast(this.marshal("subscribe", [label, options]), f);
+  },
 
-    subscribeLogs: function (options, f) {
-        return this.broadcast(this.marshal("subscribe", ["logs", options]), f);
-    },
+  subscribeLogs: function (options, f) {
+    return this.broadcast(this.marshal("subscribe", ["logs", options]), f);
+  },
 
-    subscribeNewHeads: function (f) {
-        return this.broadcast(this.marshal("subscribe", "newHeads"), f);
-    },    
+  subscribeNewHeads: function (f) {
+    return this.broadcast(this.marshal("subscribe", "newHeads"), f);
+  },    
 
-    unsubscribe: function (label, f) {
-        return this.broadcast(this.marshal("unsubscribe", label), f);
-    },
+  unsubscribe: function (label, f) {
+    return this.broadcast(this.marshal("unsubscribe", label), f);
+  },
 
-    newFilter: function (params, f) {
-        return this.broadcast(this.marshal("newFilter", params), f);
-    },
+  newFilter: function (params, f) {
+    return this.broadcast(this.marshal("newFilter", params), f);
+  },
 
-    newBlockFilter: function (f) {
-        return this.broadcast(this.marshal("newBlockFilter"), f);
-    },
+  newBlockFilter: function (f) {
+    return this.broadcast(this.marshal("newBlockFilter"), f);
+  },
 
-    newPendingTransactionFilter: function (f) {
-        return this.broadcast(this.marshal("newPendingTransactionFilter"), f);
-    },
+  newPendingTransactionFilter: function (f) {
+    return this.broadcast(this.marshal("newPendingTransactionFilter"), f);
+  },
 
-    getFilterChanges: function (filter, f) {
-        return this.broadcast(this.marshal("getFilterChanges", filter), f);
-    },
+  getFilterChanges: function (filter, f) {
+    return this.broadcast(this.marshal("getFilterChanges", filter), f);
+  },
 
-    getFilterLogs: function (filter, f) {
-        return this.broadcast(this.marshal("getFilterLogs", filter), f);
-    },
+  getFilterLogs: function (filter, f) {
+    return this.broadcast(this.marshal("getFilterLogs", filter), f);
+  },
 
-    getLogs: function (filter, f) {
-        return this.broadcast(this.marshal("getLogs", filter), f);
-    },
+  getLogs: function (filter, f) {
+    return this.broadcast(this.marshal("getLogs", filter), f);
+  },
 
-    uninstallFilter: function (filter, f) {
-        return this.broadcast(this.marshal("uninstallFilter", filter), f);
-    },
+  uninstallFilter: function (filter, f) {
+    return this.broadcast(this.marshal("uninstallFilter", filter), f);
+  },
 
-    // publish a new contract to the blockchain (from the coinbase account)
-    publish: function (compiled, f) {
-        return this.sendTx({from: this.coinbase(), data: compiled}, f);
-    },
+  // publish a new contract to the blockchain (from the coinbase account)
+  publish: function (compiled, f) {
+    return this.sendTx({from: this.coinbase(), data: compiled}, f);
+  },
 
-    // Read the code in a contract on the blockchain
-    read: function (address, block, f) {
-        return this.broadcast(this.marshal("getCode", [address, block || "latest"]), f);
-    },
-    getCode: function (address, block, f) {
-        return this.broadcast(this.marshal("getCode", [address, block || "latest"]), f);
-    },
+  // Read the code in a contract on the blockchain
+  read: function (address, block, f) {
+    return this.broadcast(this.marshal("getCode", [address, block || "latest"]), f);
+  },
+  getCode: function (address, block, f) {
+    return this.broadcast(this.marshal("getCode", [address, block || "latest"]), f);
+  },
 
-    // Fast-forward a specified number of blocks
-    fastforward: function (blocks, mine, callback) {
-        var startBlock, endBlock, self = this;
-        function fastforward() {
-            self.blockNumber(function (blockNumber) {
-                blockNumber = parseInt(blockNumber, 16);
-                if (startBlock === undefined) {
-                    startBlock = blockNumber;
-                    endBlock = blockNumber + parseInt(blocks);
-                }
-                if (blockNumber >= endBlock) {
-                    if (!mine) return callback(endBlock);
-                    self.miner("stop", [], function () {
-                        callback(endBlock);
-                    });
-                } else {
-                    setTimeout(fastforward, 3000);
-                }
-            });
+  // Fast-forward a specified number of blocks
+  fastforward: function (blocks, mine, callback) {
+    var startBlock, endBlock, self = this;
+    function fastforward() {
+      self.blockNumber(function (blockNumber) {
+        blockNumber = parseInt(blockNumber, 16);
+        if (startBlock === undefined) {
+          startBlock = blockNumber;
+          endBlock = blockNumber + parseInt(blocks);
         }
-        if (!callback && isFunction(mine)) {
-            callback = mine;
-            mine = null;
+        if (blockNumber >= endBlock) {
+          if (!mine) return callback(endBlock);
+          self.miner("stop", [], function () {
+            callback(endBlock);
+          });
+        } else {
+          setTimeout(fastforward, 3000);
         }
-        if (!mine) return fastforward();
-        this.miner("start", [], fastforward);
-    },
+      });
+    }
+    if (!callback && isFunction(mine)) {
+      callback = mine;
+      mine = null;
+    }
+    if (!mine) return fastforward();
+    this.miner("start", [], fastforward);
+  },
 
-    // Ethereum node status checks
+  // Ethereum node status checks
 
-    listening: function (f) {
-        var response, self = this;
-        try {
-            if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
-                throw new this.Error(errors.ETHEREUM_NOT_FOUND);
-            }
-            if (isFunction(f)) {
-                var timeout = setTimeout(function () {
-                    if (!response) f(false);
-                }, 2500);
-                setTimeout(function () {
-                    self.net("listening", [], function (res) {
-                        clearTimeout(timeout);
-                        f(!!res);
-                    });
-                }, 0);
-            } else {
-                return !!this.net("listening");
-            }
-        } catch (e) {
-            if (isFunction(f)) return f(false);
+  listening: function (f) {
+    var response, self = this;
+    try {
+      if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
+        throw new this.Error(errors.ETHEREUM_NOT_FOUND);
+      }
+      if (isFunction(f)) {
+        var timeout = setTimeout(function () {
+          if (!response) f(false);
+        }, 2500);
+        setTimeout(function () {
+          self.net("listening", [], function (res) {
+            clearTimeout(timeout);
+            f(!!res);
+          });
+        }, 0);
+      } else {
+        return !!this.net("listening");
+      }
+    } catch (e) {
+      if (isFunction(f)) return f(false);
+      return false;
+    }
+  },
+
+  unlocked: function (account, f) {
+    if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
+      throw new this.Error(errors.ETHEREUM_NOT_FOUND);
+    }
+    try {
+      if (isFunction(f)) {
+        this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5", function (res) {
+          if (res) {
+            if (res.error) return f(false);
+            return f(true);
+          }
+          f(false);
+        });
+      } else {
+        var res = this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5");
+        if (res) {
+          if (res.error) {
             return false;
+          }
+          return true;
         }
-    },
+        return false;
+      }
+    } catch (e) {
+      if (isFunction(f)) return f(false);
+      return false;
+    }
+  },
 
-    unlocked: function (account, f) {
-        if (!this.nodes.hosted.length && !this.nodes.local && !this.ipcpath) {
-            throw new this.Error(errors.ETHEREUM_NOT_FOUND);
-        }
-        try {
-            if (isFunction(f)) {
-                this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5", function (res) {
-                    if (res) {
-                        if (res.error) return f(false);
-                        return f(true);
-                    }
-                    f(false);
-                });
-            } else {
-                var res = this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5");
-                if (res) {
-                    if (res.error) {
-                        return false;
-                    }
-                    return true;
-                }
-                return false;
-            }
-        } catch (e) {
-            if (isFunction(f)) return f(false);
-            return false;
-        }
-    },
-
-    packageRequest: function (payload) {
-        var tx = clone(payload);
-        if (tx.params === undefined || tx.params === null) {
-            tx.params = [];
-        } else if (tx.params.constructor !== Array) {
-            tx.params = [tx.params];
-        }
-        var numParams = tx.params.length;
-        if (numParams) {
-            if (tx.signature && tx.signature.length !== numParams) {
-                throw new this.Error(errors.PARAMETER_NUMBER_ERROR);
-            }
-            for (var j = 0; j < numParams; ++j) {
-                if (tx.params[j] !== undefined && tx.params[j] !== null && tx.signature[j]) {
-                    if (tx.params[j].constructor === Number) {
-                        tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
-                    }
-                    if (tx.signature[j] === "int256") {
-                        tx.params[j] = abi.unfork(tx.params[j], true);
-                    } else if (tx.signature[j] === "int256[]" &&
+  packageRequest: function (payload) {
+    var tx = clone(payload);
+    if (tx.params === undefined || tx.params === null) {
+      tx.params = [];
+    } else if (tx.params.constructor !== Array) {
+      tx.params = [tx.params];
+    }
+    var numParams = tx.params.length;
+    if (numParams) {
+      if (tx.signature && tx.signature.length !== numParams) {
+        throw new this.Error(errors.PARAMETER_NUMBER_ERROR);
+      }
+      for (var j = 0; j < numParams; ++j) {
+        if (tx.params[j] !== undefined && tx.params[j] !== null && tx.signature[j]) {
+          if (tx.params[j].constructor === Number) {
+            tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
+          }
+          if (tx.signature[j] === "int256") {
+            tx.params[j] = abi.unfork(tx.params[j], true);
+          } else if (tx.signature[j] === "int256[]" &&
                         tx.params[j].constructor === Array && tx.params[j].length) {
-                        for (var k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
-                            tx.params[j][k] = abi.unfork(tx.params[j][k], true);
-                        }
-                    }
-                }
+            for (var k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
+              tx.params[j][k] = abi.unfork(tx.params[j][k], true);
             }
+          }
         }
-        if (tx.to) tx.to = abi.format_address(tx.to);
-        if (tx.from) tx.from = abi.format_address(tx.from);
-        var packaged = {
-            from: tx.from,
-            to: tx.to,
-            data: abi.encode(tx),
-            gas: tx.gas ? abi.hex(tx.gas) : this.DEFAULT_GAS
-        };
-        if (tx.gasPrice) packaged.gasPrice = abi.hex(tx.gasPrice);
-        if (tx.timeout) packaged.timeout = abi.hex(tx.timeout);
-        if (tx.value) packaged.value = abi.hex(tx.value);
-        if (tx.returns) packaged.returns = tx.returns;
-        if (tx.nonce) packaged.nonce = abi.hex(tx.nonce);
-        return packaged;
-    },
+      }
+    }
+    if (tx.to) tx.to = abi.format_address(tx.to);
+    if (tx.from) tx.from = abi.format_address(tx.from);
+    var packaged = {
+      from: tx.from,
+      to: tx.to,
+      data: abi.encode(tx),
+      gas: tx.gas ? abi.hex(tx.gas) : this.DEFAULT_GAS
+    };
+    if (tx.gasPrice) packaged.gasPrice = abi.hex(tx.gasPrice);
+    if (tx.timeout) packaged.timeout = abi.hex(tx.timeout);
+    if (tx.value) packaged.value = abi.hex(tx.value);
+    if (tx.returns) packaged.returns = tx.returns;
+    if (tx.nonce) packaged.nonce = abi.hex(tx.nonce);
+    return packaged;
+  },
 
-    /**
-     * Invoke a function from a contract on the blockchain.
-     *
-     * Input tx format:
-     * {
-     *    from: <sender's address> (hexstring; optional, coinbase default)
-     *    to: <contract address> (hexstring)
-     *    method: <function name> (string)
-     *    signature: <function signature, e.g. "iia"> (string)
-     *    params: <parameters passed to the function> (optional)
-     *    returns: <"number[]", "int", "BigNumber", or "string" (default)>
-     *    send: <true to sendTransaction, false to call (default)>
-     * }
-     */
-    invoke: function (payload, f) {
-        if (!payload || payload.constructor !== Object) {
-            if (!isFunction(f)) return errors.TRANSACTION_FAILED;
-            return f(errors.TRANSACTION_FAILED);
-        }
-        if (payload.send && payload.invocation && isFunction(payload.invocation.invoke)) {
-            return payload.invocation.invoke.call(payload.invocation.context, payload, f);
-        }
-        var packaged = this.packageRequest(payload);
-        if (this.debug.broadcast) {
-            packaged.debug = clone(payload);
-            packaged.debug.batch = false;
-        }
-        var invocation = (payload.send) ? this.sendTx : this.call;
-        return invocation.call(this, packaged, f);
-    },
+  /**
+   * Invoke a function from a contract on the blockchain.
+   *
+   * Input tx format:
+   * {
+   *    from: <sender's address> (hexstring; optional, coinbase default)
+   *    to: <contract address> (hexstring)
+   *    method: <function name> (string)
+   *    signature: <function signature, e.g. "iia"> (string)
+   *    params: <parameters passed to the function> (optional)
+   *    returns: <"number[]", "int", "BigNumber", or "string" (default)>
+   *    send: <true to sendTransaction, false to call (default)>
+   * }
+   */
+  invoke: function (payload, f) {
+    if (!payload || payload.constructor !== Object) {
+      if (!isFunction(f)) return errors.TRANSACTION_FAILED;
+      return f(errors.TRANSACTION_FAILED);
+    }
+    if (payload.send && payload.invocation && isFunction(payload.invocation.invoke)) {
+      return payload.invocation.invoke.call(payload.invocation.context, payload, f);
+    }
+    var packaged = this.packageRequest(payload);
+    if (this.debug.broadcast) {
+      packaged.debug = clone(payload);
+      packaged.debug.batch = false;
+    }
+    var invocation = (payload.send) ? this.sendTx : this.call;
+    return invocation.call(this, packaged, f);
+  },
 
-    /**
-     * Batched RPC commands
-     */
-    batch: function (txlist, f) {
-        var self = this;
-        var numCommands, rpclist, callbacks, packaged, invocation, returns;
-        if (txlist.constructor !== Array) {
-            if (this.debug.broadcast) {
-                console.warn("expected array for batch RPC, invoking instead");
-            }
-            return this.invoke(txlist, f);
+  /**
+   * Batched RPC commands
+   */
+  batch: function (txlist, f) {
+    var self = this;
+    var numCommands, rpclist, callbacks, packaged, invocation, returns;
+    if (txlist.constructor !== Array) {
+      if (this.debug.broadcast) {
+        console.warn("expected array for batch RPC, invoking instead");
+      }
+      return this.invoke(txlist, f);
+    }
+    numCommands = txlist.length;
+    rpclist = new Array(numCommands);
+    callbacks = new Array(numCommands);
+    returns = [];
+    for (var i = 0; i < numCommands; ++i) {
+      packaged = this.packageRequest(txlist[i]);
+      if (isFunction(txlist[i].callback)) {
+        callbacks[i] = txlist[i].callback;
+        delete txlist[i].callback;
+      }
+      returns.push(txlist[i].returns);
+      if (this.debug.broadcast) {
+        packaged.debug = clone(txlist[i]);
+        packaged.debug.batch = true;
+      }
+      invocation = (txlist[i].send) ? "sendTransaction" : "call";
+      rpclist[i] = this.marshal(invocation, [packaged, "latest"]);
+    }
+    if (this.wsUrl || this.ipcpath) {
+      return this.broadcast(rpclist, (f === true) ? callbacks : f);
+    }
+    if (!f) {
+      var res = this.broadcast(rpclist);
+      var result = new Array(numCommands);
+      for (i = 0; i < numCommands; ++i) {
+        if (returns[i]) {
+          result[i] = self.applyReturns(returns[i], res[i]);
+        } else {
+          result[i] = res[i];
         }
-        numCommands = txlist.length;
-        rpclist = new Array(numCommands);
-        callbacks = new Array(numCommands);
-        returns = [];
-        for (var i = 0; i < numCommands; ++i) {
-            packaged = this.packageRequest(txlist[i]);
-            if (isFunction(txlist[i].callback)) {
-                callbacks[i] = txlist[i].callback;
-                delete txlist[i].callback;
-            }
-            returns.push(txlist[i].returns);
-            if (this.debug.broadcast) {
-                packaged.debug = clone(txlist[i]);
-                packaged.debug.batch = true;
-            }
-            invocation = (txlist[i].send) ? "sendTransaction" : "call";
-            rpclist[i] = this.marshal(invocation, [packaged, "latest"]);
-        }
-        if (this.wsUrl || this.ipcpath) {
-            return this.broadcast(rpclist, (f === true) ? callbacks : f);
-        }
-        if (!f) {
-            var res = this.broadcast(rpclist);
-            var result = new Array(numCommands);
-            for (i = 0; i < numCommands; ++i) {
-                if (returns[i]) {
-                    result[i] = self.applyReturns(returns[i], res[i]);
-                } else {
-                    result[i] = res[i];
-                }
-            }
-            return result;
-        }
+      }
+      return result;
+    }
 
         // callback on whole array
-        if (isFunction(f)) return this.broadcast(rpclist, function (res) {
-            var result = new Array(numCommands);
-            for (var i = 0; i < numCommands; ++i) {
-                if (returns[i]) {
-                    result[i] = self.applyReturns(returns[i], res[i]);
-                } else {
-                    result[i] = res[i];
-                }
-            }
-            f(result);
-        });
+    if (isFunction(f)) return this.broadcast(rpclist, function (res) {
+      var result = new Array(numCommands);
+      for (var i = 0; i < numCommands; ++i) {
+        if (returns[i]) {
+          result[i] = self.applyReturns(returns[i], res[i]);
+        } else {
+          result[i] = res[i];
+        }
+      }
+      f(result);
+    });
 
         // callback on each element
-        this.broadcast(rpclist, function (res) {
-            if (!res) return console.error(errors.TRANSACTION_FAILED);
-            if (res.constructor === Array && res.length) {
-                for (var j = 0; j < numCommands; ++j) {
-                    if (returns[j]) {
-                        res[j] = self.applyReturns(returns[j], res[j]);
-                    }
-                    if (res[j] && callbacks[j]) {
-                        callbacks[j](res[j]);
-                    }
-                }
-            } else {
-                if (callbacks.length && isFunction(callbacks[0])) {
-                    callbacks[0](res);
-                }
-            }
-        });
-    },
+    this.broadcast(rpclist, function (res) {
+      if (!res) return console.error(errors.TRANSACTION_FAILED);
+      if (res.constructor === Array && res.length) {
+        for (var j = 0; j < numCommands; ++j) {
+          if (returns[j]) {
+            res[j] = self.applyReturns(returns[j], res[j]);
+          }
+          if (res[j] && callbacks[j]) {
+            callbacks[j](res[j]);
+          }
+        }
+      } else {
+        if (callbacks.length && isFunction(callbacks[0])) {
+          callbacks[0](res);
+        }
+      }
+    });
+  },
 
-    errorCodes: function (method, returns, response) {
-        if (response) {
-            if (response.constructor === Array) {
-                for (var i = 0, len = response.length; i < len; ++i) {
-                    response[i] = this.errorCodes(method, returns, response[i]);
-                }
-            } else if (response.name && response.message && response.stack) {
-                response.error = response.name;
-            } else if (!response.error) {
-                if (returns && returns.indexOf("[]") > -1) {
-                    if (response.length >= 194) {
-                        response = "0x" + response.slice(130, 194);
-                    }
-                }
-                if (errors[response]) {
-                    response = {
-                        error: response,
-                        message: errors[response]
-                    };
-                } else {
-                    if (returns !== "null" && returns !== "string" ||
+  errorCodes: function (method, returns, response) {
+    if (response) {
+      if (response.constructor === Array) {
+        for (var i = 0, len = response.length; i < len; ++i) {
+          response[i] = this.errorCodes(method, returns, response[i]);
+        }
+      } else if (response.name && response.message && response.stack) {
+        response.error = response.name;
+      } else if (!response.error) {
+        if (returns && returns.indexOf("[]") > -1) {
+          if (response.length >= 194) {
+            response = "0x" + response.slice(130, 194);
+          }
+        }
+        if (errors[response]) {
+          response = {
+            error: response,
+            message: errors[response]
+          };
+        } else {
+          if (returns !== "null" && returns !== "string" ||
                         (response && response.constructor === String &&
                         response.slice(0,2) === "0x")) {
-                        var responseNumber = abi.bignum(response, "string", true);
-                        if (responseNumber) {
-                            if (errors[method] && errors[method][responseNumber]) {
-                                response = {
-                                    error: responseNumber,
-                                    message: errors[method][responseNumber]
-                                };
-                            }
-                        }
-                    }
-                }
+            var responseNumber = abi.bignum(response, "string", true);
+            if (responseNumber) {
+              if (errors[method] && errors[method][responseNumber]) {
+                response = {
+                  error: responseNumber,
+                  message: errors[method][responseNumber]
+                };
+              }
             }
+          }
         }
-        return response;
-    },
+      }
+    }
+    return response;
+  },
 
     // callback/wrapper composition: callback(wrapper(result, aux))
-    fire: function (payload, callback, wrapper, aux) {
-        var self = this;
-        var tx = clone(payload);
-        if (!isFunction(callback)) {
-            var res = this.invoke(tx);
-            if (res === undefined || res === null) {
-                throw new this.Error(errors.NO_RESPONSE);
-            }
-            var err = this.errorCodes(tx.method, tx.returns, res);
-            if (err && err.error) throw new this.Error(err);
-            var converted = this.applyReturns(tx.returns, res);
-            if (isFunction(wrapper)) return wrapper(converted, aux);
-            return converted;
+  fire: function (payload, callback, wrapper, aux) {
+    var self = this;
+    var tx = clone(payload);
+    if (!isFunction(callback)) {
+      var res = this.invoke(tx);
+      if (res === undefined || res === null) {
+        throw new this.Error(errors.NO_RESPONSE);
+      }
+      var err = this.errorCodes(tx.method, tx.returns, res);
+      if (err && err.error) throw new this.Error(err);
+      var converted = this.applyReturns(tx.returns, res);
+      if (isFunction(wrapper)) return wrapper(converted, aux);
+      return converted;
+    }
+    this.invoke(tx, function (res) {
+      if (res === undefined || res === null) {
+        return callback(errors.NO_RESPONSE);
+      }
+      var err = self.errorCodes(tx.method, tx.returns, res);
+      if (err && err.error) return callback(err);
+      var converted = self.applyReturns(tx.returns, res);
+      if (isFunction(wrapper)) converted = wrapper(converted, aux);
+      return callback(converted);
+    });
+  },
+
+  /***************************************
+   * Send-call-confirm callback sequence *
+   ***************************************/
+
+  blockFilter: {id: null, heartbeat: null},
+
+  block: null,
+
+  updatePendingTx: function (tx) {
+    var self = this;
+    this.getTx(tx.hash, function (onChainTx) {
+      tx.tx = abi.copy(onChainTx);
+
+      // if transaction is null, then it was dropped from the txpool
+      if (onChainTx === null) {
+        tx.payload.tries = (tx.payload.tries) ? tx.payload.tries + 1 : 1;
+
+        // if we have retries left, then resubmit the transaction
+        if (!self.retryDroppedTxs || tx.payload.tries > self.TX_RETRY_MAX) {
+          tx.status = "failed";
+          tx.locked = false;
+          if (isFunction(tx.onFailed)) {
+            tx.onFailed(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
+          }
+        } else {
+          --self.rawTxMaxNonce;
+          tx.status = "resubmitted";
+          tx.locked = false;
+          if (self.debug.tx) console.debug("resubmitting tx:", tx.hash);
+          self.transact(tx.payload, tx.onSent, tx.onSuccess, tx.onFailed);
         }
-        this.invoke(tx, function (res) {
-            if (res === undefined || res === null) {
-                return callback(errors.NO_RESPONSE);
-            }
-            var err = self.errorCodes(tx.method, tx.returns, res);
-            if (err && err.error) return callback(err);
-            var converted = self.applyReturns(tx.returns, res);
-            if (isFunction(wrapper)) converted = wrapper(converted, aux);
-            return callback(converted);
-        });
-    },
 
-    /***************************************
-     * Send-call-confirm callback sequence *
-     ***************************************/
+        // non-null transaction: transaction still alive and kicking!
+        // check if it has been mined yet (block number is non-null)
+      } else {
+        if (onChainTx.blockNumber) {
+          tx.tx.blockNumber = parseInt(onChainTx.blockNumber, 16);
+          tx.tx.blockHash = onChainTx.blockHash;
+          tx.status = "mined";
+          tx.confirmations = self.block.number - tx.tx.blockNumber;
+          self.updateMinedTx(tx);
+        } else {
+          tx.locked = false;
+        }
+      }
+    });
+  },
 
-    blockFilter: {id: null, heartbeat: null},
-
-    block: null,
-
-    updatePendingTx: function (tx) {
-        var self = this;
-        this.getTx(tx.hash, function (onChainTx) {
-            tx.tx = abi.copy(onChainTx);
-
-            // if transaction is null, then it was dropped from the txpool
-            if (onChainTx === null) {
-                tx.payload.tries = (tx.payload.tries) ? tx.payload.tries + 1 : 1;
-
-                // if we have retries left, then resubmit the transaction
-                if (!self.retryDroppedTxs || tx.payload.tries > self.TX_RETRY_MAX) {
-                    tx.status = "failed";
-                    tx.locked = false;
-                    if (isFunction(tx.onFailed)) {
-                        tx.onFailed(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
-                    }
-                } else {
-                    --self.rawTxMaxNonce;
-                    tx.status = "resubmitted";
-                    tx.locked = false;
-                    if (self.debug.tx) console.debug("resubmitting tx:", tx.hash);
-                    self.transact(tx.payload, tx.onSent, tx.onSuccess, tx.onFailed);
-                }
-
-            // non-null transaction: transaction still alive and kicking!
-            // check if it has been mined yet (block number is non-null)
-            } else {
-                if (onChainTx.blockNumber) {
-                    tx.tx.blockNumber = parseInt(onChainTx.blockNumber, 16);
-                    tx.tx.blockHash = onChainTx.blockHash;
-                    tx.status = "mined";
-                    tx.confirmations = self.block.number - tx.tx.blockNumber;
-                    self.updateMinedTx(tx);
-                } else {
-                    tx.locked = false;
-                }
-            }
-        });
-    },
-
-    updateMinedTx: function (tx) {
-        var self = this;
-        var onChainTx = tx.tx;
-        tx.confirmations = self.block.number - onChainTx.blockNumber;
-        if (self.debug.tx) console.debug("confirmations for", tx.hash, tx.confirmations);
-        if (tx.confirmations >= self.REQUIRED_CONFIRMATIONS) {
-            tx.status = "confirmed";
-            if (isFunction(tx.onSuccess)) {
-                self.getBlock(onChainTx.blockNumber, false, function (block) {
-                    if (block && block.timestamp) {
-                        onChainTx.timestamp = parseInt(block.timestamp, 16);
-                    }
-                    if (!tx.payload.mutable) {
-                        onChainTx.callReturn = tx.callReturn;
-                        self.getTransactionReceipt(tx.hash, function (receipt) {
-                            if (self.debug.tx) console.debug("got receipt:", receipt);
-                            if (receipt && receipt.gasUsed) {
-                                onChainTx.gasFees = new BigNumber(receipt.gasUsed, 16)
+  updateMinedTx: function (tx) {
+    var self = this;
+    var onChainTx = tx.tx;
+    tx.confirmations = self.block.number - onChainTx.blockNumber;
+    if (self.debug.tx) console.debug("confirmations for", tx.hash, tx.confirmations);
+    if (tx.confirmations >= self.REQUIRED_CONFIRMATIONS) {
+      tx.status = "confirmed";
+      if (isFunction(tx.onSuccess)) {
+        self.getBlock(onChainTx.blockNumber, false, function (block) {
+          if (block && block.timestamp) {
+            onChainTx.timestamp = parseInt(block.timestamp, 16);
+          }
+          if (!tx.payload.mutable) {
+            onChainTx.callReturn = tx.callReturn;
+            self.getTransactionReceipt(tx.hash, function (receipt) {
+              if (self.debug.tx) console.debug("got receipt:", receipt);
+              if (receipt && receipt.gasUsed) {
+                onChainTx.gasFees = new BigNumber(receipt.gasUsed, 16)
                                     .times(new BigNumber(onChainTx.gasPrice, 16))
                                     .dividedBy(self.ETHER)
                                     .toFixed();
-                            }
-                            tx.locked = false;
-                            tx.onSuccess(onChainTx);
-                        });
+              }
+              tx.locked = false;
+              tx.onSuccess(onChainTx);
+            });
+          } else {
+            self.getLoggedReturnValue(tx.hash, function (err, log) {
+              if (self.debug.tx) console.debug("loggedReturnValue:", err, log);
+              if (err) {
+                tx.payload.send = false;
+                self.fire(tx.payload, function (callReturn) {
+                  tx.locked = false;
+                  if (isFunction(tx.onFailed)) {
+                    if (err.error !== errors.NULL_CALL_RETURN.error) {
+                      tx.onFailed(err);
                     } else {
-                        self.getLoggedReturnValue(tx.hash, function (err, log) {
-                            if (self.debug.tx) console.debug("loggedReturnValue:", err, log);
-                            if (err) {
-                                tx.payload.send = false;
-                                self.fire(tx.payload, function (callReturn) {
-                                    tx.locked = false;
-                                    if (isFunction(tx.onFailed)) {
-                                        if (err.error !== errors.NULL_CALL_RETURN.error) {
-                                            tx.onFailed(err);
-                                        } else {
-                                            tx.onFailed(self.errorCodes(tx.payload.method, tx.payload.returns, callReturn));
-                                        }
-                                    }
-                                });
-                            } else {
-                                var e = self.errorCodes(tx.payload.method, tx.payload.returns, log.returnValue);
-                                if (self.debug.tx) console.debug("errorCodes:", e);
-                                if (e && e.error) {
-                                    e.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
-                                    tx.locked = false;
-                                    if (isFunction(tx.onFailed)) {
-                                        tx.onFailed(e);
-                                    }
-                                } else {
-                                    onChainTx.callReturn = self.applyReturns(tx.payload.returns, log.returnValue);
-                                    onChainTx.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
-                                    tx.locked = false;
-                                    tx.onSuccess(onChainTx);
-                                }
-                            }
-                        });
+                      tx.onFailed(self.errorCodes(tx.payload.method, tx.payload.returns, callReturn));
                     }
+                  }
                 });
-            } else {
-                tx.locked = false;
-            }
-        } else {
-            tx.locked = false;
-        }
-    },
-
-    updateTx: function (tx) {
-        if (!tx.locked) {
-            if (tx.tx === undefined) {
-                tx.locked = true;
-                return this.updatePendingTx(tx);
-            }
-            switch (tx.status) {
-            case "pending":
-                tx.locked = true;
-                this.updatePendingTx(tx);
-                break;
-            case "mined":
-                tx.locked = true;
-                this.updateMinedTx(tx);
-                break;
-            default:
-                break;
-            }
-        }
-    },
-
-    onNewBlock: function (block) {
-        if (block) {
-
-            // newHeads push notification
-            if (block.number) {
-                if (this.debug.tx) console.debug("new block:", parseInt(block.number, 16));
-                this.block = abi.copy(block);
-                this.block.number = parseInt(this.block.number, 16);
-                var hashes = Object.keys(this.txs);
-                var numTxs = hashes.length;
-                for (var i = 0; i < numTxs; ++i) {
-                    this.updateTx(this.txs[hashes[i]]);
+              } else {
+                var e = self.errorCodes(tx.payload.method, tx.payload.returns, log.returnValue);
+                if (self.debug.tx) console.debug("errorCodes:", e);
+                if (e && e.error) {
+                  e.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
+                  tx.locked = false;
+                  if (isFunction(tx.onFailed)) {
+                    tx.onFailed(e);
+                  }
+                } else {
+                  onChainTx.callReturn = self.applyReturns(tx.payload.returns, log.returnValue);
+                  onChainTx.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
+                  tx.locked = false;
+                  tx.onSuccess(onChainTx);
                 }
+              }
+            });
+          }
+        });
+      } else {
+        tx.locked = false;
+      }
+    } else {
+      tx.locked = false;
+    }
+  },
+
+  updateTx: function (tx) {
+    if (!tx.locked) {
+      if (tx.tx === undefined) {
+        tx.locked = true;
+        return this.updatePendingTx(tx);
+      }
+      switch (tx.status) {
+        case "pending":
+          tx.locked = true;
+          this.updatePendingTx(tx);
+          break;
+        case "mined":
+          tx.locked = true;
+          this.updateMinedTx(tx);
+          break;
+        default:
+          break;
+      }
+    }
+  },
+
+  onNewBlock: function (block) {
+    if (block) {
+
+      // newHeads push notification
+      if (block.number) {
+        if (this.debug.tx) console.debug("new block:", parseInt(block.number, 16));
+        this.block = abi.copy(block);
+        this.block.number = parseInt(this.block.number, 16);
+        var hashes = Object.keys(this.txs);
+        var numTxs = hashes.length;
+        for (var i = 0; i < numTxs; ++i) {
+          this.updateTx(this.txs[hashes[i]]);
+        }
 
             // regular (HTTP) block filter
-            } else if (block.constructor === Array && block.length) {
-                if (this.debug.tx) console.debug("new block:", block);
-                var self = this;
-                async.each(block, function (blockHash, nextBlock) {
-                    self.getBlockByHash(blockHash, false, function (thisBlock) {
-                        self.block = abi.copy(thisBlock);
-                        self.block.number = parseInt(self.block.number, 16);
-                        var hashes = Object.keys(self.txs);
-                        var numTxs = hashes.length;
-                        for (var i = 0; i < numTxs; ++i) {
-                            self.updateTx(self.txs[hashes[i]]);
-                        }
-                        nextBlock();
-                    });
-                });
-            }
-        }
-    },
-
-    verifyTxSubmitted: function (payload, txHash, callReturn, onSent, onSuccess, onFailed, callback) {
+      } else if (block.constructor === Array && block.length) {
+        if (this.debug.tx) console.debug("new block:", block);
         var self = this;
-        if (!isFunction(callback)) {
-            if (!payload || ((!payload.mutable && payload.returns !== "null") && (txHash === null || txHash === undefined))) {
-                throw new this.Error(errors.TRANSACTION_FAILED);
+        async.each(block, function (blockHash, nextBlock) {
+          self.getBlockByHash(blockHash, false, function (thisBlock) {
+            self.block = abi.copy(thisBlock);
+            self.block.number = parseInt(self.block.number, 16);
+            var hashes = Object.keys(self.txs);
+            var numTxs = hashes.length;
+            for (var i = 0; i < numTxs; ++i) {
+              self.updateTx(self.txs[hashes[i]]);
             }
-            if (this.txs[txHash]) throw new this.Error(errors.DUPLICATE_TRANSACTION);
-            this.txs[txHash] = {
-                hash: txHash,
-                payload: payload,
-                callReturn: callReturn,
-                count: 0,
-                status: "pending"
-            };
-            var tx = this.getTransaction(txHash);
-            if (!tx) throw new this.Error(errors.TRANSACTION_FAILED);
-            this.txs[txHash].tx = tx;
-            return;
-        }
-        if (!payload || txHash === null || txHash === undefined) {
-            console.error("payload undefined or txhash null/undefined:", payload, txHash);
-            return callback(errors.TRANSACTION_FAILED);
-        }
-        if (this.txs[txHash]) return callback(errors.DUPLICATE_TRANSACTION);
-        this.txs[txHash] = {
-            hash: txHash,
-            payload: payload,
-            callReturn: callReturn,
-            onSent: onSent,
-            onSuccess: onSuccess,
-            onFailed: onFailed,
-            count: 0,
-            status: "pending"
-        };
-        if (this.block && this.block.number) {
-            this.updateTx(this.txs[txHash]);
-            return callback(null);
-        }
-        this.blockNumber(function (blockNumber) {
-            if (!blockNumber || blockNumber.error) {
-                return callback(blockNumber || "rpc.blockNumber lookup failed");
-            }
-            self.block = {number: parseInt(blockNumber, 16)};
-            self.updateTx(self.txs[txHash]);
-            callback(null);
+            nextBlock();
+          });
         });
-    },
+      }
+    }
+  },
 
-    /**
-     * asynchronous / non-blocking transact:
-     *  - call onSent when the transaction is broadcast to the network
-     *  - call onSuccess when the transaction has REQUIRED_CONFIRMATIONS
-     *  - call onFailed if the transaction fails
-     */
-    transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed) {
-        var self = this;
-        payload.send = true;
-        var returns = payload.returns;
-        delete payload.returns;
-        this.invoke(payload, function (txHash) {
-            if (self.debug.tx) console.debug("txHash:", txHash);
-            if (!txHash) return onFailed(errors.NULL_RESPONSE);
-            if (txHash.error) return onFailed(txHash);
-            payload.returns = returns;
-            txHash = abi.format_int256(txHash);
+  verifyTxSubmitted: function (payload, txHash, callReturn, onSent, onSuccess, onFailed, callback) {
+    var self = this;
+    if (!isFunction(callback)) {
+      if (!payload || ((!payload.mutable && payload.returns !== "null") && (txHash === null || txHash === undefined))) {
+        throw new this.Error(errors.TRANSACTION_FAILED);
+      }
+      if (this.txs[txHash]) throw new this.Error(errors.DUPLICATE_TRANSACTION);
+      this.txs[txHash] = {
+        hash: txHash,
+        payload: payload,
+        callReturn: callReturn,
+        count: 0,
+        status: "pending"
+      };
+      var tx = this.getTransaction(txHash);
+      if (!tx) throw new this.Error(errors.TRANSACTION_FAILED);
+      this.txs[txHash].tx = tx;
+      return;
+    }
+    if (!payload || txHash === null || txHash === undefined) {
+      console.error("payload undefined or txhash null/undefined:", payload, txHash);
+      return callback(errors.TRANSACTION_FAILED);
+    }
+    if (this.txs[txHash]) return callback(errors.DUPLICATE_TRANSACTION);
+    this.txs[txHash] = {
+      hash: txHash,
+      payload: payload,
+      callReturn: callReturn,
+      onSent: onSent,
+      onSuccess: onSuccess,
+      onFailed: onFailed,
+      count: 0,
+      status: "pending"
+    };
+    if (this.block && this.block.number) {
+      this.updateTx(this.txs[txHash]);
+      return callback(null);
+    }
+    this.blockNumber(function (blockNumber) {
+      if (!blockNumber || blockNumber.error) {
+        return callback(blockNumber || "rpc.blockNumber lookup failed");
+      }
+      self.block = {number: parseInt(blockNumber, 16)};
+      self.updateTx(self.txs[txHash]);
+      callback(null);
+    });
+  },
 
-            // send the transaction hash and return value back
-            // to the client, using the onSent callback
-            onSent({hash: txHash, txHash: txHash, callReturn: callReturn});
+  /**
+   * asynchronous / non-blocking transact:
+   *  - call onSent when the transaction is broadcast to the network
+   *  - call onSuccess when the transaction has REQUIRED_CONFIRMATIONS
+   *  - call onFailed if the transaction fails
+   */
+  transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed) {
+    var self = this;
+    payload.send = true;
+    var returns = payload.returns;
+    delete payload.returns;
+    this.invoke(payload, function (txHash) {
+      if (self.debug.tx) console.debug("txHash:", txHash);
+      if (!txHash) return onFailed(errors.NULL_RESPONSE);
+      if (txHash.error) return onFailed(txHash);
+      payload.returns = returns;
+      txHash = abi.format_int256(txHash);
 
-            self.verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, function (err) {
-                if (err) return onFailed(err);
-                if (self.blockFilter.id === null && !self.wsUrl && !self.ipcpath) {
-                    self.newBlockFilter(function (filterID) {
-                        if (filterID && !filterID.error) {
-                            self.blockFilter.id = filterID;
-                            self.blockFilter.heartbeat = setInterval(function () {
-                                self.getFilterChanges(filterID, self.onNewBlock.bind(self));
-                            }, self.TX_POLL_INTERVAL);
-                        }
-                    });
-                }
-            });
-        });
-    },
+      // send the transaction hash and return value back
+      // to the client, using the onSent callback
+      onSent({hash: txHash, txHash: txHash, callReturn: callReturn});
 
-    waitForNextPoll: function (tx, callback) {
-        if (this.txs[tx.hash].count >= this.TX_POLL_MAX) {
-            this.txs[tx.hash].status = "unconfirmed";
-            if (!isFunction(callback)) {
-                throw new Error(errors.TRANSACTION_NOT_CONFIRMED);
+      self.verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, function (err) {
+        if (err) return onFailed(err);
+        if (self.blockFilter.id === null && !self.wsUrl && !self.ipcpath) {
+          self.newBlockFilter(function (filterID) {
+            if (filterID && !filterID.error) {
+              self.blockFilter.id = filterID;
+              self.blockFilter.heartbeat = setInterval(function () {
+                self.getFilterChanges(filterID, self.onNewBlock.bind(self));
+              }, self.TX_POLL_INTERVAL);
             }
-            return callback(errors.TRANSACTION_NOT_CONFIRMED);
+          });
         }
-        if (!isFunction(callback)) {
-            wait(this.TX_POLL_INTERVAL);
-            if (this.txs[tx.hash].status === "pending" || this.txs[tx.hash].status === "mined") {
-                return null;
-            }
-        } else {
-            var self = this;
-            this.notifications[tx.hash] = setTimeout(function () {
-                if (self.txs[tx.hash].status === "pending" || self.txs[tx.hash].status === "mined") {
-                    callback(null, null);
-                }
-            }, this.TX_POLL_INTERVAL);
-        }
-    },
+      });
+    });
+  },
 
-    completeTx: function (tx, callback) {
-        this.txs[tx.hash].status = "confirmed";
+  waitForNextPoll: function (tx, callback) {
+    if (this.txs[tx.hash].count >= this.TX_POLL_MAX) {
+      this.txs[tx.hash].status = "unconfirmed";
+      if (!isFunction(callback)) {
+        throw new Error(errors.TRANSACTION_NOT_CONFIRMED);
+      }
+      return callback(errors.TRANSACTION_NOT_CONFIRMED);
+    }
+    if (!isFunction(callback)) {
+      wait(this.TX_POLL_INTERVAL);
+      if (this.txs[tx.hash].status === "pending" || this.txs[tx.hash].status === "mined") {
+        return null;
+      }
+    } else {
+      var self = this;
+      this.notifications[tx.hash] = setTimeout(function () {
+        if (self.txs[tx.hash].status === "pending" || self.txs[tx.hash].status === "mined") {
+          callback(null, null);
+        }
+      }, this.TX_POLL_INTERVAL);
+    }
+  },
+
+  completeTx: function (tx, callback) {
+    this.txs[tx.hash].status = "confirmed";
+    clearTimeout(this.notifications[tx.hash]);
+    delete this.notifications[tx.hash];
+    if (!isFunction(callback)) return tx;
+    return callback(null, tx);
+  },
+
+  checkConfirmations: function (tx, numConfirmations, callback) {
+    var self = this;
+    var minedBlockNumber = parseInt(tx.blockNumber, 16);
+    this.blockNumber(function (currentBlockNumber) {
+      if (self.debug.tx) {
+        console.log("confirmations:", parseInt(currentBlockNumber, 16) - minedBlockNumber);
+      }
+      if (parseInt(currentBlockNumber, 16) - minedBlockNumber >= numConfirmations) {
+        return self.completeTx(tx, callback);
+      }
+      return self.waitForNextPoll(tx, callback);
+    });
+  },
+
+  checkBlockHash: function (tx, numConfirmations, callback) {
+    if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
+    if (this.txs[tx.hash].count === undefined) this.txs[tx.hash].count = 0;
+    ++this.txs[tx.hash].count;
+    if (this.debug.tx) console.debug("checkBlockHash:", tx.blockHash);
+    if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
+      tx.txHash = tx.hash;
+      if (!numConfirmations) {
+        this.txs[tx.hash].status = "mined";
         clearTimeout(this.notifications[tx.hash]);
         delete this.notifications[tx.hash];
         if (!isFunction(callback)) return tx;
         return callback(null, tx);
-    },
+      }
+      return this.checkConfirmations(tx, numConfirmations, callback);
+    }
+    return this.waitForNextPoll(tx, callback);
+  },
 
-    checkConfirmations: function (tx, numConfirmations, callback) {
-        var self = this;
-        var minedBlockNumber = parseInt(tx.blockNumber, 16);
-        this.blockNumber(function (currentBlockNumber) {
-            if (self.debug.tx) {
-                console.log("confirmations:", parseInt(currentBlockNumber, 16) - minedBlockNumber);
-            }
-            if (parseInt(currentBlockNumber, 16) - minedBlockNumber >= numConfirmations) {
-                return self.completeTx(tx, callback);
-            }
-            return self.waitForNextPoll(tx, callback);
-        });
-    },
+  getLoggedReturnValue: function (txHash, callback) {
+    var self = this;
+    if (!isFunction(callback)) {
+      var receipt = this.getTransactionReceipt(txHash);
+      if (!receipt || !receipt.logs || !receipt.logs.length) {
+        throw new this.Error(errors.NULL_CALL_RETURN);
+      }
+      var log = receipt.logs[receipt.logs.length - 1];
+      if (!log || log.data === null || log.data === undefined) {
+        throw new this.Error(errors.NULL_CALL_RETURN);
+      }
+      return {
+        returnValue: log.data,
+        gasUsed: new BigNumber(receipt.gasUsed, 16)
+      };
+    }
+    this.getTransactionReceipt(txHash, function (receipt) {
+      if (self.debug.tx) console.debug("got receipt:", receipt);
+      if (!receipt || !receipt.logs || !receipt.logs.length) {
+        return callback(errors.NULL_CALL_RETURN);
+      }
+      var log = receipt.logs[receipt.logs.length - 1];
+      if (!log || log.data === null || log.data === undefined) {
+        return callback(errors.NULL_CALL_RETURN);
+      }
+      callback(null, {
+        returnValue: log.data,
+        gasUsed: new BigNumber(receipt.gasUsed, 16)
+      });
+    });
+  },
 
-    checkBlockHash: function (tx, numConfirmations, callback) {
-        if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
-        if (this.txs[tx.hash].count === undefined) this.txs[tx.hash].count = 0;
-        ++this.txs[tx.hash].count;
-        if (this.debug.tx) console.debug("checkBlockHash:", tx.blockHash);
-        if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
-            tx.txHash = tx.hash;
-            if (!numConfirmations) {
-                this.txs[tx.hash].status = "mined";
-                clearTimeout(this.notifications[tx.hash]);
-                delete this.notifications[tx.hash];
-                if (!isFunction(callback)) return tx;
-                return callback(null, tx);
-            }
-            return this.checkConfirmations(tx, numConfirmations, callback);
-        }
-        return this.waitForNextPoll(tx, callback);
-    },
-
-    getLoggedReturnValue: function (txHash, callback) {
-        var self = this;
-        if (!isFunction(callback)) {
-            var receipt = this.getTransactionReceipt(txHash);
-            if (!receipt || !receipt.logs || !receipt.logs.length) {
-                throw new this.Error(errors.NULL_CALL_RETURN);
-            }
-            var log = receipt.logs[receipt.logs.length - 1];
-            if (!log || log.data === null || log.data === undefined) {
-                throw new this.Error(errors.NULL_CALL_RETURN);
-            }
-            return {
-                returnValue: log.data,
-                gasUsed: new BigNumber(receipt.gasUsed, 16)
-            };
-        }
-        this.getTransactionReceipt(txHash, function (receipt) {
-            if (self.debug.tx) console.debug("got receipt:", receipt);
-            if (!receipt || !receipt.logs || !receipt.logs.length) {
-                return callback(errors.NULL_CALL_RETURN);
-            }
-            var log = receipt.logs[receipt.logs.length - 1];
-            if (!log || log.data === null || log.data === undefined) {
-                return callback(errors.NULL_CALL_RETURN);
-            }
-            callback(null, {
-                returnValue: log.data,
-                gasUsed: new BigNumber(receipt.gasUsed, 16)
-            });
-        });
-    },
-
-    checkDroppedTxForDuplicateNonce: function (txHash, callback) {
-        var duplicateNonce;
-        if (this.debug.tx) console.debug("Raw transactions:", this.rawTxs);
-        if (!this.rawTxs[txHash] || !this.rawTxs[txHash].tx) {
-            if (!isFunction(callback)) {
-                throw new this.Error(errors.TRANSACTION_NOT_FOUND);
-            }
-            return callback(errors.TRANSACTION_NOT_FOUND);
-        }
-        for (var hash in this.rawTxs) {
-            if (!this.rawTxs.hasOwnProperty(hash)) continue;
-            if (this.rawTxs[hash].tx.nonce === this.rawTxs[txHash].tx.nonce &&
+  checkDroppedTxForDuplicateNonce: function (txHash, callback) {
+    var duplicateNonce;
+    if (this.debug.tx) console.debug("Raw transactions:", this.rawTxs);
+    if (!this.rawTxs[txHash] || !this.rawTxs[txHash].tx) {
+      if (!isFunction(callback)) {
+        throw new this.Error(errors.TRANSACTION_NOT_FOUND);
+      }
+      return callback(errors.TRANSACTION_NOT_FOUND);
+    }
+    for (var hash in this.rawTxs) {
+      if (!this.rawTxs.hasOwnProperty(hash)) continue;
+      if (this.rawTxs[hash].tx.nonce === this.rawTxs[txHash].tx.nonce &&
                 JSON.stringify(this.rawTxs[hash].tx) !== JSON.stringify(this.rawTxs[txHash].tx)) {
-                duplicateNonce = true;
-                console.warn("Warning: duplicate nonce found on raw tx:", txHash);
-                break;
-            }
-        }
-        if (!duplicateNonce) {
-            if (!isFunction(callback)) {
-                throw new this.Error(errors.TRANSACTION_NOT_FOUND);
-            }
-            return callback(errors.TRANSACTION_NOT_FOUND);
-        }
-        if (!isFunction(callback)) return null;
-        callback(null);
-    },
+        duplicateNonce = true;
+        console.warn("Warning: duplicate nonce found on raw tx:", txHash);
+        break;
+      }
+    }
+    if (!duplicateNonce) {
+      if (!isFunction(callback)) {
+        throw new this.Error(errors.TRANSACTION_NOT_FOUND);
+      }
+      return callback(errors.TRANSACTION_NOT_FOUND);
+    }
+    if (!isFunction(callback)) return null;
+    callback(null);
+  },
 
-    txNotify: function (txHash, callback) {
-        var self = this;
-        if (!isFunction(callback)) {
-            var tx = this.getTransaction(txHash);
-            if (tx) return tx;
-            --this.rawTxMaxNonce;
-            this.txs[txHash].status = "failed";
+  txNotify: function (txHash, callback) {
+    var self = this;
+    if (!isFunction(callback)) {
+      var tx = this.getTransaction(txHash);
+      if (tx) return tx;
+      --this.rawTxMaxNonce;
+      this.txs[txHash].status = "failed";
 
-            // only resubmit if this is a raw transaction and has a duplicate nonce
-            if (!this.retryDroppedTxs) this.checkDroppedTxForDuplicateNonce(txHash);
+      // only resubmit if this is a raw transaction and has a duplicate nonce
+      if (!this.retryDroppedTxs) this.checkDroppedTxForDuplicateNonce(txHash);
 
-            this.txs[txHash].status = "resubmitted";
-            return null;
-        }
-        this.getTransaction(txHash, function (tx) {
-            if (tx) return callback(null, tx);
-            --self.rawTxMaxNonce;
-            self.txs[txHash].status = "failed";
-            if (self.retryDroppedTxs) {
-                if (self.debug.broadcast) console.debug(" *** Re-submitting transaction:", txHash);
-                self.txs[txHash].status = "resubmitted";
-                return callback(null, null);
-            }
-            // only resubmit if this is a raw transaction and has a duplicate nonce
-            self.checkDroppedTxForDuplicateNonce(txHash, function (err) {
-                if (err !== null) return callback(err);
-                if (self.debug.broadcast) console.debug(" *** Re-submitting transaction:", txHash);
-                self.txs[txHash].status = "resubmitted";
-                return callback(null, null);
-            });
-        });
-    },
+      this.txs[txHash].status = "resubmitted";
+      return null;
+    }
+    this.getTransaction(txHash, function (tx) {
+      if (tx) return callback(null, tx);
+      --self.rawTxMaxNonce;
+      self.txs[txHash].status = "failed";
+      if (self.retryDroppedTxs) {
+        if (self.debug.broadcast) console.debug(" *** Re-submitting transaction:", txHash);
+        self.txs[txHash].status = "resubmitted";
+        return callback(null, null);
+      }
+      // only resubmit if this is a raw transaction and has a duplicate nonce
+      self.checkDroppedTxForDuplicateNonce(txHash, function (err) {
+        if (err !== null) return callback(err);
+        if (self.debug.broadcast) console.debug(" *** Re-submitting transaction:", txHash);
+        self.txs[txHash].status = "resubmitted";
+        return callback(null, null);
+      });
+    });
+  },
 
-    // poll the network until the transaction is included in a block
-    // (i.e., has a non-null blockHash field)
-    pollForTxConfirmation: function (txHash, numConfirmations, callback) {
-        var self = this;
-        if (!isFunction(callback)) {
-            var tx = this.txNotify(txHash);
-            if (tx === null) return null;
-            var minedTx = this.checkBlockHash(tx, numConfirmations);
-            if (minedTx !== null) return minedTx;
-            return this.pollForTxConfirmation(txHash, numConfirmations);
-        }
-        this.txNotify(txHash, function (err, tx) {
-            if (err) return callback(err);
-            if (tx === null) return callback(null, null);
-            self.checkBlockHash(tx, numConfirmations, function (err, minedTx) {
-                if (err) return callback(err);
-                if (minedTx !== null) return callback(null, minedTx);
-                self.pollForTxConfirmation(txHash, numConfirmations, callback);
-            });
-        });
-    },
+  // poll the network until the transaction is included in a block
+  // (i.e., has a non-null blockHash field)
+  pollForTxConfirmation: function (txHash, numConfirmations, callback) {
+    var self = this;
+    if (!isFunction(callback)) {
+      var tx = this.txNotify(txHash);
+      if (tx === null) return null;
+      var minedTx = this.checkBlockHash(tx, numConfirmations);
+      if (minedTx !== null) return minedTx;
+      return this.pollForTxConfirmation(txHash, numConfirmations);
+    }
+    this.txNotify(txHash, function (err, tx) {
+      if (err) return callback(err);
+      if (tx === null) return callback(null, null);
+      self.checkBlockHash(tx, numConfirmations, function (err, minedTx) {
+        if (err) return callback(err);
+        if (minedTx !== null) return callback(null, minedTx);
+        self.pollForTxConfirmation(txHash, numConfirmations, callback);
+      });
+    });
+  },
 
-    /**
-     * synchronous transact: block until the transaction is confirmed or fails
-     * (don't use this in the browser or you will be a sad panda)
-     */
-    transactSync: function (payload) {
-        var callReturn;
-        if (payload.mutable || payload.returns === "null") {
-            callReturn = null;
-        } else {
-            callReturn = this.fire(payload);
-            if (this.debug.tx) console.debug("callReturn:", callReturn);
-            if (callReturn === undefined || callReturn === null) {
-                throw new this.Error(errors.NULL_CALL_RETURN);
-            } else if (callReturn.error === "0x") {
-                callReturn = null;
-            } else if (callReturn.error) {
-                throw new this.Error(callReturn);
-            }
-        }
-        payload.send = true;
-        var returns = payload.returns;
-        delete payload.returns;
-        var txHash = this.invoke(payload);
-        if (this.debug.tx) console.debug("txHash:", txHash);
-        if (!txHash && !payload.mutable && payload.returns !== "null") {
-            throw new this.Error(errors.NULL_RESPONSE);
-        } else if (txHash && txHash.error) {
-            throw new this.Error(txHash);
-        }
-        payload.returns = returns;
-        txHash = abi.format_int256(txHash);
-        this.verifyTxSubmitted(payload, txHash, callReturn);
-        var tx = this.pollForTxConfirmation(txHash, null);
-        if (tx === null) {
-            payload.tries = (payload.tries) ? payload.tries + 1 : 1;
-            if (payload.tries > this.TX_RETRY_MAX) {
-                throw new this.Error(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
-            }
-            return this.transact(payload);
-        }
-        tx.timestamp = parseInt(this.getBlock(tx.blockNumber, false).timestamp, 16);
-        if (!payload.mutable) {
-            tx.callReturn = callReturn;
-            var receipt = this.getTransactionReceipt(txHash);
-            if (this.debug.tx) console.debug("got receipt:", receipt);
-            if (receipt && receipt.gasUsed) {
-                tx.gasFees = new BigNumber(receipt.gasUsed, 16)
+  /**
+   * synchronous transact: block until the transaction is confirmed or fails
+   * (don't use this in the browser or you will be a sad panda)
+   */
+  transactSync: function (payload) {
+    var callReturn;
+    if (payload.mutable || payload.returns === "null") {
+      callReturn = null;
+    } else {
+      callReturn = this.fire(payload);
+      if (this.debug.tx) console.debug("callReturn:", callReturn);
+      if (callReturn === undefined || callReturn === null) {
+        throw new this.Error(errors.NULL_CALL_RETURN);
+      } else if (callReturn.error === "0x") {
+        callReturn = null;
+      } else if (callReturn.error) {
+        throw new this.Error(callReturn);
+      }
+    }
+    payload.send = true;
+    var returns = payload.returns;
+    delete payload.returns;
+    var txHash = this.invoke(payload);
+    if (this.debug.tx) console.debug("txHash:", txHash);
+    if (!txHash && !payload.mutable && payload.returns !== "null") {
+      throw new this.Error(errors.NULL_RESPONSE);
+    } else if (txHash && txHash.error) {
+      throw new this.Error(txHash);
+    }
+    payload.returns = returns;
+    txHash = abi.format_int256(txHash);
+    this.verifyTxSubmitted(payload, txHash, callReturn);
+    var tx = this.pollForTxConfirmation(txHash, null);
+    if (tx === null) {
+      payload.tries = (payload.tries) ? payload.tries + 1 : 1;
+      if (payload.tries > this.TX_RETRY_MAX) {
+        throw new this.Error(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
+      }
+      return this.transact(payload);
+    }
+    tx.timestamp = parseInt(this.getBlock(tx.blockNumber, false).timestamp, 16);
+    if (!payload.mutable) {
+      tx.callReturn = callReturn;
+      var receipt = this.getTransactionReceipt(txHash);
+      if (this.debug.tx) console.debug("got receipt:", receipt);
+      if (receipt && receipt.gasUsed) {
+        tx.gasFees = new BigNumber(receipt.gasUsed, 16)
                     .times(new BigNumber(tx.gasPrice, 16))
                     .dividedBy(this.ETHER)
                     .toFixed();
-            }
-            return tx;
-        }
-
-        // if mutable return value, then lookup logged return
-        // value in transaction receipt (after confirmation)
-        var log = this.getLoggedReturnValue(txHash);
-        var e = this.errorCodes(payload.method, payload.returns, log.returnValue);
-        if (e && e.error) {
-            e.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
-            if (e.error !== errors.NULL_CALL_RETURN.error) {
-                throw new Error(e);
-            }
-            callReturn = this.fire(payload);
-            throw new Error(this.errorCodes(payload.method, payload.returns, callReturn));
-        }
-        tx.callReturn = this.applyReturns(payload.returns, log.returnValue);
-        tx.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
-        return tx;
-    },
-
-    transact: function (payload, onSent, onSuccess, onFailed) {
-        var self = this;
-        if (this.debug.tx) console.debug("payload transact:", payload);
-        payload.send = false;
-
-        // synchronous / blocking transact sequence
-        if (!isFunction(onSent)) return this.transactSync(payload);
-
-        // asynchronous / non-blocking transact sequence
-        var cb = (isFunction(this.txRelay)) ? {
-            sent: this.wrapTxRelayCallback("sent", payload, onSent),
-            success: this.wrapTxRelayCallback("success", payload, onSuccess),
-            failed: this.wrapTxRelayCallback("failed", payload, onFailed)
-        } : {
-            sent: onSent,
-            success: (isFunction(onSuccess)) ? onSuccess : noop,
-            failed: (isFunction(onFailed)) ? onFailed : noop
-        };
-        if (payload.mutable || payload.returns === "null") {
-            return this.transactAsync(payload, null, cb.sent, cb.success, cb.failed);
-        }
-        this.fire(payload, function (callReturn) {
-            if (self.debug.tx) console.debug("callReturn:", callReturn);
-            if (callReturn === undefined || callReturn === null) {
-                return cb.failed(errors.NULL_CALL_RETURN);
-            } else if (callReturn.error) {
-                return cb.failed(callReturn);
-            }
-            self.transactAsync(payload, callReturn, cb.sent, cb.success, cb.failed);
-        });
+      }
+      return tx;
     }
+
+    // if mutable return value, then lookup logged return
+    // value in transaction receipt (after confirmation)
+    var log = this.getLoggedReturnValue(txHash);
+    var e = this.errorCodes(payload.method, payload.returns, log.returnValue);
+    if (e && e.error) {
+      e.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
+      if (e.error !== errors.NULL_CALL_RETURN.error) {
+        throw new Error(e);
+      }
+      callReturn = this.fire(payload);
+      throw new Error(this.errorCodes(payload.method, payload.returns, callReturn));
+    }
+    tx.callReturn = this.applyReturns(payload.returns, log.returnValue);
+    tx.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
+    return tx;
+  },
+
+  transact: function (payload, onSent, onSuccess, onFailed) {
+    var self = this;
+    if (this.debug.tx) console.debug("payload transact:", payload);
+    payload.send = false;
+
+    // synchronous / blocking transact sequence
+    if (!isFunction(onSent)) return this.transactSync(payload);
+
+    // asynchronous / non-blocking transact sequence
+    var cb = (isFunction(this.txRelay)) ? {
+      sent: this.wrapTxRelayCallback("sent", payload, onSent),
+      success: this.wrapTxRelayCallback("success", payload, onSuccess),
+      failed: this.wrapTxRelayCallback("failed", payload, onFailed)
+    } : {
+      sent: onSent,
+      success: (isFunction(onSuccess)) ? onSuccess : noop,
+      failed: (isFunction(onFailed)) ? onFailed : noop
+    };
+    if (payload.mutable || payload.returns === "null") {
+      return this.transactAsync(payload, null, cb.sent, cb.success, cb.failed);
+    }
+    this.fire(payload, function (callReturn) {
+      if (self.debug.tx) console.debug("callReturn:", callReturn);
+      if (callReturn === undefined || callReturn === null) {
+        return cb.failed(errors.NULL_CALL_RETURN);
+      } else if (callReturn.error) {
+        return cb.failed(callReturn);
+      }
+      self.transactAsync(payload, callReturn, cb.sent, cb.success, cb.failed);
+    });
+  }
 };
 
 }).call(this,require('_process'))
