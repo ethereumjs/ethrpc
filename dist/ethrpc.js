@@ -1,6226 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports={
-  "events": {
-    "Approval": {
-      "contract": "SendReputation", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "_owner", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "_spender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "value", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "Approval(int256,int256,int256,int256)", 
-      "signature": "0xb3a0644aa1a804a19f7ab4bf836f497fe9864488c91b39df7e6e6dd8f8f08b61"
-    }, 
-    "Transfer": {
-      "contract": "SendReputation", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "_from", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "_to", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "_value", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "Transfer(int256,int256,int256,int256)", 
-      "signature": "0xa5c50eea168b70b2f404cc28da30eade9ed5ab2beb48debd7856878bde2e6096"
-    }, 
-    "buyAndSellShares_logReturn": {
-      "contract": "BuyAndSellShares", 
-      "inputs": [
-        {
-          "indexed": false, 
-          "name": "returnValue", 
-          "type": "int256"
-        }
-      ], 
-      "name": "buyAndSellShares_logReturn(int256)", 
-      "signature": "0x9fbb0d8110bee15417200d9e638635c9436990b24f565fa2ce74f50f870171b6"
-    }, 
-    "closeMarket_logReturn": {
-      "contract": "CloseMarket", 
-      "inputs": [
-        {
-          "indexed": false, 
-          "name": "returnValue", 
-          "type": "int256"
-        }
-      ], 
-      "name": "closeMarket_logReturn(int256)", 
-      "signature": "0x7111c90bbf79fe51a8f95606c2c44137f600abeb3b5631db7d06ed168c13eea7"
-    }, 
-    "closedMarket": {
-      "contract": "CloseMarket", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "market", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "branch", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }
-      ], 
-      "name": "closedMarket(int256,int256,int256)", 
-      "signature": "0x32c2330374d337682bae09f8332c0cc2ca58d413047a81c2282ad2c3641b4d92"
-    }, 
-    "collectedFees": {
-      "contract": "CollectFees", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "branch", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "cashFeesCollected", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "newCashBalance", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "repGain", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "newRepBalance", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "totalReportingRep", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "notReportingBond", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "period", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "collectedFees(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0xcde4a27ca173f91b1dd9076223820f857c157515fd27e19adfcd4f5f4af9ab48"
-    }, 
-    "completeSets_logReturn": {
-      "contract": "CompleteSets", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "market", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "type", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "returnValue", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "numOutcomes", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "completeSets_logReturn(int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x59193f204bd4754cff0e765b9ee9157305fb373586ec5d680b49e6341ef922a6"
-    }, 
-    "consensus_logReturn": {
-      "contract": "Consensus", 
-      "inputs": [
-        {
-          "indexed": false, 
-          "name": "returnValue", 
-          "type": "int256"
-        }
-      ], 
-      "name": "consensus_logReturn(int256)", 
-      "signature": "0x2c8fae543971d12ce9baeaa8ac11b4873683653fdcb1a6104f6e0c9d5c3ecf02"
-    }, 
-    "deposit": {
-      "contract": "Cash", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "value", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "deposit(int256,int256,int256)", 
-      "signature": "0x26c0012e46d4069376ba870705277dc83bb702e2b282b4779a16fceec2479de0"
-    }, 
-    "fundedAccount": {
-      "contract": "Faucets", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "branch", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "cashBalance", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "repBalance", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "fundedAccount(int256,int256,int256,int256,int256)", 
-      "signature": "0xe86de3de21f900509377e1239ba6e244650b70db18f42d2cd7df914b395060b7"
-    }, 
-    "log_add_tx": {
-      "contract": "BuyAndSellShares", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "market", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "type", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "price", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "amount", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "outcome", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "tradeid", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "isShortAsk", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "tradeGroupID", 
-          "type": "int256"
-        }
-      ], 
-      "name": "log_add_tx(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x3922406b6c1bc74fdedc2f7b5f84f64655e6a78d29229166b493c9b738a5e40e"
-    }, 
-    "log_cancel": {
-      "contract": "BuyAndSellShares", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "market", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "price", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "amount", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "tradeid", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "outcome", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "type", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "cashRefund", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "log_cancel(int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x87540aa511444ce3628639499047bc199b924522a0dbfd241e849901db56c8db"
-    }, 
-    "log_fill_tx": {
-      "contract": "Trade", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "market", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "owner", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "type", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "price", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "amount", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "tradeid", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "outcome", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "takerFee", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "makerFee", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "onChainPrice", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "tradeHash", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "tradeGroupID", 
-          "type": "int256"
-        }
-      ], 
-      "name": "log_fill_tx(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0xe054ca76966cd4f17c6c6a8e55f1c6352cb2b58b760f658e013353f1613d32c7"
-    }, 
-    "log_short_fill_tx": {
-      "contract": "Trade", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "market", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "owner", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "price", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "amount", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "tradeid", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "outcome", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "takerFee", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "makerFee", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "numOutcomes", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "onChainPrice", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "tradeHash", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "tradeGroupID", 
-          "type": "int256"
-        }
-      ], 
-      "name": "log_short_fill_tx(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x3572c2b345009b4c449540a9d7fe10a7464ae662d6bb1bae9fea96ce21a8ebb1"
-    }, 
-    "makeReports_logReturn": {
-      "contract": "MakeReports", 
-      "inputs": [
-        {
-          "indexed": false, 
-          "name": "returnValue", 
-          "type": "int256"
-        }
-      ], 
-      "name": "makeReports_logReturn(int256)", 
-      "signature": "0xc63250021b81c42e43223a77f306159f705fa6e54b1fbeaeeadaaa8340a38760"
-    }, 
-    "marketCreated": {
-      "contract": "CreateMarket", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "branch", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "marketID", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "marketCreationFee", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "eventBond", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "marketCreated(int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x80dc2c0162323f3305cee66776c5a51c1475ee8c4d8c6798df60e80d8c8c907b"
-    }, 
-    "payout": {
-      "contract": "Payout", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "market", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "cashPayout", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "cashBalance", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "shares", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "payout(int256,int256,int256,int256,int256,int256)", 
-      "signature": "0xa2bf9dad859f137c8894b41a4e89182a27fa82c48ed42019e924af83fefc1f81"
-    }, 
-    "penalizationCaughtUp": {
-      "contract": "PenalizationCatchup", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "branch", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "penalizedFrom", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "penalizedUpTo", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "repLost", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "newRepBalance", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "penalizationCaughtUp(int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x31dc9507ffec8f6f69d9f2b7a9bd206108312323de6ba468056af9c269881ea0"
-    }, 
-    "penalize": {
-      "contract": "Consensus", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "branch", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "event", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "outcome", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "oldrep", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "repchange", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "newafterrep", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "p", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "reportValue", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "penalizedUpTo", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "penalize(int256,int256,int256,int256,int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0xc06628844b88265d7d67648aa987a952cb724513c59dcf14014706b266041de7"
-    }, 
-    "registration": {
-      "contract": "Register", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "registration(int256,int256)", 
-      "signature": "0x44b6aeb7b38bb1ad04b4d0daf588cff086ff8829f0a34c30ddbb4d38695428de"
-    }, 
-    "sentCash": {
-      "contract": "Cash", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "_from", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "_to", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "_value", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "sentCash(int256,int256,int256,int256)", 
-      "signature": "0x27fc4539f0a547270e2eb3d44c9889a9dd0d9fe116324eb14204ad6d54d6e047"
-    }, 
-    "submittedReport": {
-      "contract": "MakeReports", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "branch", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "event", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "salt", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "report", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "ethics", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "submittedReport(int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x10a25c8f0d1e8e37576b43df8517b7a01ba412360118206afdc4bf19fe8a61ad"
-    }, 
-    "submittedReportHash": {
-      "contract": "MakeReports", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "branch", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "event", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "reportHash", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "encryptedReport", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "encryptedSalt", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "ethics", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "submittedReportHash(int256,int256,int256,int256,int256,int256,int256,int256)", 
-      "signature": "0x022363830a2ffb8853db587ab6c8995dc8cb6bb401abc22fa484d705c81881c6"
-    }, 
-    "trade_logArrayReturn": {
-      "contract": "Trade", 
-      "inputs": [
-        {
-          "indexed": false, 
-          "name": "returnArray", 
-          "type": "int256[]"
-        }
-      ], 
-      "name": "trade_logArrayReturn(int256[])", 
-      "signature": "0x6a5b12f51adb25f3461c7108a9f5f8c509d374df9530d7dac8dfdd310929e39d"
-    }, 
-    "trade_logReturn": {
-      "contract": "Trade", 
-      "inputs": [
-        {
-          "indexed": false, 
-          "name": "returnValue", 
-          "type": "int256"
-        }
-      ], 
-      "name": "trade_logReturn(int256)", 
-      "signature": "0x1bbf36d9a7b2814880015722ce46ca5df561edceee37844559cf4dd31ecd5dfa"
-    }, 
-    "tradingFeeUpdated": {
-      "contract": "CreateMarket", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "branch", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "marketID", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "tradingFee", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "tradingFeeUpdated(int256,int256,int256,int256,int256)", 
-      "signature": "0xcd5a359787987cf4975171bed45d96e380d985598c913dc5a76c6aca1d1fccfb"
-    }, 
-    "withdraw": {
-      "contract": "Cash", 
-      "inputs": [
-        {
-          "indexed": true, 
-          "name": "sender", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": true, 
-          "name": "to", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "value", 
-          "type": "int256"
-        }, 
-        {
-          "indexed": false, 
-          "name": "timestamp", 
-          "type": "int256"
-        }
-      ], 
-      "name": "withdraw(int256,int256,int256,int256)", 
-      "signature": "0xca93904ea92cb171dc196571984cacdf47206dfcde44e464b394de4cca42f7b7"
-    }
-  }, 
-  "functions": {
-    "Backstops": {
-      "adjForkBondPaid": {
-        "inputs": [
-          "event", 
-          "amount"
-        ], 
-        "label": "Adj Fork Bond Paid", 
-        "method": "adjForkBondPaid", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "doRoundTwoRefund": {
-        "inputs": [
-          "sender", 
-          "event"
-        ], 
-        "label": "Do Round Two Refund", 
-        "method": "doRoundTwoRefund", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getBondAmount": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Bond Amount", 
-        "method": "getBondAmount", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getBondPaid": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Bond Paid", 
-        "method": "getBondPaid", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getBondPoster": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Bond Poster", 
-        "method": "getBondPoster", 
-        "returns": "address", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getBondReturned": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Bond Returned", 
-        "method": "getBondReturned", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getFinal": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Final", 
-        "method": "getFinal", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getForkBondPaid": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Fork Bond Paid", 
-        "method": "getForkBondPaid", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getForkBondPoster": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Fork Bond Poster", 
-        "method": "getForkBondPoster", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getForkedOverEthicality": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Forked Over Ethicality", 
-        "method": "getForkedOverEthicality", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getMoved": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Moved", 
-        "method": "getMoved", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getOriginalBranch": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Original Branch", 
-        "method": "getOriginalBranch", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getOriginalEthicality": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Original Ethicality", 
-        "method": "getOriginalEthicality", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getOriginalOutcome": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Original Outcome", 
-        "method": "getOriginalOutcome", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getOriginalVotePeriod": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Original Vote Period", 
-        "method": "getOriginalVotePeriod", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getResolved": {
-        "inputs": [
-          "branch", 
-          "forkPeriod"
-        ], 
-        "label": "Get Resolved", 
-        "method": "getResolved", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getRoundTwo": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Round Two", 
-        "method": "getRoundTwo", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "increaseBondPaid": {
-        "inputs": [
-          "event", 
-          "amount"
-        ], 
-        "label": "Increase Bond Paid", 
-        "method": "increaseBondPaid", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setBondAmount": {
-        "inputs": [
-          "event", 
-          "amount"
-        ], 
-        "label": "Set Bond Amount", 
-        "method": "setBondAmount", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setBondPoster": {
-        "inputs": [
-          "event", 
-          "bondPoster"
-        ], 
-        "label": "Set Bond Poster", 
-        "method": "setBondPoster", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setBondReturned": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Set Bond Returned", 
-        "method": "setBondReturned", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "setFinal": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Set Final", 
-        "method": "setFinal", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "setForkBondPoster": {
-        "inputs": [
-          "event", 
-          "poster"
-        ], 
-        "label": "Set Fork Bond Poster", 
-        "method": "setForkBondPoster", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setForkedOverEthicality": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Set Forked Over Ethicality", 
-        "method": "setForkedOverEthicality", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "setMoved": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Set Moved", 
-        "method": "setMoved", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "setOriginalBranch": {
-        "inputs": [
-          "event", 
-          "branch"
-        ], 
-        "label": "Set Original Branch", 
-        "method": "setOriginalBranch", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setOriginalEthicality": {
-        "inputs": [
-          "event", 
-          "ethicality"
-        ], 
-        "label": "Set Original Ethicality", 
-        "method": "setOriginalEthicality", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setOriginalOutcome": {
-        "inputs": [
-          "event", 
-          "originalOutcome"
-        ], 
-        "label": "Set Original Outcome", 
-        "method": "setOriginalOutcome", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setOriginalVotePeriod": {
-        "inputs": [
-          "event", 
-          "period"
-        ], 
-        "label": "Set Original Vote Period", 
-        "method": "setOriginalVotePeriod", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setResolved": {
-        "inputs": [
-          "branch", 
-          "forkPeriod", 
-          "winner"
-        ], 
-        "label": "Set Resolved", 
-        "method": "setResolved", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setRoundTwo": {
-        "inputs": [
-          "event", 
-          "roundTwo"
-        ], 
-        "label": "Set Round Two", 
-        "method": "setRoundTwo", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setRoundTwoRefund": {
-        "inputs": [
-          "event", 
-          "amt"
-        ], 
-        "label": "Set Round Two Refund", 
-        "method": "setRoundTwoRefund", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "Branches": {
-      "addMarketToBranch": {
-        "inputs": [
-          "branch", 
-          "market"
-        ], 
-        "label": "Add Market To Branch", 
-        "method": "addMarketToBranch", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getBaseReporters": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Base Reporters", 
-        "method": "getBaseReporters", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getBranchByNum": {
-        "inputs": [
-          "branchNumber"
-        ], 
-        "label": "Get Branch By Num", 
-        "method": "getBranchByNum", 
-        "returns": "hash", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getBranches": {
-        "label": "Get Branches", 
-        "method": "getBranches", 
-        "returns": "hash[]"
-      }, 
-      "getCreationDate": {
-        "inputs": [
-          "ID"
-        ], 
-        "label": "Get Creation Date", 
-        "method": "getCreationDate", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getEventForkedOver": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Event Forked Over", 
-        "method": "getEventForkedOver", 
-        "parser": "parseMarket", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getForkPeriod": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Fork Period", 
-        "method": "getForkPeriod", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getInitialBalance": {
-        "inputs": [
-          "branch", 
-          "period"
-        ], 
-        "label": "Get Initial Balance", 
-        "method": "getInitialBalance", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getMarketsInBranch": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Markets In Branch", 
-        "method": "getMarketsInBranch", 
-        "parser": "parseMarkets", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getMinTradingFee": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Min Trading Fee", 
-        "method": "getMinTradingFee", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getNumBranches": {
-        "label": "Get Num Branches", 
-        "method": "getNumBranches", 
-        "returns": "number"
-      }, 
-      "getNumMarketsBranch": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Num Markets Branch", 
-        "method": "getNumMarketsBranch", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getOracleOnly": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Oracle Only", 
-        "method": "getOracleOnly", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getParent": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Parent", 
-        "method": "getParent", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getParentPeriod": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Parent Period", 
-        "method": "getParentPeriod", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getPeriodLength": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Period Length", 
-        "method": "getPeriodLength", 
-        "returns": "int", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getSomeMarketsInBranch": {
-        "inputs": [
-          "branch", 
-          "initial", 
-          "last"
-        ], 
-        "label": "Get Some Markets In Branch", 
-        "method": "getSomeMarketsInBranch", 
-        "returns": "int256[]", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getVotePeriod": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Vote Period", 
-        "method": "getVotePeriod", 
-        "returns": "int", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "incrementPeriod": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Increment Period", 
-        "method": "incrementPeriod", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "initDefaultBranch": {
-        "label": "Init Default Branch", 
-        "method": "initDefaultBranch", 
-        "returns": "number", 
-        "send": true
-      }, 
-      "initializeBranch": {
-        "inputs": [
-          "ID", 
-          "currentVotePeriod", 
-          "periodLength", 
-          "minTradingFee", 
-          "oracleOnly", 
-          "parentPeriod", 
-          "parent"
-        ], 
-        "label": "Initialize Branch", 
-        "method": "initializeBranch", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setBaseReporters": {
-        "inputs": [
-          "branch", 
-          "num"
-        ], 
-        "label": "Set Base Reporters", 
-        "method": "setBaseReporters", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setEventForkedOver": {
-        "inputs": [
-          "branch", 
-          "event"
-        ], 
-        "label": "Set Event Forked Over", 
-        "method": "setEventForkedOver", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setForkPeriod": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Set Fork Period", 
-        "method": "setForkPeriod", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "setInitialBalance": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "balance"
-        ], 
-        "label": "Set Initial Balance", 
-        "method": "setInitialBalance", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "BuyAndSellShares": {
-      "buy": {
-        "events": [
-          "log_add_tx", 
-          "sentCash"
-        ], 
-        "gas": 725202, 
-        "inputs": [
-          "amount", 
-          "price", 
-          "market", 
-          "outcome", 
-          "minimumTradeSize", 
-          "tradeGroupID"
-        ], 
-        "label": "Bid", 
-        "method": "buy", 
-        "mutable": true, 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "cancel": {
-        "events": [
-          "log_cancel"
-        ], 
-        "gas": 288060, 
-        "inputs": [
-          "trade_id"
-        ], 
-        "label": "Cancel", 
-        "method": "cancel", 
-        "mutable": true, 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "sell": {
-        "events": [
-          "log_add_tx", 
-          "sentCash"
-        ], 
-        "gas": 696759, 
-        "inputs": [
-          "amount", 
-          "price", 
-          "market", 
-          "outcome", 
-          "minimumTradeSize", 
-          "isShortAsk", 
-          "tradeGroupID"
-        ], 
-        "label": "Ask", 
-        "method": "sell", 
-        "mutable": true, 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "shortAsk": {
-        "events": [
-          "completeSets_logReturn", 
-          "sentCash", 
-          "log_add_tx"
-        ], 
-        "gas": 1500000, 
-        "inputs": [
-          "amount", 
-          "price", 
-          "market", 
-          "outcome", 
-          "minimumTradeSize", 
-          "tradeGroupID"
-        ], 
-        "label": "Short Ask", 
-        "method": "shortAsk", 
-        "mutable": true, 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "Cash": {
-      "addCash": {
-        "fixed": [
-          1
-        ], 
-        "inputs": [
-          "ID", 
-          "amount"
-        ], 
-        "label": "Add Cash", 
-        "method": "addCash", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "balance": {
-        "inputs": [
-          "address"
-        ], 
-        "label": "Balance", 
-        "method": "balance", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "depositEther": {
-        "description": "Convert Ether to tradeable Ether token", 
-        "events": [
-          "deposit"
-        ], 
-        "label": "Deposit Ether", 
-        "method": "depositEther", 
-        "returns": "number", 
-        "send": true
-      }, 
-      "initiateOwner": {
-        "inputs": [
-          "account"
-        ], 
-        "label": "Initiate Owner", 
-        "method": "initiateOwner", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "send": {
-        "events": [
-          "sentCash"
-        ], 
-        "fixed": [
-          1
-        ], 
-        "inputs": [
-          "recver", 
-          "value"
-        ], 
-        "label": "Send Tokens", 
-        "method": "send", 
-        "returns": "unfix", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "sendFrom": {
-        "events": [
-          "sentCash"
-        ], 
-        "fixed": [
-          1
-        ], 
-        "inputs": [
-          "recver", 
-          "value", 
-          "from"
-        ], 
-        "label": "Send Tokens", 
-        "method": "sendFrom", 
-        "returns": "unfix", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setCash": {
-        "fixed": [
-          1
-        ], 
-        "inputs": [
-          "address", 
-          "balance"
-        ], 
-        "label": "Set Cash", 
-        "method": "setCash", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "subtractCash": {
-        "inputs": [
-          "ID", 
-          "amount"
-        ], 
-        "label": "Subtract Cash", 
-        "method": "subtractCash", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "withdrawEther": {
-        "description": "Convert tradeable Ether token to Ether", 
-        "events": [
-          "withdraw"
-        ], 
-        "fixed": [
-          1
-        ], 
-        "inputs": [
-          "to", 
-          "value"
-        ], 
-        "label": "Withdraw Ether", 
-        "method": "withdrawEther", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "CloseMarket": {
-      "claimProceeds": {
-        "events": [
-          "payout"
-        ], 
-        "inputs": [
-          "branch", 
-          "market"
-        ], 
-        "label": "Claim Trading Payout", 
-        "method": "claimProceeds", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "closeMarket": {
-        "events": [
-          "closedMarket"
-        ], 
-        "inputs": [
-          "branch", 
-          "market", 
-          "sender"
-        ], 
-        "label": "Close Market", 
-        "method": "closeMarket", 
-        "mutable": true, 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "CollectFees": {
-      "collectFees": {
-        "events": [
-          "collectedFees"
-        ], 
-        "inputs": [
-          "branch", 
-          "sender"
-        ], 
-        "label": "Reporting Payment", 
-        "method": "collectFees", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "CompleteSets": {
-      "buyCompleteSets": {
-        "events": [
-          "completeSets_logReturn", 
-          "sentCash"
-        ], 
-        "fixed": [
-          1
-        ], 
-        "gas": 698875, 
-        "inputs": [
-          "market", 
-          "amount"
-        ], 
-        "label": "Buy Complete Sets", 
-        "method": "buyCompleteSets", 
-        "mutable": true, 
-        "returns": "hash[]", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "sellCompleteSets": {
-        "events": [
-          "completeSets_logReturn"
-        ], 
-        "fixed": [
-          1
-        ], 
-        "gas": 535220, 
-        "inputs": [
-          "market", 
-          "amount"
-        ], 
-        "label": "Sell Complete Sets", 
-        "method": "sellCompleteSets", 
-        "mutable": true, 
-        "returns": "hash[]", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "CompositeGetters": {
-      "batchGetMarketInfo": {
-        "inputs": [
-          "marketIDs", 
-          "account"
-        ], 
-        "label": "Batch Get Market Info", 
-        "method": "batchGetMarketInfo", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256[]", 
-          "int256"
-        ]
-      }, 
-      "getAccountOrderBook": {
-        "inputs": [
-          "marketID", 
-          "account"
-        ], 
-        "label": "Get Account Order Book", 
-        "method": "getAccountOrderBook", 
-        "returns": "int256[]", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getEventsWithSubmittedReport": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "reporter"
-        ], 
-        "label": "Get Events With Submitted Report", 
-        "method": "getEventsWithSubmittedReport", 
-        "parser": "parseMarkets", 
-        "returns": "int256[]", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getMarketCreatorFeesCollected": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Market Creator Fees Collected", 
-        "method": "getMarketCreatorFeesCollected", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getMarketInfo": {
-        "inputs": [
-          "marketID", 
-          "account"
-        ], 
-        "label": "Get Market Info", 
-        "method": "getMarketInfo", 
-        "parser": "validateMarketInfo", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getMarketsCreatedByMarketCreator": {
-        "inputs": [
-          "branch", 
-          "creator", 
-          "initial", 
-          "last"
-        ], 
-        "label": "Get Markets Created By Market Creator", 
-        "method": "getMarketsCreatedByMarketCreator", 
-        "parser": "parseMarkets", 
-        "returns": "int256[]", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getMarketsInfo": {
-        "inputs": [
-          "branch", 
-          "offset", 
-          "numMarketsToLoad", 
-          "volumeMin", 
-          "volumeMax"
-        ], 
-        "label": "Get Markets Info", 
-        "method": "getMarketsInfo", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getOrderBook": {
-        "inputs": [
-          "marketID", 
-          "offset", 
-          "numTradesToLoad"
-        ], 
-        "label": "Get Order Book", 
-        "method": "getOrderBook", 
-        "parser": "parseOrderBook", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getPositionInMarket": {
-        "inputs": [
-          "market", 
-          "account"
-        ], 
-        "label": "Get Position In Market", 
-        "method": "getPositionInMarket", 
-        "parser": "parsePositionInMarket", 
-        "returns": "int256[]", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "Consensus": {
-      "incrementPeriodAfterReporting": {
-        "description": "Advance to the next Reporting cycle", 
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Next Reporting Cycle", 
-        "method": "incrementPeriodAfterReporting", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "penalizeWrong": {
-        "events": [
-          "penalize", 
-          "closedMarket"
-        ], 
-        "inputs": [
-          "branch", 
-          "event"
-        ], 
-        "label": "Compare Report To Consensus", 
-        "method": "penalizeWrong", 
-        "mutable": true, 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "ConsensusData": {
-      "doRefund": {
-        "inputs": [
-          "sender", 
-          "refunder"
-        ], 
-        "label": "Do Refund", 
-        "method": "doRefund", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getBaseReportersLastPeriod": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Base Reporters Last Period", 
-        "method": "getBaseReportersLastPeriod", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getDenominator": {
-        "inputs": [
-          "branch", 
-          "period"
-        ], 
-        "label": "Get Denominator", 
-        "method": "getDenominator", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getFeeFirst": {
-        "inputs": [
-          "branch", 
-          "period"
-        ], 
-        "label": "Get Fee First", 
-        "method": "getFeeFirst", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getFeesCollected": {
-        "inputs": [
-          "branch", 
-          "address", 
-          "period"
-        ], 
-        "label": "Get Fees Collected", 
-        "method": "getFeesCollected", 
-        "returns": "number", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getNotEnoughPenalized": {
-        "inputs": [
-          "branch", 
-          "address", 
-          "period"
-        ], 
-        "label": "Get Not Enough Penalized", 
-        "method": "getNotEnoughPenalized", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getPenalized": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "sender", 
-          "event"
-        ], 
-        "label": "Get Penalized", 
-        "method": "getPenalized", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getPenalizedNum": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "sender"
-        ], 
-        "label": "Get Penalized Num", 
-        "method": "getPenalizedNum", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getPenalizedUpTo": {
-        "inputs": [
-          "branch", 
-          "sender"
-        ], 
-        "label": "Get Penalized Up To", 
-        "method": "getPenalizedUpTo", 
-        "returns": "int", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getPeriodBalance": {
-        "inputs": [
-          "branch", 
-          "period"
-        ], 
-        "label": "Get Period Balance", 
-        "method": "getPeriodBalance", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getRepRedistributionDone": {
-        "inputs": [
-          "branch", 
-          "reporter"
-        ], 
-        "label": "Get Rep Redistribution Done", 
-        "method": "getRepRedistributionDone", 
-        "returns": "number", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getSlashed": {
-        "inputs": [
-          "branch", 
-          "votePeriod", 
-          "reporter"
-        ], 
-        "label": "Get Slashed", 
-        "method": "getSlashed", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "increaseDenominator": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "amount"
-        ], 
-        "label": "Increase Denominator", 
-        "method": "increaseDenominator", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "increasePenalizedNum": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "sender", 
-          "amount"
-        ], 
-        "label": "Increase Penalized Num", 
-        "method": "increasePenalizedNum", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setBaseReportersLastPeriod": {
-        "inputs": [
-          "branch", 
-          "amount"
-        ], 
-        "label": "Set Base Reporters Last Period", 
-        "method": "setBaseReportersLastPeriod", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setFeeFirst": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "val"
-        ], 
-        "label": "Set Fee First", 
-        "method": "setFeeFirst", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setFeesCollected": {
-        "inputs": [
-          "branch", 
-          "address", 
-          "period"
-        ], 
-        "label": "Set Fees Collected", 
-        "method": "setFeesCollected", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setNotEnoughPenalized": {
-        "inputs": [
-          "branch", 
-          "address", 
-          "period"
-        ], 
-        "label": "Set Not Enough Penalized", 
-        "method": "setNotEnoughPenalized", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setPenalized": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "sender", 
-          "event"
-        ], 
-        "label": "Set Penalized", 
-        "method": "setPenalized", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setPenalizedUpTo": {
-        "inputs": [
-          "branch", 
-          "sender", 
-          "period"
-        ], 
-        "label": "Set Penalized Up To", 
-        "method": "setPenalizedUpTo", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setPeriodBalance": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "balance"
-        ], 
-        "label": "Set Period Balance", 
-        "method": "setPeriodBalance", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setRefund": {
-        "inputs": [
-          "refunder", 
-          "amt"
-        ], 
-        "label": "Set Refund", 
-        "method": "setRefund", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setSlashed": {
-        "inputs": [
-          "branch", 
-          "votePeriod", 
-          "reporter"
-        ], 
-        "label": "Set Slashed", 
-        "method": "setSlashed", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "CreateBranch": {
-      "createSubbranch": {
-        "events": [
-          "sentCash"
-        ], 
-        "inputs": [
-          "description", 
-          "periodLength", 
-          "parent", 
-          "minTradingFee", 
-          "oracleOnly"
-        ], 
-        "label": "Fork Reputation", 
-        "method": "createSubbranch", 
-        "returns": "hash", 
-        "send": true, 
-        "signature": [
-          "bytes", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "CreateMarket": {
-      "createEvent": {
-        "inputs": [
-          "branch", 
-          "description", 
-          "expDate", 
-          "minValue", 
-          "maxValue", 
-          "numOutcomes", 
-          "resolution"
-        ], 
-        "label": "Create Event", 
-        "method": "createEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "bytes", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "bytes"
-        ]
-      }, 
-      "createMarket": {
-        "events": [
-          "sentCash", 
-          "marketCreated"
-        ], 
-        "inputs": [
-          "branch", 
-          "description", 
-          "tradingFee", 
-          "event", 
-          "tag1", 
-          "tag2", 
-          "tag3", 
-          "makerFees", 
-          "extraInfo"
-        ], 
-        "label": "Create Market", 
-        "method": "createMarket", 
-        "mutable": true, 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "bytes", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "bytes"
-        ]
-      }, 
-      "createSingleEventMarket": {
-        "events": [
-          "sentCash", 
-          "marketCreated"
-        ], 
-        "inputs": [
-          "branch", 
-          "description", 
-          "expDate", 
-          "minValue", 
-          "maxValue", 
-          "numOutcomes", 
-          "resolution", 
-          "tradingFee", 
-          "tag1", 
-          "tag2", 
-          "tag3", 
-          "makerFees", 
-          "extraInfo"
-        ], 
-        "label": "Create Market", 
-        "method": "createSingleEventMarket", 
-        "mutable": true, 
-        "returns": "hash", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "bytes", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "bytes", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "bytes"
-        ]
-      }, 
-      "pushMarketForward": {
-        "events": [
-          "sentCash"
-        ], 
-        "inputs": [
-          "branch", 
-          "market"
-        ], 
-        "label": "Push Market Forward", 
-        "method": "pushMarketForward", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "updateTradingFee": {
-        "events": [
-          "tradingFeeUpdated", 
-          "sentCash"
-        ], 
-        "inputs": [
-          "branch", 
-          "market", 
-          "tradingFee", 
-          "makerFees"
-        ], 
-        "label": "Update Trading Fee", 
-        "method": "updateTradingFee", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "EventResolution": {
-      "determineWinningOutcomes": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Determine Winning Outcomes", 
-        "method": "determineWinningOutcomes", 
-        "returns": "int256[]", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "resolveBinary": {
-        "inputs": [
-          "event", 
-          "market", 
-          "branch", 
-          "votingPeriodEvent"
-        ], 
-        "label": "Resolve Binary", 
-        "method": "resolveBinary", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "resolveCategoricalOrScalar": {
-        "inputs": [
-          "scaled_min", 
-          "scaled_max", 
-          "event", 
-          "market", 
-          "branch", 
-          "votingPeriodEvent"
-        ], 
-        "label": "Resolve Categorical Or Scalar", 
-        "method": "resolveCategoricalOrScalar", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "Events": {
-      "addMarket": {
-        "inputs": [
-          "event", 
-          "marketID"
-        ], 
-        "label": "Add Market", 
-        "method": "addMarket", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "addPast24": {
-        "inputs": [
-          "period"
-        ], 
-        "label": "Add Past24", 
-        "method": "addPast24", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getBond": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Bond", 
-        "method": "getBond", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getBranch": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Branch", 
-        "method": "getBranch", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getEthical": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Ethical", 
-        "method": "getEthical", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getEthics": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Ethics", 
-        "method": "getEthics", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getEventBranch": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Event Branch", 
-        "method": "getEventBranch", 
-        "returns": "hash", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getEventInfo": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Event Info", 
-        "method": "getEventInfo", 
-        "parser": "parseEventInfo", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getEventPushedUp": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Event Pushed Up", 
-        "method": "getEventPushedUp", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getExpiration": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Expiration", 
-        "method": "getExpiration", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getForkEthicality": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Fork Ethicality", 
-        "method": "getForkEthicality", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getForkOutcome": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Fork Outcome", 
-        "method": "getForkOutcome", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getForked": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Forked", 
-        "method": "getForked", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getForkedDone": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Forked Done", 
-        "method": "getForkedDone", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getMarket": {
-        "inputs": [
-          "event", 
-          "marketIndex"
-        ], 
-        "label": "Get Market", 
-        "method": "getMarket", 
-        "parser": "parseMarket", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getMarkets": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Markets", 
-        "method": "getMarkets", 
-        "parser": "parseMarkets", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getMaxValue": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Max Value", 
-        "method": "getMaxValue", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getMinValue": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Min Value", 
-        "method": "getMinValue", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getNumMarkets": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Num Markets", 
-        "method": "getNumMarkets", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getNumOutcomes": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Num Outcomes", 
-        "method": "getNumOutcomes", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getOriginalExpiration": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Original Expiration", 
-        "method": "getOriginalExpiration", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getOutcome": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Outcome", 
-        "method": "getOutcome", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getPast24": {
-        "inputs": [
-          "period"
-        ], 
-        "label": "Get Past24", 
-        "method": "getPast24", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getRejected": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Rejected", 
-        "method": "getRejected", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getRejectedPeriod": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Rejected Period", 
-        "method": "getRejectedPeriod", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getReportingThreshold": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Reporting Threshold", 
-        "method": "getReportingThreshold", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getResolution": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Resolution", 
-        "method": "getResolution", 
-        "returns": "string", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getResolutionLength": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Resolution Length", 
-        "method": "getResolutionLength", 
-        "returns": "int", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getUncaughtOutcome": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Uncaught Outcome", 
-        "method": "getUncaughtOutcome", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getmode": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Getmode", 
-        "method": "getmode", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "initializeEvent": {
-        "inputs": [
-          "ID", 
-          "branch", 
-          "expirationDate", 
-          "minValue", 
-          "maxValue", 
-          "numOutcomes", 
-          "resolution"
-        ], 
-        "label": "Initialize Event", 
-        "method": "initializeEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "bytes"
-        ]
-      }, 
-      "setBond": {
-        "inputs": [
-          "event", 
-          "bond"
-        ], 
-        "label": "Set Bond", 
-        "method": "setBond", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setBranch": {
-        "inputs": [
-          "event", 
-          "branch"
-        ], 
-        "label": "Set Branch", 
-        "method": "setBranch", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setEthics": {
-        "inputs": [
-          "event", 
-          "ethicality"
-        ], 
-        "label": "Set Ethics", 
-        "method": "setEthics", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setEventPushedUp": {
-        "inputs": [
-          "event", 
-          "val"
-        ], 
-        "label": "Set Event Pushed Up", 
-        "method": "setEventPushedUp", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setExpiration": {
-        "inputs": [
-          "event", 
-          "date"
-        ], 
-        "label": "Set Expiration", 
-        "method": "setExpiration", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setForkDone": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Set Fork Done", 
-        "method": "setForkDone", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "setForkEthicality": {
-        "inputs": [
-          "event", 
-          "value"
-        ], 
-        "label": "Set Fork Ethicality", 
-        "method": "setForkEthicality", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setForkOutcome": {
-        "inputs": [
-          "event", 
-          "value"
-        ], 
-        "label": "Set Fork Outcome", 
-        "method": "setForkOutcome", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setForked": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Set Forked", 
-        "method": "setForked", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "setOriginalExpiration": {
-        "inputs": [
-          "event", 
-          "date"
-        ], 
-        "label": "Set Original Expiration", 
-        "method": "setOriginalExpiration", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setOutcome": {
-        "inputs": [
-          "ID", 
-          "outcome"
-        ], 
-        "label": "Set Outcome", 
-        "method": "setOutcome", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setRejected": {
-        "inputs": [
-          "event", 
-          "period"
-        ], 
-        "label": "Set Rejected", 
-        "method": "setRejected", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setThreshold": {
-        "inputs": [
-          "event", 
-          "threshold"
-        ], 
-        "label": "Set Threshold", 
-        "method": "setThreshold", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setUncaughtOutcome": {
-        "inputs": [
-          "event", 
-          "outcome"
-        ], 
-        "label": "Set Uncaught Outcome", 
-        "method": "setUncaughtOutcome", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setmode": {
-        "inputs": [
-          "event", 
-          "mode"
-        ], 
-        "label": "Setmode", 
-        "method": "setmode", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "ExpiringEvents": {
-      "addEvent": {
-        "inputs": [
-          "branch", 
-          "futurePeriod", 
-          "eventID", 
-          "subsidy"
-        ], 
-        "label": "Add Event", 
-        "method": "addEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "addRepEvent": {
-        "inputs": [
-          "branch", 
-          "votePeriod", 
-          "event", 
-          "amount"
-        ], 
-        "label": "Add Rep Event", 
-        "method": "addRepEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "addReportToEvent": {
-        "inputs": [
-          "branch", 
-          "votePeriod", 
-          "eventID", 
-          "sender"
-        ], 
-        "label": "Add Report To Event", 
-        "method": "addReportToEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "addReportersPaidSoFar": {
-        "inputs": [
-          "branch", 
-          "event"
-        ], 
-        "label": "Add Reporters Paid So Far", 
-        "method": "addReportersPaidSoFar", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "addRoundTwo": {
-        "inputs": [
-          "branch", 
-          "period"
-        ], 
-        "label": "Add Round Two", 
-        "method": "addRoundTwo", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "addToWeightOfReport": {
-        "inputs": [
-          "period", 
-          "event", 
-          "report", 
-          "amount"
-        ], 
-        "label": "Add To Weight Of Report", 
-        "method": "addToWeightOfReport", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "adjustPeriodShareValueOutstanding": {
-        "inputs": [
-          "branch", 
-          "expIndex", 
-          "amount"
-        ], 
-        "label": "Adjust Period Share Value Outstanding", 
-        "method": "adjustPeriodShareValueOutstanding", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "deleteEvent": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "event"
-        ], 
-        "label": "Delete Event", 
-        "method": "deleteEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getAfterRep": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "sender"
-        ], 
-        "label": "Get After Rep", 
-        "method": "getAfterRep", 
-        "returns": "unfix", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getBeforeRep": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "sender"
-        ], 
-        "label": "Get Before Rep", 
-        "method": "getBeforeRep", 
-        "returns": "unfix", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getCurrentMode": {
-        "inputs": [
-          "period", 
-          "event"
-        ], 
-        "label": "Get Current Mode", 
-        "method": "getCurrentMode", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getCurrentModeItems": {
-        "inputs": [
-          "period", 
-          "event"
-        ], 
-        "label": "Get Current Mode Items", 
-        "method": "getCurrentModeItems", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getEncryptedReport": {
-        "inputs": [
-          "branch", 
-          "expDateIndex", 
-          "reporter", 
-          "event"
-        ], 
-        "label": "Get Encrypted Report", 
-        "method": "getEncryptedReport", 
-        "returns": "int256[]", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getEthicReport": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "event", 
-          "sender"
-        ], 
-        "label": "Get Ethic Report", 
-        "method": "getEthicReport", 
-        "returns": "unfix", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getEvent": {
-        "inputs": [
-          "branch", 
-          "expDateIndex", 
-          "eventIndex"
-        ], 
-        "label": "Get Event", 
-        "method": "getEvent", 
-        "parser": "parseMarket", 
-        "returns": "hash", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getEventIndex": {
-        "inputs": [
-          "period", 
-          "eventID"
-        ], 
-        "label": "Get Event Index", 
-        "method": "getEventIndex", 
-        "returns": "number", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getEvents": {
-        "inputs": [
-          "branch", 
-          "expDateIndex"
-        ], 
-        "label": "Get Events", 
-        "method": "getEvents", 
-        "parser": "parseMarkets", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getEventsRange": {
-        "inputs": [
-          "branch", 
-          "expDateIndex", 
-          "start", 
-          "end"
-        ], 
-        "label": "Get Events Range", 
-        "method": "getEventsRange", 
-        "parser": "parseMarkets", 
-        "returns": "int256[]", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getLesserReportNum": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "event"
-        ], 
-        "label": "Get Lesser Report Num", 
-        "method": "getLesserReportNum", 
-        "returns": "unfix", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getNumEventsToReportOn": {
-        "inputs": [
-          "branch", 
-          "expDateIndex"
-        ], 
-        "label": "Get Num Events To Report On", 
-        "method": "getNumEventsToReportOn", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getNumRemoved": {
-        "inputs": [
-          "branch", 
-          "period"
-        ], 
-        "label": "Get Num Removed", 
-        "method": "getNumRemoved", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getNumReportsActual": {
-        "inputs": [
-          "branch", 
-          "votePeriod", 
-          "sender"
-        ], 
-        "label": "Get Num Reports Actual", 
-        "method": "getNumReportsActual", 
-        "returns": "number", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getNumReportsEvent": {
-        "inputs": [
-          "branch", 
-          "votePeriod", 
-          "eventID"
-        ], 
-        "label": "Get Num Reports Event", 
-        "method": "getNumReportsEvent", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getNumRequired": {
-        "inputs": [
-          "branch", 
-          "period"
-        ], 
-        "label": "Get Num Required", 
-        "method": "getNumRequired", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getNumRoundTwo": {
-        "inputs": [
-          "branch", 
-          "period"
-        ], 
-        "label": "Get Num Round Two", 
-        "method": "getNumRoundTwo", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getNumberEvents": {
-        "inputs": [
-          "branch", 
-          "expDateIndex"
-        ], 
-        "label": "Get Number Events", 
-        "method": "getNumberEvents", 
-        "returns": "number", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getPeriodDormantRep": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "sender"
-        ], 
-        "label": "Get Period Dormant Rep", 
-        "method": "getPeriodDormantRep", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getPeriodRepConstant": {
-        "inputs": [
-          "branch", 
-          "votePeriod", 
-          "sender"
-        ], 
-        "label": "Get Period Rep Constant", 
-        "method": "getPeriodRepConstant", 
-        "returns": "unfix", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getRepEvent": {
-        "inputs": [
-          "branch", 
-          "votePeriod", 
-          "event"
-        ], 
-        "label": "Get Rep Event", 
-        "method": "getRepEvent", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getReport": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "event", 
-          "sender"
-        ], 
-        "label": "Get Report", 
-        "method": "getReport", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getReportHash": {
-        "inputs": [
-          "branch", 
-          "expDateIndex", 
-          "reporter", 
-          "event"
-        ], 
-        "label": "Get Report Hash", 
-        "method": "getReportHash", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getReportersPaidSoFar": {
-        "inputs": [
-          "branch", 
-          "event"
-        ], 
-        "label": "Get Reporters Paid So Far", 
-        "method": "getReportersPaidSoFar", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getRequired": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Get Required", 
-        "method": "getRequired", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getShareValue": {
-        "inputs": [
-          "branch", 
-          "expIndex"
-        ], 
-        "label": "Get Share Value", 
-        "method": "getShareValue", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getSubsidy": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "event"
-        ], 
-        "label": "Get Subsidy", 
-        "method": "getSubsidy", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getWeightOfReport": {
-        "inputs": [
-          "period", 
-          "event", 
-          "report"
-        ], 
-        "label": "Get Weight Of Report", 
-        "method": "getWeightOfReport", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "moveEvent": {
-        "inputs": [
-          "branch", 
-          "event"
-        ], 
-        "label": "Move Event", 
-        "method": "moveEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "refundCost": {
-        "inputs": [
-          "to", 
-          "value"
-        ], 
-        "label": "Refund Cost", 
-        "method": "refundCost", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "removeEvent": {
-        "inputs": [
-          "branch", 
-          "period"
-        ], 
-        "label": "Remove Event", 
-        "method": "removeEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setAfterRep": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "rep", 
-          "sender"
-        ], 
-        "label": "Set After Rep", 
-        "method": "setAfterRep", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setBeforeRep": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "rep", 
-          "sender"
-        ], 
-        "label": "Set Before Rep", 
-        "method": "setBeforeRep", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setCurrentMode": {
-        "inputs": [
-          "period", 
-          "event", 
-          "mode"
-        ], 
-        "label": "Set Current Mode", 
-        "method": "setCurrentMode", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setCurrentModeItems": {
-        "inputs": [
-          "period", 
-          "event", 
-          "modeReport"
-        ], 
-        "label": "Set Current Mode Items", 
-        "method": "setCurrentModeItems", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setEncryptedReport": {
-        "inputs": [
-          "branch", 
-          "expDateIndex", 
-          "reporter", 
-          "report", 
-          "salt", 
-          "ethics", 
-          "event"
-        ], 
-        "label": "Set Encrypted Report", 
-        "method": "setEncryptedReport", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setEthicReport": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "event", 
-          "ethics", 
-          "sender"
-        ], 
-        "label": "Set Ethic Report", 
-        "method": "setEthicReport", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setEventRequired": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "event"
-        ], 
-        "label": "Set Event Required", 
-        "method": "setEventRequired", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setLesserReportNum": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "event", 
-          "num"
-        ], 
-        "label": "Set Lesser Report Num", 
-        "method": "setLesserReportNum", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setNumEventsToReportOn": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Set Num Events To Report On", 
-        "method": "setNumEventsToReportOn", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "setNumReportsEvent": {
-        "inputs": [
-          "branch", 
-          "votePeriod", 
-          "eventID", 
-          "num"
-        ], 
-        "label": "Set Num Reports Event", 
-        "method": "setNumReportsEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setPeriodDormantRep": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "rep", 
-          "sender"
-        ], 
-        "label": "Set Period Dormant Rep", 
-        "method": "setPeriodDormantRep", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setPeriodRepConstant": {
-        "inputs": [
-          "branch", 
-          "votePeriod", 
-          "sender", 
-          "value"
-        ], 
-        "label": "Set Period Rep Constant", 
-        "method": "setPeriodRepConstant", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setReport": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "event", 
-          "report", 
-          "sender"
-        ], 
-        "label": "Set Report", 
-        "method": "setReport", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setReportHash": {
-        "inputs": [
-          "branch", 
-          "expDateIndex", 
-          "reporter", 
-          "reportHash", 
-          "event"
-        ], 
-        "label": "Set Report Hash", 
-        "method": "setReportHash", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "Faucets": {
-      "cashFaucet": {
-        "label": "Cash Faucet", 
-        "method": "cashFaucet", 
-        "returns": "number", 
-        "send": true
-      }, 
-      "claimInitialRep": {
-        "inputs": [
-          "parent", 
-          "branch"
-        ], 
-        "label": "Claim Initial Rep", 
-        "method": "claimInitialRep", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "fundNewAccount": {
-        "events": [
-          "sentCash", 
-          "fundedAccount"
-        ], 
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Fund Account", 
-        "method": "fundNewAccount", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "reputationFaucet": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Reputation Faucet", 
-        "method": "reputationFaucet", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }
-    }, 
-    "ForkPenalize": {
-      "penalizeOnForkedEvent": {
-        "inputs": [
-          "branch", 
-          "event"
-        ], 
-        "label": "Penalize On Forked Event", 
-        "method": "penalizeOnForkedEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "proportionCorrectForkEvent": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Proportion Correct Fork Event", 
-        "method": "proportionCorrectForkEvent", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }
-    }, 
-    "Forking": {
-      "exchangeRate": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Exchange Rate", 
-        "method": "exchangeRate", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "fork": {
-        "events": [
-          "Transfer", 
-          "sentCash", 
-          "penalizationCaughtUp", 
-          "collectedFees"
-        ], 
-        "inputs": [
-          "event", 
-          "branch", 
-          "forkedOverEthicality"
-        ], 
-        "label": "Fork", 
-        "method": "fork", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "move_event": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Move event", 
-        "method": "move_event", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "resolveForkEvent": {
-        "inputs": [
-          "branch", 
-          "event"
-        ], 
-        "label": "Resolve Fork Event", 
-        "method": "resolveForkEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "resolveForkedEvent": {
-        "inputs": [
-          "branch", 
-          "event"
-        ], 
-        "label": "Resolve Forked Event", 
-        "method": "resolveForkedEvent", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "resolve_fork": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Resolve fork", 
-        "method": "resolve_fork", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }
-    }, 
-    "FxpFunctions": {
-      "fx_exp": {
-        "inputs": [
-          "x"
-        ], 
-        "label": "Fx exp", 
-        "method": "fx_exp", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "fx_log": {
-        "inputs": [
-          "x"
-        ], 
-        "label": "Fx log", 
-        "method": "fx_log", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "sqrt": {
-        "inputs": [
-          "n"
-        ], 
-        "label": "Sqrt", 
-        "method": "sqrt", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }
-    }, 
-    "Info": {
-      "getCreationFee": {
-        "inputs": [
-          "ID"
-        ], 
-        "label": "Get Creation Fee", 
-        "method": "getCreationFee", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getCreator": {
-        "inputs": [
-          "ID"
-        ], 
-        "label": "Get Creator", 
-        "method": "getCreator", 
-        "returns": "address", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getDescription": {
-        "inputs": [
-          "ID"
-        ], 
-        "label": "Get Description", 
-        "method": "getDescription", 
-        "returns": "string", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getDescriptionLength": {
-        "inputs": [
-          "ID"
-        ], 
-        "label": "Get Description Length", 
-        "method": "getDescriptionLength", 
-        "returns": "int", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "setInfo": {
-        "inputs": [
-          "ID", 
-          "description", 
-          "creator", 
-          "fee"
-        ], 
-        "label": "Set Info", 
-        "method": "setInfo", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "bytes", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "LogReturn": {}, 
-    "MakeReports": {
-      "makeHash": {
-        "inputs": [
-          "salt", 
-          "report", 
-          "eventID", 
-          "sender"
-        ], 
-        "label": "Make Hash", 
-        "method": "makeHash", 
-        "returns": "hash", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "submitReport": {
-        "events": [
-          "penalizationCaughtUp", 
-          "submittedReportHash"
-        ], 
-        "fixed": [
-          3
-        ], 
-        "inputs": [
-          "event", 
-          "salt", 
-          "report", 
-          "ethics"
-        ], 
-        "label": "Reveal Report", 
-        "method": "submitReport", 
-        "mutable": true, 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "submitReportHash": {
-        "events": [
-          "penalizationCaughtUp", 
-          "submittedReportHash"
-        ], 
-        "inputs": [
-          "event", 
-          "reportHash", 
-          "encryptedReport", 
-          "encryptedSalt", 
-          "ethics"
-        ], 
-        "label": "Commit Report", 
-        "method": "submitReportHash", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "validateReport": {
-        "fixed": [
-          3, 
-          7
-        ], 
-        "inputs": [
-          "eventID", 
-          "branch", 
-          "votePeriod", 
-          "report", 
-          "forkedOverEthicality", 
-          "forkedOverThisEvent", 
-          "roundTwo", 
-          "balance"
-        ], 
-        "label": "Validate Report", 
-        "method": "validateReport", 
-        "returns": "number", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "Markets": {
-      "addFees": {
-        "inputs": [
-          "market", 
-          "amount"
-        ], 
-        "label": "Add Fees", 
-        "method": "addFees", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "addToMarketsHash": {
-        "inputs": [
-          "branch", 
-          "newHash"
-        ], 
-        "label": "Add To Markets Hash", 
-        "method": "addToMarketsHash", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "addTrade": {
-        "inputs": [
-          "market", 
-          "trade_id", 
-          "last_id"
-        ], 
-        "label": "Add Trade", 
-        "method": "addTrade", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getBondsMan": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Bonds Man", 
-        "method": "getBondsMan", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getBranchID": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Branch ID", 
-        "method": "getBranchID", 
-        "returns": "hash", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getCreationTime": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Creation Time", 
-        "method": "getCreationTime", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getCumScale": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Cum Scale", 
-        "method": "getCumScale", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getExtraInfo": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Extra Info", 
-        "method": "getExtraInfo", 
-        "returns": "string", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getExtraInfoLength": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Extra Info Length", 
-        "method": "getExtraInfoLength", 
-        "returns": "int", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getFees": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Fees", 
-        "method": "getFees", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getLastExpDate": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Last Exp Date", 
-        "method": "getLastExpDate", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getLastOutcomePrice": {
-        "inputs": [
-          "market", 
-          "outcome"
-        ], 
-        "label": "Get Last Outcome Price", 
-        "method": "getLastOutcomePrice", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getLastTrade": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Last Trade", 
-        "method": "getLastTrade", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getMakerFees": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Maker Fees", 
-        "method": "getMakerFees", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getMarketEvent": {
-        "inputs": [
-          "market", 
-          "index"
-        ], 
-        "label": "Get Market Event", 
-        "method": "getMarketEvent", 
-        "parser": "parseMarket", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getMarketEvents": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Market Events", 
-        "method": "getMarketEvents", 
-        "parser": "parseMarkets", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getMarketNumOutcomes": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Market Num Outcomes", 
-        "method": "getMarketNumOutcomes", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getMarketsHash": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Markets Hash", 
-        "method": "getMarketsHash", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getNumEvents": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Num Events", 
-        "method": "getNumEvents", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getOneWinningOutcome": {
-        "inputs": [
-          "market", 
-          "num"
-        ], 
-        "label": "Get One Winning Outcome", 
-        "method": "getOneWinningOutcome", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getOriginalTradingPeriod": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Original Trading Period", 
-        "method": "getOriginalTradingPeriod", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getParticipantSharesPurchased": {
-        "inputs": [
-          "market", 
-          "trader", 
-          "outcome"
-        ], 
-        "label": "Get Participant Shares Purchased", 
-        "method": "getParticipantSharesPurchased", 
-        "returns": "unfix", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getPushedForward": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Pushed Forward", 
-        "method": "getPushedForward", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getSender": {
-        "label": "Get Sender", 
-        "method": "getSender", 
-        "returns": "int256"
-      }, 
-      "getSharesPurchased": {
-        "inputs": [
-          "market", 
-          "outcome"
-        ], 
-        "label": "Get Shares Purchased", 
-        "method": "getSharesPurchased", 
-        "returns": "unfix", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getSharesValue": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Shares Value", 
-        "method": "getSharesValue", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getTotalSharesPurchased": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Total Shares Purchased", 
-        "method": "getTotalSharesPurchased", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getTradingFee": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Trading Fee", 
-        "method": "getTradingFee", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getTradingPeriod": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Trading Period", 
-        "method": "getTradingPeriod", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getVolume": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Volume", 
-        "method": "getVolume", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getWinningOutcomes": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Get Winning Outcomes", 
-        "method": "getWinningOutcomes", 
-        "returns": "number[]", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "get_total_trades": {
-        "inputs": [
-          "market_id"
-        ], 
-        "label": "Get total trades", 
-        "method": "get_total_trades", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "get_trade_ids": {
-        "inputs": [
-          "market_id"
-        ], 
-        "label": "Get trade ids", 
-        "method": "get_trade_ids", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getgasSubsidy": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Getgas Subsidy", 
-        "method": "getgasSubsidy", 
-        "returns": "int", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "initializeMarket": {
-        "inputs": [
-          "marketID", 
-          "events", 
-          "tradingPeriod", 
-          "tradingFee", 
-          "branch", 
-          "tag1", 
-          "tag2", 
-          "tag3", 
-          "makerFees", 
-          "cumScale", 
-          "numOutcomes", 
-          "extraInfo", 
-          "gasSubsidy", 
-          "creationFee", 
-          "lastExpDate"
-        ], 
-        "label": "Initialize Market", 
-        "method": "initializeMarket", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256[]", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "bytes", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "modifyParticipantShares": {
-        "inputs": [
-          "marketID", 
-          "trader", 
-          "outcome", 
-          "amount", 
-          "cancel"
-        ], 
-        "label": "Modify Participant Shares", 
-        "method": "modifyParticipantShares", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "modifyShares": {
-        "inputs": [
-          "marketID", 
-          "outcome", 
-          "amount"
-        ], 
-        "label": "Modify Shares", 
-        "method": "modifyShares", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "modifySharesValue": {
-        "inputs": [
-          "marketID", 
-          "amount"
-        ], 
-        "label": "Modify Shares Value", 
-        "method": "modifySharesValue", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "refundClosing": {
-        "inputs": [
-          "market", 
-          "to"
-        ], 
-        "label": "Refund Closing", 
-        "method": "refundClosing", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "remove_trade_from_market": {
-        "inputs": [
-          "market_id", 
-          "trade_id"
-        ], 
-        "label": "Remove trade from market", 
-        "method": "remove_trade_from_market", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "returnTags": {
-        "inputs": [
-          "market"
-        ], 
-        "label": "Return Tags", 
-        "method": "returnTags", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "setMakerFees": {
-        "inputs": [
-          "market", 
-          "makerFees"
-        ], 
-        "label": "Set Maker Fees", 
-        "method": "setMakerFees", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setPrice": {
-        "inputs": [
-          "market", 
-          "outcome", 
-          "price"
-        ], 
-        "label": "Set Price", 
-        "method": "setPrice", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setPushedForward": {
-        "inputs": [
-          "market", 
-          "bool", 
-          "sender"
-        ], 
-        "label": "Set Pushed Forward", 
-        "method": "setPushedForward", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setTradingFee": {
-        "inputs": [
-          "market", 
-          "fee"
-        ], 
-        "label": "Set Trading Fee", 
-        "method": "setTradingFee", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setTradingPeriod": {
-        "inputs": [
-          "market", 
-          "period"
-        ], 
-        "label": "Set Trading Period", 
-        "method": "setTradingPeriod", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setWinningOutcomes": {
-        "inputs": [
-          "market", 
-          "outcomes"
-        ], 
-        "label": "Set Winning Outcomes", 
-        "method": "setWinningOutcomes", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256[]"
-        ]
-      }
-    }, 
-    "Payout": {
-      "oneOutcome": {
-        "events": [
-          "payout"
-        ], 
-        "inputs": [
-          "market", 
-          "winningOutcome", 
-          "sender", 
-          "categoricalPointFive", 
-          "numOutcomes"
-        ], 
-        "label": "One Outcome", 
-        "method": "oneOutcome", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "twoOutcomes": {
-        "events": [
-          "payout"
-        ], 
-        "inputs": [
-          "market", 
-          "winningOutcome", 
-          "event", 
-          "sender"
-        ], 
-        "label": "Two Outcomes", 
-        "method": "twoOutcomes", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256[]", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "PenalizationCatchup": {
-      "penalizationCatchup": {
-        "events": [
-          "penalizationCaughtUp"
-        ], 
-        "inputs": [
-          "branch", 
-          "sender"
-        ], 
-        "label": "Reporting Cycle Catch-Up", 
-        "method": "penalizationCatchup", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "PenalizeNotEnoughReports": {
-      "proveReporterDidntReportEnough": {
-        "inputs": [
-          "branch", 
-          "reporter", 
-          "eventExample"
-        ], 
-        "label": "Prove Reporter Didnt Report Enough", 
-        "method": "proveReporterDidntReportEnough", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "ProportionCorrect": {
-      "proportionCorrect": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Proportion Correct", 
-        "method": "proportionCorrect", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }
-    }, 
-    "Register": {
-      "register": {
-        "description": "Write registration timestamp to the blockchain", 
-        "events": [
-          "registration"
-        ], 
-        "label": "Register New Account", 
-        "method": "register", 
-        "returns": "number", 
-        "send": true
-      }
-    }, 
-    "Reporting": {
-      "addDormantRep": {
-        "inputs": [
-          "branch", 
-          "index", 
-          "value"
-        ], 
-        "label": "Add Dormant Rep", 
-        "method": "addDormantRep", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "addRep": {
-        "inputs": [
-          "branch", 
-          "index", 
-          "value"
-        ], 
-        "label": "Add Rep", 
-        "method": "addRep", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "addReporter": {
-        "inputs": [
-          "branch", 
-          "sender", 
-          "amount", 
-          "dormant", 
-          "repToBonderOrBranch"
-        ], 
-        "label": "Add Reporter", 
-        "method": "addReporter", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "adjustActiveRep": {
-        "inputs": [
-          "branch", 
-          "amount"
-        ], 
-        "label": "Adjust Active Rep", 
-        "method": "adjustActiveRep", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "balanceOf": {
-        "inputs": [
-          "branch", 
-          "address"
-        ], 
-        "label": "Balance Of", 
-        "method": "balanceOf", 
-        "returns": "unfix", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "checkContractWhitelist": {
-        "inputs": [
-          "contract", 
-          "address"
-        ], 
-        "label": "Check Contract Whitelist", 
-        "method": "checkContractWhitelist", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "checkWhitelist": {
-        "inputs": [
-          "address"
-        ], 
-        "label": "Check Whitelist", 
-        "method": "checkWhitelist", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getActiveRep": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Active Rep", 
-        "method": "getActiveRep", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getDormantRepByIndex": {
-        "inputs": [
-          "branch", 
-          "repIndex"
-        ], 
-        "label": "Get Dormant Rep By Index", 
-        "method": "getDormantRepByIndex", 
-        "returns": "unfix", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getFork": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Fork", 
-        "method": "getFork", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getNumberReporters": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Number Reporters", 
-        "method": "getNumberReporters", 
-        "returns": "number", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getRepBalance": {
-        "inputs": [
-          "branch", 
-          "address"
-        ], 
-        "label": "Get Rep Balance", 
-        "method": "getRepBalance", 
-        "returns": "unfix", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getRepByIndex": {
-        "inputs": [
-          "branch", 
-          "repIndex"
-        ], 
-        "label": "Get Rep By Index", 
-        "method": "getRepByIndex", 
-        "returns": "unfix", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getReporterID": {
-        "inputs": [
-          "branch", 
-          "index"
-        ], 
-        "label": "Get Reporter ID", 
-        "method": "getReporterID", 
-        "returns": "hash", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getReputation": {
-        "inputs": [
-          "address"
-        ], 
-        "label": "Get Reputation", 
-        "method": "getReputation", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getTotalRep": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Get Total Rep", 
-        "method": "getTotalRep", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "repIDToIndex": {
-        "inputs": [
-          "branch", 
-          "repID"
-        ], 
-        "label": "Rep ID To Index", 
-        "method": "repIDToIndex", 
-        "returns": "number", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setFork": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Set Fork", 
-        "method": "setFork", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "setInitialReporters": {
-        "inputs": [
-          "parent", 
-          "branchID"
-        ], 
-        "label": "Set Initial Reporters", 
-        "method": "setInitialReporters", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setRep": {
-        "inputs": [
-          "branch", 
-          "index", 
-          "newRep"
-        ], 
-        "label": "Set Rep", 
-        "method": "setRep", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setSaleDistribution": {
-        "inputs": [
-          "addresses", 
-          "balances", 
-          "branchID"
-        ], 
-        "label": "Set Sale Distribution", 
-        "method": "setSaleDistribution", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256[]", 
-          "int256[]", 
-          "int256"
-        ]
-      }, 
-      "setWhitelist": {
-        "inputs": [
-          "contract", 
-          "addresses"
-        ], 
-        "label": "Set Whitelist", 
-        "method": "setWhitelist", 
-        "returns": "string", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256[]"
-        ]
-      }, 
-      "subtractDormantRep": {
-        "inputs": [
-          "branch", 
-          "index", 
-          "value"
-        ], 
-        "label": "Subtract Dormant Rep", 
-        "method": "subtractDormantRep", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "subtractRep": {
-        "inputs": [
-          "branch", 
-          "index", 
-          "value"
-        ], 
-        "label": "Subtract Rep", 
-        "method": "subtractRep", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "totalSupply": {
-        "inputs": [
-          "branch"
-        ], 
-        "label": "Total Supply", 
-        "method": "totalSupply", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }
-    }, 
-    "ReportingThreshold": {
-      "calculateReportTargetForEvent": {
-        "inputs": [
-          "branch", 
-          "eventID", 
-          "votePeriod", 
-          "sender"
-        ], 
-        "label": "Calculate Report Target For Event", 
-        "method": "calculateReportTargetForEvent", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "calculateReportingThreshold": {
-        "inputs": [
-          "branch", 
-          "eventID", 
-          "votePeriod", 
-          "sender"
-        ], 
-        "label": "Calculate Reporting Threshold", 
-        "method": "calculateReportingThreshold", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getEventCanReportOn": {
-        "inputs": [
-          "branch", 
-          "expDateIndex", 
-          "reporter", 
-          "event"
-        ], 
-        "label": "Get Event Can Report On", 
-        "method": "getEventCanReportOn", 
-        "returns": "number", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getEventsToReportOn": {
-        "inputs": [
-          "branch", 
-          "period", 
-          "sender", 
-          "start"
-        ], 
-        "label": "Get Events To Report On", 
-        "method": "getEventsToReportOn", 
-        "parser": "parseMarkets", 
-        "returns": "int256[]", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "setReportingThreshold": {
-        "inputs": [
-          "event"
-        ], 
-        "label": "Set Reporting Threshold", 
-        "method": "setReportingThreshold", 
-        "returns": "int256", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }
-    }, 
-    "RoundTwo": {
-      "resolve": {
-        "inputs": [
-          "branch", 
-          "event"
-        ], 
-        "label": "Resolve", 
-        "method": "resolve", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "roundTwoPostBond": {
-        "events": [
-          "Transfer", 
-          "penalizationCaughtUp", 
-          "collectedFees"
-        ], 
-        "inputs": [
-          "branch", 
-          "event", 
-          "eventIndex", 
-          "votePeriod"
-        ], 
-        "label": "Round Two Post Bond", 
-        "method": "roundTwoPostBond", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "roundTwoResolve": {
-        "inputs": [
-          "branch", 
-          "event", 
-          "eventIndex", 
-          "sender"
-        ], 
-        "label": "Round Two Resolve", 
-        "method": "roundTwoResolve", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "RoundTwoPenalize": {
-      "penalizeRoundTwoWrong": {
-        "inputs": [
-          "branch", 
-          "event"
-        ], 
-        "label": "Penalize Round Two Wrong", 
-        "method": "penalizeRoundTwoWrong", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "SendReputation": {
-      "allowance": {
-        "inputs": [
-          "owner", 
-          "spender"
-        ], 
-        "label": "Allowance", 
-        "method": "allowance", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "approve": {
-        "events": [
-          "Approval"
-        ], 
-        "inputs": [
-          "branch", 
-          "spender", 
-          "value"
-        ], 
-        "label": "Approve", 
-        "method": "approve", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "convertToActiveRep": {
-        "events": [
-          "penalizationCaughtUp", 
-          "collectedFees"
-        ], 
-        "inputs": [
-          "branch", 
-          "value"
-        ], 
-        "label": "Convert To Active Rep", 
-        "method": "convertToActiveRep", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "convertToDormantRep": {
-        "events": [
-          "penalizationCaughtUp", 
-          "collectedFees"
-        ], 
-        "inputs": [
-          "branch", 
-          "value"
-        ], 
-        "label": "Convert To Dormant Rep", 
-        "method": "convertToDormantRep", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "sendReputation": {
-        "events": [
-          "Transfer", 
-          "collectedFees", 
-          "penalizationCaughtUp"
-        ], 
-        "inputs": [
-          "branch", 
-          "recver", 
-          "value"
-        ], 
-        "label": "Send Reputation", 
-        "method": "sendReputation", 
-        "returns": "unfix", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "transfer": {
-        "events": [
-          "Transfer"
-        ], 
-        "inputs": [
-          "branch", 
-          "recver", 
-          "value"
-        ], 
-        "label": "Transfer", 
-        "method": "transfer", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "transferFrom": {
-        "events": [
-          "Transfer"
-        ], 
-        "inputs": [
-          "branch", 
-          "from", 
-          "recver", 
-          "value"
-        ], 
-        "label": "Transfer From", 
-        "method": "transferFrom", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "SlashRep": {
-      "slashRep": {
-        "description": "Punish Reporter for insufficient Reports submitted", 
-        "inputs": [
-          "branch", 
-          "salt", 
-          "report", 
-          "reporter", 
-          "eventID"
-        ], 
-        "label": "Punish Reporter", 
-        "method": "slashRep", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }
-    }, 
-    "Trade": {
-      "short_sell": {
-        "events": [
-          "log_short_fill_tx", 
-          "trade_logArrayReturn", 
-          "sentCash"
-        ], 
-        "gas": 1059796, 
-        "inputs": [
-          "buyer_trade_id", 
-          "max_amount", 
-          "tradeGroupID"
-        ], 
-        "label": "Short sell", 
-        "method": "short_sell", 
-        "mutable": true, 
-        "returns": "hash[]", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "trade": {
-        "events": [
-          "trade_logArrayReturn", 
-          "log_fill_tx"
-        ], 
-        "gas": 787421, 
-        "inputs": [
-          "max_value", 
-          "max_amount", 
-          "trade_ids", 
-          "tradeGroupID"
-        ], 
-        "label": "Trade", 
-        "method": "trade", 
-        "mutable": true, 
-        "returns": "hash[]", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256[]", 
-          "int256"
-        ]
-      }
-    }, 
-    "Trades": {
-      "checkHash": {
-        "inputs": [
-          "tradeHash", 
-          "sender"
-        ], 
-        "label": "Check Hash", 
-        "method": "checkHash", 
-        "returns": "number", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "commitTrade": {
-        "gas": 147581, 
-        "inputs": [
-          "hash"
-        ], 
-        "label": "Commit Trade", 
-        "method": "commitTrade", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "fill_trade": {
-        "fixed": [
-          1
-        ], 
-        "inputs": [
-          "id", 
-          "fill"
-        ], 
-        "label": "Fill trade", 
-        "method": "fill_trade", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getBestAskID": {
-        "inputs": [
-          "market", 
-          "outcome"
-        ], 
-        "label": "Get Best Ask ID", 
-        "method": "getBestAskID", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getBestBidID": {
-        "inputs": [
-          "market", 
-          "outcome"
-        ], 
-        "label": "Get Best Bid ID", 
-        "method": "getBestBidID", 
-        "returns": "int256", 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "getID": {
-        "inputs": [
-          "tradeID"
-        ], 
-        "label": "Get ID", 
-        "method": "getID", 
-        "returns": "hash", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "getTradeOwner": {
-        "inputs": [
-          "id"
-        ], 
-        "label": "Get Trade Owner", 
-        "method": "getTradeOwner", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "get_amount": {
-        "inputs": [
-          "id"
-        ], 
-        "label": "Get amount", 
-        "method": "get_amount", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "get_price": {
-        "inputs": [
-          "id"
-        ], 
-        "label": "Get price", 
-        "method": "get_price", 
-        "returns": "unfix", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "get_trade": {
-        "inputs": [
-          "id"
-        ], 
-        "label": "Get trade", 
-        "method": "get_trade", 
-        "parser": "parseTradeInfo", 
-        "returns": "hash[]", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "get_trade_block": {
-        "inputs": [
-          "id"
-        ], 
-        "label": "Get trade block", 
-        "method": "get_trade_block", 
-        "returns": "int256", 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "makeTradeHash": {
-        "inputs": [
-          "max_value", 
-          "max_amount", 
-          "trade_ids"
-        ], 
-        "label": "Make Trade Hash", 
-        "method": "makeTradeHash", 
-        "returns": "hash", 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256[]"
-        ]
-      }, 
-      "remove_trade": {
-        "inputs": [
-          "id"
-        ], 
-        "label": "Remove trade", 
-        "method": "remove_trade", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256"
-        ]
-      }, 
-      "saveTrade": {
-        "fixed": [
-          3, 
-          4
-        ], 
-        "inputs": [
-          "trade_id", 
-          "type", 
-          "market", 
-          "amount", 
-          "price", 
-          "sender", 
-          "outcome"
-        ], 
-        "label": "Save Trade", 
-        "method": "saveTrade", 
-        "returns": "number", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "update_trade": {
-        "fixed": [
-          1
-        ], 
-        "inputs": [
-          "id", 
-          "price"
-        ], 
-        "label": "Update trade", 
-        "method": "update_trade", 
-        "send": true, 
-        "signature": [
-          "int256", 
-          "int256"
-        ]
-      }, 
-      "zeroHash": {
-        "label": "Zero Hash", 
-        "method": "zeroHash", 
-        "returns": "number", 
-        "send": true
-      }
-    }
-  }
-}
-},{}],2:[function(require,module,exports){
-module.exports={
-    "10101": {
-        "Backstops": "0x708fdfe18bf28afe861a69e95419d183ace003eb", 
-        "Branches": "0x482c57abdce592b39434e3f619ffc3db62ab6d01", 
-        "BuyAndSellShares": "0xd70c6e1f3857d23bd96c3e4d2ec346fa7c3931f3", 
-        "Cash": "0xbd19195b9e8a2d8ed14fc3a2823856b5c16f7f55", 
-        "CloseMarket": "0x3f3276849a878a176b2f02dd48a483e8182a49e4", 
-        "CollectFees": "0x81a7621e9a286d061b3dea040888a51c96693b1c", 
-        "CompleteSets": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea", 
-        "CompositeGetters": "0xd2e9f7c2fd4635199b8cc9e8128fc4d27c693945", 
-        "Consensus": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79", 
-        "ConsensusData": "0x4a61f3db785f1e2a23ffefeafaceeef2df551667", 
-        "CreateBranch": "0x9fe69262bbaa47f013b7dbd6ca5f01e17446c645", 
-        "CreateMarket": "0x2e5a882aa53805f1a9da3cf18f73673bca98fa0f", 
-        "EventResolution": "0x35152caa07026203a1add680771afb690d872d7d", 
-        "Events": "0x8f2c2267687cb0f047b28a1b6f945da6e101a0d7", 
-        "ExpiringEvents": "0xe4714fcbdcdba49629bc408183ef40d120700b8d", 
-        "Faucets": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e", 
-        "ForkPenalize": "0xd15a6cfc462ae76b9ec590cab8b34bfa8e1302d7", 
-        "Forking": "0xcd6c7bc634257f82903b182142aae7156d72a200", 
-        "FxpFunctions": "0xe5b327630cfa7f4b2324f9066c897dceecfd88a3", 
-        "Info": "0x8a4e2993a9972ee035453bb5674816fc3a698718", 
-        "MakeReports": "0x8c19616de17acdfbc933b99d9f529a689d22098f", 
-        "Markets": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d", 
-        "Payout": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7", 
-        "PenalizationCatchup": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd", 
-        "PenalizeNotEnoughReports": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df", 
-        "ProportionCorrect": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2", 
-        "Register": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c", 
-        "Reporting": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6", 
-        "ReportingThreshold": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68", 
-        "RoundTwo": "0x9308cf21b5a11f182f9707ca284bbb71bb84f893", 
-        "RoundTwoPenalize": "0x7d4b581a0868204b7481c316b430a97fd292a2fb", 
-        "SendReputation": "0x70a893eb9569041e97a3787f0c76a1eb6378d8b2", 
-        "SlashRep": "0x5069d883e31429c6dd1325d961f443007747c7a2", 
-        "Trade": "0x031d9d02520cc708ea3c865278508c9cdb92bd51", 
-        "Trades": "0x448c01a2e1fd6c2ef133402c403d2f48c99993e7"
-    }, 
-    "3": {
-        "Backstops": "0x5f6623608a6dedff51c6258a1ac271b28ef79f07", 
-        "Branches": "0x6854670653257ac1329983a76cef7ccc7ff67674", 
-        "BuyAndSellShares": "0xce7da26e82cc7bcf6eefcc6761c27f37fe7550c0", 
-        "Cash": "0xe1f39399f38071ef38e4541a1615f1ef70ff5e18", 
-        "CloseMarket": "0xb1f9ebf616c79f0cdb30dc48b1a089598fa29f34", 
-        "CollectFees": "0xa5716c2b7fbbc9588ced046fedb71610d99f5d04", 
-        "CompleteSets": "0x0082b66b5ef1c857cc6d869e423343e7bfb03d8a", 
-        "CompositeGetters": "0x68d04b32e4dbf6844ee9a8f5419456048c56004e", 
-        "Consensus": "0xb86b84209aa3f7acaf9f1f7fc9e6dcca7e65db9e", 
-        "ConsensusData": "0x0862bd1a0901219bf81309f883f67ee82073a8b6", 
-        "CreateBranch": "0x16af93de362f97b96693f5b2c3a3bba3a27ae2b2", 
-        "CreateMarket": "0x049fd37576d74efe855452c9c61578df41554ff0", 
-        "EventResolution": "0x19e1fc9cbaf968e1eb035385c62221238968d7a0", 
-        "Events": "0xd7b6f43b43090b597caba32faacdb8841512fc65", 
-        "ExpiringEvents": "0x043ac01ed52d549accb0f1f7616fc34fb5657b51", 
-        "Faucets": "0x5a5874d5268519e2233e2f6e14f32eceaedd59aa", 
-        "ForkPenalize": "0xdeb142a7691923c301be4a89509f736a86bb681f", 
-        "Forking": "0x40fe8524eb4e141c12c16412afe4bab5c94551de", 
-        "FxpFunctions": "0xa1b1d11bd71e30aed95602fcbc7ed6be8ea8b7d2", 
-        "Info": "0x5ded30c21f6ac3e2567ee6052d2f2aa48a167bcd", 
-        "MakeReports": "0x123c6edfcde7cf8eff3928782456b42014118204", 
-        "Markets": "0x3b063fafcba91081219cd85df7acd390191609bb", 
-        "Payout": "0x3ec1b5396fd39101bfe5b3670f904807c996535e", 
-        "PenalizationCatchup": "0x80989ad93e2cd3bef55f97f770ee184138478ae0", 
-        "PenalizeNotEnoughReports": "0x1c2ac827157f6250ff65f6294bfde77f1713e34c", 
-        "ProportionCorrect": "0x425a2e7b655f2625b0eef9c2c6300db98b29464a", 
-        "Register": "0xd209c792467417d71e5ab38440c9cc2769fc8e37", 
-        "Reporting": "0x87cb32509f665364b6b53afbe1141cf37cdd2d4a", 
-        "ReportingThreshold": "0x30924e8620e38407c24f4954fc8c8dddc27b1443", 
-        "RoundTwo": "0xf19a64c011fe95492d190325731873bc3bb28bde", 
-        "RoundTwoPenalize": "0x13dc24a2cd15acaed004cf011a7d283aa798e202", 
-        "SendReputation": "0x7f3eff49bfc9757a4eea1204f8b54abfdbe24cd7", 
-        "SlashRep": "0x92395ed2899261ed61fba48131eb80f0d4917e8a", 
-        "Trade": "0xccf55a273ae3230c128732afb9abd8675a662d98", 
-        "Trades": "0x9fae2352f99dd6e829fa9c6bf3ee4de4f568f68a"
-    }, 
-    "9000": {
-        "Backstops": "0x708fdfe18bf28afe861a69e95419d183ace003eb", 
-        "Branches": "0x482c57abdce592b39434e3f619ffc3db62ab6d01", 
-        "BuyAndSellShares": "0xd70c6e1f3857d23bd96c3e4d2ec346fa7c3931f3", 
-        "Cash": "0xbd19195b9e8a2d8ed14fc3a2823856b5c16f7f55", 
-        "CloseMarket": "0x3f3276849a878a176b2f02dd48a483e8182a49e4", 
-        "CollectFees": "0x81a7621e9a286d061b3dea040888a51c96693b1c", 
-        "CompleteSets": "0x60cb05deb51f92ee25ce99f67181ecaeb0b743ea", 
-        "CompositeGetters": "0xd2e9f7c2fd4635199b8cc9e8128fc4d27c693945", 
-        "Consensus": "0xc1c4e2f32e4b84a60b8b7983b6356af4269aab79", 
-        "ConsensusData": "0x4a61f3db785f1e2a23ffefeafaceeef2df551667", 
-        "CreateBranch": "0x9fe69262bbaa47f013b7dbd6ca5f01e17446c645", 
-        "CreateMarket": "0x2e5a882aa53805f1a9da3cf18f73673bca98fa0f", 
-        "EventResolution": "0x35152caa07026203a1add680771afb690d872d7d", 
-        "Events": "0x8f2c2267687cb0f047b28a1b6f945da6e101a0d7", 
-        "ExpiringEvents": "0xe4714fcbdcdba49629bc408183ef40d120700b8d", 
-        "Faucets": "0xc21cfa6688dbfd2eca2548d894aa55fd0bbf1c7e", 
-        "ForkPenalize": "0xd15a6cfc462ae76b9ec590cab8b34bfa8e1302d7", 
-        "Forking": "0xcd6c7bc634257f82903b182142aae7156d72a200", 
-        "FxpFunctions": "0xe5b327630cfa7f4b2324f9066c897dceecfd88a3", 
-        "Info": "0x8a4e2993a9972ee035453bb5674816fc3a698718", 
-        "MakeReports": "0x8c19616de17acdfbc933b99d9f529a689d22098f", 
-        "Markets": "0x8caf2c0ce7cdc2e81b58f74322cefdef440b3f8d", 
-        "Payout": "0x52ccb0490bc81a2ae363fccbb2b367bca546cec7", 
-        "PenalizationCatchup": "0xabe47f122a496a732d6c4b38b3ca376d597d75dd", 
-        "PenalizeNotEnoughReports": "0x5f67ab9ff79be97b27ac8f26ef9f4b429b82e2df", 
-        "ProportionCorrect": "0x0fbddb6bfb81c8d0965a894567cf4061446072c2", 
-        "Register": "0xa34c9f6fc047cea795f69b34a063d32e6cb6288c", 
-        "Reporting": "0x77c424f86a1b80f1e303d1c2651acd6aba653cb6", 
-        "ReportingThreshold": "0x6c4c9fa11d6d8ed2c7a08ddcf4d4654c85194f68", 
-        "RoundTwo": "0x9308cf21b5a11f182f9707ca284bbb71bb84f893", 
-        "RoundTwoPenalize": "0x7d4b581a0868204b7481c316b430a97fd292a2fb", 
-        "SendReputation": "0x70a893eb9569041e97a3787f0c76a1eb6378d8b2", 
-        "SlashRep": "0x5069d883e31429c6dd1325d961f443007747c7a2", 
-        "Trade": "0x031d9d02520cc708ea3c865278508c9cdb92bd51", 
-        "Trades": "0x448c01a2e1fd6c2ef133402c403d2f48c99993e7"
-    }
-}
-},{}],3:[function(require,module,exports){
-module.exports={
   "0x": "no response or bad input",
   "buy": {
     "0": "market doesn't exist",
@@ -6548,213 +327,13 @@ module.exports={
   }
 }
 
-},{}],4:[function(require,module,exports){
-var contracts = require("./contracts");
-contracts.errors = require("./errors");
-contracts.Tx = require("./tx");
-
-module.exports = contracts;
-
-},{"./contracts":2,"./errors":3,"./tx":6}],5:[function(require,module,exports){
-(function (Buffer){
-var clone = (function() {
-'use strict';
-
-/**
- * Clones (copies) an Object using deep copying.
- *
- * This function supports circular references by default, but if you are certain
- * there are no circular references in your object, you can save some CPU time
- * by calling clone(obj, false).
- *
- * Caution: if `circular` is false and `parent` contains circular references,
- * your program may enter an infinite loop and crash.
- *
- * @param `parent` - the object to be cloned
- * @param `circular` - set to true if the object to be cloned may contain
- *    circular references. (optional - true by default)
- * @param `depth` - set to a number if the object is only to be cloned to
- *    a particular depth. (optional - defaults to Infinity)
- * @param `prototype` - sets the prototype to be used when cloning an object.
- *    (optional - defaults to parent prototype).
-*/
-function clone(parent, circular, depth, prototype) {
-  var filter;
-  if (typeof circular === 'object') {
-    depth = circular.depth;
-    prototype = circular.prototype;
-    filter = circular.filter;
-    circular = circular.circular
-  }
-  // maintain two arrays for circular references, where corresponding parents
-  // and children have the same index
-  var allParents = [];
-  var allChildren = [];
-
-  var useBuffer = typeof Buffer != 'undefined';
-
-  if (typeof circular == 'undefined')
-    circular = true;
-
-  if (typeof depth == 'undefined')
-    depth = Infinity;
-
-  // recurse this function so we don't reset allParents and allChildren
-  function _clone(parent, depth) {
-    // cloning null always returns null
-    if (parent === null)
-      return null;
-
-    if (depth == 0)
-      return parent;
-
-    var child;
-    var proto;
-    if (typeof parent != 'object') {
-      return parent;
-    }
-
-    if (clone.__isArray(parent)) {
-      child = [];
-    } else if (clone.__isRegExp(parent)) {
-      child = new RegExp(parent.source, __getRegExpFlags(parent));
-      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
-    } else if (clone.__isDate(parent)) {
-      child = new Date(parent.getTime());
-    } else if (useBuffer && Buffer.isBuffer(parent)) {
-      child = new Buffer(parent.length);
-      parent.copy(child);
-      return child;
-    } else {
-      if (typeof prototype == 'undefined') {
-        proto = Object.getPrototypeOf(parent);
-        child = Object.create(proto);
-      }
-      else {
-        child = Object.create(prototype);
-        proto = prototype;
-      }
-    }
-
-    if (circular) {
-      var index = allParents.indexOf(parent);
-
-      if (index != -1) {
-        return allChildren[index];
-      }
-      allParents.push(parent);
-      allChildren.push(child);
-    }
-
-    for (var i in parent) {
-      var attrs;
-      if (proto) {
-        attrs = Object.getOwnPropertyDescriptor(proto, i);
-      }
-
-      if (attrs && attrs.set == null) {
-        continue;
-      }
-      child[i] = _clone(parent[i], depth - 1);
-    }
-
-    return child;
-  }
-
-  return _clone(parent, depth);
-}
-
-/**
- * Simple flat clone using prototype, accepts only objects, usefull for property
- * override on FLAT configuration object (no nested props).
- *
- * USE WITH CAUTION! This may not behave as you wish if you do not know how this
- * works.
- */
-clone.clonePrototype = function clonePrototype(parent) {
-  if (parent === null)
-    return null;
-
-  var c = function () {};
-  c.prototype = parent;
-  return new c();
-};
-
-// private utility functions
-
-function __objToStr(o) {
-  return Object.prototype.toString.call(o);
-};
-clone.__objToStr = __objToStr;
-
-function __isDate(o) {
-  return typeof o === 'object' && __objToStr(o) === '[object Date]';
-};
-clone.__isDate = __isDate;
-
-function __isArray(o) {
-  return typeof o === 'object' && __objToStr(o) === '[object Array]';
-};
-clone.__isArray = __isArray;
-
-function __isRegExp(o) {
-  return typeof o === 'object' && __objToStr(o) === '[object RegExp]';
-};
-clone.__isRegExp = __isRegExp;
-
-function __getRegExpFlags(re) {
-  var flags = '';
-  if (re.global) flags += 'g';
-  if (re.ignoreCase) flags += 'i';
-  if (re.multiline) flags += 'm';
-  return flags;
-};
-clone.__getRegExpFlags = __getRegExpFlags;
-
-return clone;
-})();
-
-if (typeof module === 'object' && module.exports) {
-  module.exports = clone;
-}
-
-}).call(this,require("buffer").Buffer)
-},{"buffer":21}],6:[function(require,module,exports){
-/**
- * Augur contract method info.
- */
-
-"use strict";
-
-var clone = require("clone");
-
-module.exports = function (network, contracts) {
-
-  contracts = contracts || require("./contracts")[network || "3"];
-  var api = clone(require("./api"));
-
-  for (var contract in api.functions) {
-    if (!api.functions.hasOwnProperty(contract)) continue;
-    for (var method in api.functions[contract]) {
-      if (!api.functions[contract].hasOwnProperty(method)) continue;
-      api.functions[contract][method].to = contracts[contract];
-    }
-  }
-  for (var event in api.events) {
-    if (!api.events.hasOwnProperty(event)) continue;
-    api.events[event].address = contracts[api.events[event].contract];
-  }
-
-  return api;
-};
-
-},{"./api":1,"./contracts":2,"clone":5}],7:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 (function (global){
 var ethrpc = global.ethrpc || require("./");
 global.ethrpc = ethrpc;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./":8}],8:[function(require,module,exports){
+},{"./":3}],3:[function(require,module,exports){
 (function (process){
 /**
  * JSON RPC methods for Ethereum
@@ -6778,8 +357,8 @@ var clone = require("clone");
 var W3CWebSocket = (NODE_JS) ? require("websocket").w3cwebsocket : WebSocket;
 var BigNumber = require("bignumber.js");
 var keccak_256 = require("js-sha3").keccak_256;
-var errors = require("augur-contracts").errors;
 var abi = require("augur-abi");
+var errors = require("./errors");
 
 BigNumber.config({
   MODULO_MODE: BigNumber.EUCLID,
@@ -7562,6 +1141,8 @@ module.exports = {
   reset: function (deleteData) {
     this.nodes.hosted = this.DEFAULT_HOSTED_NODES.slice();
     this.wsUrl = process.env.GETH_WEBSOCKET_URL || this.DEFAULT_HOSTED_WEBSOCKET;
+    this.ipcpath = null;
+    this.rpcStatus = {ipc: 0, ws: 0};
     if (deleteData) this.clear();
   },
 
@@ -8690,7 +2271,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"_process":62,"async":10,"augur-abi":11,"augur-contracts":4,"bignumber.js":13,"browser-request":17,"clone":23,"js-sha3":59,"net":20,"request":18,"sync-request":18,"websocket":18}],9:[function(require,module,exports){
+},{"./errors":1,"_process":57,"async":5,"augur-abi":6,"bignumber.js":8,"browser-request":12,"clone":18,"js-sha3":54,"net":15,"request":13,"sync-request":13,"websocket":13}],4:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -9051,7 +2632,7 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":94}],10:[function(require,module,exports){
+},{"util/":89}],5:[function(require,module,exports){
 (function (process,global){
 /*!
  * async
@@ -10320,7 +3901,7 @@ var objectKeys = Object.keys || function (obj) {
 }());
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":62}],11:[function(require,module,exports){
+},{"_process":57}],6:[function(require,module,exports){
 (function (Buffer){
 /**
  * Ethereum contract ABI data serialization.
@@ -10334,614 +3915,618 @@ var keccak_256 = require("js-sha3").keccak_256;
 var ethabi = require("ethereumjs-abi");
 
 BigNumber.config({
-    MODULO_MODE: BigNumber.EUCLID,
-    ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN
+  MODULO_MODE: BigNumber.EUCLID,
+  ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN
 });
 
 module.exports = {
 
-    debug: false,
+  debug: false,
 
-    version: "1.0.0",
+  version: "1.1.1",
 
-    constants: {
-        ONE: new BigNumber(10).toPower(new BigNumber(18)),
-        BYTES_32: new BigNumber(2).toPower(new BigNumber(252)),
-        // Serpent integers are bounded by [-2^255, 2^255-1]
-        SERPINT_MIN: new BigNumber(2).toPower(new BigNumber(255)).neg(),
-        SERPINT_MAX: new BigNumber(2).toPower(new BigNumber(255)).minus(new BigNumber(1)),
-        MOD: new BigNumber(2).toPower(new BigNumber(256))
-    },
+  constants: {
+    ONE: new BigNumber(10).toPower(new BigNumber(18)),
+    BYTES_32: new BigNumber(2).toPower(new BigNumber(252)),
+    // Serpent integers are bounded by [-2^255, 2^255-1]
+    SERPINT_MIN: new BigNumber(2).toPower(new BigNumber(255)).neg(),
+    SERPINT_MAX: new BigNumber(2).toPower(new BigNumber(255)).minus(new BigNumber(1)),
+    MOD: new BigNumber(2).toPower(new BigNumber(256))
+  },
 
-    abi: ethabi,
+  abi: ethabi,
 
-    keccak_256: keccak_256,
+  keccak_256: keccak_256,
 
-    // Convert hex to byte array for sha3
-    // (https://github.com/ethereum/dapp-bin/blob/master/ether_ad/scripts/sha3.min.js)
-    hex_to_bytes: function (s) {
-        var o = [];
-        var alpha = "0123456789abcdef";
-        for (var i = (s.substr(0, 2) === "0x" ? 2 : 0); i < s.length; i += 2) {
-            var index1 = alpha.indexOf(s[i]);
-            var index2 = alpha.indexOf(s[i + 1]);
-            if (index1 < 0 || index2 < 0) {
-                throw("Bad input to hex decoding: " + s + " " + i + " " + index1 + " " + index2);
-            }
-            o.push(16*index1 + index2);
-        }
-        return o;
-    },
-
-    bytes_to_hex: function (b) {
-        var hexbyte, h = "";
-        for (var i = 0, n = b.length; i < n; ++i) {
-            hexbyte = this.strip_0x(b[i].toString(16));
-            if (hexbyte.length === 1) hexbyte = "0" + hexbyte;
-            h += hexbyte;
-        }
-        return h;
-    },
-
-    sha3: function (hexstr) {
-        return keccak_256(this.hex_to_bytes(hexstr));
-    },
-
-    copy: function (obj) {
-        if (null === obj || "object" !== typeof obj) return obj;
-        var copy = obj.constructor();
-        for (var attr in obj) {
-            if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-        }
-        return copy;
-    },
-
-    is_numeric: function (n) {
-        return Number(parseFloat(n)) == n;
-    },
-
-    remove_leading_zeros: function (h) {
-        var hex = h.toString();
-        if (hex.slice(0, 2) === "0x") {
-            hex = hex.slice(2);
-        }
-        if (!/^0+$/.test(hex)) {
-            while (hex.slice(0, 2) === "00") {
-                hex = hex.slice(2);
-            }
-        }
-        return hex;
-    },
-
-    remove_trailing_zeros: function (h, utf8) {
-        var hex = h.toString();
-        if (utf8) {
-            while (hex.slice(-1) === "\u0000") {
-                hex = hex.slice(0, -1);
-            }
-        } else {
-            while (hex.slice(-2) === "00") {
-                hex = hex.slice(0, -2);
-            }
-        }
-        return hex;
-    },
-
-    bytes_to_utf16: function (bytearray) {
-        if (bytearray.constructor === Array) {
-            var tmp = '';
-            for (var i = 0; i < bytearray.length; ++i) {
-                if (bytearray[i] !== undefined && bytearray[i] !== null) {
-                    if (bytearray[i].constructor === String) {
-                        tmp += this.strip_0x(bytearray[i]);
-                    } else if (bytearray[i].constructor === Number) {
-                        tmp += bytearray[i].toString(16);
-                    } else if (Buffer.isBuffer(bytearray[i])) {
-                        tmp += bytearray[i].toString("hex");
-                    }
-                }
-            }
-            bytearray = tmp;
-        }
-        if (bytearray.constructor === String) {
-            bytearray = this.strip_0x(bytearray);
-        }
-        if (!Buffer.isBuffer(bytearray)) {
-            try {
-                bytearray = new Buffer(bytearray, "hex");
-            } catch (ex) {
-                console.log("[augur-abi] bytes_to_utf16:", JSON.stringify(bytearray, null, 2));
-                throw ex;
-            }
-        }
-        return bytearray.toString("utf8");
-    },
-
-    short_string_to_int256: function (shortstring) {
-        var int256 = shortstring;
-        if (int256.length > 32) int256 = int256.slice(0, 32);
-        return this.prefix_hex(this.pad_right(new Buffer(int256, "utf8").toString("hex")));
-    },
-
-    int256_to_short_string: function (int256) {
-        return new Buffer(this.strip_0x(this.remove_trailing_zeros(int256)), "hex").toString("utf8");
-    },
-
-    decode_hex: function (h, strip) {
-        var hex = h.toString();
-        var str = '';
-        if (hex.slice(0,2) === "0x") hex = hex.slice(2);
-        // first 32 bytes = offset
-        // second 32 bytes = string length
-        if (strip) {
-            hex = hex.slice(128);
-            hex = this.remove_trailing_zeros(hex);
-        }
-        for (var i = 0, l = hex.length; i < l; i += 2) {
-            str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-        }
-        return str;
-    },
-
-    // convert bytes to hex
-    encode_hex: function (str, toArray) {
-        var hexbyte, hex, i, len;
-        if (str && str.constructor === Object || str.constructor === Array) {
-            str = JSON.stringify(str);
-        }
-        len = str.length;
-        if (toArray) {
-            hex = [];
-            for (i = 0; i < len; ++i) {
-                hexbyte = str.charCodeAt(i).toString(16);
-                if (hexbyte.length === 1) hexbyte = "0" + hexbyte;
-                hex.push(this.prefix_hex(hexbyte));
-            }
-        } else {
-            hex = '';
-            for (i = 0; i < len; ++i) {
-                hexbyte = str.charCodeAt(i).toString(16);
-                if (hexbyte.length === 1) hexbyte = "0" + hexbyte;
-                hex += hexbyte;
-            }
-        }
-        return hex;
-    },
-
-    raw_encode_hex: function (str) {
-        return ethabi.rawEncode(["string"], [str]).toString("hex");
-    },
-
-    raw_decode_hex: function (hex) {
-        if (!Buffer.isBuffer(hex)) hex = new Buffer(this.strip_0x(hex), "hex");
-        return ethabi.rawDecode(["string"], hex)[0];
-    },
-
-    unfork: function (forked, prefix) {
-        if (forked !== null && forked !== undefined && forked.constructor !== Object) {
-            var unforked = this.bignum(forked);
-            if (unforked.constructor === BigNumber) {
-                var superforked = unforked.plus(this.constants.MOD);
-                if (superforked.gte(this.constants.BYTES_32) && superforked.lt(this.constants.MOD)) {
-                    unforked = superforked;
-                }
-                if (forked.constructor === BigNumber) return unforked;
-                unforked = this.pad_left(unforked.toString(16));
-                if (prefix) unforked = this.prefix_hex(unforked);
-                return unforked;
-            } else {
-                throw new Error("abi.unfork failed (bad input): " + JSON.stringify(forked));
-            }
-        } else {
-            throw new Error("abi.unfork failed (bad input): " + JSON.stringify(forked));
-        }
-    },
-
-    hex: function (n, wrap) {
-        var h;
-        if (n !== undefined && n !== null && n.constructor) {
-            switch (n.constructor) {
-                case Buffer:
-                    h = n.toString("hex");
-                    break;
-                case Object:
-                    h = this.encode_hex(JSON.stringify(n));
-                    break;
-                case Array:
-                    h = this.bignum(n, "hex", wrap);
-                    break;
-                case BigNumber:
-                    if (wrap) {
-                        h = this.wrap(n.floor()).toString(16);
-                    } else {
-                        h = n.floor().toString(16);
-                    }
-                    break;
-                case String:
-                    if (n === "-0x0") {
-                        h = "0x0";
-                    } else if (n === "-0") {
-                        h = "0";
-                    } else if (n.slice(0, 3) === "-0x" || n.slice(0, 2) === "-0x") {
-                        h = this.bignum(n, "hex", wrap);
-                    } else {
-                        if (isFinite(n)) {
-                            h = this.bignum(n, "hex", wrap);
-                        } else {
-                            h = this.encode_hex(n);
-                        }
-                    }
-                    break;
-                case Boolean:
-                    h = (n) ? "0x1" : "0x0";
-                    break;
-                default:
-                    h = this.bignum(n, "hex", wrap);
-            }
-        }
-        return this.prefix_hex(h);
-    },
-
-    is_hex: function (str) {
-        if (str && str.constructor === String) {
-            if (str.slice(0, 1) === '-' && str.length > 1) {
-                return /^[0-9A-F]+$/i.test(str.slice(1));
-            }
-            return /^[0-9A-F]+$/i.test(str);
-        }
-        return false;
-    },
-
-    format_int256: function (s) {
-        if (s === undefined || s === null || s === "0x") return s;
-        if (Buffer.isBuffer(s)) s = s.toString("hex");
-        if (s.constructor !== String) s = s.toString(16);
-        if (s.slice(0, 1) === "-") s = this.unfork(s);
-        s = this.strip_0x(s);
-        if (s.length > 64) {
-            if (this.debug) {
-                var overflow = (s.length / 2) - 32;
-                console.warn("input " + overflow + " bytes too large for int256, truncating");
-            }
-            s = s.slice(0, 64);
-        }
-        return this.prefix_hex(this.pad_left(s));
-    },
-
-    format_address: function (addr) {
-        if (addr && addr.constructor === String) {
-            addr = this.strip_0x(addr);
-            while (addr.length > 40 && addr.slice(0, 1) === "0") {
-                addr = addr.slice(1);
-            }
-            while (addr.length < 40) {
-                addr = "0" + addr;
-            }
-            return this.prefix_hex(addr);
-        }
-    },
-
-    strip_0x: function (str) {
-        if (str && str.constructor === String && str.length >= 2) {
-            var h = str;
-            if (h === "-0x0" || h === "0x0") {
-                return "0";
-            }
-            if (h.slice(0, 2) === "0x" && h.length > 2) {
-                h = h.slice(2);
-            } else if (h.slice(0, 3) === "-0x" && h.length > 3) {
-                h = '-' + h.slice(3);
-            }
-            if (this.is_hex(h)) return h;
-        }
-        return str;
-    },
-
-    zero_prefix: function (h) {
-        if (h !== undefined && h !== null && h.constructor === String) {
-            h = this.strip_0x(h);
-            if (h.length % 2) h = "0" + h;
-            if (h.slice(0,2) !== "0x" && h.slice(0,3) !== "-0x") {
-                if (h.slice(0,1) === '-') {
-                    h = "-0x" + h.slice(1);
-                } else {
-                    h = "0x" + h;
-                }
-            }
-        }
-        return h;
-    },
-
-    prefix_hex: function (n) {
-        if (n === undefined || n === null || n === "") return n;
-        if (n.constructor === Number || n.constructor === BigNumber) {
-            n = n.toString(16);
-        }
-        if (n.constructor === String && n.slice(0,2) !== "0x" && n.slice(0,3) !== "-0x") {
-            if (n.slice(0,1) === '-') {
-                n = "-0x" + n.slice(1);
-            } else {
-                n = "0x" + n;
-            }
-        }
-        return n;
-    },
-
-    bignum: function (n, encoding, wrap) {
-        var bn, len;
-        if (n !== null && n !== undefined && n !== "0x" && !n.error && !n.message) {
-            switch (n.constructor) {
-                case BigNumber:
-                    bn = n;
-                    break;
-                case Number:
-                    bn = new BigNumber(n, 10);
-                    break;
-                case String:
-                    try {
-                        bn = new BigNumber(n, 10);
-                    } catch (exc) {
-                        if (this.is_hex(n)) {
-                            bn = new BigNumber(n, 16);
-                        } else {
-                            return n;
-                        }
-                    }
-                    break;
-                case Array:
-                    len = n.length;
-                    bn = new Array(len);
-                    for (var i = 0; i < len; ++i) {
-                        bn[i] = this.bignum(n[i], encoding, wrap);
-                    }
-                    break;
-                default:
-                    if (this.is_hex(n)) {
-                        bn = new BigNumber(n, 16);
-                    } else {
-                        bn = new BigNumber(n, 10);
-                    }
-            }
-            if (bn !== undefined && bn !== null && bn.constructor === BigNumber) {
-                if (wrap) bn = this.wrap(bn);
-                if (encoding) {
-                    if (encoding === "number") {
-                        bn = bn.toNumber();
-                    } else if (encoding === "string") {
-                        bn = bn.toFixed();
-                    } else if (encoding === "hex") {
-                        bn = this.prefix_hex(bn.floor().toString(16));
-                    }
-                }
-            }
-            return bn;
-        } else {
-            return n;
-        }
-    },
-
-    wrap: function (bn) {
-        if (bn === undefined || bn === null) return bn;
-        if (bn.constructor !== BigNumber) bn = this.bignum(bn);
-        if (bn.gt(this.constants.SERPINT_MAX)) {
-            return bn.sub(this.constants.MOD);
-        } else if (bn.lt(this.constants.SERPINT_MIN)) {
-            return bn.plus(this.constants.MOD);
-        }
-        return bn;
-    },
-
-    fix: function (n, encode, wrap) {
-        var fixed;
-        if (n && n !== "0x" && !n.error && !n.message) {
-            if (encode && n.constructor === String) {
-                encode = encode.toLowerCase();
-            }
-            if (n.constructor === Array) {
-                var len = n.length;
-                fixed = new Array(len);
-                for (var i = 0; i < len; ++i) {
-                    fixed[i] = this.fix(n[i], encode);
-                }
-            } else {
-                if (n.constructor === BigNumber) {
-                    fixed = n.mul(this.constants.ONE).round();
-                } else {
-                    fixed = this.bignum(n).mul(this.constants.ONE).round();
-                }
-                if (wrap) fixed = this.wrap(fixed);
-                if (encode) {
-                    if (encode === "string") {
-                        fixed = fixed.toFixed();
-                    } else if (encode === "hex") {
-                        if (fixed.constructor === BigNumber) {
-                            fixed = fixed.toString(16);
-                        }
-                        fixed = this.prefix_hex(fixed);
-                    }
-                }
-            }
-            return fixed;
-        } else {
-            return n;
-        }
-    },
-
-    unfix: function (n, encode) {
-        var unfixed;
-        if (n && n !== "0x" && !n.error && !n.message) {
-            if (encode) encode = encode.toLowerCase();
-            if (n.constructor === Array) {
-                var len = n.length;
-                unfixed = new Array(len);
-                for (var i = 0; i < len; ++i) {
-                    unfixed[i] = this.unfix(n[i], encode);
-                }
-            } else {
-                if (n.constructor === BigNumber) {
-                    unfixed = n.dividedBy(this.constants.ONE);
-                } else {
-                    unfixed = this.bignum(n).dividedBy(this.constants.ONE);
-                }
-                if (unfixed && encode) {
-                    if (encode === "hex") {
-                        unfixed = this.prefix_hex(unfixed.round());
-                    } else if (encode === "string") {
-                        unfixed = unfixed.toFixed();
-                    } else if (encode === "number") {
-                        unfixed = unfixed.toNumber();
-                    }
-                }
-            }
-            return unfixed;
-        } else {
-            return n;
-        }
-    },
-
-    unfix_signed: function (n, encode) {
-        return this.unfix(this.hex(n, true), encode);
-    },
-
-    string: function (n, wrap) {
-        return this.bignum(n, "string", wrap);
-    },
-
-    number: function (s, wrap) {
-        return this.bignum(s, "number", wrap);
-    },
-
-    chunk: function (total_len, chunk_len) {
-        chunk_len = chunk_len || 64;
-        return Math.ceil(total_len / chunk_len);
-    },
-
-    pad_right: function (s, chunk_len, prefix) {
-        chunk_len = chunk_len || 64;
-        s = this.strip_0x(s);
-        var multiple = chunk_len * (this.chunk(s.length, chunk_len) || 1);
-        while (s.length < multiple) {
-            s += '0';
-        }
-        if (prefix) s = this.prefix_hex(s);
-        return s;
-    },
-
-    pad_left: function (s, chunk_len, prefix) {
-        chunk_len = chunk_len || 64;
-        s = this.strip_0x(s);
-        var multiple = chunk_len * (this.chunk(s.length, chunk_len) || 1);
-        while (s.length < multiple) {
-            s = '0' + s;
-        }
-        if (prefix) s = this.prefix_hex(s);
-        return s;
-    },
-
-    encode_prefix: function (funcname, signature) {
-        signature = signature || "";
-        var summary = funcname + "(";
-        for (var i = 0, len = signature.length; i < len; ++i) {
-            switch (signature[i]) {
-                case 's':
-                    summary += "bytes";
-                    break;
-                case 'b':
-                    summary += "bytes";
-                    var j = 1;
-                    while (this.is_numeric(signature[i+j])) {
-                        summary += signature[i+j].toString();
-                        j++;
-                    }
-                    i += j;
-                    break;
-                case 'i':
-                    summary += "int256";
-                    break;
-                case 'a':
-                    summary += "int256[]";
-                    break;
-                default:
-                    summary += "weird";
-            }
-            if (i !== len - 1) summary += ",";
-        }
-        var prefix = keccak_256(summary + ")").slice(0, 8);
-        while (prefix.slice(0, 1) === '0') {
-            prefix = prefix.slice(1);
-        }
-        return this.pad_left(prefix, 8, true);
-    },
-
-    parse_signature: function (signature) {
-        var types = [];
-        for (var i = 0, len = signature.length; i < len; ++i) {
-            if (this.is_numeric(signature[i])) {
-                types[types.length - 1] += signature[i].toString();
-            } else {
-                if (signature[i] === 's') {
-                    types.push("bytes");
-                } else if (signature[i] === 'b') {
-                    types.push("bytes");
-                } else if (signature[i] === 'a') {
-                    types.push("int256[]");
-                } else {
-                    types.push("int256");
-                }
-            }
-        }
-        return types;
-    },
-
-    parse_params: function (params) {
-        if (params !== undefined && params !== null &&
-            params !== [] && params !== "")
-        {
-            if (params.constructor === String) {
-                if (params.slice(0,1) === "[" &&
-                    params.slice(-1) === "]")
-                {
-                    params = JSON.parse(params);
-                }
-                if (params.constructor === String) {
-                    params = [params];
-                }
-            } else if (params.constructor === Number) {
-                params = [params];
-            }
-        } else {
-            params = [];
-        }
-        return params;
-    },
-
-    encode_int: function (value) {
-        var cs, x, output;
-        cs = [];
-        x = new BigNumber(value);
-        while (x.gt(new BigNumber(0))) {
-            cs.push(String.fromCharCode(x.mod(new BigNumber(256))));
-            x = x.dividedBy(new BigNumber(256)).floor();
-        }
-        output = this.encode_hex((cs.reverse()).join(''));
-        while (output.length < 64) {
-            output = '0' + output;
-        }
-        return output;
-    },
-
-    // hex-encode a function's ABI data and return it
-    encode: function (tx) {
-        tx.signature = tx.signature || [];
-        return this.prefix_hex(Buffer.concat([
-            ethabi.methodID(tx.method, tx.signature),
-            ethabi.rawEncode(tx.signature, tx.params)
-        ]).toString("hex"));
+  // Convert hex to byte array for sha3
+  // (https://github.com/ethereum/dapp-bin/blob/master/ether_ad/scripts/sha3.min.js)
+  hex_to_bytes: function (s) {
+    var o = [];
+    var alpha = "0123456789abcdef";
+    for (var i = (s.substr(0, 2) === "0x" ? 2 : 0); i < s.length; i += 2) {
+      var index1 = alpha.indexOf(s[i]);
+      var index2 = alpha.indexOf(s[i + 1]);
+      if (index1 < 0 || index2 < 0) {
+        throw("Bad input to hex decoding: " + s + " " + i + " " + index1 + " " + index2);
+      }
+      o.push(16*index1 + index2);
     }
+    return o;
+  },
+
+  bytes_to_hex: function (b) {
+    var hexbyte, h = "";
+    for (var i = 0, n = b.length; i < n; ++i) {
+      hexbyte = this.strip_0x(b[i].toString(16));
+      if (hexbyte.length === 1) hexbyte = "0" + hexbyte;
+      h += hexbyte;
+    }
+    return h;
+  },
+
+  sha3: function (hexstr) {
+    return keccak_256(this.hex_to_bytes(hexstr));
+  },
+
+  copy: function (obj) {
+    if (null === obj || "object" !== typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+      if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+  },
+
+  is_numeric: function (n) {
+    return Number(parseFloat(n)) == n;
+  },
+
+  remove_leading_zeros: function (h) {
+    var hex = h.toString();
+    if (hex.slice(0, 2) === "0x") {
+      hex = hex.slice(2);
+    }
+    if (!/^0+$/.test(hex)) {
+      while (hex.slice(0, 2) === "00") {
+        hex = hex.slice(2);
+      }
+    }
+    return hex;
+  },
+
+  remove_trailing_zeros: function (h, utf8) {
+    var hex = h.toString();
+    if (utf8) {
+      while (hex.slice(-1) === "\u0000") {
+        hex = hex.slice(0, -1);
+      }
+    } else {
+      while (hex.slice(-2) === "00") {
+        hex = hex.slice(0, -2);
+      }
+    }
+    return hex;
+  },
+
+  bytes_to_utf16: function (bytearray) {
+    var el, bytestring;
+    if (Buffer.isBuffer(bytearray)) {
+      return new Buffer(bytearray, "hex").toString("utf8");
+    }
+    if (bytearray.constructor === Array) {
+      bytestring = '';
+      for (var i = 0, numBytes = bytearray.length; i < numBytes; ++i) {
+        el = bytearray[i];
+        if (el !== undefined && el !== null) {
+          if (el.constructor === String) {
+            el = this.strip_0x(el);
+            if (el.length % 2 !== 0) el = '0' + el;
+            bytestring += el;
+          } else if (el.constructor === Number || el.constructor === BigNumber) {
+            el = el.toString(16);
+            if (el.length % 2 !== 0) el = '0' + el;
+            bytestring += el;
+          } else if (Buffer.isBuffer(el)) {
+            bytestring += el.toString("hex");
+          }
+        }
+      }
+    }
+    if (bytearray.constructor === String) {
+      bytestring = this.strip_0x(bytearray);
+    } else if (bytearray.constructor === Number || bytearray.constructor === BigNumber) {
+      bytestring = bytearray.toString(16);
+    }
+    try {
+      bytestring = new Buffer(bytestring, "hex");
+    } catch (ex) {
+      console.error("[augur-abi] bytes_to_utf16:", JSON.stringify(bytestring, null, 2));
+      throw ex;
+    }
+    return bytestring.toString("utf8");
+  },
+
+  short_string_to_int256: function (shortstring) {
+    var int256 = shortstring;
+    if (int256.length > 32) int256 = int256.slice(0, 32);
+    return this.prefix_hex(this.pad_right(new Buffer(int256, "utf8").toString("hex")));
+  },
+
+  int256_to_short_string: function (int256) {
+    return new Buffer(this.strip_0x(this.remove_trailing_zeros(int256)), "hex").toString("utf8");
+  },
+
+  decode_hex: function (h, strip) {
+    var hex = h.toString();
+    var str = '';
+    if (hex.slice(0,2) === "0x") hex = hex.slice(2);
+    // first 32 bytes = offset
+    // second 32 bytes = string length
+    if (strip) {
+      hex = hex.slice(128);
+      hex = this.remove_trailing_zeros(hex);
+    }
+    for (var i = 0, l = hex.length; i < l; i += 2) {
+      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    }
+    return str;
+  },
+
+  // convert bytes to hex
+  encode_hex: function (str, toArray) {
+    var hexbyte, hex, i, len;
+    if (str && str.constructor === Object || str.constructor === Array) {
+      str = JSON.stringify(str);
+    }
+    len = str.length;
+    if (toArray) {
+      hex = [];
+      for (i = 0; i < len; ++i) {
+        hexbyte = str.charCodeAt(i).toString(16);
+        if (hexbyte.length === 1) hexbyte = "0" + hexbyte;
+        hex.push(this.prefix_hex(hexbyte));
+      }
+    } else {
+      hex = '';
+      for (i = 0; i < len; ++i) {
+        hexbyte = str.charCodeAt(i).toString(16);
+        if (hexbyte.length === 1) hexbyte = "0" + hexbyte;
+        hex += hexbyte;
+      }
+    }
+    return hex;
+  },
+
+  raw_encode_hex: function (str) {
+    return ethabi.rawEncode(["string"], [str]).toString("hex");
+  },
+
+  raw_decode_hex: function (hex) {
+    if (!Buffer.isBuffer(hex)) hex = new Buffer(this.strip_0x(hex), "hex");
+    return ethabi.rawDecode(["string"], hex)[0];
+  },
+
+  unfork: function (forked, prefix) {
+    if (forked !== null && forked !== undefined && forked.constructor !== Object) {
+      var unforked = this.bignum(forked);
+      if (unforked.constructor === BigNumber) {
+        var superforked = unforked.plus(this.constants.MOD);
+        if (superforked.gte(this.constants.BYTES_32) && superforked.lt(this.constants.MOD)) {
+          unforked = superforked;
+        }
+        if (forked.constructor === BigNumber) return unforked;
+        unforked = this.pad_left(unforked.toString(16));
+        if (prefix) unforked = this.prefix_hex(unforked);
+        return unforked;
+      } else {
+        throw new Error("abi.unfork failed (bad input): " + JSON.stringify(forked));
+      }
+    } else {
+      throw new Error("abi.unfork failed (bad input): " + JSON.stringify(forked));
+    }
+  },
+
+  hex: function (n, wrap) {
+    var h;
+    if (n !== undefined && n !== null && n.constructor) {
+      switch (n.constructor) {
+        case Buffer:
+          h = n.toString("hex");
+          break;
+        case Object:
+          h = this.encode_hex(JSON.stringify(n));
+          break;
+        case Array:
+          h = this.bignum(n, "hex", wrap);
+          break;
+        case BigNumber:
+          if (wrap) {
+            h = this.wrap(n.floor()).toString(16);
+          } else {
+            h = n.floor().toString(16);
+          }
+          break;
+        case String:
+          if (n === "-0x0") {
+            h = "0x0";
+          } else if (n === "-0") {
+            h = "0";
+          } else if (n.slice(0, 3) === "-0x" || n.slice(0, 2) === "-0x") {
+            h = this.bignum(n, "hex", wrap);
+          } else {
+            if (isFinite(n)) {
+              h = this.bignum(n, "hex", wrap);
+            } else {
+              h = this.encode_hex(n);
+            }
+          }
+          break;
+        case Boolean:
+          h = (n) ? "0x1" : "0x0";
+          break;
+        default:
+          h = this.bignum(n, "hex", wrap);
+      }
+    }
+    return this.prefix_hex(h);
+  },
+
+  is_hex: function (str) {
+    if (str && str.constructor === String) {
+      if (str.slice(0, 1) === '-' && str.length > 1) {
+        return /^[0-9A-F]+$/i.test(str.slice(1));
+      }
+      return /^[0-9A-F]+$/i.test(str);
+    }
+    return false;
+  },
+
+  format_int256: function (s) {
+    if (s === undefined || s === null || s === "0x") return s;
+    if (Buffer.isBuffer(s)) s = s.toString("hex");
+    if (s.constructor !== String) s = s.toString(16);
+    if (s.slice(0, 1) === "-") s = this.unfork(s);
+    s = this.strip_0x(s);
+    if (s.length > 64) {
+      if (this.debug) {
+        var overflow = (s.length / 2) - 32;
+        console.warn("input " + overflow + " bytes too large for int256, truncating");
+      }
+      s = s.slice(0, 64);
+    }
+    return this.prefix_hex(this.pad_left(s));
+  },
+
+  format_address: function (addr) {
+    if (addr && addr.constructor === String) {
+      addr = this.strip_0x(addr);
+      while (addr.length > 40 && addr.slice(0, 1) === "0") {
+        addr = addr.slice(1);
+      }
+      while (addr.length < 40) {
+        addr = "0" + addr;
+      }
+      return this.prefix_hex(addr);
+    }
+  },
+
+  strip_0x: function (str) {
+    if (str && str.constructor === String && str.length >= 2) {
+      var h = str;
+      if (h === "-0x0" || h === "0x0") {
+        return "0";
+      }
+      if (h.slice(0, 2) === "0x" && h.length > 2) {
+        h = h.slice(2);
+      } else if (h.slice(0, 3) === "-0x" && h.length > 3) {
+        h = '-' + h.slice(3);
+      }
+      if (this.is_hex(h)) return h;
+    }
+    return str;
+  },
+
+  zero_prefix: function (h) {
+    if (h !== undefined && h !== null && h.constructor === String) {
+      h = this.strip_0x(h);
+      if (h.length % 2) h = "0" + h;
+      if (h.slice(0,2) !== "0x" && h.slice(0,3) !== "-0x") {
+        if (h.slice(0,1) === '-') {
+          h = "-0x" + h.slice(1);
+        } else {
+          h = "0x" + h;
+        }
+      }
+    }
+    return h;
+  },
+
+  prefix_hex: function (n) {
+    if (n === undefined || n === null || n === "") return n;
+    if (n.constructor === Number || n.constructor === BigNumber) {
+      n = n.toString(16);
+    }
+    if (n.constructor === String && n.slice(0,2) !== "0x" && n.slice(0,3) !== "-0x") {
+      if (n.slice(0,1) === '-') {
+        n = "-0x" + n.slice(1);
+      } else {
+        n = "0x" + n;
+      }
+    }
+    return n;
+  },
+
+  bignum: function (n, encoding, wrap) {
+    var bn, len;
+    if (n !== null && n !== undefined && n !== "0x" && !n.error && !n.message) {
+      switch (n.constructor) {
+        case BigNumber:
+          bn = n;
+          break;
+        case Number:
+          bn = new BigNumber(n, 10);
+          break;
+        case String:
+          try {
+            bn = new BigNumber(n, 10);
+          } catch (exc) {
+            if (this.is_hex(n)) {
+              bn = new BigNumber(n, 16);
+            } else {
+              return n;
+            }
+          }
+          break;
+        case Array:
+          len = n.length;
+          bn = new Array(len);
+          for (var i = 0; i < len; ++i) {
+            bn[i] = this.bignum(n[i], encoding, wrap);
+          }
+          break;
+        default:
+          if (this.is_hex(n)) {
+            bn = new BigNumber(n, 16);
+          } else {
+            bn = new BigNumber(n, 10);
+          }
+      }
+      if (bn !== undefined && bn !== null && bn.constructor === BigNumber) {
+        if (wrap) bn = this.wrap(bn);
+        if (encoding) {
+          if (encoding === "number") {
+            bn = bn.toNumber();
+          } else if (encoding === "string") {
+            bn = bn.toFixed();
+          } else if (encoding === "hex") {
+            bn = this.prefix_hex(bn.floor().toString(16));
+          }
+        }
+      }
+      return bn;
+    } else {
+      return n;
+    }
+  },
+
+  wrap: function (bn) {
+    if (bn === undefined || bn === null) return bn;
+    if (bn.constructor !== BigNumber) bn = this.bignum(bn);
+    if (bn.gt(this.constants.SERPINT_MAX)) {
+      return bn.sub(this.constants.MOD);
+    } else if (bn.lt(this.constants.SERPINT_MIN)) {
+      return bn.plus(this.constants.MOD);
+    }
+    return bn;
+  },
+
+  fix: function (n, encode, wrap) {
+    var fixed;
+    if (n && n !== "0x" && !n.error && !n.message) {
+      if (encode && n.constructor === String) {
+        encode = encode.toLowerCase();
+      }
+      if (n.constructor === Array) {
+        var len = n.length;
+        fixed = new Array(len);
+        for (var i = 0; i < len; ++i) {
+          fixed[i] = this.fix(n[i], encode);
+        }
+      } else {
+        if (n.constructor === BigNumber) {
+          fixed = n.mul(this.constants.ONE).round();
+        } else {
+          fixed = this.bignum(n).mul(this.constants.ONE).round();
+        }
+        if (wrap) fixed = this.wrap(fixed);
+        if (encode) {
+          if (encode === "string") {
+            fixed = fixed.toFixed();
+          } else if (encode === "hex") {
+            if (fixed.constructor === BigNumber) {
+              fixed = fixed.toString(16);
+            }
+            fixed = this.prefix_hex(fixed);
+          }
+        }
+      }
+      return fixed;
+    } else {
+      return n;
+    }
+  },
+
+  unfix: function (n, encode) {
+    var unfixed;
+    if (n && n !== "0x" && !n.error && !n.message) {
+      if (encode) encode = encode.toLowerCase();
+      if (n.constructor === Array) {
+        var len = n.length;
+        unfixed = new Array(len);
+        for (var i = 0; i < len; ++i) {
+          unfixed[i] = this.unfix(n[i], encode);
+        }
+      } else {
+        if (n.constructor === BigNumber) {
+          unfixed = n.dividedBy(this.constants.ONE);
+        } else {
+          unfixed = this.bignum(n).dividedBy(this.constants.ONE);
+        }
+        if (unfixed && encode) {
+          if (encode === "hex") {
+            unfixed = this.prefix_hex(unfixed.round());
+          } else if (encode === "string") {
+            unfixed = unfixed.toFixed();
+          } else if (encode === "number") {
+            unfixed = unfixed.toNumber();
+          }
+        }
+      }
+      return unfixed;
+    } else {
+      return n;
+    }
+  },
+
+  unfix_signed: function (n, encode) {
+    return this.unfix(this.hex(n, true), encode);
+  },
+
+  string: function (n, wrap) {
+    return this.bignum(n, "string", wrap);
+  },
+
+  number: function (s, wrap) {
+    return this.bignum(s, "number", wrap);
+  },
+
+  chunk: function (total_len, chunk_len) {
+    chunk_len = chunk_len || 64;
+    return Math.ceil(total_len / chunk_len);
+  },
+
+  pad_right: function (s, chunk_len, prefix) {
+    chunk_len = chunk_len || 64;
+    s = this.strip_0x(s);
+    var multiple = chunk_len * (this.chunk(s.length, chunk_len) || 1);
+    while (s.length < multiple) {
+      s += '0';
+    }
+    if (prefix) s = this.prefix_hex(s);
+    return s;
+  },
+
+  pad_left: function (s, chunk_len, prefix) {
+    chunk_len = chunk_len || 64;
+    s = this.strip_0x(s);
+    var multiple = chunk_len * (this.chunk(s.length, chunk_len) || 1);
+    while (s.length < multiple) {
+      s = '0' + s;
+    }
+    if (prefix) s = this.prefix_hex(s);
+    return s;
+  },
+
+  encode_prefix: function (funcname, signature) {
+    signature = signature || "";
+    var summary = funcname + "(";
+    for (var i = 0, len = signature.length; i < len; ++i) {
+      switch (signature[i]) {
+        case 's':
+          summary += "bytes";
+          break;
+        case 'b':
+          summary += "bytes";
+          var j = 1;
+          while (this.is_numeric(signature[i+j])) {
+            summary += signature[i+j].toString();
+            j++;
+          }
+          i += j;
+          break;
+        case 'i':
+          summary += "int256";
+          break;
+        case 'a':
+          summary += "int256[]";
+          break;
+        default:
+          summary += "weird";
+      }
+      if (i !== len - 1) summary += ",";
+    }
+    var prefix = keccak_256(summary + ")").slice(0, 8);
+    while (prefix.slice(0, 1) === '0') {
+      prefix = prefix.slice(1);
+    }
+    return this.pad_left(prefix, 8, true);
+  },
+
+  parse_signature: function (signature) {
+    var types = [];
+    for (var i = 0, len = signature.length; i < len; ++i) {
+      if (this.is_numeric(signature[i])) {
+        types[types.length - 1] += signature[i].toString();
+      } else {
+        if (signature[i] === 's') {
+          types.push("bytes");
+        } else if (signature[i] === 'b') {
+          types.push("bytes");
+        } else if (signature[i] === 'a') {
+          types.push("int256[]");
+        } else {
+          types.push("int256");
+        }
+      }
+    }
+    return types;
+  },
+
+  parse_params: function (params) {
+    if (params !== undefined && params !== null && params !== [] && params !== "") {
+      if (params.constructor === String) {
+        if (params.slice(0,1) === "[" && params.slice(-1) === "]") {
+          params = JSON.parse(params);
+        }
+        if (params.constructor === String) {
+          params = [params];
+        }
+      } else if (params.constructor === Number) {
+        params = [params];
+      }
+    } else {
+      params = [];
+    }
+    return params;
+  },
+
+  encode_int: function (value) {
+    var cs, x, output;
+    cs = [];
+    x = new BigNumber(value);
+    while (x.gt(new BigNumber(0))) {
+      cs.push(String.fromCharCode(x.mod(new BigNumber(256))));
+      x = x.dividedBy(new BigNumber(256)).floor();
+    }
+    output = this.encode_hex((cs.reverse()).join(''));
+    while (output.length < 64) {
+      output = '0' + output;
+    }
+    return output;
+  },
+
+  // hex-encode a function's ABI data and return it
+  encode: function (tx) {
+    tx.signature = tx.signature || [];
+    return this.prefix_hex(Buffer.concat([
+      ethabi.methodID(tx.method, tx.signature),
+      ethabi.rawEncode(tx.signature, tx.params)
+    ]).toString("hex"));
+  }
 };
 
 }).call(this,require("buffer").Buffer)
-},{"bignumber.js":13,"buffer":21,"ethereumjs-abi":45,"js-sha3":59}],12:[function(require,module,exports){
+},{"bignumber.js":8,"buffer":16,"ethereumjs-abi":40,"js-sha3":54}],7:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -11067,7 +4652,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],13:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /*! bignumber.js v2.3.0 https://github.com/MikeMcl/bignumber.js/LICENCE */
 
 ;(function (globalObj) {
@@ -13802,7 +7387,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     }
 })(this);
 
-},{}],14:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (Buffer){
 // Reference https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki
 // Format: 0x30 [total-length] 0x02 [R-length] [R] 0x02 [S-length] [S]
@@ -13917,7 +7502,7 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":21}],15:[function(require,module,exports){
+},{"buffer":16}],10:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -17346,7 +10931,7 @@ module.exports = {
   };
 })(typeof module === 'undefined' || module, this);
 
-},{}],16:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var r;
 
 module.exports = function rand(len) {
@@ -17405,7 +10990,7 @@ if (typeof window === 'object') {
   }
 }
 
-},{"crypto":18}],17:[function(require,module,exports){
+},{"crypto":13}],12:[function(require,module,exports){
 // Browser Request
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17901,9 +11486,9 @@ function b64_enc (data) {
 }));
 //UMD FOOTER END
 
-},{}],18:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 
-},{}],19:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function (Buffer){
 const Sha3 = require('js-sha3')
 
@@ -17941,9 +11526,9 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":21,"js-sha3":59}],20:[function(require,module,exports){
-arguments[4][18][0].apply(exports,arguments)
-},{"dup":18}],21:[function(require,module,exports){
+},{"buffer":16,"js-sha3":54}],15:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"dup":13}],16:[function(require,module,exports){
 (function (global){
 /*!
  * The buffer module from node.js, for the browser.
@@ -19495,7 +13080,7 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":12,"ieee754":55,"isarray":58}],22:[function(require,module,exports){
+},{"base64-js":7,"ieee754":50,"isarray":53}],17:[function(require,module,exports){
 (function (Buffer){
 var Transform = require('stream').Transform
 var inherits = require('inherits')
@@ -19589,9 +13174,171 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":21,"inherits":56,"stream":89,"string_decoder":90}],23:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"buffer":21,"dup":5}],24:[function(require,module,exports){
+},{"buffer":16,"inherits":51,"stream":84,"string_decoder":85}],18:[function(require,module,exports){
+(function (Buffer){
+var clone = (function() {
+'use strict';
+
+/**
+ * Clones (copies) an Object using deep copying.
+ *
+ * This function supports circular references by default, but if you are certain
+ * there are no circular references in your object, you can save some CPU time
+ * by calling clone(obj, false).
+ *
+ * Caution: if `circular` is false and `parent` contains circular references,
+ * your program may enter an infinite loop and crash.
+ *
+ * @param `parent` - the object to be cloned
+ * @param `circular` - set to true if the object to be cloned may contain
+ *    circular references. (optional - true by default)
+ * @param `depth` - set to a number if the object is only to be cloned to
+ *    a particular depth. (optional - defaults to Infinity)
+ * @param `prototype` - sets the prototype to be used when cloning an object.
+ *    (optional - defaults to parent prototype).
+*/
+function clone(parent, circular, depth, prototype) {
+  var filter;
+  if (typeof circular === 'object') {
+    depth = circular.depth;
+    prototype = circular.prototype;
+    filter = circular.filter;
+    circular = circular.circular
+  }
+  // maintain two arrays for circular references, where corresponding parents
+  // and children have the same index
+  var allParents = [];
+  var allChildren = [];
+
+  var useBuffer = typeof Buffer != 'undefined';
+
+  if (typeof circular == 'undefined')
+    circular = true;
+
+  if (typeof depth == 'undefined')
+    depth = Infinity;
+
+  // recurse this function so we don't reset allParents and allChildren
+  function _clone(parent, depth) {
+    // cloning null always returns null
+    if (parent === null)
+      return null;
+
+    if (depth == 0)
+      return parent;
+
+    var child;
+    var proto;
+    if (typeof parent != 'object') {
+      return parent;
+    }
+
+    if (clone.__isArray(parent)) {
+      child = [];
+    } else if (clone.__isRegExp(parent)) {
+      child = new RegExp(parent.source, __getRegExpFlags(parent));
+      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
+    } else if (clone.__isDate(parent)) {
+      child = new Date(parent.getTime());
+    } else if (useBuffer && Buffer.isBuffer(parent)) {
+      child = new Buffer(parent.length);
+      parent.copy(child);
+      return child;
+    } else {
+      if (typeof prototype == 'undefined') {
+        proto = Object.getPrototypeOf(parent);
+        child = Object.create(proto);
+      }
+      else {
+        child = Object.create(prototype);
+        proto = prototype;
+      }
+    }
+
+    if (circular) {
+      var index = allParents.indexOf(parent);
+
+      if (index != -1) {
+        return allChildren[index];
+      }
+      allParents.push(parent);
+      allChildren.push(child);
+    }
+
+    for (var i in parent) {
+      var attrs;
+      if (proto) {
+        attrs = Object.getOwnPropertyDescriptor(proto, i);
+      }
+
+      if (attrs && attrs.set == null) {
+        continue;
+      }
+      child[i] = _clone(parent[i], depth - 1);
+    }
+
+    return child;
+  }
+
+  return _clone(parent, depth);
+}
+
+/**
+ * Simple flat clone using prototype, accepts only objects, usefull for property
+ * override on FLAT configuration object (no nested props).
+ *
+ * USE WITH CAUTION! This may not behave as you wish if you do not know how this
+ * works.
+ */
+clone.clonePrototype = function clonePrototype(parent) {
+  if (parent === null)
+    return null;
+
+  var c = function () {};
+  c.prototype = parent;
+  return new c();
+};
+
+// private utility functions
+
+function __objToStr(o) {
+  return Object.prototype.toString.call(o);
+};
+clone.__objToStr = __objToStr;
+
+function __isDate(o) {
+  return typeof o === 'object' && __objToStr(o) === '[object Date]';
+};
+clone.__isDate = __isDate;
+
+function __isArray(o) {
+  return typeof o === 'object' && __objToStr(o) === '[object Array]';
+};
+clone.__isArray = __isArray;
+
+function __isRegExp(o) {
+  return typeof o === 'object' && __objToStr(o) === '[object RegExp]';
+};
+clone.__isRegExp = __isRegExp;
+
+function __getRegExpFlags(re) {
+  var flags = '';
+  if (re.global) flags += 'g';
+  if (re.ignoreCase) flags += 'i';
+  if (re.multiline) flags += 'm';
+  return flags;
+};
+clone.__getRegExpFlags = __getRegExpFlags;
+
+return clone;
+})();
+
+if (typeof module === 'object' && module.exports) {
+  module.exports = clone;
+}
+
+}).call(this,require("buffer").Buffer)
+},{"buffer":16}],19:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -19702,7 +13449,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":57}],25:[function(require,module,exports){
+},{"../../is-buffer/index.js":52}],20:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var inherits = require('inherits')
@@ -19758,7 +13505,7 @@ module.exports = function createHash (alg) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./md5":27,"buffer":21,"cipher-base":22,"inherits":56,"ripemd160":73,"sha.js":82}],26:[function(require,module,exports){
+},{"./md5":22,"buffer":16,"cipher-base":17,"inherits":51,"ripemd160":68,"sha.js":77}],21:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var intSize = 4;
@@ -19795,7 +13542,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 }
 exports.hash = hash;
 }).call(this,require("buffer").Buffer)
-},{"buffer":21}],27:[function(require,module,exports){
+},{"buffer":16}],22:[function(require,module,exports){
 'use strict';
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -19952,7 +13699,7 @@ function bit_rol(num, cnt)
 module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
-},{"./helpers":26}],28:[function(require,module,exports){
+},{"./helpers":21}],23:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -19968,7 +13715,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":44,"./elliptic/curve":31,"./elliptic/curves":34,"./elliptic/ec":35,"./elliptic/eddsa":38,"./elliptic/hmac-drbg":41,"./elliptic/utils":43,"brorand":16}],29:[function(require,module,exports){
+},{"../package.json":39,"./elliptic/curve":26,"./elliptic/curves":29,"./elliptic/ec":30,"./elliptic/eddsa":33,"./elliptic/hmac-drbg":36,"./elliptic/utils":38,"brorand":11}],24:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -20345,7 +14092,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../../elliptic":28,"bn.js":15}],30:[function(require,module,exports){
+},{"../../elliptic":23,"bn.js":10}],25:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -20780,7 +14527,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../../elliptic":28,"../curve":31,"bn.js":15,"inherits":56}],31:[function(require,module,exports){
+},{"../../elliptic":23,"../curve":26,"bn.js":10,"inherits":51}],26:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -20790,7 +14537,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":29,"./edwards":30,"./mont":32,"./short":33}],32:[function(require,module,exports){
+},{"./base":24,"./edwards":25,"./mont":27,"./short":28}],27:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -20972,7 +14719,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../../elliptic":28,"../curve":31,"bn.js":15,"inherits":56}],33:[function(require,module,exports){
+},{"../../elliptic":23,"../curve":26,"bn.js":10,"inherits":51}],28:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -21912,7 +15659,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../../elliptic":28,"../curve":31,"bn.js":15,"inherits":56}],34:[function(require,module,exports){
+},{"../../elliptic":23,"../curve":26,"bn.js":10,"inherits":51}],29:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -22119,7 +15866,7 @@ defineCurve('secp256k1', {
   ]
 });
 
-},{"../elliptic":28,"./precomputed/secp256k1":42,"hash.js":49}],35:[function(require,module,exports){
+},{"../elliptic":23,"./precomputed/secp256k1":37,"hash.js":44}],30:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -22358,7 +16105,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../../elliptic":28,"./key":36,"./signature":37,"bn.js":15}],36:[function(require,module,exports){
+},{"../../elliptic":23,"./key":31,"./signature":32,"bn.js":10}],31:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -22467,7 +16214,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"bn.js":15}],37:[function(require,module,exports){
+},{"bn.js":10}],32:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -22604,7 +16351,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../../elliptic":28,"bn.js":15}],38:[function(require,module,exports){
+},{"../../elliptic":23,"bn.js":10}],33:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -22724,7 +16471,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../../elliptic":28,"./key":39,"./signature":40,"hash.js":49}],39:[function(require,module,exports){
+},{"../../elliptic":23,"./key":34,"./signature":35,"hash.js":44}],34:[function(require,module,exports){
 'use strict';
 
 var elliptic = require('../../elliptic');
@@ -22822,7 +16569,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../../elliptic":28}],40:[function(require,module,exports){
+},{"../../elliptic":23}],35:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -22890,7 +16637,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../../elliptic":28,"bn.js":15}],41:[function(require,module,exports){
+},{"../../elliptic":23,"bn.js":10}],36:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -23006,7 +16753,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"../elliptic":28,"hash.js":49}],42:[function(require,module,exports){
+},{"../elliptic":23,"hash.js":44}],37:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -23788,7 +17535,7 @@ module.exports = {
   }
 };
 
-},{}],43:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -23962,7 +17709,7 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":15}],44:[function(require,module,exports){
+},{"bn.js":10}],39:[function(require,module,exports){
 module.exports={
   "_args": [
     [
@@ -24083,10 +17830,10 @@ module.exports={
   "version": "6.3.2"
 }
 
-},{}],45:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 module.exports = require('./lib/index.js')
 
-},{"./lib/index.js":46}],46:[function(require,module,exports){
+},{"./lib/index.js":41}],41:[function(require,module,exports){
 (function (Buffer){
 const utils = require('ethereumjs-util')
 const BN = require('bn.js')
@@ -24601,7 +18348,7 @@ ABI.toSerpent = function (types) {
 module.exports = ABI
 
 }).call(this,require("buffer").Buffer)
-},{"bn.js":15,"buffer":21,"ethereumjs-util":47}],47:[function(require,module,exports){
+},{"bn.js":10,"buffer":16,"ethereumjs-util":42}],42:[function(require,module,exports){
 (function (Buffer){
 const SHA3 = require('keccakjs')
 const secp256k1 = require('secp256k1')
@@ -25306,7 +19053,7 @@ exports.defineProperties = function (self, fields, data) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"assert":9,"bn.js":15,"buffer":21,"create-hash":25,"keccakjs":60,"rlp":74,"secp256k1":75}],48:[function(require,module,exports){
+},{"assert":4,"bn.js":10,"buffer":16,"create-hash":20,"keccakjs":55,"rlp":69,"secp256k1":70}],43:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25609,7 +19356,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],49:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -25626,7 +19373,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":50,"./hash/hmac":51,"./hash/ripemd":52,"./hash/sha":53,"./hash/utils":54}],50:[function(require,module,exports){
+},{"./hash/common":45,"./hash/hmac":46,"./hash/ripemd":47,"./hash/sha":48,"./hash/utils":49}],45:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 var assert = utils.assert;
@@ -25719,7 +19466,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"../hash":49}],51:[function(require,module,exports){
+},{"../hash":44}],46:[function(require,module,exports){
 var hmac = exports;
 
 var hash = require('../hash');
@@ -25769,7 +19516,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"../hash":49}],52:[function(require,module,exports){
+},{"../hash":44}],47:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 
@@ -25915,7 +19662,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"../hash":49}],53:[function(require,module,exports){
+},{"../hash":44}],48:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 var assert = utils.assert;
@@ -26481,7 +20228,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../hash":49}],54:[function(require,module,exports){
+},{"../hash":44}],49:[function(require,module,exports){
 var utils = exports;
 var inherits = require('inherits');
 
@@ -26740,7 +20487,7 @@ function shr64_lo(ah, al, num) {
 };
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":56}],55:[function(require,module,exports){
+},{"inherits":51}],50:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -26826,7 +20573,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],56:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -26851,7 +20598,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],57:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -26874,14 +20621,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],58:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],59:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 (function (global){
 /*
  * js-sha3 v0.3.1
@@ -27317,10 +21064,10 @@ module.exports = Array.isArray || function (arr) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],60:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 module.exports = require('browserify-sha3').SHA3Hash
 
-},{"browserify-sha3":19}],61:[function(require,module,exports){
+},{"browserify-sha3":14}],56:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -27367,7 +21114,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 }
 
 }).call(this,require('_process'))
-},{"_process":62}],62:[function(require,module,exports){
+},{"_process":57}],57:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -27549,10 +21296,10 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],63:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":64}],64:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":59}],59:[function(require,module,exports){
 // a duplex stream is just a stream that is both readable and writable.
 // Since JS doesn't have multiple prototypal inheritance, this class
 // prototypally inherits from Readable, and then parasitically from
@@ -27628,7 +21375,7 @@ function forEach(xs, f) {
     f(xs[i], i);
   }
 }
-},{"./_stream_readable":66,"./_stream_writable":68,"core-util-is":24,"inherits":56,"process-nextick-args":61}],65:[function(require,module,exports){
+},{"./_stream_readable":61,"./_stream_writable":63,"core-util-is":19,"inherits":51,"process-nextick-args":56}],60:[function(require,module,exports){
 // a passthrough stream.
 // basically just the most minimal sort of Transform stream.
 // Every written chunk gets output as-is.
@@ -27655,7 +21402,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":67,"core-util-is":24,"inherits":56}],66:[function(require,module,exports){
+},{"./_stream_transform":62,"core-util-is":19,"inherits":51}],61:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -28538,7 +22285,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":64,"_process":62,"buffer":21,"core-util-is":24,"events":48,"inherits":56,"isarray":58,"process-nextick-args":61,"string_decoder/":90,"util":18}],67:[function(require,module,exports){
+},{"./_stream_duplex":59,"_process":57,"buffer":16,"core-util-is":19,"events":43,"inherits":51,"isarray":53,"process-nextick-args":56,"string_decoder/":85,"util":13}],62:[function(require,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -28719,7 +22466,7 @@ function done(stream, er) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":64,"core-util-is":24,"inherits":56}],68:[function(require,module,exports){
+},{"./_stream_duplex":59,"core-util-is":19,"inherits":51}],63:[function(require,module,exports){
 (function (process){
 // A bit simpler than readable streams.
 // Implement an async ._write(chunk, encoding, cb), and it'll handle all
@@ -29238,10 +22985,10 @@ function CorkedRequest(state) {
   };
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":64,"_process":62,"buffer":21,"core-util-is":24,"events":48,"inherits":56,"process-nextick-args":61,"util-deprecate":91}],69:[function(require,module,exports){
+},{"./_stream_duplex":59,"_process":57,"buffer":16,"core-util-is":19,"events":43,"inherits":51,"process-nextick-args":56,"util-deprecate":86}],64:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":65}],70:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":60}],65:[function(require,module,exports){
 var Stream = (function (){
   try {
     return require('st' + 'ream'); // hack to fix a circular dependency issue when used with browserify
@@ -29255,13 +23002,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":64,"./lib/_stream_passthrough.js":65,"./lib/_stream_readable.js":66,"./lib/_stream_transform.js":67,"./lib/_stream_writable.js":68}],71:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":59,"./lib/_stream_passthrough.js":60,"./lib/_stream_readable.js":61,"./lib/_stream_transform.js":62,"./lib/_stream_writable.js":63}],66:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":67}],72:[function(require,module,exports){
+},{"./lib/_stream_transform.js":62}],67:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":68}],73:[function(require,module,exports){
+},{"./lib/_stream_writable.js":63}],68:[function(require,module,exports){
 (function (Buffer){
 /*
 CryptoJS v3.1.2
@@ -29475,7 +23222,7 @@ function ripemd160 (message) {
 module.exports = ripemd160
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":21}],74:[function(require,module,exports){
+},{"buffer":16}],69:[function(require,module,exports){
 (function (Buffer){
 const assert = require('assert')
 /**
@@ -29708,11 +23455,11 @@ function toBuffer (v) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"assert":9,"buffer":21}],75:[function(require,module,exports){
+},{"assert":4,"buffer":16}],70:[function(require,module,exports){
 'use strict'
 module.exports = require('./lib')(require('./lib/elliptic'))
 
-},{"./lib":79,"./lib/elliptic":78}],76:[function(require,module,exports){
+},{"./lib":74,"./lib/elliptic":73}],71:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var toString = Object.prototype.toString
@@ -29760,7 +23507,7 @@ exports.isNumberInInterval = function (number, x, y, message) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":57}],77:[function(require,module,exports){
+},{"../../is-buffer/index.js":52}],72:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var bip66 = require('bip66')
@@ -29961,7 +23708,7 @@ exports.signatureImportLax = function (sig) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bip66":14,"buffer":21}],78:[function(require,module,exports){
+},{"bip66":9,"buffer":16}],73:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var createHash = require('create-hash')
@@ -30212,7 +23959,7 @@ exports.ecdhUnsafe = function (publicKey, privateKey, compressed) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../messages.json":80,"bn.js":15,"buffer":21,"create-hash":25,"elliptic":28}],79:[function(require,module,exports){
+},{"../messages.json":75,"bn.js":10,"buffer":16,"create-hash":20,"elliptic":23}],74:[function(require,module,exports){
 'use strict'
 var assert = require('./assert')
 var der = require('./der')
@@ -30445,7 +24192,7 @@ module.exports = function (secp256k1) {
   }
 }
 
-},{"./assert":76,"./der":77,"./messages.json":80}],80:[function(require,module,exports){
+},{"./assert":71,"./der":72,"./messages.json":75}],75:[function(require,module,exports){
 module.exports={
   "COMPRESSED_TYPE_INVALID": "compressed should be a boolean",
   "EC_PRIVATE_KEY_TYPE_INVALID": "private key should be a Buffer",
@@ -30483,7 +24230,7 @@ module.exports={
   "TWEAK_LENGTH_INVALID": "tweak length is invalid"
 }
 
-},{}],81:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 (function (Buffer){
 // prototype class for hash functions
 function Hash (blockSize, finalSize) {
@@ -30556,7 +24303,7 @@ Hash.prototype._update = function () {
 module.exports = Hash
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":21}],82:[function(require,module,exports){
+},{"buffer":16}],77:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -30573,7 +24320,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":83,"./sha1":84,"./sha224":85,"./sha256":86,"./sha384":87,"./sha512":88}],83:[function(require,module,exports){
+},{"./sha":78,"./sha1":79,"./sha224":80,"./sha256":81,"./sha384":82,"./sha512":83}],78:[function(require,module,exports){
 (function (Buffer){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
@@ -30670,7 +24417,7 @@ Sha.prototype._hash = function () {
 module.exports = Sha
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":81,"buffer":21,"inherits":56}],84:[function(require,module,exports){
+},{"./hash":76,"buffer":16,"inherits":51}],79:[function(require,module,exports){
 (function (Buffer){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
@@ -30772,7 +24519,7 @@ Sha1.prototype._hash = function () {
 module.exports = Sha1
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":81,"buffer":21,"inherits":56}],85:[function(require,module,exports){
+},{"./hash":76,"buffer":16,"inherits":51}],80:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -30828,7 +24575,7 @@ Sha224.prototype._hash = function () {
 module.exports = Sha224
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":81,"./sha256":86,"buffer":21,"inherits":56}],86:[function(require,module,exports){
+},{"./hash":76,"./sha256":81,"buffer":16,"inherits":51}],81:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -30966,7 +24713,7 @@ Sha256.prototype._hash = function () {
 module.exports = Sha256
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":81,"buffer":21,"inherits":56}],87:[function(require,module,exports){
+},{"./hash":76,"buffer":16,"inherits":51}],82:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
@@ -31026,7 +24773,7 @@ Sha384.prototype._hash = function () {
 module.exports = Sha384
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":81,"./sha512":88,"buffer":21,"inherits":56}],88:[function(require,module,exports){
+},{"./hash":76,"./sha512":83,"buffer":16,"inherits":51}],83:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var Hash = require('./hash')
@@ -31289,7 +25036,7 @@ Sha512.prototype._hash = function () {
 module.exports = Sha512
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":81,"buffer":21,"inherits":56}],89:[function(require,module,exports){
+},{"./hash":76,"buffer":16,"inherits":51}],84:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -31418,7 +25165,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":48,"inherits":56,"readable-stream/duplex.js":63,"readable-stream/passthrough.js":69,"readable-stream/readable.js":70,"readable-stream/transform.js":71,"readable-stream/writable.js":72}],90:[function(require,module,exports){
+},{"events":43,"inherits":51,"readable-stream/duplex.js":58,"readable-stream/passthrough.js":64,"readable-stream/readable.js":65,"readable-stream/transform.js":66,"readable-stream/writable.js":67}],85:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -31641,7 +25388,7 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":21}],91:[function(require,module,exports){
+},{"buffer":16}],86:[function(require,module,exports){
 (function (global){
 
 /**
@@ -31712,16 +25459,16 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],92:[function(require,module,exports){
-arguments[4][56][0].apply(exports,arguments)
-},{"dup":56}],93:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
+arguments[4][51][0].apply(exports,arguments)
+},{"dup":51}],88:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],94:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -32311,4 +26058,4 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":93,"_process":62,"inherits":92}]},{},[7]);
+},{"./support/isBuffer":88,"_process":57,"inherits":87}]},{},[2]);

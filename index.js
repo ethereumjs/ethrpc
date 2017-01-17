@@ -20,8 +20,8 @@ var clone = require("clone");
 var W3CWebSocket = (NODE_JS) ? require("websocket").w3cwebsocket : WebSocket;
 var BigNumber = require("bignumber.js");
 var keccak_256 = require("js-sha3").keccak_256;
-var errors = require("augur-contracts").errors;
 var abi = require("augur-abi");
+var errors = require("./errors");
 
 BigNumber.config({
   MODULO_MODE: BigNumber.EUCLID,
@@ -804,6 +804,8 @@ module.exports = {
   reset: function (deleteData) {
     this.nodes.hosted = this.DEFAULT_HOSTED_NODES.slice();
     this.wsUrl = process.env.GETH_WEBSOCKET_URL || this.DEFAULT_HOSTED_WEBSOCKET;
+    this.ipcpath = null;
+    this.rpcStatus = {ipc: 0, ws: 0};
     if (deleteData) this.clear();
   },
 

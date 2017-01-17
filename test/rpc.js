@@ -9,8 +9,8 @@ var assert = require("chai").assert;
 var async = require("async");
 var clone = require("clone");
 var contracts = require("augur-contracts");
-var errors = contracts.errors;
 var abi = require("augur-abi");
+var errors = require("../errors");
 var rpc = require("../");
 var DEBUG = false;
 
