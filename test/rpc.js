@@ -19,8 +19,6 @@ require('it-each')({testPerIteration: true});
 var requests = 0;
 var TIMEOUT = 720000;
 var COINBASE = "0x00bae5113ee9f252cceb0001205b88fad175461a";
-var SHA3_INPUT = "boom!";
-var SHA3_DIGEST = "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
 var PROTOCOL_VERSION = "0x3f";
 var TXHASH = "0xc52b258dec9e8374880b346f93669d7699d7e64d46c8b6072b19122ca9406461";
 var NETWORK_ID = "3";
@@ -687,16 +685,6 @@ describe("send", function () {
     command: {
       id: ++requests,
       jsonrpc: "2.0",
-      method: "web3_sha3",
-      params: [SHA3_INPUT]
-    },
-    returns: "int256",
-    expected: SHA3_DIGEST
-  });
-  test({
-    command: {
-      id: ++requests,
-      jsonrpc: "2.0",
       method: "net_listening",
       params: []
     },
@@ -717,8 +705,8 @@ describe("send", function () {
     command: [{
       id: ++requests,
       jsonrpc: "2.0",
-      method: "web3_sha3",
-      params: [SHA3_INPUT]
+      method: "eth_coinbase",
+      params: []
     }, {
       id: ++requests,
       jsonrpc: "2.0",
@@ -726,7 +714,7 @@ describe("send", function () {
       params: []
     }],
     returns: ["int256", "bool"],
-    expected: [SHA3_DIGEST, true]
+    expected: [COINBASE, true]
   });
 });
 
@@ -734,12 +722,15 @@ describe("RPC", function () {
 
   function runtests(wsUrl) {
 
-    before(function () {
+    function reset() {
       rpc.reset();
-      rpc.ipcpath = null;
       HOSTED_NODES = rpc.nodes.hosted.slice();
       rpc.wsUrl = wsUrl;
       if (!wsUrl) rpc.rpcStatus.ws = -1;
+    }
+
+    before(function () {
+      reset();
       rpc.useHostedNode();
     });
 
@@ -759,17 +750,6 @@ describe("RPC", function () {
           jsonrpc: "2.0",
           method: "eth_coinbase",
           params: []
-        }
-      });
-      test({
-        prefix: "web3_",
-        command: "sha3",
-        params: "boom!",
-        expected: {
-          id: ++requests,
-          jsonrpc: "2.0",
-          method: "web3_sha3",
-          params: ["boom!"]
         }
       });
       test({
@@ -830,15 +810,6 @@ describe("RPC", function () {
         command: {
           id: ++requests,
           jsonrpc: "2.0",
-          method: "web3_sha3",
-          params: [SHA3_INPUT]
-        },
-        expected: SHA3_DIGEST
-      });
-      test({
-        command: {
-          id: ++requests,
-          jsonrpc: "2.0",
           method: "net_listening",
           params: []
         },
@@ -875,16 +846,6 @@ describe("RPC", function () {
         },
         returns: "address",
         expected: COINBASE
-      });
-      test({
-        node: "https://eth3.augur.net",
-        command: {
-          id: ++requests,
-          jsonrpc: "2.0",
-          method: "web3_sha3",
-          params: [SHA3_INPUT]
-        },
-        expected: SHA3_DIGEST
       });
       test({
         node: "https://eth3.augur.net",
@@ -937,16 +898,6 @@ describe("RPC", function () {
         command: {
           id: ++requests,
           jsonrpc: "2.0",
-          method: "web3_sha3",
-          params: [SHA3_INPUT]
-        },
-        expected: SHA3_DIGEST
-      });
-      test({
-        node: "https://eth3.augur.net",
-        command: {
-          id: ++requests,
-          jsonrpc: "2.0",
           method: "net_listening",
           params: []
         },
@@ -968,7 +919,7 @@ describe("RPC", function () {
       var test = function (t) {
         it(t.node + " -> " + t.listening, function (done) {
           this.timeout(TIMEOUT);
-          rpc.reset();
+          reset();
           rpc.nodes.hosted = [t.node];
           assert.strictEqual(rpc.listening(), t.listening);
           rpc.listening(function (listening) {
@@ -987,7 +938,7 @@ describe("RPC", function () {
       var test = function (t) {
         it(t.node + " -> " + t.version, function (done) {
           this.timeout(TIMEOUT);
-          rpc.reset();
+          reset();
           rpc.nodes.hosted = [t.node];
           assert.strictEqual(rpc.version(), t.version);
           rpc.version(function (version) {
@@ -1006,7 +957,7 @@ describe("RPC", function () {
       var test = function (t) {
         it(t.node + " -> " + t.unlocked, function () {
           this.timeout(TIMEOUT);
-          rpc.reset();
+          reset();
           rpc.nodes.hosted = [t.node];
           assert.strictEqual(rpc.unlocked(t.account), t.unlocked);
         });
@@ -1069,11 +1020,11 @@ describe("RPC", function () {
         gasPrice: "0x4a817c800"
       }];
       it("sync: return and match separate calls", function () {
-        rpc.reset();
+        reset();
         test(rpc.batch(txList));
       });
       it("async: callback on whole array", function (done) {
-        rpc.reset();
+        reset();
         rpc.batch(txList, function (r) {
           test(r); done();
         });
@@ -1083,7 +1034,7 @@ describe("RPC", function () {
     describe("clear", function () {
       it("delete cached network/notification/transaction data", function (done) {
         this.timeout(TIMEOUT);
-        rpc.reset();
+        reset();
         rpc.txs["0x1"] = { junk: "junk" };
         rpc.notifications["0x1"] = setTimeout(function () { done(1); }, 1500);
         rpc.clear();
@@ -1101,10 +1052,10 @@ describe("RPC", function () {
         assert.strictEqual(rpc.nodes.hosted[0], "https://eth0.augur.net");
         assert.isNull(rpc.nodes.local);
         assert.isArray(rpc.nodes.hosted);
-        rpc.reset();
+        reset();
         assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
         assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
-        rpc.reset();
+        reset();
         assert.isNull(rpc.nodes.local);
         assert.isArray(rpc.nodes.hosted);
         assert.strictEqual(rpc.nodes.hosted.length, HOSTED_NODES.length);
@@ -1205,27 +1156,6 @@ describe("RPC", function () {
           assert.strictEqual(res, PROTOCOL_VERSION);
           done();
         });
-      });
-      it("sha3/keccak-256", function () {
-        this.timeout(TIMEOUT);
-        var data = {
-          hex: "0x68656c6c6f20776f726c64",
-          ascii: "Deposit(address,hash256,uint256)"
-        };
-        var expected = {
-          hex: "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad",
-          ascii: "0x50cb9fe53daa9737b786ab3646f04d0150dc50ef4e75f59509d83667ad5adb20"
-        };
-
-                // hex input
-        assert.strictEqual(rpc.web3("sha3", data.hex), expected.hex);
-        assert.strictEqual(rpc.sha3(data.hex, true), expected.hex);
-        assert.strictEqual(rpc.web3("sha3", data.hex), rpc.sha3(data.hex, true));
-
-                // ASCII input
-        assert.strictEqual(rpc.web3("sha3", abi.encode_hex(data.ascii)), expected.ascii);
-        assert.strictEqual(rpc.sha3(data.ascii), expected.ascii);
-        assert.strictEqual(rpc.web3("sha3", abi.encode_hex(data.ascii)), rpc.sha3(data.ascii));
       });
       it("gasPrice", function (done) {
         this.timeout(TIMEOUT);
@@ -1610,7 +1540,7 @@ describe("RPC", function () {
 
     describe("useHostedNode", function () {
       it("switch to hosted node(s)", function () {
-        rpc.reset();
+        reset();
         assert.isNull(rpc.nodes.local);
         rpc.setLocalNode("http://127.0.0.1:8545");
         assert.strictEqual(rpc.nodes.local, "http://127.0.0.1:8545");
@@ -1625,7 +1555,7 @@ describe("RPC", function () {
         var test = function (command) {
           it("[sync] " + JSON.stringify(command), function () {
             this.timeout(TIMEOUT);
-            rpc.reset();
+            reset();
             rpc.setLocalNode("http://127.0.0.0");
             assert.strictEqual(rpc.nodes.local, "http://127.0.0.0");
             assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);
@@ -1633,7 +1563,7 @@ describe("RPC", function () {
           });
           it("[async] " + JSON.stringify(command), function (done) {
             this.timeout(TIMEOUT);
-            rpc.reset();
+            reset();
             rpc.setLocalNode("http://127.0.0.0");
             assert.strictEqual(rpc.nodes.local, "http://127.0.0.0");
             assert.deepEqual(rpc.nodes.hosted, HOSTED_NODES);

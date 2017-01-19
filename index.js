@@ -603,17 +603,19 @@ module.exports = {
     return this.nodes.hosted.slice();
   },
 
+  commandQueue: [],
+
     // Post JSON-RPC command to all Ethereum nodes
   broadcast: function (cmd, callback) {
     var command, nodes, numCommands, returns, result, completed, self = this;
     if (!cmd || (cmd.constructor === Object && !cmd.method) ||
-            (cmd.constructor === Array && !cmd.length)) {
+      (cmd.constructor === Array && !cmd.length)) {
       if (!callback) return null;
       return callback(null);
     }
     command = clone(cmd);
 
-        // make sure the ethereum node list isn't empty
+    // make sure the ethereum node list isn't empty
     if (!this.nodes.local && !this.nodes.hosted.length && !this.ipcpath && !this.wsUrl) {
       if (isFunction(callback)) return callback(errors.ETHEREUM_NOT_FOUND);
       throw new this.Error(errors.ETHEREUM_NOT_FOUND);
@@ -642,8 +644,8 @@ module.exports = {
     // if we're on Node, use IPC if available and ipcpath is specified
     if (NODE_JS && this.ipcpath && command.method) {
       var loopback = this.nodes.local && (
-                (this.nodes.local.indexOf("127.0.0.1") > -1 ||
-                this.nodes.local.indexOf("localhost") > -1));
+        (this.nodes.local.indexOf("127.0.0.1") > -1 ||
+        this.nodes.local.indexOf("localhost") > -1));
       if (!isFunction(callback) && !loopback) {
         throw new this.Error(errors.LOOPBACK_NOT_FOUND);
       }
@@ -653,10 +655,30 @@ module.exports = {
 
           // [0] IPC socket closed / not connected: try to connect
           case 0:
-            return this.ipcConnect(function (connected) {
-              if (!connected) return self.broadcast(cmd, callback);
-              self.send("ipc", command, returns, callback);
-            });
+            if (this.ipcConnectInProgress) {
+              this.commandQueue.push({command: command, callback: callback, returns: returns});
+            } else {
+              this.ipcConnectInProgress = true;
+              this.ipcConnect(function (connected) {
+                var queued;
+                self.ipcConnectInProgress = false;
+                if (!connected) {
+                  self.broadcast(cmd, callback);
+                  while (self.commandQueue.length) {
+                    queued = self.commandQueue.shift();
+                    queued.command.returns = queued.returns;
+                    self.broadcast(queued.command, queued.callback);
+                  }
+                } else {
+                  self.send("ipc", command, returns, callback);
+                  while (self.commandQueue.length) {
+                    queued = self.commandQueue.shift();
+                    self.send("ipc", queued.command, queued.returns, queued.callback);
+                  }
+                }
+              });
+            }
+            return;
 
           // [1] IPC socket connected
           case 1:
@@ -676,10 +698,29 @@ module.exports = {
 
         // [0] websocket closed / not connected: try to connect
         case 0:
-          this.wsConnect(function (connected) {
-            if (!connected) return self.broadcast(cmd, callback);
-            self.send("ws", command, returns, callback);
-          });
+          if (this.wsConnectInProgress) {
+            this.commandQueue.push({command: command, callback: callback, returns: returns});
+          } else {
+            this.wsConnectInProgress = true;
+            this.wsConnect(function (connected) {
+              var queued;
+              self.wsConnectInProgress = false;
+              if (!connected) {
+                self.broadcast(cmd, callback);
+                while (self.commandQueue.length) {
+                  queued = self.commandQueue.shift();
+                  queued.command.returns = queued.returns;
+                  self.broadcast(queued.command, queued.callback);
+                }
+              } else {
+                self.send("ws", command, returns, callback);
+                while (self.commandQueue.length) {
+                  queued = self.commandQueue.shift();
+                  self.send("ws", queued.command, queued.returns, queued.callback);
+                }
+              }
+            });
+          }
           break;
 
         // [1] websocket connected
@@ -693,8 +734,8 @@ module.exports = {
             if (!completed) {
               self.post(node, command, returns, function (res) {
                 if (node === nodes[nodes.length - 1] ||
-                                (res !== undefined && res !== null &&
-                                !res.error && res !== "0x")) {
+                  (res !== undefined && res !== null &&
+                  !res.error && res !== "0x")) {
                   completed = true;
                   return nextNode({output: res});
                 }
@@ -707,7 +748,7 @@ module.exports = {
           });
       }
 
-      // use synchronous http if no callback provided
+    // use synchronous http if no callback provided
     } else {
       for (var j = 0, len = nodes.length; j < len; ++j) {
         try {
