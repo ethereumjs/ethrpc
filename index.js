@@ -66,6 +66,8 @@ module.exports = {
   ipcpath: null,
   socket: null,
 
+  useHostedNodeFallback: true,
+
   // geth websocket endpoint
   wsUrl: process.env.GETH_WEBSOCKET_URL || HOSTED_WEBSOCKET,
 
@@ -128,6 +130,20 @@ module.exports = {
 
   gasPrice: 20000000000,
 
+  enableHostedNodeFallback: function (url) {
+    this.useHostedNodeFallback = true;
+    this.nodes.hosted = (url) ? [url] : this.DEFAULT_HOSTED_NODES.slice();
+    this.wsUrl = process.env.GETH_WEBSOCKET_URL || this.DEFAULT_HOSTED_WEBSOCKET;
+  },
+
+  disableHostedNodeFallback: function () {
+    this.useHostedNodeFallback = false;
+    this.nodes.hosted = [];
+    if (this.wsUrl === HOSTED_WEBSOCKET) {
+      this.wsUrl = null;
+    }
+  },
+
   registerTxRelay: function (txRelay) {
     this.txRelay = txRelay;
   },
@@ -183,14 +199,11 @@ module.exports = {
       array = new Array(elements);
       position = init || 2;
       for (var i = 0; i < elements; ++i) {
-        array[i] = abi.prefix_hex(
-                    string.slice(position, position + stride)
-                );
+        array[i] = abi.prefix_hex(string.slice(position, position + stride));
         position += stride;
       }
       if (array.length) {
-        if (parseInt(array[1], 16) === array.length - 2 ||
-                    parseInt(array[1], 16) / 32 === array.length - 2) {
+        if (parseInt(array[1], 16) === array.length - 2 || parseInt(array[1], 16) / 32 === array.length - 2) {
           array.splice(0, 2);
         }
       }
@@ -843,8 +856,10 @@ module.exports = {
 
   // reset to default Ethereum nodes
   reset: function (deleteData) {
-    this.nodes.hosted = this.DEFAULT_HOSTED_NODES.slice();
-    this.wsUrl = process.env.GETH_WEBSOCKET_URL || this.DEFAULT_HOSTED_WEBSOCKET;
+    if (this.useHostedNodeFallback) {
+      this.nodes.hosted = this.DEFAULT_HOSTED_NODES.slice();
+      this.wsUrl = process.env.GETH_WEBSOCKET_URL || this.DEFAULT_HOSTED_WEBSOCKET;
+    }
     this.ipcpath = null;
     this.rpcStatus = {ipc: 0, ws: 0};
     if (deleteData) this.clear();
