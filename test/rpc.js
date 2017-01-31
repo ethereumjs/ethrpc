@@ -1306,8 +1306,6 @@ describe("RPC", function () {
         });
       };
       test(0);
-      test(1);
-      test(2);
     });
 
     describe("getBlock", function () {
