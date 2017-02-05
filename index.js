@@ -1932,9 +1932,9 @@ module.exports = {
       if (this.debug.tx) console.debug("got receipt:", receipt);
       if (receipt && receipt.gasUsed) {
         tx.gasFees = new BigNumber(receipt.gasUsed, 16)
-                    .times(new BigNumber(tx.gasPrice, 16))
-                    .dividedBy(this.ETHER)
-                    .toFixed();
+          .times(new BigNumber(tx.gasPrice, 16))
+          .dividedBy(this.ETHER)
+          .toFixed();
       }
       return tx;
     }
