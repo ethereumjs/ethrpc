@@ -18131,7 +18131,9 @@ module.exports = {
           tx.status = "failed";
           tx.locked = false;
           if (isFunction(tx.onFailed)) {
-            tx.onFailed(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
+            var e = clone(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
+            e.hash = tx.hash;
+            tx.onFailed(e);
           }
         } else {
           --self.rawTxMaxNonce;
@@ -18175,9 +18177,9 @@ module.exports = {
               if (self.debug.tx) console.debug("got receipt:", receipt);
               if (receipt && receipt.gasUsed) {
                 onChainTx.gasFees = new BigNumber(receipt.gasUsed, 16)
-                                    .times(new BigNumber(onChainTx.gasPrice, 16))
-                                    .dividedBy(self.ETHER)
-                                    .toFixed();
+                  .times(new BigNumber(onChainTx.gasPrice, 16))
+                  .dividedBy(self.ETHER)
+                  .toFixed();
               }
               tx.locked = false;
               tx.onSuccess(onChainTx);
@@ -18191,9 +18193,12 @@ module.exports = {
                   tx.locked = false;
                   if (isFunction(tx.onFailed)) {
                     if (err.error !== errors.NULL_CALL_RETURN.error) {
+                      err.hash = tx.hash;
                       tx.onFailed(err);
                     } else {
-                      tx.onFailed(self.errorCodes(tx.payload.method, tx.payload.returns, callReturn));
+                      var e = self.errorCodes(tx.payload.method, tx.payload.returns, callReturn);
+                      e.hash = tx.hash;
+                      tx.onFailed(e);
                     }
                   }
                 });
@@ -18204,6 +18209,7 @@ module.exports = {
                   e.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
                   tx.locked = false;
                   if (isFunction(tx.onFailed)) {
+                    e.hash = tx.hash;
                     tx.onFailed(e);
                   }
                 } else {
@@ -18350,7 +18356,10 @@ module.exports = {
       onSent({hash: txHash, txHash: txHash, callReturn: callReturn});
 
       self.verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, function (err) {
-        if (err) return onFailed(err);
+        if (err) {
+          err.hash = txHash;
+          return onFailed(err);
+        }
         if (self.blockFilter.id === null && !self.wsUrl && !self.ipcpath) {
           self.newBlockFilter(function (filterID) {
             if (filterID && !filterID.error) {
@@ -18591,9 +18600,9 @@ module.exports = {
       if (this.debug.tx) console.debug("got receipt:", receipt);
       if (receipt && receipt.gasUsed) {
         tx.gasFees = new BigNumber(receipt.gasUsed, 16)
-                    .times(new BigNumber(tx.gasPrice, 16))
-                    .dividedBy(this.ETHER)
-                    .toFixed();
+          .times(new BigNumber(tx.gasPrice, 16))
+          .dividedBy(this.ETHER)
+          .toFixed();
       }
       return tx;
     }
