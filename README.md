@@ -101,3 +101,8 @@ Unit tests are included in `test/ethrpc.js`, and can be run using npm:
 ```
 $ npm test
 ```
+
+Alternatively, you can run the tests inside of a docker container.  Docker layer caching is leveraged to make it so the build is very fast after the first time (unless you change dependencies):
+```
+docker build -t ethrpc . && docker run --rm ethrpc
+```
