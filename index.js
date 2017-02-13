@@ -331,9 +331,7 @@ module.exports = {
 
   rpcRequests: {ipc: {}, ws: {}},
 
-  // initial value 0
-  // if connection fails: -1
-  // if connection succeeds: 1
+  RPC_STATUS: Object.freeze ({ FAILED: -1, CONNECTING: 0, CONNECTED: 1 }),
   rpcStatus: {ipc: 0, ws: 0},
 
   messageAction: function (type, msg) {
@@ -386,7 +384,7 @@ module.exports = {
     });
     this.socket.on("end", function () { received = ""; });
     this.socket.on("error", function (err) {
-      self.rpcStatus.ipc = -1;
+      self.rpcStatus.ipc = self.RPC_STATUS.FAILED;
       self.socket.destroy();
       received = "";
       if (self.debug.broadcast) {
@@ -394,14 +392,14 @@ module.exports = {
       }
     });
     this.socket.on("close", function (err) {
-      self.rpcStatus.ipc = (err) ? -1 : 0;
+      self.rpcStatus.ipc = (err) ? self.RPC_STATUS.FAILED : self.RPC_STATUS.CONNECTING;
       received = "";
       if (self.debug.broadcast) {
         console.warn("[ethrpc] IPC socket closed", self.ipcpath, self.rpcStatus.ipc);
       }
     });
     this.socket.connect({path: this.ipcpath}, function () {
-      self.rpcStatus.ipc = 1;
+      self.rpcStatus.ipc = self.RPC_STATUS.CONNECTED;
       self.resetNewBlockSubscription(callback);
     });
   },
@@ -410,7 +408,7 @@ module.exports = {
     var self = this;
     var calledCallback = false;
     if (!this.wsUrl) {
-      this.rpcStatus.ws = -1;
+      this.rpcStatus.ws = self.RPC_STATUS.FAILED;
       return callback(false);
     }
     this.websocket = new W3CWebSocket(this.wsUrl);
@@ -418,7 +416,7 @@ module.exports = {
       if (self.debug.broadcast) {
         console.error("[ethrpc] WebSocket error", self.wsUrl, self.rpcStatus.ws);
       }
-      self.rpcStatus.ws = -1;
+      self.rpcStatus.ws = self.RPC_STATUS.FAILED;
       self.wsUrl = null;
     };
     this.websocket.onclose = function () {
@@ -426,8 +424,8 @@ module.exports = {
         console.warn("[ethrpc] WebSocket closed", self.wsUrl, self.rpcStatus.ws);
       }
       var status = self.rpcStatus.ws;
-      if (status !== -1) self.rpcStatus.ws = 0;
-      if (status === 1 && self.AUTO_RECONNECT) {
+      if (status !== self.RPC_STATUS.FAILED) self.rpcStatus.ws = self.RPC_STATUS.CONNECTING;
+      if (status === self.RPC_STATUS.CONNECTED && self.AUTO_RECONNECT) {
         if (self.debug.broadcast) {
           console.debug("[ethrpc] WebSocket reconnecting...");
         }
@@ -445,7 +443,7 @@ module.exports = {
       }
     };
     this.websocket.onopen = function () {
-      self.rpcStatus.ws = 1;
+      self.rpcStatus.ws = self.RPC_STATUS.CONNECTED;
       calledCallback = true;
       self.resetNewBlockSubscription(callback);
       if (isFunction(self.resetCustomSubscription)) {
@@ -1099,7 +1097,7 @@ module.exports = {
 
   subscribeNewHeads: function (f) {
     return this.broadcast(this.marshal("subscribe", "newHeads"), f);
-  },    
+  },
 
   unsubscribe: function (label, f) {
     return this.broadcast(this.marshal("unsubscribe", label), f);
