@@ -6,4 +6,4 @@ RUN npm install
 
 COPY . /ethrpc
 
-ENTRYPOINT [ "npm", "test" ]
+ENTRYPOINT [ "/ethrpc/node_modules/.bin/mocha" ]

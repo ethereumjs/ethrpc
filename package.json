@@ -36,13 +36,15 @@
     "chalk": "^1.1.1",
     "coveralls": "^2.11.4",
     "del": "^1.2.1",
+    "ethereumjs-testrpc": "3.0.3",
     "geth": "^0.1.4",
     "gulp": "^3.9.0",
     "istanbul": "^0.3.18",
     "it-each": "^0.3.1",
     "jshint": "^2.8.0",
-    "mocha": "^2.2.5",
-    "uglify-js": "^2.4.24"
+    "mocha": "3.2.0",
+    "uglify-js": "^2.4.24",
+    "ws": "2.0.3"
   },
   "optionalDependencies": {
     "sync-request": "2.0.1",
