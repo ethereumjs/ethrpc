@@ -118,47 +118,47 @@ describe("wsConnect", function () {
   };
   test({
     wsUrl: "wss://ws.augur.net",
-    rpcStatus: {ws: 0},
+    rpcStatus: {ws: rpc.RPC_STATUS.CONNECTING},
     expected: {
       connected: true,
       wsUrl: "wss://ws.augur.net",
-      rpcStatus: {ws: 1}
+      rpcStatus: {ws: rpc.RPC_STATUS.CONNECTED}
     }
   });
   test({
     wsUrl: "wss://ws.augur.net",
-    rpcStatus: {ws: -1},
+    rpcStatus: {ws: rpc.RPC_STATUS.FAILED},
     expected: {
       connected: true,
       wsUrl: "wss://ws.augur.net",
-      rpcStatus: {ws: 1}
+      rpcStatus: {ws: rpc.RPC_STATUS.CONNECTED}
     }
   });
   test({
     wsUrl: "ws://127.0.0.2:1212",
-    rpcStatus: {ws: 0},
+    rpcStatus: {ws: rpc.RPC_STATUS.CONNECTING},
     expected: {
       connected: false,
       wsUrl: null,
-      rpcStatus: {ws: -1}
+      rpcStatus: {ws: rpc.RPC_STATUS.FAILED}
     }
   });
   test({
     wsUrl: "ws://127.0.0.2:1212",
-    rpcStatus: {ws: -1},
+    rpcStatus: {ws: rpc.RPC_STATUS.FAILED},
     expected: {
       connected: false,
       wsUrl: null,
-      rpcStatus: {ws: -1}
+      rpcStatus: {ws: rpc.RPC_STATUS.FAILED}
     }
   });
   test({
     wsUrl: null,
-    rpcStatus: {ws: 0},
+    rpcStatus: {ws: rpc.RPC_STATUS.CONNECTING},
     expected: {
       connected: false,
       wsUrl: null,
-      rpcStatus: {ws: -1}
+      rpcStatus: {ws: rpc.RPC_STATUS.FAILED}
     }
   });
 });
@@ -626,7 +626,7 @@ describe("packageRequest", function () {
 });
 
 describe("send", function () {
-  afterEach(function () { 
+  afterEach(function () {
     rpc.websocket.close();
     rpc.rpcStatus.ws = 0;
   });
