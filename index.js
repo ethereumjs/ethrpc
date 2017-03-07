@@ -1484,7 +1484,7 @@ module.exports = {
 
     // nonce ok, complete sequence
     if (!isFunction(callback)) return rawTransactionResponse;
-    return callback(rawTransactionResponse);
+    callback(rawTransactionResponse);
   },
 
   submitRawTransaction: function (packaged, address, privateKey, callback) {
@@ -1847,7 +1847,7 @@ module.exports = {
     payload.send = true;
     var returns = payload.returns;
     delete payload.returns;
-    (payload.invoke || this.invoke)(payload, function (txHash) {
+    (payload.invoke || this.invoke).call(this, payload, function (txHash) {
       if (self.debug.tx) console.debug("txHash:", txHash);
       if (!txHash) return onFailed(errors.NULL_RESPONSE);
       if (txHash.error) return onFailed(txHash);
@@ -2078,7 +2078,7 @@ module.exports = {
     payload.send = true;
     var returns = payload.returns;
     delete payload.returns;
-    var txHash = (payload.invoke || this.invoke)(payload);
+    var txHash = (payload.invoke || this.invoke).call(this, payload);
     if (this.debug.tx) console.debug("txHash:", txHash);
     if (!txHash && !payload.mutable && payload.returns !== "null") {
       throw new this.Error(errors.NULL_RESPONSE);
