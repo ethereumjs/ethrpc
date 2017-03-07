@@ -4,3 +4,4 @@ npm-debug.*
 coverage
 overflow
 data
+build

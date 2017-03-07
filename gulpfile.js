@@ -1,12 +1,12 @@
 "use strict";
 
-var path = require("path");
 var cp = require("child_process");
-var gulp = require("gulp");
+var async = require("async");
 var del = require("del");
+var gulp = require("gulp");
 
 gulp.task("clean", function (callback) {
-  del([path.join("dist", "*.js")], callback);
+  del(["dist/*"], callback);
 });
 
 gulp.task("lint", function (callback) {
@@ -16,23 +16,32 @@ gulp.task("lint", function (callback) {
   });
 });
 
-gulp.task("build", function (callback) {
-  del([path.join("dist", "*.js")], function (err) {
-    if (err) throw err;
-    cp.exec("./node_modules/browserify/bin/cmd.js ./exports.js | "+
-            "./node_modules/uglify-js/bin/uglifyjs > ./dist/ethrpc.min.js",
-            function (err, stdout) {
-              if (err) throw err;
-              if (stdout) process.stdout.write(stdout);
-              cp.exec("./node_modules/browserify/bin/cmd.js ./exports.js "+
-                "> ./dist/ethrpc.js",
-                function (err, stdout) {
-                  if (err) throw err;
-                  if (stdout) process.stdout.write(stdout);
-                  callback();
-                });
-            });
+gulp.task("test", function (callback) {
+  cp.exec("npm test", function (err, stdout) {
+    if (err) if (stdout) process.stdout.write(stdout);
+    callback(err);
   });
 });
 
-gulp.task("default", ["lint", "build"]);
+function shellExec(command, callback) {
+  cp.exec(command, function (err, stdout) {
+    if (err) return callback(err);
+    if (stdout) process.stdout.write(stdout);
+    callback();
+  });
+}
+
+gulp.task("build", function (callback) {
+  async.eachSeries([
+    "./node_modules/.bin/babel ./node_modules/ethereumjs-tx --source-root ./node_modules/ethereumjs-tx -d ./node_modules/ethereumjs-tx",
+    "./node_modules/.bin/babel ./ --source-root ./ -d ./build"
+  ], shellExec, function (err) {
+    if (err) return callback(err);
+    async.each([
+      "./node_modules/.bin/browserify ./exports.js > ./dist/ethrpc.js",
+      "./node_modules/.bin/browserify ./exports.js | ./node_modules/uglify-js/bin/uglifyjs > ./dist/ethrpc.min.js"
+    ], shellExec, callback);
+  });
+});
+
+gulp.task("default", ["lint", "test", "build"]);
