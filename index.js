@@ -1270,7 +1270,7 @@ module.exports = {
     if (tx.timeout) packaged.timeout = abi.hex(tx.timeout);
     if (tx.value) packaged.value = abi.hex(tx.value);
     if (tx.returns) packaged.returns = tx.returns;
-    if (tx.nonce) packaged.nonce = abi.hex(tx.nonce);
+    if (tx.nonce) packaged.nonce = tx.nonce;
     return packaged;
   },
 
@@ -1488,27 +1488,26 @@ module.exports = {
   },
 
   submitRawTransaction: function (packaged, address, privateKey, callback) {
-    for (var rawTxHash in this.rawTxs) {
-      if (!this.rawTxs.hasOwnProperty(rawTxHash)) continue;
-      if (this.rawTxs[rawTxHash].tx.nonce === packaged.nonce && (!this.txs[rawTxHash] || this.txs[rawTxHash].status !== "failed")) {
-        packaged.nonce = abi.hex(this.rawTxMaxNonce + 1);
+    var rawTxHashes = Object.keys(this.rawTxs);
+    var rawTxHash;
+    for (var i = 0, numRawTxs = rawTxHashes.length; i < numRawTxs; ++i) {
+      rawTxHash = rawTxHashes[i];
+      if (this.rawTxs[rawTxHash].tx.nonce === abi.hex(packaged.nonce) && (!this.txs[rawTxHash] || this.txs[rawTxHash].status !== "failed")) {
+        packaged.nonce = this.rawTxMaxNonce + 1;
         if (this.debug.broadcast || this.debug.nonce) {
-          console.debug("[ethrpc] duplicate nonce, incremented:", parseInt(packaged.nonce, 16), this.rawTxMaxNonce);
+          console.debug("[ethrpc] duplicate nonce, incremented:", packaged.nonce, this.rawTxMaxNonce);
         }
         break;
       }
     }
-    if (parseInt(packaged.nonce, 16) <= this.rawTxMaxNonce) {
-      packaged.nonce = abi.hex(++this.rawTxMaxNonce);
+    if (packaged.nonce <= this.rawTxMaxNonce) {
+      packaged.nonce = ++this.rawTxMaxNonce;
     } else {
-      this.rawTxMaxNonce = parseInt(packaged.nonce, 16);
+      this.rawTxMaxNonce = packaged.nonce;
     }
-    if (this.debug.broadcast || this.debug.nonce) {
-      console.debug("[ethrpc] nonce:", parseInt(packaged.nonce, 16), this.rawTxMaxNonce);
-    }
-    if (this.debug.broadcast) {
-      console.debug("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
-    }
+    if (this.debug.nonce) console.debug("[ethrpc] nonce:", packaged.nonce, this.rawTxMaxNonce);
+    if (this.debug.broadcast) console.debug("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
+    packaged.nonce = abi.hex(packaged.nonce);
     var etx = new EthTx(packaged);
 
     // sign the transaction using privateKey
@@ -1555,16 +1554,14 @@ module.exports = {
         console.debug('[ethrpc] txCount:', parseInt(txCount, 16));
       }
       if (txCount && !txCount.error && !(txCount instanceof Error)) {
-        packaged.nonce = abi.hex(txCount);
+        packaged.nonce = parseInt(txCount, 16);
       }
       return this.submitRawTransaction(packaged, address, privateKey);
     }
     this.pendingTxCount(address, function (txCount) {
-      if (self.debug.nonce) {
-        console.debug('[ethrpc] txCount:', parseInt(txCount, 16));
-      }
+      if (self.debug.nonce) console.debug('[ethrpc] txCount:', parseInt(txCount, 16));
       if (txCount && !txCount.error && !(txCount instanceof Error)) {
-        packaged.nonce = abi.hex(txCount);
+        packaged.nonce = parseInt(txCount, 16);
       }
       self.submitRawTransaction(packaged, address, privateKey, callback);
     });
@@ -1584,7 +1581,7 @@ module.exports = {
     // parse and serialize transaction parameters
     var packaged = this.packageRequest(payload);
     packaged.from = address;
-    packaged.nonce = payload.nonce || "0x0";
+    packaged.nonce = payload.nonce || 0;
     packaged.value = payload.value || "0x0";
     if (payload.gasLimit) {
       packaged.gasLimit = abi.hex(payload.gasLimit);
@@ -1593,7 +1590,7 @@ module.exports = {
     } else {
       packaged.gasLimit = this.DEFAULT_GAS;
     }
-    if (this.networkID && !isNaN(parseInt(this.networkID, 10)) && parseInt(this.networkID, 10) < 109) {
+    if (this.networkID && parseInt(this.networkID, 10) < 109) {
       packaged.chainId = parseInt(this.networkID, 10);
     }
     if (this.debug.broadcast) console.debug("[ethrpc] payload:", payload);

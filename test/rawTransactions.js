@@ -49,7 +49,7 @@ describe("submitRawTransaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
         data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
         gas: "0x1",
-        nonce: "0x0",
+        nonce: 0,
         value: "0x0"
       },
       address: "0x0000000000000000000000000000000000000b0b",
@@ -87,7 +87,7 @@ describe("submitRawTransaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
         data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
         gas: "0x2fd618",
-        nonce: "-0x2",
+        nonce: -2,
         value: "0x0",
         gasLimit: "0x2fd618",
         gasPrice: "0x4a817c800"
@@ -121,7 +121,7 @@ describe("submitRawTransaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
         data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
         gas: "0x2fd618",
-        nonce: "0x0",
+        nonce: 0,
         value: "0x0",
         gasLimit: "0x2fd618",
         gasPrice: "0x4a817c800"
@@ -157,7 +157,7 @@ describe("submitRawTransaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
         data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
         gas: "0x2fd618",
-        nonce: "0x0",
+        nonce: 0,
         value: "0x0",
         gasLimit: "0x2fd618",
         gasPrice: "0x4a817c800"
@@ -207,7 +207,7 @@ describe("submitRawTransaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
         data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
         gas: "0x2fd618",
-        nonce: "0x0",
+        nonce: 0,
         value: "0x0",
         gasLimit: "0x2fd618",
         gasPrice: "0x4a817c800"
@@ -251,7 +251,7 @@ describe("submitRawTransaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
         data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
         gas: "0x2fd618",
-        nonce: "0x0",
+        nonce: 0,
         value: "0x0",
         gasLimit: "0x2fd618",
         gasPrice: "0x4a817c800"
@@ -381,11 +381,11 @@ describe("accounts.setNonceThenSubmitRawTransaction", function () {
       privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex")
     },
     pendingTxCount: function (address, cb) {
-      if (!cb) return "15";
-      cb("15");
+      if (!cb) return "0xf";
+      cb("0xf");
     },
     assertions: function (packaged) {
-      assert.deepEqual(packaged, { nonce: "0xf" });
+      assert.deepEqual(packaged, { nonce: 15 });
     }
   });
 });
@@ -522,7 +522,7 @@ describe("packageAndSubmitSubmitRawTransaction", function () {
         data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
         gas: "0x2fd618",
         returns: "int256",
-        nonce: "0x0",
+        nonce: 0,
         value: "0x0",
         gasLimit: "0x2fd618",
         gasPrice: "0x4a817c800",
@@ -538,7 +538,7 @@ describe("packageAndSubmitSubmitRawTransaction", function () {
         data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
         gas: "0x2fd618",
         returns: "int256",
-        nonce: "0x0",
+        nonce: 0,
         value: "0x0",
         gasLimit: "0x2fd618",
         gasPrice: "0x4a817c800",
