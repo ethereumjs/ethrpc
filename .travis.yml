@@ -28,4 +28,4 @@ before_script:
 
 script:
   - npm run lint
-  - istanbul cover -x **/lib/** ./node_modules/mocha/bin/_mocha test/rpc.js --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+  - istanbul cover -x **/lib/** ./node_modules/mocha/bin/_mocha test/rawTransactions.js --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
