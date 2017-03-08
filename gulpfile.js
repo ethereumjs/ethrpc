@@ -32,10 +32,7 @@ function shellExec(command, callback) {
 }
 
 gulp.task("build", function (callback) {
-  async.eachSeries([
-    "./node_modules/.bin/babel ./node_modules/ethereumjs-tx --source-root ./node_modules/ethereumjs-tx -d ./node_modules/ethereumjs-tx",
-    "./node_modules/.bin/babel ./ --source-root ./ -d ./build"
-  ], shellExec, function (err) {
+  shellExec("./node_modules/.bin/babel ./node_modules/ethereumjs-tx --source-root ./node_modules/ethereumjs-tx -d ./node_modules/ethereumjs-tx", function (err) {
     if (err) return callback(err);
     async.each([
       "./node_modules/.bin/browserify ./exports.js > ./dist/ethrpc.js",

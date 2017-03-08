@@ -1,2 +1,2 @@
-var ethrpc = global.ethrpc || require("./build/index");
+var ethrpc = global.ethrpc || require("./");
 global.ethrpc = ethrpc;
