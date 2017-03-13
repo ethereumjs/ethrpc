@@ -119,7 +119,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
  */
 Transporter.prototype.blockchainRpc = function (jso, requirements, debugLogging) {
   var chosenTransport = chooseTransport.bind(this)(requirements);
-  if (debugLogging) console.log("Blockchain RPC to " + chosenTransport.address + " with payload: " + JSON.stringify(jso));
+  if (debugLogging) console.log("Blockchain RPC to " + chosenTransport.address + " via " + chosenTransport.constructor.name + " with payload: " + JSON.stringify(jso));
   chosenTransport.submitWork(jso);
 }
 
