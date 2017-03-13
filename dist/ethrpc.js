@@ -16732,6 +16732,7 @@ var noop = function () { };
 module.exports = {
 
   debug: {
+    connect: false,
     tx: false,
     broadcast: false,
     nonce: false,
@@ -16831,7 +16832,7 @@ module.exports = {
     if (syncOnly) initialConnectCallback = function (error) { if (error instanceof Error) throw error; else if (error) throw new ErrorWithData(error); };
 
     // initialize the transporter, this will be how we send to and receive from the blockchain
-    new Transporter(this.configuration, this.internalState.shimMessageHandler, syncOnly, this.debug.broadcast, function (error, transporter) { // jshint ignore:line
+    new Transporter(this.configuration, this.internalState.shimMessageHandler, syncOnly, this.debug.connect, function (error, transporter) { // jshint ignore:line
       if (error !== null) return initialConnectCallback(error);
       this.internalState.transporter = transporter;
       // ensure we can do basic JSON-RPC over this connection
@@ -22291,7 +22292,19 @@ module.exports={
 (function (Buffer){
 'use strict';
 
-var _typeof8 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof10 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof9 = typeof Symbol === "function" && _typeof10(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof10(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof10(obj);
+};
+
+var _typeof8 = typeof Symbol === "function" && _typeof9(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof9(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof9(obj);
+};
 
 var _typeof7 = typeof Symbol === "function" && _typeof8(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof8(obj);
@@ -31317,7 +31330,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
  */
 Transporter.prototype.blockchainRpc = function (jso, requirements, debugLogging) {
   var chosenTransport = chooseTransport.bind(this)(requirements);
-  if (debugLogging) console.log("Blockchain RPC to " + chosenTransport.address + " with payload: " + JSON.stringify(jso));
+  if (debugLogging) console.log("Blockchain RPC to " + chosenTransport.address + " via " + chosenTransport.constructor.name + " with payload: " + JSON.stringify(jso));
   chosenTransport.submitWork(jso);
 }
 

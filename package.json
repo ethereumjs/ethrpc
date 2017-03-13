@@ -1,7 +1,9 @@
 {
   "name": "ethrpc",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Ethereum JSON RPC",
+  "author": "The Augur Developers <team@augur.net>",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/",
@@ -13,8 +15,6 @@
     "type": "git",
     "url": "git+https://github.com/AugurProject/ethrpc.git"
   },
-  "author": "Jack Peterson <jack@tinybike.net>",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/AugurProject/ethrpc/issues"
   },
@@ -31,7 +31,7 @@
     "sync-request": "2.0.1"
   },
   "devDependencies": {
-    "augur-contracts": "^2.8.13",
+    "augur-contracts": "^2.11.0",
     "babel-cli": "^6.22.2",
     "babel-plugin-transform-es3-member-expression-literals": "^6.22.0",
     "babel-plugin-transform-es3-property-literals": "^6.22.0",
