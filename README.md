@@ -14,9 +14,19 @@ ethrpc can be installed using npm:
 ```
 $ npm install ethrpc
 ```
-After installing, to use it with Node, just require it:
+After installing, to use it with Node, require it and call connect:
 ```javascript
 var rpc = require("ethrpc");
+var outOfBandErrorHandler = (error) => console.log(error);
+var connectionConfiguration = {
+  httpAddresses: ["http://localhost:8545"], // optional, default empty array
+  wsAddresses: [], // optional, default empty array
+  ipcAddresses: [], // optional, default empty array
+  connectionTimeout: 3000, // optional, default 3000
+  errorHandler: outOfBandErrorHandler, // required, only used for errors that can't be correlated back to a request
+};
+var connectCompleteCallback = (connected) => if (connected) console.log("connected to Ethereum node!") else console.log("Failed to connect to Ethereum node.");
+rpc.connect(connectionConfiguration, connectCompleteCallback);
 ```
 A minified, browserified file `dist/ethrpc.min.js` is included for use in the browser.  Including this file simply attaches an `ethrpc` object to `window`:
 ```html
@@ -106,3 +116,6 @@ Alternatively, you can run the tests inside of a docker container.  Docker layer
 ```
 docker build -t ethrpc . && docker run --rm ethrpc
 ```
+
+# Internal Architecture
+Upon calling `connect`, a `Transporter` will be instantiated with the supplied addresses to connect to.  A `Transport` will be created for each of the supplied addresses plus one for MetaMask and one for Sync (which uses HTTP addresses).  Once they have all either successfully connected or failed to connect, `Transporter` will choose the first address for each transport type (HTTP, WS, IPC, Sync, MetaMask) that connected successfully and use that as the `Transport` for that transport type.  When a call to the blockchain is made, `Transporter` will choose the most appropriate transport for that message based on its requirements (SYNC, DUPLEX, etc.).  If there are no requirements of the transport then one will be chosen automatically based on a preference of `MetaMask > IPC > WS > HTTP`.  If no transports are available that meet the requirements, the request will fail.  The `Transports` each have their own internal queue of work and if they lose a connection they will queue up incoming requests until a connection can be re-established.  Once it is, the queue will be pumped until empty.
