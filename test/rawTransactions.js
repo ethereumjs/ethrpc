@@ -2,41 +2,36 @@
 
 var assert = require("chai").assert;
 var rpc = require("../");
-var errors = require("../errors");
+var errors = require("../errors.json");
 var abi = require("augur-abi");
-
-var noop = function () {};
-
-function clearCallCounts(callCounts) {
-  var keys = Object.keys(callCounts);
-  for (var i = 0, numKeys = keys.length; i < numKeys; ++i) {
-    callCounts[keys[i]] = 0;
-  }
-}
 
 describe("submitRawTransaction", function () {
   var sendRawTransaction = rpc.sendRawTransaction;
   var setNonceThenSubmitRawTransaction = rpc.setNonceThenSubmitRawTransaction;
-  var callCounts = {
-    sendRawTransaction: 0,
-    setNonceThenSubmitRawTransaction: 0
-  };
+  var callCounts;
+  beforeEach(function () {
+    // FIXME: tests shouldn't be calling this directly, they should be calling connect
+    rpc.resetState();
+    callCounts = {
+      sendRawTransaction: 0,
+      setNonceThenSubmitRawTransaction: 0
+    };
+  });
   afterEach(function () {
-    clearCallCounts(callCounts);
     rpc.rawTxMaxNonce = -1;
     rpc.rawTxs = {};
     rpc.txs = {};
     rpc.sendRawTransaction = sendRawTransaction;
     rpc.setNonceThenSubmitRawTransaction = setNonceThenSubmitRawTransaction;
   });
-  var test = function (t) {
-    it(t.description, function (done) {
-      rpc.sendRawTransaction = t.sendRawTransaction;
-      rpc.setNonceThenSubmitRawTransaction = t.setNonceThenSubmitRawTransaction;
-      rpc.rawTxs = t.rawTxs || {};
-      rpc.txs = t.txs || {};
-      rpc.submitRawTransaction(t.params.packaged, t.params.address, t.params.privateKey, function (res) {
-        t.assertions(res);
+  var test = function (testData) {
+    it(testData.description, function (done) {
+      rpc.sendRawTransaction = testData.sendRawTransaction;
+      rpc.setNonceThenSubmitRawTransaction = testData.setNonceThenSubmitRawTransaction;
+      rpc.rawTxs = testData.rawTxs || {};
+      rpc.txs = testData.txs || {};
+      rpc.submitRawTransaction(testData.params.packaged, testData.params.address, testData.params.privateKey, function (res) {
+        testData.assertions(res);
         done();
       });
     });
@@ -296,6 +291,9 @@ describe("submitRawTransaction", function () {
 describe("accounts.setNonceThenSubmitRawTransaction", function () {
   var pendingTxCount = rpc.pendingTxCount;
   var submitRawTransaction = rpc.submitRawTransaction;
+  beforeEach(function() {
+    rpc.resetState();
+  });
   afterEach(function () {
     rpc.pendingTxCount = pendingTxCount;
     rpc.submitRawTransaction = submitRawTransaction;
@@ -397,14 +395,17 @@ describe("packageAndSubmitSubmitRawTransaction", function () {
   var fire = rpc.fire;
   var block = rpc.block;
   var networkID = rpc.networkID;
-  var callCounts = {
-    packageRequest: 0,
-    setNonceThenSubmitRawTransaction: 0,
-    getGasPrice: 0,
-    fire: 0
-  };
+  var callCounts;
+  beforeEach(function () {
+    rpc.resetState();
+    callCounts = {
+      packageRequest: 0,
+      setNonceThenSubmitRawTransaction: 0,
+      getGasPrice: 0,
+      fire: 0
+    };
+  });
   afterEach(function () {
-    clearCallCounts(callCounts);
     rpc.packageRequest = packageRequest;
     rpc.setNonceThenSubmitRawTransaction = setNonceThenSubmitRawTransaction;
     rpc.getGasPrice = getGasPrice;
