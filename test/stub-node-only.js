@@ -41,6 +41,7 @@ describe("tests that only work against stub server", function () {
         });
 
         it("starts connected > uses connection > loses connection > reconnects > uses connection", function (done) {
+          this.timeout(4000);
           stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple" });
           helpers.rpcConnect(transportType, transportAddress, function () {
             rpc.version(function (errorOrVersion) {
@@ -57,6 +58,7 @@ describe("tests that only work against stub server", function () {
         });
 
         it("starts connected > uses connection > loses connection > uses connection > reconnects > uses connection", function (done) {
+          this.timeout(6000);
           stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple" });
           helpers.rpcConnect(transportType, transportAddress, function () {
             rpc.version(function (errorOrVersion) {
