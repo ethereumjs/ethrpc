@@ -13,12 +13,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AugurProject/ethrpc.git"
+    "url": "git+https://github.com/ethereumjs/ethrpc.git"
   },
   "bugs": {
-    "url": "https://github.com/AugurProject/ethrpc/issues"
+    "url": "https://github.com/ethereumjs/ethrpc/issues"
   },
-  "homepage": "https://github.com/AugurProject/ethrpc#readme",
+  "homepage": "https://github.com/ethereumjs/ethrpc#readme",
   "dependencies": {
     "async": "1.5.2",
     "augur-abi": "1.1.1",
