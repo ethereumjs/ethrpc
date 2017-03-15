@@ -1,3 +1,5 @@
+"use strict";
+
 var syncRequest = require('sync-request');
 
 // hack to workaround https://github.com/ethereum/go-ethereum/issues/3762

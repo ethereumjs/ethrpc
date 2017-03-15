@@ -1,3 +1,5 @@
+"use strict";
+
 function ErrorWithData(message, data) {
     Error.call(this, message);
     this.name = "ErrorWithData";

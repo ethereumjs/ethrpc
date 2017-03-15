@@ -1,9 +1,9 @@
 "use strict";
 
 var helpers = require("./helpers.js");
-var rpc = require("../");
+var rpc = require("../src/index.js");
 var StubServer = require("ethereumjs-stub-rpc-server");
-var ErrorWithCode = require("../errors.js").ErrorWithCode;
+var ErrorWithCode = require("../src/errors.js").ErrorWithCode;
 
 var assert = require("chai").assert;
 var ethereumjsAbi = require("ethereumjs-abi");

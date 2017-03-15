@@ -7,7 +7,7 @@ var syncRequest = require("../platform/sync-request.js");
 
 function SyncTransport(address, timeout, messageHandler, syncConnect, initialConnectCallback) {
   AbstractTransport.call(this, address, timeout, messageHandler);
-  
+
   this.syncConnect = syncConnect;
   this.initialConnect(initialConnectCallback);
 }
@@ -23,7 +23,7 @@ SyncTransport.prototype.submitWork = function (rpcObject) {
   } catch (error) {
     this.messageHandler(error, null);
   }
-}
+};
 
 SyncTransport.prototype.connect = function (callback) {
   if (this.syncConnect) {
@@ -37,10 +37,10 @@ SyncTransport.prototype.connect = function (callback) {
   } else {
     HttpTransport.prototype.connect.bind(this)(callback);
   }
-}
+};
 
-SyncTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
+SyncTransport.prototype.submitRpcRequest = function (/*rpcObject, errorCallback*/) {
   throw new Error("not implemented, code should be unreachable for SYNC requests");
-}
+};
 
 module.exports = SyncTransport;

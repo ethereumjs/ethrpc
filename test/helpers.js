@@ -1,6 +1,6 @@
 "use strict";
 
-var rpc = require("../");
+var rpc = require("../src/index.js");
 
 var assert = require("chai").assert;
 var os = require("os");

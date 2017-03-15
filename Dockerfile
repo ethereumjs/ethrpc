@@ -5,5 +5,6 @@ WORKDIR /ethrpc
 RUN npm install
 
 COPY . /ethrpc
+RUN mkdir dist
 
 ENTRYPOINT [ "/ethrpc/node_modules/.bin/mocha" ]

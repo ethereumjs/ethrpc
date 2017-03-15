@@ -4,21 +4,21 @@
   "description": "Ethereum JSON RPC",
   "author": "The Augur Developers <team@augur.net>",
   "license": "MIT",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "mocha test/",
-    "lint": "jshint index.js",
+    "lint": "jshint src/",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/",
     "link": "npm link augur-contracts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AugurProject/ethrpc.git"
+    "url": "git+https://github.com/ethereumjs/ethrpc.git"
   },
   "bugs": {
-    "url": "https://github.com/AugurProject/ethrpc/issues"
+    "url": "https://github.com/ethereumjs/ethrpc/issues"
   },
-  "homepage": "https://github.com/AugurProject/ethrpc#readme",
+  "homepage": "https://github.com/ethereumjs/ethrpc#readme",
   "dependencies": {
     "async": "1.5.2",
     "augur-abi": "1.1.1",

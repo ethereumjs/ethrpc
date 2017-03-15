@@ -25,7 +25,7 @@ HttpTransport.prototype.connect = function (callback) {
       callback(error);
     } else {
       if (jso.error) {
-        var error = new Error(jso.error.message || "Unknown error.");
+        error = new Error(jso.error.message || "Unknown error.");
         error.code = jso.error.code;
         error.data = jso.error.data;
         callback(error);
@@ -34,7 +34,7 @@ HttpTransport.prototype.connect = function (callback) {
       }
     }
   }.bind(this));
-}
+};
 
 HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
   request({
@@ -52,12 +52,12 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       this.messageHandler(null, body);
     }
     else {
-      var error = new Error("Unexpected status code.");
+      error = new Error("Unexpected status code.");
       error.code = response.statusCode;
       error.address = this.address;
       errorCallback(error);
     }
   }.bind(this));
-}
+};
 
 module.exports = HttpTransport;

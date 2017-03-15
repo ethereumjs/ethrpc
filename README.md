@@ -1,8 +1,8 @@
 ethrpc
 ======
 
-[![Build Status](https://travis-ci.org/AugurProject/ethrpc.svg)](https://travis-ci.org/AugurProject/ethrpc)
-[![Coverage Status](https://coveralls.io/repos/AugurProject/ethrpc/badge.svg?branch=master&service=github)](https://coveralls.io/github/AugurProject/ethrpc?branch=master)
+[![Build Status](https://travis-ci.org/ethereumjs/ethrpc.svg)](https://travis-ci.org/ethereumjs/ethrpc)
+[![Coverage Status](https://coveralls.io/repos/ethereumjs/ethrpc/badge.svg?branch=master&service=github)](https://coveralls.io/github/ethereumjs/ethrpc?branch=master)
 [![npm version](https://badge.fury.io/js/ethrpc.svg)](http://badge.fury.io/js/ethrpc)
 
 JavaScript RPC communication with the Ethereum network.
