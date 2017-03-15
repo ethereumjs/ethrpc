@@ -27,11 +27,11 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
   // validate configuration
   if (typeof configuration !== "object") return callback(new Error("configuration must be an object."));
   if (!Array.isArray(configuration.httpAddresses)) return callback(new Error("configuration.httpAddresses must be an array."));
-  if (configuration.httpAddresses.some(function (x) { typeof x !== "string" })) return callback(new Error("configuration.httpAddresses must contain only strings."));
+  if (configuration.httpAddresses.some(function (x) { return typeof x !== "string"; })) return callback(new Error("configuration.httpAddresses must contain only strings."));
   if (!Array.isArray(configuration.wsAddresses)) return callback(new Error("configuration.wsAddresses must be an array."));
-  if (configuration.wsAddresses.some(function (x) { typeof x !== "string" })) return callback(new Error("configuration.wsAddresses must contain only strings."));
+  if (configuration.wsAddresses.some(function (x) { return typeof x !== "string"; })) return callback(new Error("configuration.wsAddresses must contain only strings."));
   if (!Array.isArray(configuration.ipcAddresses)) return callback(new Error("configuration.ipcAddresses must be an array."));
-  if (configuration.ipcAddresses.some(function (x) { typeof x !== "string" })) return callback(new Error("configuration.ipcAddresses must contain only strings."));
+  if (configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) return callback(new Error("configuration.ipcAddresses must contain only strings."));
   if (typeof configuration.connectionTimeout !== "number") return callback(new Error("configuration.connectionTimeout must be a number."));
 
   // default to all transports undefined, we will look for all of them becoming !== undefined to determine when we are done attempting all connects
@@ -41,7 +41,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
     wsTransports: createArrayWithDefaultValue(configuration.wsAddresses.length, undefined),
     httpTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined),
     syncTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined),
-  }
+  };
 
   // set the internal state reasonable default values
   this.internalState = {
@@ -52,22 +52,23 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
     syncTransport: null,
     outstandingRequests: {},
     debugLogging: !!debugLogging,
-  }
+  };
 
   if (syncOnly) {
     resultAggregator.metaMaskTransports = [];
-    if (configuration.wsAddresses.length != 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
-    if (configuration.ipcAddresses.length != 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
+    if (configuration.wsAddresses.length !== 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
+    if (configuration.ipcAddresses.length !== 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
     configuration.httpAddresses.forEach(function (httpAddress, index) {
+      /* jshint nonew: false */
       new SyncTransport(httpAddress, configuration.connectionTimeout, messageHandler, true, function (error, syncTransport) {
         resultAggregator.syncTransports[index] = (error !== null) ? null : syncTransport;
         // TODO: propagate the error up to the caller for reporting
-        checkIfComplete.bind(this)(resultAggregator, callback);
+        checkIfComplete(this, resultAggregator, callback);
         // instantiate an HttpTransport with all the same parameters, we don't need to worry about validating the connection since that is already done by now.
         // we want an HTTP transport because there are some necessarily async operations that need an async transport like background polling for blocks
         configuration.httpAddresses.forEach(function (httpAddress, index) {
           resultAggregator.httpTransports[index] = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function () { });
-          checkIfComplete.bind(this)(resultAggregator, callback);
+          checkIfComplete(this, resultAggregator, callback);
         }.bind(this));
       }.bind(this));
     }.bind(this));
@@ -75,36 +76,36 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
   }
 
   // initiate connections to all provided addresses, as each completes it will check to see if everything is done
-  new MetaMaskTransport(messageHandler, function (error, metaMaskTransport) {
+  var metaMaskTransport = new MetaMaskTransport(messageHandler, function (error) {
     resultAggregator.metaMaskTransports[0] = (error !== null) ? null : metaMaskTransport;
-    checkIfComplete.bind(this)(resultAggregator, callback);
+    checkIfComplete(this, resultAggregator, callback);
   }.bind(this));
   configuration.ipcAddresses.forEach(function (ipcAddress, index) {
-    new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error, ipcTransport) {
+    var ipcTransport = new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error) {
       resultAggregator.ipcTransports[index] = (error !== null) ? null : ipcTransport;
       // TODO: propagate the error up to the caller for reporting
-      checkIfComplete.bind(this)(resultAggregator, callback);
+      checkIfComplete(this, resultAggregator, callback);
     }.bind(this));
   }.bind(this));
   configuration.wsAddresses.forEach(function (wsAddress, index) {
-    new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error, wsTransport) {
+    var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error) {
       resultAggregator.wsTransports[index] = (error !== null) ? null : wsTransport;
       // TODO: propagate the error up to the caller for reporting
-      checkIfComplete.bind(this)(resultAggregator, callback);
+      checkIfComplete(this, resultAggregator, callback);
     }.bind(this));
   }.bind(this));
   configuration.httpAddresses.forEach(function (httpAddress, index) {
-    new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error, httpTransport) {
+    var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error) {
       resultAggregator.httpTransports[index] = (error !== null) ? null : httpTransport;
       // TODO: propagate the error up to the caller for reporting
-      checkIfComplete.bind(this)(resultAggregator, callback);
+      checkIfComplete(this, resultAggregator, callback);
     }.bind(this));
   }.bind(this));
   configuration.httpAddresses.forEach(function (httpAddress, index) {
-    new SyncTransport(httpAddress, configuration.connectionTimeout, messageHandler, false, function (error, syncTransport) {
+    var syncTransport = new SyncTransport(httpAddress, configuration.connectionTimeout, messageHandler, false, function (error) {
       resultAggregator.syncTransports[index] = (error !== null) ? null : syncTransport;
       // TODO: propagate the error up to the caller for reporting
-      checkIfComplete.bind(this)(resultAggregator, callback);
+      checkIfComplete(this, resultAggregator, callback);
     }.bind(this));
   }.bind(this));
 }
@@ -118,28 +119,30 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
  * @returns {void}
  */
 Transporter.prototype.blockchainRpc = function (jso, requirements, debugLogging) {
-  var chosenTransport = chooseTransport.bind(this)(requirements);
+  var chosenTransport = chooseTransport(this.internalState, requirements);
   if (debugLogging) console.log("Blockchain RPC to " + chosenTransport.address + " via " + chosenTransport.constructor.name + " with payload: " + JSON.stringify(jso));
   chosenTransport.submitWork(jso);
-}
+};
 
 Transporter.prototype.addReconnectListener = function (callback) {
   [this.internalState.metaMaskTransport, this.internalState.ipcTransport, this.internalState.wsTransport, this.internalState.httpTransport, this.internalState.syncTransport].forEach(function (transport) {
     if (!transport) return;
     transport.addReconnectListener(callback);
   });
-}
+};
 Transporter.prototype.removeReconnectListener = function (callback) {
-  [this.internalState.metaMaskTransport, ipcTransport, wsTransport, httpTransport, syncTransport].forEach(function (transport) {
+  [this.internalState.metaMaskTransport, this.internalState.ipcTransport, this.internalState.wsTransport, this.internalState.httpTransport, this.internalState.syncTransport].forEach(function (transport) {
     if (!transport) return;
     transport.removeReconnectListener(callback);
   });
-}
+};
 
 /**
  * Checks to see if result aggregation is complete and if so, calls the provided callback.
  */
-function checkIfComplete(resultAggregator, onCompleteCallback) {
+function checkIfComplete(transporter, resultAggregator, onCompleteCallback) {
+  var internalState = transporter.internalState;
+  
   if (resultAggregator.metaMaskTransports.some(isUndefined)) return;
   if (resultAggregator.syncTransports.some(isUndefined)) return;
   if (resultAggregator.httpTransports.some(isUndefined)) return;
@@ -153,21 +156,21 @@ function checkIfComplete(resultAggregator, onCompleteCallback) {
     && resultAggregator.ipcTransports.every(isNull))
     return onCompleteCallback(new Error("Unable to connect to an Ethereum node via any tranpsort (MetaMask, HTTP, WS, IPC)."), null);
 
-  this.internalState.metaMaskTransport = resultAggregator.metaMaskTransports.filter(isNotNull)[0] || null;
-  this.internalState.syncTransport = resultAggregator.syncTransports.filter(isNotNull)[0] || null;
-  this.internalState.httpTransport = resultAggregator.httpTransports.filter(isNotNull)[0] || null;
-  this.internalState.wsTransport = resultAggregator.wsTransports.filter(isNotNull)[0] || null;
-  this.internalState.ipcTransport = resultAggregator.ipcTransports.filter(isNotNull)[0] || null;
+  internalState.metaMaskTransport = resultAggregator.metaMaskTransports.filter(isNotNull)[0] || null;
+  internalState.syncTransport = resultAggregator.syncTransports.filter(isNotNull)[0] || null;
+  internalState.httpTransport = resultAggregator.httpTransports.filter(isNotNull)[0] || null;
+  internalState.wsTransport = resultAggregator.wsTransports.filter(isNotNull)[0] || null;
+  internalState.ipcTransport = resultAggregator.ipcTransports.filter(isNotNull)[0] || null;
 
-  if (this.internalState.debugLogging) {
-    console.log("MetaMask: " + (this.internalState.metaMaskTransport ? "connected" : "not connected"));
-    console.log("Sync: " + (this.internalState.syncTransport ? this.internalState.syncTransport.address : "not connected"));
-    console.log("HTTP: " + (this.internalState.httpTransport ? this.internalState.httpTransport.address : "not connected"));
-    console.log("WS: " + (this.internalState.wsTransport ? this.internalState.wsTransport.address : "not connected"));
-    console.log("IPC: " + (this.internalState.ipcTransport ? this.internalState.ipcTransport.address : "not connected"));
+  if (internalState.debugLogging) {
+    console.log("MetaMask: " + (internalState.metaMaskTransport ? "connected" : "not connected"));
+    console.log("Sync: " + (internalState.syncTransport ? internalState.syncTransport.address : "not connected"));
+    console.log("HTTP: " + (internalState.httpTransport ? internalState.httpTransport.address : "not connected"));
+    console.log("WS: " + (internalState.wsTransport ? internalState.wsTransport.address : "not connected"));
+    console.log("IPC: " + (internalState.ipcTransport ? internalState.ipcTransport.address : "not connected"));
   }
 
-  onCompleteCallback(null, this);
+  onCompleteCallback(null, transporter);
 }
 
 /**
@@ -176,17 +179,17 @@ function checkIfComplete(resultAggregator, onCompleteCallback) {
  * @param {!string} requirements - ANY, SYNC or DUPLEX.  Will choose best available transport that meets the requirements.
  * @returns {!AbstractTransport}
  */
-function chooseTransport(requirements) {
+function chooseTransport(internalState, requirements) {
   var eligibleTransports;
   switch (requirements) {
     case "ANY":
-      eligibleTransports = [this.internalState.metaMaskTransport, this.internalState.ipcTransport, this.internalState.wsTransport, this.internalState.httpTransport];
+      eligibleTransports = [internalState.metaMaskTransport, internalState.ipcTransport, internalState.wsTransport, internalState.httpTransport];
       break;
     case "SYNC":
-      eligibleTransports = [this.internalState.syncTransport];
+      eligibleTransports = [internalState.syncTransport];
       break;
     case "DUPLEX":
-      eligibleTransports = [this.internalState.ipcTransport, this.internalState.wsTransport];
+      eligibleTransports = [internalState.ipcTransport, internalState.wsTransport];
       break;
     default:
       throw new Error("requirements must be one of ANY, SYNC or DUPLEX");
@@ -208,12 +211,8 @@ function isNotNull(value) {
   return value !== null;
 }
 
-function isTruthy(value) {
-  return !!value;
-}
-
 function createArrayWithDefaultValue(size, defaultValue) {
-  return Array.apply(null, Array(size)).map(function () { return defaultValue; })
+  return Array.apply(null, Array(size)).map(function () { return defaultValue; });
 }
 
 module.exports = Transporter;

@@ -1,4 +1,4 @@
-global.rpc = require("./index.js");
+global.rpc = require("./src/index.js");
 
 var configuration = {
   httpAddresses: ["http://127.0.0.1:8545"],
@@ -6,7 +6,9 @@ var configuration = {
   errorHandler: console.log
 }
 
-rpc.connect(configuration, function () {
+rpc.connect(configuration, function (error) {
+  if (error instanceof Error) throw error;
+  if (error) throw new Error(error);
   global.COINBASE = rpc.coinbase();
   global.NETWORK_ID = rpc.version();
   global.contracts = require("augur-contracts")[NETWORK_ID];

@@ -18,13 +18,13 @@ MetaMaskTransport.prototype.connect = function (callback) {
   } else {
     setTimeout(function () { callback(new Error("Nothing found at window.web3.currentProvider.")); }, 1);
   }
-}
+};
 
 MetaMaskTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
   if (typeof window === "undefined") return errorCallback("attempted to access 'window' outside of a browser, this shouldn't happen");
   var web3Provider = ((window || {}).web3 || {}).currentProvider;
   if (!web3Provider) return errorCallback("window.web3.currentProvider no longer available.");
   web3Provider.sendAsync(rpcObject, this.messageHandler.bind(this));
-}
+};
 
 module.exports = MetaMaskTransport;

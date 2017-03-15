@@ -142,7 +142,8 @@ module.exports = {
     if (syncOnly) initialConnectCallback = function (error) { if (error instanceof Error) throw error; else if (error) throw new ErrorWithData(error); };
 
     // initialize the transporter, this will be how we send to and receive from the blockchain
-    new Transporter(this.configuration, this.internalState.shimMessageHandler, syncOnly, this.debug.connect, function (error, transporter) { // jshint ignore:line
+    /* jshint nonew: false */
+    new Transporter(this.configuration, this.internalState.shimMessageHandler, syncOnly, this.debug.connect, function (error, transporter) {
       if (error !== null) return initialConnectCallback(error);
       this.internalState.transporter = transporter;
       // ensure we can do basic JSON-RPC over this connection

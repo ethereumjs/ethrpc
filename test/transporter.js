@@ -1,7 +1,7 @@
 "use strict";
 
 var helpers = require("./helpers.js");
-var Transporter = require("../transport/transporter.js");
+var Transporter = require("../src/transport/transporter.js");
 
 var assert = require("chai").assert;
 var async = require("async");

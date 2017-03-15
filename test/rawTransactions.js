@@ -1,8 +1,8 @@
 "use strict";
 
 var assert = require("chai").assert;
-var rpc = require("../");
-var errors = require("../errors.json");
+var rpc = require("../src/index.js");
+var errors = require("../src/errors.json");
 var abi = require("augur-abi");
 
 describe("submitRawTransaction", function () {

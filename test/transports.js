@@ -1,6 +1,6 @@
 "use strict";
 
-var HttpTransport = require("../transport/http-transport.js");
+var HttpTransport = require("../src/transport/http-transport.js");
 
 var assert = require("chai").assert;
 var async = require("async");

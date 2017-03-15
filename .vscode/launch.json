@@ -10,9 +10,7 @@
             "name": "Mocha Tests",
             "cwd": "${workspaceRoot}",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha",
-            "windows": {
-                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha.cmd"
-            },
+            "windows": { "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha.cmd" },
             "runtimeArgs": [
                 "-u", "bdd",
                 "--colors",

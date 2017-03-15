@@ -38,8 +38,8 @@ AbstractTransport.prototype.submitWork = function (rpcObject) {
   if (this.awaitingPump) return;
   // force into an async context so behavior doesn't differ depending on whether or not this is first-in-queue
   this.awaitingPump = true;
-  setTimeout(pumpQueue.bind(this));
-}
+  setTimeout(pumpQueue.bind(null, this));
+};
 
 /**
  * Register to be notified when a reconnect occurs for this transport.
@@ -48,7 +48,7 @@ AbstractTransport.prototype.submitWork = function (rpcObject) {
  */
 AbstractTransport.prototype.addReconnectListener = function (callback) {
   this.reconnectListeners[callback] = callback;
-}
+};
 
 /**
  * Unregister a previously registered reconnect listener.
@@ -57,7 +57,7 @@ AbstractTransport.prototype.addReconnectListener = function (callback) {
  */
 AbstractTransport.prototype.removeReconnectListener = function (callbackToRemove) {
   delete this.reconnectListeners[callbackToRemove];
-}
+};
 
 /**
  * Used internally by derived prototypes to attempt to establish an initial connection.  Should be called from constructor.
@@ -69,10 +69,10 @@ AbstractTransport.prototype.initialConnect = function (callback) {
     if (error !== null) return callback(error);
 
     this.connected = true;
-    pumpQueue.bind(this)();
+    pumpQueue(this);
     callback(null, this);
   }.bind(this));
-}
+};
 
 /**
  * Implemented by derived prototypes.  Should submit the given object to Ethereum.
@@ -81,8 +81,8 @@ AbstractTransport.prototype.initialConnect = function (callback) {
  * @param {!function(!Error):void} errorCallback - To be called if something goes wrong with the connection.  If the provided error has retryable = true property then the request will be re-queued and connection will be re-established.
  */
 AbstractTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
-  callback(new Error("Must be implemented by derived prototype."));
-}
+  errorCallback(new Error("Must be implemented by derived prototype."));
+};
 
 /**
  * Implemented by derived prototypes.  Should establish a connection or otherwise validate that the remote host is accessible.
@@ -91,61 +91,61 @@ AbstractTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) 
  */
 AbstractTransport.prototype.connect = function (callback) {
   callback(new Error("Must be implemented by derived prototype."));
-}
+};
 
 /**
- * Used internally to pump the current work queue.
+ * Pumps the current work queue.
  */
-function pumpQueue() {
-  this.awaitingPump = false;
+function pumpQueue(abstractTransport) {
+  abstractTransport.awaitingPump = false;
   var rpcObject;
-  while (rpcObject = this.workQueue.shift()) {
+  while ((rpcObject = abstractTransport.workQueue.shift())) {
     // it is possible to lose a connection while iterating over the queue, if that happens unroll the latest iteration and stop pumping (reconnect will start pumping again)
-    if (!this.connected) {
-      this.workQueue.unshift(rpcObject);
+    if (!abstractTransport.connected) {
+      abstractTransport.workQueue.unshift(rpcObject);
       return;
-    };
-    processWork.bind(this)(rpcObject);
+    }
+    processWork(abstractTransport, rpcObject);
   }
 }
 
 /**
  * Processes one request off the head of the queue.
  */
-function processWork(rpcObject) {
-  this.submitRpcRequest(rpcObject, function (error) {
+function processWork(abstractTransport, rpcObject) {
+  abstractTransport.submitRpcRequest(rpcObject, function (error) {
     if (error === null) return;
     if (error.retryable) {
       // if the error is retryable, put it back on the queue (at the head) and initiate reconnection in the background
-      this.workQueue.unshift(rpcObject);
+      abstractTransport.workQueue.unshift(rpcObject);
       // if this is the first retriable failure then initiate a reconnect
-      if (this.connected) {
-        this.connected = false;
-        reconnect.bind(this)();
+      if (abstractTransport.connected) {
+        abstractTransport.connected = false;
+        reconnect(abstractTransport);
       }
     }
     else {
       // if we aren't going to retry the request, let the user know that something went wrong so they can handle it
       error.data = rpcObject;
-      this.messageHandler(error);
+      abstractTransport.messageHandler(error);
     }
-  }.bind(this));
+  });
 }
 
 /**
  * Attempts to reconnect with exponential backoff.
  */
-function reconnect() {
-  this.connect(function (error) {
-    if (error !== null) return setTimeout(reconnect.bind(this), this.backoffMilliseconds *= 2);
-    Object.keys(this.reconnectListeners).forEach(function (key) {
-      if (typeof this.reconnectListeners[key] !== "function") return delete this.reconnectListeners[key];
-      this.reconnectListeners[key]();
-    }.bind(this));
-    this.connected = true;
-    this.backoffMilliseconds = 1;
-    pumpQueue.bind(this)();
-  }.bind(this));
+function reconnect(abstractTransport) {
+  abstractTransport.connect(function (error) {
+    if (error !== null) return setTimeout(reconnect(abstractTransport), abstractTransport.backoffMilliseconds *= 2);
+    Object.keys(abstractTransport.reconnectListeners).forEach(function (key) {
+      if (typeof abstractTransport.reconnectListeners[key] !== "function") return delete abstractTransport.reconnectListeners[key];
+      abstractTransport.reconnectListeners[key]();
+    });
+    abstractTransport.connected = true;
+    abstractTransport.backoffMilliseconds = 1;
+    pumpQueue(abstractTransport);
+  });
 }
 
 module.exports = AbstractTransport;

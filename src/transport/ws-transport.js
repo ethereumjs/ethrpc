@@ -1,7 +1,7 @@
 "use strict";
 
 var AbstractTransport = require("./abstract-transport.js");
-var WebSocketClient = require("../platform/web-socket-client.js")
+var WebSocketClient = require("../platform/web-socket-client.js");
 
 function WsTransport(address, timeout, messageHandler, initialConnectCallback) {
   AbstractTransport.call(this, address, timeout, messageHandler);
@@ -18,7 +18,7 @@ WsTransport.prototype.connect = function (callback) {
   var messageHandler = function () { };
   this.webSocketClient.onopen = function () {
     callback(null);
-    callback = function () { }
+    callback = function () { };
     messageHandler = this.messageHandler;
   }.bind(this);
   this.webSocketClient.onmessage = function (message) {
@@ -30,9 +30,9 @@ WsTransport.prototype.connect = function (callback) {
   }.bind(this);
   this.webSocketClient.onclose = function () {
     callback(new Error("Web socket closed without opening, usually means failed connection."));
-    callback = function () { }
+    callback = function () { };
   }.bind(this);
-}
+};
 
 WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
@@ -42,6 +42,6 @@ WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
     if (error.message === "cannot call send() while not connected") error.retryable = true;
     errorCallback(error);
   }
-}
+};
 
 module.exports = WsTransport;
