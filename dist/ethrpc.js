@@ -623,7 +623,7 @@ module.exports = {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"bignumber.js":2,"buffer":70,"ethereumjs-abi":28,"js-sha3":38}],2:[function(require,module,exports){
+},{"bignumber.js":2,"buffer":66,"ethereumjs-abi":28,"js-sha3":38}],2:[function(require,module,exports){
 /*! bignumber.js v2.3.0 https://github.com/MikeMcl/bignumber.js/LICENCE */
 
 ;(function (globalObj) {
@@ -3473,7 +3473,7 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":70}],4:[function(require,module,exports){
+},{"buffer":66}],4:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -6961,7 +6961,7 @@ if (typeof window === 'object') {
   }
 }
 
-},{"crypto":67}],6:[function(require,module,exports){
+},{"crypto":63}],6:[function(require,module,exports){
 (function (Buffer){
 const Sha3 = require('js-sha3')
 
@@ -6999,7 +6999,7 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":70,"js-sha3":38}],7:[function(require,module,exports){
+},{"buffer":66,"js-sha3":38}],7:[function(require,module,exports){
 (function (Buffer){
 var Transform = require('stream').Transform
 var inherits = require('inherits')
@@ -7093,7 +7093,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":70,"inherits":37,"stream":148,"string_decoder":149}],8:[function(require,module,exports){
+},{"buffer":66,"inherits":37,"stream":144,"string_decoder":145}],8:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var inherits = require('inherits')
@@ -7149,7 +7149,7 @@ module.exports = function createHash (alg) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./md5":10,"buffer":70,"cipher-base":7,"inherits":37,"ripemd160":40,"sha.js":49}],9:[function(require,module,exports){
+},{"./md5":10,"buffer":66,"cipher-base":7,"inherits":37,"ripemd160":40,"sha.js":49}],9:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var intSize = 4;
@@ -7186,7 +7186,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 }
 exports.hash = hash;
 }).call(this,require("buffer").Buffer)
-},{"buffer":70}],10:[function(require,module,exports){
+},{"buffer":66}],10:[function(require,module,exports){
 'use strict';
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -11992,7 +11992,7 @@ ABI.toSerpent = function (types) {
 module.exports = ABI
 
 }).call(this,require("buffer").Buffer)
-},{"bn.js":4,"buffer":70,"ethereumjs-util":30}],30:[function(require,module,exports){
+},{"bn.js":4,"buffer":66,"ethereumjs-util":30}],30:[function(require,module,exports){
 (function (Buffer){
 const SHA3 = require('keccakjs')
 const secp256k1 = require('secp256k1')
@@ -12697,7 +12697,7 @@ exports.defineProperties = function (self, fields, data) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"assert":60,"bn.js":4,"buffer":70,"create-hash":8,"keccakjs":39,"rlp":41,"secp256k1":42}],31:[function(require,module,exports){
+},{"assert":56,"bn.js":4,"buffer":66,"create-hash":8,"keccakjs":39,"rlp":41,"secp256k1":42}],31:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -14506,7 +14506,7 @@ function ripemd160 (message) {
 module.exports = ripemd160
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":70}],41:[function(require,module,exports){
+},{"buffer":66}],41:[function(require,module,exports){
 (function (Buffer){
 const assert = require('assert')
 /**
@@ -14739,7 +14739,7 @@ function toBuffer (v) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"assert":60,"buffer":70}],42:[function(require,module,exports){
+},{"assert":56,"buffer":66}],42:[function(require,module,exports){
 'use strict'
 module.exports = require('./lib')(require('./lib/elliptic'))
 
@@ -14791,7 +14791,7 @@ exports.isNumberInInterval = function (number, x, y, message) {
 }
 
 }).call(this,{"isBuffer":require("../../../../ethrpc/node_modules/is-buffer/index.js")})
-},{"../../../../ethrpc/node_modules/is-buffer/index.js":108}],44:[function(require,module,exports){
+},{"../../../../ethrpc/node_modules/is-buffer/index.js":104}],44:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var bip66 = require('bip66')
@@ -14992,7 +14992,7 @@ exports.signatureImportLax = function (sig) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bip66":3,"buffer":70}],45:[function(require,module,exports){
+},{"bip66":3,"buffer":66}],45:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var createHash = require('create-hash')
@@ -15243,7 +15243,7 @@ exports.ecdhUnsafe = function (publicKey, privateKey, compressed) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../messages.json":47,"bn.js":4,"buffer":70,"create-hash":8,"elliptic":11}],46:[function(require,module,exports){
+},{"../messages.json":47,"bn.js":4,"buffer":66,"create-hash":8,"elliptic":11}],46:[function(require,module,exports){
 'use strict'
 var assert = require('./assert')
 var der = require('./der')
@@ -15587,7 +15587,7 @@ Hash.prototype._update = function () {
 module.exports = Hash
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":70}],49:[function(require,module,exports){
+},{"buffer":66}],49:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -15701,7 +15701,7 @@ Sha.prototype._hash = function () {
 module.exports = Sha
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":48,"buffer":70,"inherits":37}],51:[function(require,module,exports){
+},{"./hash":48,"buffer":66,"inherits":37}],51:[function(require,module,exports){
 (function (Buffer){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
@@ -15803,7 +15803,7 @@ Sha1.prototype._hash = function () {
 module.exports = Sha1
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":48,"buffer":70,"inherits":37}],52:[function(require,module,exports){
+},{"./hash":48,"buffer":66,"inherits":37}],52:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -15859,7 +15859,7 @@ Sha224.prototype._hash = function () {
 module.exports = Sha224
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":48,"./sha256":53,"buffer":70,"inherits":37}],53:[function(require,module,exports){
+},{"./hash":48,"./sha256":53,"buffer":66,"inherits":37}],53:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -15997,7 +15997,7 @@ Sha256.prototype._hash = function () {
 module.exports = Sha256
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":48,"buffer":70,"inherits":37}],54:[function(require,module,exports){
+},{"./hash":48,"buffer":66,"inherits":37}],54:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
@@ -16057,7 +16057,7 @@ Sha384.prototype._hash = function () {
 module.exports = Sha384
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":48,"./sha512":55,"buffer":70,"inherits":37}],55:[function(require,module,exports){
+},{"./hash":48,"./sha512":55,"buffer":66,"inherits":37}],55:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var Hash = require('./hash')
@@ -16320,2307 +16320,7 @@ Sha512.prototype._hash = function () {
 module.exports = Sha512
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":48,"buffer":70,"inherits":37}],56:[function(require,module,exports){
-module.exports={
-  "0x": "no response or bad input",
-  "buy": {
-    "0": "market doesn't exist",
-    "-1": "amount/price bad",
-    "-2": "oracle-only branch",
-    "-4": "not enough money",
-    "-5": "bid price exceeds best ask",
-    "21": "trade already exists"
-  },
-  "buyCompleteSets": {
-    "0": "market not found",
-    "-1": "oracle-only branch",
-    "-3": "not enough cash"
-  },
-  "cashFaucet": {
-    "-1": "Hey, you're not broke!"
-  },
-  "claimProceeds": {
-    "0": "reporting not done",
-    "-1": "trader doesn't exist",
-    "-8": "invalid branch"
-  },
-  "closeMarket": {
-    "0": "fail/trading not over yet/event not expired or closed already",
-    "-1": "Market has no cash anyway / already closed",
-    "-2": "0 outcome / not reported on yet",
-    "-3": "not final round 2 event",
-    "-5": "Event forked and not final yet",
-    "-6": "bonded pushed forward market not ready to be resolved",
-    "-7": "event not reportable >.99",
-    "-8": "market isn't in branch"
-  },
-  "collectFees": {
-    "-1": "rep redistribution/rewards/penalizations in consensus not done yet"
-  },
-  "createEvent": {
-    "-1": "we're either already past that date, branch doesn't exist, or description is bad",
-    "0": "not enough money to pay fees or event already exists",
-    "-2": "max value < min value",
-    "-9": "would expire during non-reporting fork period"
-  },
-  "createSingleEventMarket": {
-    "0": "not enough money to pay fees or event already exists",
-    "-1": "we're either already past that date, branch doesn't exist, or description is bad, or bad input or parent doesn't exist",
-    "-2": "max value < min value",
-    "-3": "too many outcomes",
-    "-4": "not enough money",
-    "-5": "fee too low",
-    "-6": "duplicate events",
-    "-7": "event already expired",
-    "-8": "market already exists",
-    "-9": "would expire during non-reporting fork period"
-  },
-  "createMarket": {
-    "-1": "bad input or parent doesn't exist",
-    "-2": "too many events",
-    "-3": "too many outcomes",
-    "-4": "not enough money",
-    "-5": "fee too low",
-    "-6": "duplicate events",
-    "-7": "event already expired",
-    "-8": "market already exists",
-    "-9": "would expire during non-reporting fork period"
-  },
-  "createSubbranch": {
-    "-1": "bad input or parent doesn't exist",
-    "-2": "no money for creation fee or branch already exists"
-  },
-  "penalizationCatchup": {
-    "-1": "not in first half of reporting period",
-    "-2": "doesn't need to be penalized/caught up",
-    "-3": "user isn't behind or reported in the last period (and should thus use the penalization functions in consensus.se)"
-  },
-  "penalizeOnForkedEvent": {
-    "-2": "already past first half of new period and needed to penalize before then",
-    "-4": "fork event isn't resolved yet",
-    "-5": "already done for all events in this period"
-  },
-  "penalizeRoundTwoWrong": {
-    "0": "event is a fork event",
-    "-1": "need to penalize in round 2 penalize function",
-    "-2": "already past first half of new period and needed to penalize before then",
-    "-4": "in fork period only thing that rbcr is done on is the round 2 event in the original branch via round 2 penalize",
-    "-5": "already done for all events in this period",
-    "-6": "forked events should be penalized using the fork penalization function"
-  },
-  "penalizeWrong": {
-    "0": "event is a fork event",
-    "-1": "need to penalize in round 2 penalize function",
-    "-2": "already past first half of new period and needed to penalize before then",
-    "-4": "in fork period only thing that rbcr is done on is the round 2 event in the original branch via round 2 penalize",
-    "-6": "forked events should be penalized using the fork penalization function",
-    "-7": "no outcome"
-  },
-  "proveReporterDidntReportEnough": {
-    "-1": "already done",
-    "-2": "not in right part of period"
-  },
-  "pushMarketForward": {
-    "-1": "fork period cannot be the current or previous period",
-    "-2": "market is already closed or pushed forward",
-    "-3": "not enough cash to post early resolution bond",
-    "-4": "early resolution already attempted or outcome already exists"
-  },
-  "sell": {
-    "0": "market doesn't exist",
-    "-1": "amount/price bad",
-    "-2": "oracle only branch",
-    "-3": "bad outcome to trade",
-    "-4": "not enough shares",
-    "-5": "best bid exceeds ask price",
-    "10": "insufficient balance",
-    "21": "trade already exists"
-  },
-  "sellCompleteSets": {
-    "-1": "oracle-only branch",
-    "-2": "not a participant in this market",
-    "-3": "not enough shares"
-  },
-  "sendReputation": {
-    "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
-    "-2": "Receiving address doesn't exist"
-  },
-  "shortAsk": {
-    "0": "market doesn't exist",
-    "-1": "amount/price bad",
-    "-2": "oracle only branch",
-    "-3": "bad outcome to trade",
-    "-4": "not enough shares",
-    "-5": "best bid exceeds ask price",
-    "10": "insufficient balance",
-    "21": "trade already exists"
-  },
-  "short_sell": {
-    "-1": "trade doesn't exist",
-    "-2": "invalid trade hash/commitment",
-    "-3": "must be a bid, not an ask",
-    "-4": "market is already resolved",
-    "-5": "can't pickup your own trade",
-    "-6": "can't trade on oracle only branch",
-    "-7": "not a large enough trade",
-    "10": "insufficient balance",
-    "22": "trade in same block prohibited"
-  },
-  "slashRep": {
-    "0": "not a valid claim",
-    "-2": "reporter doesn't exist"
-  },
-  "submitReportHash": {
-    "-1": "invalid event",
-    "-3": "not eligible to report on this event"
-  },
-  "submitReport": {
-    "0": "reporter doesn't exist or has <1 rep",
-    "-1": "has already reported",
-    "-2": "not in second half of period [reveal part]",
-    "-3": "hash doesn't match",
-    "-4": "bad report",
-    "-5": "invalid event",
-    "-6": "already resolved",
-    "-7": "<48 hr left in period, too late to report, able to put up readj. bonds though",
-    "-8": "fees couldn't be collected",
-    "-9": "need to pay not reporting bond"
-  },
-  "trade": {
-    "-1": "oracle only branch",
-    "-2": "bad trade hash",
-    "-3": "trader doesn't exist / own shares in this market",
-    "-4": "must trade at least 0.00000001 in value",
-    "-5": "can't pick up your own trade",
-    "10": "insufficient balance",
-    "22": "trade in same block prohibited"
-  },
-  "updateTradingFee": {
-    "-1": "invalid trading fee: either fee is below the minimum trading fee or you are trying to raise the trading fee (trading fees can be lowered, but not raised)",
-    "-4": "sender's address does not match the market creator's address"
-  },
-  "GAS_LIMIT_EXCEEDED": {
-    "error": 40,
-    "message": "trade exceeds the current block gas limit"
-  },
-  "WRONG_NUMBER_OF_OUTCOMES": {
-    "error": 41,
-    "message": "the number of initial fair prices does not match this market's number of outcomes"
-  },
-  "INSUFFICIENT_LIQUIDITY": {
-    "error": 42,
-    "message": "insufficient liquidity to generate order book"
-  },
-  "INITIAL_PRICE_OUT_OF_BOUNDS": {
-    "error": 43,
-    "message": "one or more initial fair prices are out-of-bounds"
-  },
-  "PRICE_WIDTH_OUT_OF_BOUNDS": {
-    "error": 44,
-    "message": "price width is too large for one or more initial fair prices"
-  },
-  "DB_DELETE_FAILED": {
-    "error": 97,
-    "message": "database delete failed"
-  },
-  "DB_WRITE_FAILED": {
-    "error": 98,
-    "message": "database write failed"
-  },
-  "DB_READ_FAILED": {
-    "error": 99,
-    "message": "database read failed"
-  },
-  "INVALID_CONTRACT_PARAMETER": {
-    "error": 400,
-    "message": "cannot send object parameter to contract"
-  },
-  "NOT_LOGGED_IN": {
-    "error": 401,
-    "message": "not logged in"
-  },
-  "PARAMETER_NUMBER_ERROR": {
-    "error": 402,
-    "message": "wrong number of parameters"
-  },
-  "BAD_CREDENTIALS": {
-    "error": 403,
-    "message": "incorrect handle or password"
-  },
-  "TRANSACTION_NOT_FOUND": {
-    "error": 404,
-    "message": "transaction not found"
-  },
-  "PASSWORD_TOO_SHORT": {
-    "error": 405,
-    "message": "password must be at least 6 characters long"
-  },
-  "NULL_CALL_RETURN": {
-    "error": 406,
-    "message": "expected contract call to return value, received null"
-  },
-  "NULL_RESPONSE": {
-    "error": 407,
-    "message": "expected transaction hash from Ethereum node, received null"
-  },
-  "NO_RESPONSE": {
-    "error": 408,
-    "message": "no response"
-  },
-  "INVALID_RESPONSE": {
-    "error": 409,
-    "message": "could not parse response from Ethereum node"
-  },
-  "LOCAL_NODE_FAILURE": {
-    "error": 410,
-    "message": "RPC request to local Ethereum node failed"
-  },
-  "HOSTED_NODE_FAILURE": {
-    "error": 411,
-    "message": "RPC request to hosted nodes failed"
-  },
-  "TRANSACTION_INVALID": {
-    "error": 412,
-    "message": "transaction validation failed"
-  },
-  "TRANSACTION_RETRY_MAX_EXCEEDED": {
-    "error": 413,
-    "message": "maximum number of transaction retry attempts exceeded"
-  },
-  "HANDLE_TAKEN": {
-    "error": 422,
-    "message": "handle already taken"
-  },
-  "FILTER_NOT_CREATED": {
-    "error": 450,
-    "message": "filter could not be created"
-  },
-  "TRANSACTION_FAILED": {
-    "error": 500,
-    "message": "transaction failed"
-  },
-  "TRANSACTION_NOT_CONFIRMED": {
-    "error": 501,
-    "message": "polled network but could not confirm transaction"
-  },
-  "DUPLICATE_TRANSACTION": {
-    "error": 502,
-    "message": "duplicate transaction"
-  },
-  "RAW_TRANSACTION_ERROR": {
-    "error": 503,
-    "message": "error sending client-side transaction"
-  },
-  "RLP_ENCODING_ERROR": {
-    "error": 504,
-    "message": "RLP encoding error"
-  },
-  "TRANSACTION_RECEIPT_NOT_FOUND": {
-    "error": 505,
-    "message": "transaction receipt not found"
-  },
-  "RPC_TIMEOUT": {
-    "error": 599,
-    "message": "timed out while waiting for Ethereum network response"
-  },
-  "LOOPBACK_NOT_FOUND": {
-    "error": 650,
-    "message": "loopback interface required for synchronous local commands"
-  },
-  "ETHEREUM_NOT_FOUND": {
-    "error": 651,
-    "message": "no active ethereum node(s) found"
-  },
-  "CHECK_ORDER_BOOK_FAILED": {
-    "error": 710,
-    "message": "could not check order book using current prices"
-  },
-  "TRADE_FAILED": {
-    "error": 711,
-    "message": "trade failed, instead of success value (1), received "
-  },
-  "TRADE_NOT_FOUND": {
-    "error": 712,
-    "message": "trade not found"
-  },
-  "REPORT_NOT_FOUND": {
-    "error": 812,
-    "message": "report not found"
-  }
-}
-
-},{}],57:[function(require,module,exports){
-function ErrorWithData(message, data) {
-    Error.call(this, message);
-    this.name = "ErrorWithData";
-    this.data = data;
-}
-
-ErrorWithData.prototype = Object.create(Error.prototype);
-ErrorWithData.prototype.constructor = ErrorWithData;
-
-function ErrorWithCode(message, code) {
-  Error.call(this, message);
-  this.name = "ErrorWithCode";
-  this.code = code;
-}
-
-ErrorWithCode.prototype = Object.create(Error.prototype);
-ErrorWithCode.prototype.constructor = ErrorWithCode;
-
-function ErrorWithCodeAndData(message, code, data) {
-  Error.call(this, message);
-  this.name = "ErrorWithCodeAndData";
-  this.code = code;
-  this.data = data;
-}
-
-module.exports = {
-    ErrorWithCode: ErrorWithCode,
-    ErrorWithData: ErrorWithData,
-    ErrorWithCodeAndData: ErrorWithCodeAndData
-};
-
-},{}],58:[function(require,module,exports){
-(function (global){
-var ethrpc = global.ethrpc || require("./");
-global.ethrpc = ethrpc;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./":59}],59:[function(require,module,exports){
-/**
- * JSON RPC methods for Ethereum
- * @author Jack Peterson (jack@tinybike.net)
- */
-
-"use strict";
-
-var clone = require("clone");
-var EthTx = require("ethereumjs-tx");
-var BigNumber = require("bignumber.js");
-var keccak_256 = require("js-sha3").keccak_256;
-var abi = require("augur-abi");
-var errors = require("./errors.json");
-var ErrorWithData = require("./errors.js").ErrorWithData;
-var ErrorWithCodeAndData = require("./errors.js").ErrorWithCodeAndData;
-var Transporter = require("./transport/transporter.js");
-
-BigNumber.config({
-  MODULO_MODE: BigNumber.EUCLID,
-  ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN
-});
-
-function RPCError(err) {
-  this.name = "RPCError";
-  this.message = JSON.stringify(err);
-}
-
-RPCError.prototype = Error.prototype;
-
-function isFunction(f) {
-  return Object.prototype.toString.call(f) === "[object Function]";
-}
-
-function wait(delay) {
-  var until = new Date().getTime() + delay;
-  while (new Date().getTime() < until) { }
-  return;
-}
-
-var noop = function () { };
-
-module.exports = {
-
-  debug: {
-    connect: false,
-    tx: false,
-    broadcast: false,
-    nonce: false,
-    sync: false
-  },
-
-  // if set to true, dropped transactions are automatically resubmitted
-  retryDroppedTxs: true,
-
-  // Number of required confirmations for transact sequence
-  REQUIRED_CONFIRMATIONS: 0,
-
-  // Maximum number of retry attempts for dropped transactions
-  TX_RETRY_MAX: 5,
-
-  // Maximum number of transaction verification attempts
-  TX_POLL_MAX: 1000,
-
-  // Transaction polling interval
-  TX_POLL_INTERVAL: 10000,
-
-  // how frequently to poll when waiting for blocks
-  BLOCK_POLL_INTERVAL: 30000,
-
-  // Default timeout for asynchronous POST
-  POST_TIMEOUT: 30000,
-
-  DEFAULT_GAS: "0x2fd618",
-
-  ETHER: new BigNumber(10, 10).toPower(18),
-
-  Error: RPCError,
-
-  errors: errors,
-
-  requests: null,
-
-  // Hook for transaction callbacks
-  txRelay: null,
-
-  // Do not call txRelay for these methods
-  excludedFromTxRelay: null,
-
-  txs: null,
-
-  rawTxs: null,
-
-  rawTxMaxNonce: null,
-
-  block: null,
-
-  networkID: null,
-
-  notifications: null,
-
-  gasPrice: null,
-
-  configuration: null,
-
-  internalState: null,
-
-  /**
-   * Initiates a connection to Ethereum.  This must be called before any other methods are called.
-   *
-   * @typedef configuration
-   * @type {object}
-   * @property {?string[]} httpAddresses
-   * @property {?string[]} wsAddresses
-   * @property {?string[]} ipcAddresses
-   * @property {?number} connectionTimeout
-   * @property {!function(Error):void} errorHandler - called when an otherwise unhandled asynchronous error occurs during the course of operation.
-   *
-   * @param {!configuration} configuration
-   * @param {!function(?Error):void} initialConnectCallback - if the error parameter is null then the connection was successful
-   * @returns {void}
-   */
-  connect: function (configuration, initialConnectCallback) {
-    this.resetState();
-
-    // overwrite configuration values with user config, throw away unused user config
-    for (var key in this.configuration) {
-      if (!this.configuration.hasOwnProperty(key)) continue;
-      if (configuration[key] === undefined || configuration[key] === null) continue;
-      this.configuration[key] = configuration[key];
-    }
-
-    // validate configuration
-    if (!isFunction(this.configuration.errorHandler)) throw new Error("configuration.errorHandler must be a function");
-    if (!Array.isArray(this.configuration.httpAddresses)) return this.configuration.errorHandler(new Error("configuration.httpAddresses must be an array."));
-    if (this.configuration.httpAddresses.some(function (x) { return typeof x !== "string"; })) return this.configuration.errorHandler(new Error("configuration.httpAddresses must contain only strings."));
-    if (!Array.isArray(this.configuration.wsAddresses)) return this.configuration.errorHandler(new Error("configuration.wsAddresses must be an array."));
-    if (this.configuration.wsAddresses.some(function (x) { return typeof x !== "string"; })) return this.configuration.errorHandler(new Error("configuration.wsAddresses must contain only strings."));
-    if (!Array.isArray(this.configuration.ipcAddresses)) return this.configuration.errorHandler(new Error("configuration.ipcAddresses must be an array."));
-    if (this.configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) return this.configuration.errorHandler(new Error("configuration.ipcAddresses must contain only strings."));
-
-    var syncOnly = !initialConnectCallback;
-    if (syncOnly) initialConnectCallback = function (error) { if (error instanceof Error) throw error; else if (error) throw new ErrorWithData(error); };
-
-    // initialize the transporter, this will be how we send to and receive from the blockchain
-    new Transporter(this.configuration, this.internalState.shimMessageHandler, syncOnly, this.debug.connect, function (error, transporter) { // jshint ignore:line
-      if (error !== null) return initialConnectCallback(error);
-      this.internalState.transporter = transporter;
-      // ensure we can do basic JSON-RPC over this connection
-      this.version(function (errorOrResult) {
-        if (errorOrResult instanceof Error || errorOrResult.error) return initialConnectCallback(errorOrResult);
-        this.setupBlockSubscription(function () { initialConnectCallback(null); });
-      }.bind(this));
-    }.bind(this));
-  },
-
-  /**
-   * Resets the global state of this module to default.
-   */
-  resetState: function() {
-    // stop any pending timers
-    clearInterval((this.internalState || {}).newBlockIntervalTimeoutId);
-
-    // reset configuration to defaults
-    this.configuration = {
-      httpAddresses: [],
-      wsAddresses: [],
-      ipcAddresses: [],
-      connectionTimeout: 3000,
-      errorHandler: null,
-    };
-
-    // redirect any not-yet-received responses to /dev/null
-    var oldMessageHandlerObject = (this.internalState || {}).shimMessageHandlerObject || {};
-    var newMessageHandlerObject = { realMessageHandler: this.blockchainMessageHandler.bind(this) };
-    oldMessageHandlerObject.realMessageHandler = function () {};
-
-    // reset state to defaults
-    this.internalState = {
-      transporter: null,
-      outstandingRequests: {},
-      subscriptions: {},
-      newBlockIntervalTimeoutId: null,
-      shimMessageHandlerObject: newMessageHandlerObject,
-      // by binding this function to `shimMessageHandlerObject`, its `this` value will be a pointer to an object that we can mutate before replacing when reset
-      shimMessageHandler: function (error, jso) { this.realMessageHandler(error, jso); }.bind(newMessageHandlerObject)
-    };
-
-    // reset public state
-    this.block = null;
-    this.excludedFromTxRelay = {};
-    this.gasPrice = 20000000000;
-    this.notifications = {};
-    this.rawTxMaxNonce = -1;
-    this.rawTxs = {};
-    this.requests = 1;
-    this.txs = {};
-  },
-
-  // TODO: add support for caller passing in request and response type information
-  /**
-   * Used internally.  Submits a remote procedure call to the blockchain.
-   *
-   * @param {!object} jso - The JSON-RPC call to make.
-   * @param {?string} transportRequirements - ANY, SYNC or DUPLEX.  Will choose best available transport that meets the requirements.
-   * @param {?function(?Error, ?object):void} callback - Called when a response to the request is received.  May only be null if preferredTransport is SYNC.
-   * @returns {void|?Error|?object} - Returns the error or result if the operation is synchronous.
-   */
-  submitRequestToBlockchain: function (jso, transportRequirements, callback) {
-    var syncErrorOrResult;
-    if (transportRequirements === "SYNC") callback = function (error, result) { return (syncErrorOrResult = (error || result)); };
-
-    if (isFunction(transportRequirements) && !callback) {
-      callback = transportRequirements;
-      transportRequirements = null;
-    }
-
-    if (!isFunction(callback)) throw new Error("callback must be a function");
-    if (typeof transportRequirements !== "string" && transportRequirements !== null) return callback(new Error("transportRequirements must be null or a string"));
-    if (typeof jso !== "object") return callback(new Error("jso must be an object"));
-    if (typeof jso.id !== "number") return callback(new Error("jso.id must be a number"));
-
-    // FIXME: return types shouldn't be embedded into the RPC JSO
-    var expectedReturnTypes = this.strip(jso);
-    this.internalState.outstandingRequests[jso.id] = {
-      jso: jso,
-      expectedReturnTypes: expectedReturnTypes,
-      callback: callback
-    };
-
-    this.internalState.transporter.blockchainRpc(jso, transportRequirements, this.debug.broadcast);
-
-    if (transportRequirements === "SYNC") {
-      if (typeof this.internalState.outstandingRequests[jso.id] !== "undefined") return new Error("SYNC request didn't receive messageHandler call before returning.");
-      return syncErrorOrResult;
-    }
-  },
-
-  /**
-   * Used internally.  Processes a response from the blockchain by looking up the associated callback and calling it.
-   */
-  blockchainMessageHandler: function (error, jso) {
-    if (error !== null)
-      return this.configuration.errorHandler(error);
-    if (typeof jso !== "object")
-      return this.configuration.errorHandler(new ErrorWithData("Unexpectedly received a message from the transport that was not an object.", jso));
-
-    var subscriptionHandler = function () {
-      if (jso.method !== "eth_subscription")
-        return this.configuration.errorHandler(new ErrorWithData("Received an RPC request that wasn't an `eth_subscription`.", jso));
-      if (typeof jso.params.subscription !== "string")
-        return this.configuration.errorHandler(new ErrorWithData("Received an `eth_subscription` request without a subscription ID.", jso));
-      if (jso.params.result === null || jso.params.result === undefined)
-        return this.configuration.errorHandler(new ErrorWithData("Received an `eth_subscription` request without a result.", jso));
-
-      var subscriptionCallback = this.internalState.subscriptions[jso.params.subscription];
-      if (subscriptionCallback)
-        subscriptionCallback(jso.params.result);
-    }.bind(this);
-
-    var responseHandler = function () {
-      if (typeof jso.id !== "number")
-        return this.configuration.errorHandler(new ErrorWithData("Received a message from the blockchain that didn't have a valid id.", jso));
-      var outstandingRequest = this.internalState.outstandingRequests[jso.id];
-      delete this.internalState.outstandingRequests[jso.id];
-      if (typeof outstandingRequest !== "object")
-        return this.configuration.errorHandler(new ErrorWithData("Unable to locate original request for blockchain response.", jso));
-
-      // FIXME: outstandingRequest.callback should be function(Error,object) not function(Error|object)
-      this.parse(jso, outstandingRequest.expectedReturnTypes, outstandingRequest.callback);
-    }.bind(this);
-
-    var errorHandler = function () {
-      // errors with IDs can go through the normal result process
-      if (jso.id !== null && jso.id !== undefined)
-        return responseHandler.bind(this)(jso);
-      this.configuration.errorHandler(new ErrorWithCodeAndData(jso.error.message, jso.error.code, jso.error.data));
-    }.bind(this);
-
-    // depending on the type of message it is (request, response, error, invalid) we will handle it differently
-    if (jso.method !== undefined) {
-      subscriptionHandler();
-    } else if (jso.result !== undefined) {
-      responseHandler();
-    } else if (jso.error !== undefined) {
-      errorHandler();
-    } else {
-      this.configuration.errorHandler(new ErrorWithData("Received an invalid JSON-RPC message.", jso));
-    }
-  },
-
-  /**
-   * Used internally.  Setup the initial subscription for new blocks.  Called on first connect, then never again.
-   * 
-   * @param {function():void} callback - called when the subscription is done being setup
-   */
-  setupBlockSubscription: function (callback) {
-    if (!callback) {
-      // sync: we know subscriptions aren't supported, so just skip to setting up the polling
-      clearInterval(this.internalState.newBlockIntervalTimeoutId);
-      this.internalState.newBlockIntervalTimeoutId = setInterval(this.getBlockByNumber.bind(this, "latest", false, this.onNewBlock.bind(this)), this.BLOCK_POLL_INTERVAL);
-    } else {
-      // async: try to subscribe first, if that fails fallback to polling
-      var subscribeToNewBlocks = function(callback) {
-        clearInterval(this.internalState.newBlockIntervalTimeoutId);
-        this.subscribeNewHeads(function (resultOrError) {
-          if (resultOrError instanceof Error || resultOrError.error) {
-            this.internalState.newBlockIntervalTimeoutId = setInterval(this.getBlockByNumber.bind(this, "latest", false, this.onNewBlock.bind(this)), this.BLOCK_POLL_INTERVAL);
-          } else {
-            this.internalState.subscriptions[resultOrError] = this.onNewBlock.bind(this);
-          }
-          callback();
-        }.bind(this));
-      }.bind(this);
-
-      this.internalState.transporter.addReconnectListener(subscribeToNewBlocks.bind(this, function () {}));
-      subscribeToNewBlocks(callback);
-    }
-  },
-
-  onNewBlock: function (block) {
-    if (typeof block !== "object") throw new Error("block must be an object");
-
-    this.block = block;
-    // FIXME: ethrpc should really store the original block and add getters for making it easier to interact with
-    this.block.number = parseInt(block.number, 16);
-
-    // re-process all transactions
-    for (var transactionHash in this.txs) {
-      var transaction = this.txs[transactionHash];
-      this.updateTx(transaction);
-    }
-  },
-
-
-
-
-  registerTxRelay: function (txRelay) {
-    this.txRelay = txRelay;
-  },
-
-  unregisterTxRelay: function () {
-    this.txRelay = null;
-  },
-
-  wrapTxRelayCallback: function (status, payload, callback) {
-    var self = this;
-    return function (response) {
-      if (isFunction(callback)) callback(response);
-      if (payload.method && !self.excludedFromTxRelay[payload.method]) {
-        self.txRelay({
-          type: payload.label || payload.method,
-          status: status,
-          data: payload,
-          response: response
-        });
-      }
-    };
-  },
-
-  excludeFromTxRelay: function (method) {
-    if (method) {
-      if (method.constructor === Array && method.length) {
-        for (var i = 0, numMethods = method.length; i < numMethods; ++i) {
-          this.excludedFromTxRelay[method[i]] = true;
-        }
-      } else {
-        this.excludedFromTxRelay[method] = true;
-      }
-    }
-  },
-
-  includeInTxRelay: function (method) {
-    if (method) {
-      if (method.constructor === Array && method.length) {
-        for (var i = 0, numMethods = method.length; i < numMethods; ++i) {
-          this.excludedFromTxRelay[method[i]] = false;
-        }
-      } else {
-        this.excludedFromTxRelay[method] = false;
-      }
-    }
-  },
-
-  unmarshal: function (string, returns, stride, init) {
-    var elements, array, position;
-    if (string && string.length >= 66) {
-      stride = stride || 64;
-      elements = Math.ceil((string.length - 2) / stride);
-      array = new Array(elements);
-      position = init || 2;
-      for (var i = 0; i < elements; ++i) {
-        array[i] = abi.prefix_hex(string.slice(position, position + stride));
-        position += stride;
-      }
-      if (array.length) {
-        if (parseInt(array[1], 16) === array.length - 2 || parseInt(array[1], 16) / 32 === array.length - 2) {
-          array.splice(0, 2);
-        }
-      }
-      for (i = 0; i < array.length; ++i) {
-        if (returns === "number[]") {
-          array[i] = abi.string(array[i]);
-        } else if (returns === "unfix[]") {
-          array[i] = abi.unfix(array[i], "string");
-        }
-      }
-      return array;
-    } else {
-      return string;
-    }
-  },
-
-  applyReturns: function (returns, result) {
-    var res;
-    if (!returns) return result;
-    if (result && result !== "0x") {
-      if (result.error) return result;
-      returns = returns.toLowerCase();
-      res = clone(result);
-      if (returns && returns.slice(-2) === "[]") {
-        res = this.unmarshal(res, returns);
-        if (returns === "hash[]") res = abi.hex(res);
-      } else if (returns === "string") {
-        res = abi.raw_decode_hex(res);
-      } else if (returns === "number") {
-        res = abi.string(res, true);
-      } else if (returns === "int") {
-        res = abi.number(res, true);
-      } else if (returns === "bignumber") {
-        res = abi.bignum(res, null, true);
-      } else if (returns === "unfix") {
-        res = abi.unfix(res, "string");
-      } else if (returns === "null") {
-        res = null;
-      } else if (returns === "address" || returns === "address[]") {
-        res = abi.format_address(res);
-      }
-    } else {
-      res = result;
-    }
-    return res;
-  },
-
-  parse: function (origResponse, returns, callback) {
-    var results, len, err;
-    var response = clone(origResponse);
-    if ((this.debug.tx && (response && response.error)) || this.debug.broadcast) {
-      console.log("[ethrpc] response:", response);
-    }
-    if (response && typeof response === "string") {
-      try {
-        response = JSON.parse(response);
-      } catch (e) {
-        err = e;
-        if (e && e.name === "SyntaxError") {
-          err = errors.INVALID_RESPONSE;
-        }
-        if (isFunction(callback)) return callback(err);
-        throw new this.Error(err);
-      }
-    }
-    if (response !== undefined && typeof response === "object" && response !== null) {
-      if (response.error) {
-        response = {
-          error: response.error.code,
-          message: response.error.message
-        };
-        if (!isFunction(callback)) return response;
-        return callback(response);
-      } else if (response.result !== undefined) {
-        if (!isFunction(callback)) return response.result;
-        return callback(response.result);
-      } else if (response.constructor === Array && response.length) {
-        len = response.length;
-        results = new Array(len);
-        for (var i = 0; i < len; ++i) {
-          results[i] = response[i].result;
-          if (response.error || (response[i] && response[i].error)) {
-            if (this.debug.broadcast) {
-              if (isFunction(callback)) return callback(response.error);
-              throw new this.Error(response.error);
-            }
-          }
-        }
-        if (!isFunction(callback)) return results;
-        return callback(results);
-      }
-
-      // no result or error field
-      err = errors.NO_RESPONSE;
-      err.bubble = response;
-      if (isFunction(callback)) return callback(err);
-      throw new this.Error(err);
-    }
-  },
-
-  strip: function (tx) {
-    var returns;
-    if (tx.method === "eth_coinbase") return "address";
-    if (tx.params !== undefined && tx.params.length && tx.params[0]) {
-      if (tx.params[0].returns) {
-        returns = tx.params[0].returns;
-        delete tx.params[0].returns;
-      }
-      if (tx.params[0].invocation) {
-        delete tx.params[0].invocation;
-      }
-    }
-    return returns;
-  },
-
-  subscriptions: {},
-
-  unregisterSubscriptionCallback: function (id) {
-    delete this.internalState.subscriptions[id];
-  },
-
-  registerSubscriptionCallback: function (id, callback) {
-    this.internalState.subscriptions[id] = callback;
-  },
-
-  marshal: function (command, params, prefix) {
-    var payload, action;
-    if (prefix === "null" || prefix === null) {
-      action = command.toString();
-    } else {
-      action = (prefix || "eth_") + command.toString();
-    }
-    payload = {
-      id: this.requests++,
-      jsonrpc: "2.0",
-      method: action
-    };
-    if (params === undefined) params = [];
-    if (params === null) params = [];
-    if (this.debug.broadcast && params.debug) {
-      payload.debug = clone(params.debug);
-      delete params.debug;
-    }
-    if (params.timeout) {
-      payload.timeout = params.timeout;
-      delete params.timeout;
-    }
-    payload.params = (params instanceof Array) ? ethereumEncodeArray(params) : [ethereumEncodePrimitive(params)];
-    return payload;
-  },
-
-  // delete cached network, notification, and transaction data
-  clear: function () {
-    this.txs = {};
-    for (var n in this.notifications) {
-      if (!this.notifications.hasOwnProperty(n)) continue;
-      if (this.notifications[n]) {
-        clearTimeout(this.notifications[n]);
-      }
-    }
-    this.notifications = {};
-    this.rawTxs = {};
-    this.txs = {};
-    this.rawTxMaxNonce = -1;
-  },
-
-  /******************************
-   * Ethereum JSON-RPC bindings *
-   ******************************/
-
-  raw: function (command, params, callback) {
-    var transportRequirements = "ANY";
-    if (!callback) transportRequirements = "SYNC";
-    return this.submitRequestToBlockchain(this.marshal(command, params, null), transportRequirements, callback);
-  },
-
-  eth: function (command, params, callback) {
-    return this.raw("eth_" + command, params, callback);
-  },
-
-  net: function (command, params, callback) {
-    return this.raw("net_" + command, params, callback);
-  },
-
-  web3: function (command, params, callback) {
-    return this.raw("web3_" + command, params, callback);
-  },
-
-  shh: function (command, params, callback) {
-    return this.raw("shh_" + command, params, callback);
-  },
-
-  miner: function (command, params, callback) {
-    return this.raw("miner_" + command, params, callback);
-  },
-
-  admin: function (command, params, callback) {
-    return this.raw("admin_" + command, params, callback);
-  },
-
-  personal: function (command, params, callback) {
-    return this.raw("personal_" + command, params, callback);
-  },
-
-  txpool: function (command, params, callback) {
-    return this.raw("txpool_" + command, params, callback);
-  },
-
-  // ****
-  // web3_*
-  // ****
-
-  clientVersion: function (callback) {
-    return this.web3("clientVersion", null, callback);
-  },
-
-  // TODO: make this take a callback like everything else
-  sha3: function (data, isHex) {
-    if (isHex) data = abi.decode_hex(data);
-    return abi.prefix_hex(keccak_256(data));
-  },
-
-  // ****
-  // net_*
-  // ****
-
-  listening: function (callback) {
-    return this.net("listening", null, callback);
-  },
-
-  peerCount: function (callback) {
-    return this.net("peerCount", null, callback);
-  },
-
-  version: function (callback) {
-    return this.net("version", null, callback);
-  },
-
-  netVersion: function (callback) {
-    return this.version(callback);
-  },
-
-  // ****
-  // eth_*
-  // ****
-
-  accounts: function (callback) {
-    return this.eth("accounts", null, callback);
-  },
-
-  blockNumber: function (callback) {
-    return this.eth("blockNumber", null, callback);
-  },
-
-  call: function (transaction, blockNumber, callback) {
-    // support incorrect usage rather than failing fast
-    if (isFunction(blockNumber)) {
-      callback = blockNumber;
-      blockNumber = null;
-    }
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("call", [transaction, blockNumber], callback);
-  },
-
-  coinbase: function (callback) {
-    return this.eth("coinbase", null, callback);
-  },
-
-  // compileLLL intentionally left out, does not make sense as an RPC call
-
-  // compileSerpent intentionally left out, does not make sense as an RPC call
-
-  // compileSolidity intentionally left out, does not make sense as an RPC call
-
-  estimateGas: function (transaction, blockNumber, callback) {
-    // support incorrect usage rather than failing fast
-    if (isFunction(blockNumber)) {
-      callback = blockNumber;
-      blockNumber = null;
-    }
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("estimateGas", [transaction, blockNumber], callback);
-  },
-
-  getGasPrice: function (callback) {
-    return this.eth("gasPrice", null, callback);
-  },
-
-  getBalance: function (address, blockNumber, callback) {
-    // support incorrect usage rather than failing fast
-    if (isFunction(blockNumber)) {
-      callback = blockNumber;
-      blockNumber = null;
-    }
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("getBalance", [address, blockNumber], callback);
-  },
-
-  balance: function (address, blockNumber, callback) {
-    return this.getBalance(address, blockNumber, callback);
-  },
-
-  getBlockByHash: function (hash, shouldReturnFullTransactions, callback) {
-    if (shouldReturnFullTransactions === undefined) shouldReturnFullTransactions = true;
-    return this.eth("getBlockByHash", [hash, !!shouldReturnFullTransactions], callback);
-  },
-
-  getBlockByNumber: function (number, shouldReturnFullTransactions, callback) {
-    if (shouldReturnFullTransactions !== true) shouldReturnFullTransactions = false;
-    var block = validateAndDefaultBlockNumber(number);
-    return this.eth("getBlockByNumber", [block, !!shouldReturnFullTransactions], callback);
-  },
-
-  getBlock: function (number, shouldReturnFullTransactions, callback) {
-    return this.getBlockByNumber(number, shouldReturnFullTransactions, callback);
-  },
-
-  // TODO: getBlockTransactionCountByHash
-
-  // TODO: getBlockTransactionCountByNumber
-
-  getCode: function (address, blockNumber, callback) {
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("getCode", [address, blockNumber], callback);
-  },
-
-  read: function (address, blockNumber, callback) {
-    this.getCode(address, blockNumber, callback);
-  },
-
-  // TODO: getCompilers
-
-  getFilterChanges: function (filter, callback) {
-    return this.eth("getFilterChanges", [filter], callback);
-  },
-
-  getFilterLogs: function (filter, callback) {
-    return this.eth("getFilterLogs", filter, callback);
-  },
-
-  getLogs: function (filter, callback) {
-    return this.eth("getLogs", filter, callback);
-  },
-
-  // TODO: add map lookup support (at the moment, this function doesn't support map lookups due to rounding errors after 51-bits for JS numbers)
-  getStorageAt: function (address, position, blockNumber, callback) {
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("getStorageAt", [address, position, blockNumber], callback);
-  },
-
-  // TODO: getTransactionByBlockHashAndIndex
-
-  // TODO: getTransactionByBlockNumberAndIndex
-
-  getTransactionByHash: function (transactionHash, callback) {
-    return this.eth("getTransactionByHash", [transactionHash], callback);
-  },
-
-  getTransaction: function (transactionHash, callback) {
-    return this.getTransactionByHash(transactionHash, callback);
-  },
-
-  getTx: function (transactionHash, callback) {
-    return this.getTransactionByHash(transactionHash, callback);
-  },
-
-  getTransactionCount: function (address, callback) {
-    return this.eth("getTransactionCount", [address, "latest"], callback);
-  },
-
-  txCount: function (address, callback) {
-    return this.getTransactionCount(address, callback);
-  },
-
-  getPendingTransactionCount: function (address, callback) {
-    return this.eth("getTransactionCount", [address, "pending"], callback);
-  },
-
-  pendingTxCount: function (address, callback) {
-    return this.getPendingTransactionCount(address, callback);
-  },
-
-  getTransactionReceipt: function (transactionHash, callback) {
-    return this.eth("getTransactionReceipt", transactionHash, callback);
-  },
-
-  receipt: function (transactionHash, callback) {
-    return this.getTransactionReceipt(transactionHash, callback);
-  },
-
-  getUncleByBlockHashAndIndex: function (blockHash, index, callback) {
-    return this.eth("getUncleByBlockHashAndIndex", [blockHash, index], callback);
-  },
-
-  getUncleByBlockNumberAndIndex: function (blockNumber, index, callback) {
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("getUncleByBlockNumberAndIndex", [blockNumber, index], callback);
-  },
-
-  getUncle: function (blockNumber, index, callback) {
-    return this.getUncleByBlockNumberAndIndex(blockNumber, index, callback);
-  },
-
-  getUncleCountByBlockHash: function (blockHash, callback) {
-    return this.eth("getUncleCountByBlockHash", [blockHash], callback);
-  },
-
-  getUncleCountByBlockNumber: function (blockNumber, callback) {
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("getUncleCountByBlockNumber", [blockNumber], callback);
-  },
-
-  getUncleCount: function (blockNumber, callback) {
-    return this.getUncleCountByBlockNumber(blockNumber, callback);
-  },
-
-  // TODO: getWork
-
-  hashrate: function (callback) {
-    return this.eth("hashrate", null, callback);
-  },
-
-  mining: function (callback) {
-    return this.eth("mining", null, callback);
-  },
-
-  newBlockFilter: function (callback) {
-    return this.eth("newBlockFilter", null, callback);
-  },
-
-  /**
-   * @param {{fromBlock:number|string, toBlock:number|string, address:string, topics:string[], limit:number}} filterOptions
-   */
-  newFilter: function (filterOptions, callback) {
-    filterOptions.fromBlock = validateAndDefaultBlockNumber(filterOptions.fromBlock);
-    filterOptions.toBlock = validateAndDefaultBlockNumber(filterOptions.toBlock);
-    return this.eth("newFilter", filterOptions, callback);
-  },
-
-  newPendingTransactionFilter: function (callback) {
-    return this.eth("newPendingTransactionFilter", null, callback);
-  },
-
-  protocolVersion: function (callback) {
-    return this.eth("protocolVersion", null, callback);
-  },
-
-  // TODO: provide overload that takes in an unencoded signed transaction
-  /**
-   * @param {string} signedTransaction - RLP encoded transaction signed with private key
-   */
-  sendRawTransaction: function (signedTransaction, callback) {
-    // allow for malformed input
-    if (/^[0-9a-fA-F]*$/.test(signedTransaction)) signedTransaction = "0x" + signedTransaction;
-    if (!/^0x[0-9a-fA-F]*$/.test(signedTransaction)) throw new Error("signedTransaction must be RLP encoded hex byte array encoded into a string");
-    return this.eth("sendRawTransaction", [signedTransaction], callback);
-  },
-
-  /**
-   * @param {{from:string, to:string, gas:number, gasPrice:number, value:number, data:string, nonce:number, minBlock:number|string}} transaction
-   */
-  sendTransaction: function (transaction, callback) {
-    validateTransaction(transaction);
-    return this.eth("sendTransaction", [transaction], callback);
-  },
-
-  sendTx: function (transaction, callback) {
-    return this.sendTransaction(transaction, callback);
-  },
-
-  sign: function (address, data, callback) {
-    return this.eth("sign", [address, data], callback);
-  },
-
-  signTransaction: function (transaction, callback) {
-    validateTransaction(transaction);
-    return this.eth("signTransaction", [transaction], callback);
-  },
-
-  // TODO: submitHashrate
-
-  // TODO: submitWork
-
-  subscribe: function (label, options, callback) {
-    if (options === undefined) options = {};
-    if (options === null) options = {};
-    if (typeof options !== "object") throw new Error("options must be an object");
-    return this.eth("subscribe", [label, options], callback);
-  },
-
-  subscribeLogs: function (options, callback) {
-    return this.subscribe("logs", options, callback);
-  },
-
-  subscribeNewHeads: function (callback) {
-    return this.subscribe("newHeads", null, callback);
-  },
-
-  subscribeNewPendingTransactions: function (callback) {
-    return this.subscribe("newPendingTransactions", null, callback);
-  },
-
-  syncing: function (callback) {
-    return this.eth("syncing", null, callback);
-  },
-
-  uninstallFilter: function (filter, callback) {
-    if (typeof filter !== "number") throw new Error("filter must be a number");
-    return this.eth("uninstallFilter", [filter], callback);
-  },
-
-  unsubscribe: function (label, callback) {
-    return this.eth("unsubscribe", [label], callback);
-  },
-
-  // ****
-  // personal_* (?parity only?)
-  // ****
-
-  // ****
-  // signer_* (?parity only?)
-  // ****
-
-  // ****
-  // shh_* (?geth only?)
-  // ****
-
-  // ****
-  // trace_* (?parity only?)
-  // ****
-
-  // ****
-  // high level access
-  // ****
-
-  /**
-   * Ensures that `this.block` contains the latest block.
-   */
-  ensureLatestBlock: function (callback) {
-    var sync = (!callback);
-    if (sync) {
-      var resultOrError = this.getBlockByNumber("latest", false);
-      if (resultOrError instanceof Error || resultOrError.error) return;
-      this.onNewBlock(resultOrError);
-      return resultOrError;
-    } else {
-      this.getBlockByNumber("latest", false, function (resultOrError) {
-        if (resultOrError instanceof Error || resultOrError.error) return;
-        this.onNewBlock(resultOrError);
-        callback(resultOrError);
-      }.bind(this));
-    }
-  },
-
-  /**
-   * Check to see if the provided account is unlocked for the connected node.
-   */
-  unlocked: function (account, f) {
-    try {
-      if (isFunction(f)) {
-        this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5", function (res) {
-          if (res) {
-            if (res.error) return f(false);
-            return f(true);
-          }
-          f(false);
-        });
-      } else {
-        var res = this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5");
-        if (res) {
-          if (res.error) {
-            return false;
-          }
-          return true;
-        }
-        return false;
-      }
-    } catch (e) {
-      if (isFunction(f)) return f(false);
-      return false;
-    }
-  },
-
-  /**
-   * Invoke a function from a contract on the blockchain.
-   *
-   * Input tx format:
-   * {
-   *    from: <sender's address> (hexstring; optional, coinbase default)
-   *    to: <contract address> (hexstring)
-   *    method: <function name> (string)
-   *    signature: <function signature, e.g. "iia"> (string)
-   *    params: <parameters passed to the function> (optional)
-   *    returns: <"number[]", "int", "BigNumber", or "string" (default)>
-   *    send: <true to sendTransaction, false to call (default)>
-   * }
-   */
-  invoke: function (payload, f) {
-    if (!payload || payload.constructor !== Object) {
-      if (!isFunction(f)) return errors.TRANSACTION_FAILED;
-      return f(errors.TRANSACTION_FAILED);
-    }
-    var packaged = this.packageRequest(payload);
-    if (this.debug.broadcast) {
-      packaged.debug = clone(payload);
-      packaged.debug.batch = false;
-    }
-    var invocation = (payload.send) ? this.sendTx : this.call;
-    return invocation.call(this, packaged, f);
-  },
-
-  /**
-   * Wait for the specified number of blocks to appear before calling `callback`
-   */
-  fastforward: function (blocks, mine, callback) {
-    var startBlock, endBlock, self = this;
-    function fastforward() {
-      self.blockNumber(function (blockNumber) {
-        blockNumber = parseInt(blockNumber, 16);
-        if (startBlock === undefined) {
-          startBlock = blockNumber;
-          endBlock = blockNumber + parseInt(blocks);
-        }
-        if (blockNumber >= endBlock) {
-          if (!mine) return callback(endBlock);
-          self.miner("stop", [], function () {
-            callback(endBlock);
-          });
-        } else {
-          setTimeout(fastforward, self.BLOCK_POLL_INTERVAL);
-        }
-      });
-    }
-    if (!callback && isFunction(mine)) {
-      callback = mine;
-      mine = null;
-    }
-    if (!mine) return fastforward();
-    this.miner("start", [], fastforward);
-  },
-
-  /**
-   * @typedef FirePayload
-   * @type {object}
-   * @property {!string} method
-   * @property {?string} label
-   * @property {!string} returns
-   * @property {!string} from
-   * @property {!string} to
-   * @property {?string[]} params
-   * 
-   * @param {FirePayload} payload
-   * @param {function(object):void} callback - called with the result, possibly run through `wrapper` if applicable
-   * @param {function(object,object):void} wrapper - a function to transform the result before it is passed to `callback`.  first parameter is result, second is `aux`
-   * @param {object} aux - an optional parameter passed to `wrapper` (second parameter)
-   */
-  fire: function (payload, callback, wrapper, aux) {
-    var self = this;
-    var tx = clone(payload);
-    if (!isFunction(callback)) {
-      var res = this.invoke(tx);
-      if (res === undefined || res === null) {
-        throw new this.Error(errors.NO_RESPONSE);
-      }
-      var err = this.errorCodes(tx.method, tx.returns, res);
-      if (err && err.error) throw new this.Error(err);
-      var converted = this.applyReturns(tx.returns, res);
-      if (isFunction(wrapper)) return wrapper(converted, aux);
-      return converted;
-    }
-    this.invoke(tx, function (res) {
-      if (res === undefined || res === null) {
-        return callback(errors.NO_RESPONSE);
-      }
-      var err = self.errorCodes(tx.method, tx.returns, res);
-      if (err && err.error) return callback(err);
-      var converted = self.applyReturns(tx.returns, res);
-      if (isFunction(wrapper)) converted = wrapper(converted, aux);
-      return callback(converted);
-    });
-  },
-
-  // ****
-  // other
-  // ****
-
-  sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
-    if (to && to.constructor === Object) {
-      value = to.value;
-      from = to.from;
-      if (to.onSent) onSent = to.onSent;
-      if (to.onSuccess) onSuccess = to.onSuccess;
-      if (to.onFailed) onFailed = to.onFailed;
-      to = to.to;
-    }
-    return this.transact({
-      from: from,
-      to: to,
-      value: abi.fix(value, "hex"),
-      returns: "null",
-      gas: "0xcf08"
-    }, onSent, onSuccess, onFailed);
-  },
-
-  // publish a new contract to the blockchain (from the coinbase account)
-  publish: function (compiled, f) {
-    return this.sendTx({ from: this.coinbase(), data: compiled }, f);
-  },
-
-  // Ethereum node status checks
-
-  packageRequest: function (payload) {
-    var tx = clone(payload);
-    if (tx.params === undefined || tx.params === null) {
-      tx.params = [];
-    } else if (tx.params.constructor !== Array) {
-      tx.params = [tx.params];
-    }
-    var numParams = tx.params.length;
-    if (numParams) {
-      if (tx.signature && tx.signature.length !== numParams) {
-        throw new this.Error(errors.PARAMETER_NUMBER_ERROR);
-      }
-      for (var j = 0; j < numParams; ++j) {
-        if (tx.params[j] !== undefined && tx.params[j] !== null && tx.signature[j]) {
-          if (tx.params[j].constructor === Number) {
-            tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
-          }
-          if (tx.signature[j] === "int256") {
-            tx.params[j] = abi.unfork(tx.params[j], true);
-          } else if (tx.signature[j] === "int256[]" &&
-            tx.params[j].constructor === Array && tx.params[j].length) {
-            for (var k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
-              tx.params[j][k] = abi.unfork(tx.params[j][k], true);
-            }
-          }
-        }
-      }
-    }
-    if (tx.to) tx.to = abi.format_address(tx.to);
-    if (tx.from) tx.from = abi.format_address(tx.from);
-    var packaged = {
-      from: tx.from,
-      to: tx.to,
-      data: abi.encode(tx),
-      gas: tx.gas ? abi.hex(tx.gas) : this.DEFAULT_GAS
-    };
-    if (tx.gasPrice) packaged.gasPrice = abi.hex(tx.gasPrice);
-    if (tx.timeout) packaged.timeout = abi.hex(tx.timeout);
-    if (tx.value) packaged.value = abi.hex(tx.value);
-    if (tx.returns) packaged.returns = tx.returns;
-    if (tx.nonce) packaged.nonce = tx.nonce;
-    return packaged;
-  },
-
-  errorCodes: function (method, returns, response) {
-    if (response) {
-      if (response.constructor === Array) {
-        for (var i = 0, len = response.length; i < len; ++i) {
-          response[i] = this.errorCodes(method, returns, response[i]);
-        }
-      } else if (response.name && response.message && response.stack) {
-        response.error = response.name;
-      } else if (!response.error) {
-        if (returns && returns.indexOf("[]") > -1) {
-          if (response.length >= 194) {
-            response = "0x" + response.slice(130, 194);
-          }
-        }
-        if (errors[response]) {
-          response = {
-            error: response,
-            message: errors[response]
-          };
-        } else {
-          if (returns !== "null" && returns !== "string" ||
-            (response && response.constructor === String &&
-              response.slice(0, 2) === "0x")) {
-            var responseNumber = abi.bignum(response, "string", true);
-            if (responseNumber) {
-              if (errors[method] && errors[method][responseNumber]) {
-                response = {
-                  error: responseNumber,
-                  message: errors[method][responseNumber]
-                };
-              }
-            }
-          }
-        }
-      }
-    }
-    return response;
-  },
-
-  /********************
-   * Raw transactions *
-   ********************/
-
-  parseRawTransactionResponse: function (rawTransactionResponse, packaged, address, privateKey, cost, callback) {
-    if (this.debug.broadcast) {
-      console.log("[ethrpc] sendRawTransaction response:", rawTransactionResponse);
-    }
-    if (!rawTransactionResponse) {
-      if (!isFunction(callback)) return errors.RAW_TRANSACTION_ERROR;
-      return callback(errors.RAW_TRANSACTION_ERROR);
-    }
-    if (rawTransactionResponse.error) {
-      if (rawTransactionResponse.message.indexOf("rlp") > -1) {
-        var err = clone(errors.RLP_ENCODING_ERROR);
-        err.bubble = rawTransactionResponse;
-        err.packaged = packaged;
-        if (!isFunction(callback)) return err;
-        return callback(err);
-      } else if (rawTransactionResponse.message.indexOf("Nonce too low") > -1) {
-        if (this.debug.broadcast || this.debug.nonce) {
-          console.info("[ethrpc] Nonce too low, incrementing:", rawTransactionResponse.message, packaged, this.rawTxMaxNonce);
-        }
-        ++this.rawTxMaxNonce;
-        delete packaged.nonce;
-        return this.setNonceThenSubmitRawTransaction(packaged, address, privateKey, callback);
-      }
-      if (!isFunction(callback)) return rawTransactionResponse;
-      return callback(rawTransactionResponse);
-    }
-
-    // rawTransactionResponse is the txhash if nothing failed immediately
-    // (even if the tx is nulled, still index the hash)
-    this.rawTxs[rawTransactionResponse] = {tx: packaged, cost: abi.unfix(cost, "string")};
-
-    // nonce ok, complete sequence
-    if (!isFunction(callback)) return rawTransactionResponse;
-    callback(rawTransactionResponse);
-  },
-
-  submitRawTransaction: function (packaged, address, privateKey, callback) {
-    var rawTxHashes = Object.keys(this.rawTxs);
-    var rawTxHash;
-    for (var i = 0, numRawTxs = rawTxHashes.length; i < numRawTxs; ++i) {
-      rawTxHash = rawTxHashes[i];
-      if (this.rawTxs[rawTxHash].tx.nonce === abi.hex(packaged.nonce) && (!this.txs[rawTxHash] || this.txs[rawTxHash].status !== "failed")) {
-        packaged.nonce = this.rawTxMaxNonce + 1;
-        if (this.debug.broadcast || this.debug.nonce) {
-          console.log("[ethrpc] duplicate nonce, incremented:", packaged.nonce, this.rawTxMaxNonce);
-        }
-        break;
-      }
-    }
-    if (packaged.nonce <= this.rawTxMaxNonce) {
-      packaged.nonce = ++this.rawTxMaxNonce;
-    } else {
-      this.rawTxMaxNonce = packaged.nonce;
-    }
-    if (this.debug.nonce) console.log("[ethrpc] nonce:", packaged.nonce, this.rawTxMaxNonce);
-    if (this.debug.broadcast) console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
-    packaged.nonce = abi.hex(packaged.nonce);
-    var etx = new EthTx(packaged);
-
-    // sign the transaction using privateKey
-    etx.sign(privateKey);
-    if (this.debug.tx || this.debug.broadcast) {
-      console.log("raw nonce:    0x" + etx.nonce.toString("hex"));
-      console.log("raw gasPrice: 0x" + etx.gasPrice.toString("hex"));
-      console.log("raw gasLimit: 0x" + etx.gasLimit.toString("hex"));
-      console.log("raw to:       0x" + etx.to.toString("hex"));
-      console.log("raw value:    0x" + etx.value.toString("hex"));
-      console.log("raw v:        0x" + etx.v.toString("hex"));
-      console.log("raw r:        0x" + etx.r.toString("hex"));
-      console.log("raw s:        0x" + etx.s.toString("hex"));
-      console.log("raw data:     0x" + etx.data.toString("hex"));
-    }
-
-    // calculate the cost (in ether) of this transaction
-    // (note: this is an *upper bound* on the cost, set by the gasLimit)
-    var cost = etx.getUpfrontCost().toString();
-
-    // validate the transaction's signature
-    if (!etx.validate()) return callback(errors.TRANSACTION_INVALID);
-
-    // submit the raw transaction to the network
-    if (!isFunction(callback)) {
-      var rawTransactionResponse = this.sendRawTransaction(etx.serialize().toString("hex"));
-      return this.parseRawTransactionResponse(rawTransactionResponse, packaged, address, privateKey, cost);
-    }
-    var self = this;
-    this.sendRawTransaction(etx.serialize().toString("hex"), function (rawTransactionResponse) {
-      self.parseRawTransactionResponse(rawTransactionResponse, packaged, address, privateKey, cost, callback);
-    });
-  },
-
-  // set transaction nonce to the number of transactions
-  setNonceThenSubmitRawTransaction: function (packaged, address, privateKey, callback) {
-    var self = this;
-    if (packaged.nonce) {
-      return this.submitRawTransaction(packaged, address, privateKey, callback);
-    }
-    if (!isFunction(callback)) {
-      var txCount = this.pendingTxCount(address);
-      if (this.debug.nonce) {
-        console.log('[ethrpc] txCount:', parseInt(txCount, 16));
-      }
-      if (txCount && !txCount.error && !(txCount instanceof Error)) {
-        packaged.nonce = parseInt(txCount, 16);
-      }
-      return this.submitRawTransaction(packaged, address, privateKey);
-    }
-    this.pendingTxCount(address, function (txCount) {
-      if (self.debug.nonce) console.log('[ethrpc] txCount:', parseInt(txCount, 16));
-      if (txCount && !txCount.error && !(txCount instanceof Error)) {
-        packaged.nonce = parseInt(txCount, 16);
-      }
-      self.submitRawTransaction(packaged, address, privateKey, callback);
-    });
-  },
-
-  packageAndSubmitRawTransaction: function (payload, address, privateKey, callback) {
-    var self = this;
-    if (!payload || payload.constructor !== Object) {
-      if (!isFunction(callback)) throw new this.Error(errors.TRANSACTION_FAILED);
-      return callback(errors.TRANSACTION_FAILED);
-    }
-    if (!address || !privateKey) {
-      if (!isFunction(callback)) throw new this.Error(errors.NOT_LOGGED_IN);
-      return callback(errors.NOT_LOGGED_IN);
-    }
-
-    // parse and serialize transaction parameters
-    var packaged = this.packageRequest(payload);
-    packaged.from = address;
-    packaged.nonce = payload.nonce || 0;
-    packaged.value = payload.value || "0x0";
-    if (payload.gasLimit) {
-      packaged.gasLimit = abi.hex(payload.gasLimit);
-    } else if (this.block && this.block.gasLimit) {
-      packaged.gasLimit = abi.hex(this.block.gasLimit);
-    } else {
-      packaged.gasLimit = this.DEFAULT_GAS;
-    }
-    if (this.networkID && parseInt(this.networkID, 10) < 109) {
-      packaged.chainId = parseInt(this.networkID, 10);
-    }
-    if (this.debug.broadcast) console.log("[ethrpc] payload:", payload);
-    if (payload.gasPrice && abi.number(payload.gasPrice) > 0) {
-      packaged.gasPrice = payload.gasPrice;
-      return this.setNonceThenSubmitRawTransaction(packaged, address, privateKey, callback);
-    }
-    if (!isFunction(callback)) {
-      var gasPrice = this.getGasPrice();
-      if (!gasPrice || gasPrice.error) throw new this.Error(errors.TRANSACTION_FAILED);
-      packaged.gasPrice = gasPrice;
-      return this.setNonceThenSubmitRawTransaction(packaged, address, privateKey);
-    }
-    this.getGasPrice(function (gasPrice) {
-      if (!gasPrice || gasPrice.error) return callback(errors.TRANSACTION_FAILED);
-      packaged.gasPrice = gasPrice;
-      self.setNonceThenSubmitRawTransaction(packaged, address, privateKey, callback);
-    });
-  },
-
-  /***************************************
-   * Send-call-confirm callback sequence *
-   ***************************************/
-
-  updatePendingTx: function (tx) {
-    var self = this;
-    this.getTx(tx.hash, function (onChainTx) {
-      tx.tx = abi.copy(onChainTx);
-
-      // if transaction is null, then it was dropped from the txpool
-      if (onChainTx === null) {
-        tx.payload.tries = (tx.payload.tries) ? tx.payload.tries + 1 : 1;
-
-        // if we have retries left, then resubmit the transaction
-        if (!self.retryDroppedTxs || tx.payload.tries > self.TX_RETRY_MAX) {
-          tx.status = "failed";
-          tx.locked = false;
-          if (isFunction(tx.onFailed)) {
-            var e = clone(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
-            e.hash = tx.hash;
-            tx.onFailed(e);
-          }
-        } else {
-          --self.rawTxMaxNonce;
-          tx.status = "resubmitted";
-          tx.locked = false;
-          if (self.debug.tx) console.log("resubmitting tx:", tx.hash);
-          self.transact(tx.payload, tx.onSent, tx.onSuccess, tx.onFailed);
-        }
-
-        // non-null transaction: transaction still alive and kicking!
-        // check if it has been mined yet (block number is non-null)
-      } else {
-        if (onChainTx.blockNumber) {
-          tx.tx.blockNumber = parseInt(onChainTx.blockNumber, 16);
-          tx.tx.blockHash = onChainTx.blockHash;
-          tx.status = "mined";
-          tx.confirmations = self.block.number - tx.tx.blockNumber;
-          self.updateMinedTx(tx);
-        } else {
-          tx.locked = false;
-        }
-      }
-    });
-  },
-
-  updateMinedTx: function (tx) {
-    var self = this;
-    var onChainTx = tx.tx;
-    tx.confirmations = self.block.number - onChainTx.blockNumber;
-    if (self.debug.tx) console.log("confirmations for", tx.hash, tx.confirmations);
-    if (tx.confirmations >= self.REQUIRED_CONFIRMATIONS) {
-      tx.status = "confirmed";
-      if (isFunction(tx.onSuccess)) {
-        self.getBlock(onChainTx.blockNumber, false, function (block) {
-          if (block && block.timestamp) {
-            onChainTx.timestamp = parseInt(block.timestamp, 16);
-          }
-          if (!tx.payload.mutable) {
-            onChainTx.callReturn = tx.callReturn;
-            self.getTransactionReceipt(tx.hash, function (receipt) {
-              if (self.debug.tx) console.log("got receipt:", receipt);
-              if (receipt && receipt.gasUsed) {
-                onChainTx.gasFees = new BigNumber(receipt.gasUsed, 16)
-                  .times(new BigNumber(onChainTx.gasPrice, 16))
-                  .dividedBy(self.ETHER)
-                  .toFixed();
-              }
-              tx.locked = false;
-              tx.onSuccess(onChainTx);
-            });
-          } else {
-            self.getLoggedReturnValue(tx.hash, function (err, log) {
-              if (self.debug.tx) console.log("loggedReturnValue:", err, log);
-              if (err) {
-                tx.payload.send = false;
-                self.fire(tx.payload, function (callReturn) {
-                  tx.locked = false;
-                  if (isFunction(tx.onFailed)) {
-                    if (err.error !== errors.NULL_CALL_RETURN.error) {
-                      err.hash = tx.hash;
-                      tx.onFailed(err);
-                    } else {
-                      var e = self.errorCodes(tx.payload.method, tx.payload.returns, callReturn);
-                      e.hash = tx.hash;
-                      tx.onFailed(e);
-                    }
-                  }
-                });
-              } else {
-                var e = self.errorCodes(tx.payload.method, tx.payload.returns, log.returnValue);
-                if (self.debug.tx) console.log("errorCodes:", e);
-                if (e && e.error) {
-                  e.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
-                  tx.locked = false;
-                  if (isFunction(tx.onFailed)) {
-                    e.hash = tx.hash;
-                    tx.onFailed(e);
-                  }
-                } else {
-                  onChainTx.callReturn = self.applyReturns(tx.payload.returns, log.returnValue);
-                  onChainTx.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
-                  tx.locked = false;
-                  tx.onSuccess(onChainTx);
-                }
-              }
-            });
-          }
-        });
-      } else {
-        tx.locked = false;
-      }
-    } else {
-      tx.locked = false;
-    }
-  },
-
-  updateTx: function (tx) {
-    if (!tx.locked) {
-      if (tx.tx === undefined) {
-        tx.locked = true;
-        return this.updatePendingTx(tx);
-      }
-      switch (tx.status) {
-        case "pending":
-          tx.locked = true;
-          this.updatePendingTx(tx);
-          break;
-        case "mined":
-          tx.locked = true;
-          this.updateMinedTx(tx);
-          break;
-        default:
-          break;
-      }
-    }
-  },
-
-  verifyTxSubmitted: function (payload, txHash, callReturn, onSent, onSuccess, onFailed, callback) {
-    var self = this;
-    if (!isFunction(callback)) {
-      if (!payload || ((!payload.mutable && payload.returns !== "null") && (txHash === null || txHash === undefined))) {
-        throw new this.Error(errors.TRANSACTION_FAILED);
-      }
-      if (this.txs[txHash]) throw new this.Error(errors.DUPLICATE_TRANSACTION);
-      this.txs[txHash] = {
-        hash: txHash,
-        payload: payload,
-        callReturn: callReturn,
-        count: 0,
-        status: "pending"
-      };
-      var tx = this.getTransaction(txHash);
-      if (!tx) throw new this.Error(errors.TRANSACTION_FAILED);
-      this.txs[txHash].tx = tx;
-      return;
-    }
-    if (!payload || txHash === null || txHash === undefined) {
-      console.error("payload undefined or txhash null/undefined:", payload, txHash);
-      return callback(errors.TRANSACTION_FAILED);
-    }
-    if (this.txs[txHash]) return callback(errors.DUPLICATE_TRANSACTION);
-    this.txs[txHash] = {
-      hash: txHash,
-      payload: payload,
-      callReturn: callReturn,
-      onSent: onSent,
-      onSuccess: onSuccess,
-      onFailed: onFailed,
-      count: 0,
-      status: "pending"
-    };
-    if (this.block && this.block.number) {
-      this.updateTx(this.txs[txHash]);
-      return callback(null);
-    }
-    this.blockNumber(function (blockNumber) {
-      if (!blockNumber || blockNumber.error) {
-        return callback(blockNumber || "rpc.blockNumber lookup failed");
-      }
-      self.block = { number: parseInt(blockNumber, 16) };
-      self.updateTx(self.txs[txHash]);
-      callback(null);
-    });
-  },
-
-  /**
-   * asynchronous / non-blocking transact:
-   *  - call onSent when the transaction is broadcast to the network
-   *  - call onSuccess when the transaction has REQUIRED_CONFIRMATIONS
-   *  - call onFailed if the transaction fails
-   */
-  transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed) {
-    var self = this;
-    payload.send = true;
-    var returns = payload.returns;
-    delete payload.returns;
-    (payload.invoke || this.invoke).call(this, payload, function (txHash) {
-      if (self.debug.tx) console.log("txHash:", txHash);
-      if (!txHash) return onFailed(errors.NULL_RESPONSE);
-      if (txHash.error) return onFailed(txHash);
-      payload.returns = returns;
-      txHash = abi.format_int256(txHash);
-
-      // send the transaction hash and return value back
-      // to the client, using the onSent callback
-      onSent({ hash: txHash, txHash: txHash, callReturn: callReturn });
-
-      self.verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, function (err) {
-        if (err) {
-          err.hash = txHash;
-          return onFailed(err);
-        }
-      });
-    });
-  },
-
-  waitForNextPoll: function (tx, callback) {
-    if (this.txs[tx.hash].count >= this.TX_POLL_MAX) {
-      this.txs[tx.hash].status = "unconfirmed";
-      if (!isFunction(callback)) {
-        throw new Error(errors.TRANSACTION_NOT_CONFIRMED);
-      }
-      return callback(errors.TRANSACTION_NOT_CONFIRMED);
-    }
-    if (!isFunction(callback)) {
-      wait(this.TX_POLL_INTERVAL);
-      if (this.txs[tx.hash].status === "pending" || this.txs[tx.hash].status === "mined") {
-        return null;
-      }
-    } else {
-      var self = this;
-      this.notifications[tx.hash] = setTimeout(function () {
-        if (self.txs[tx.hash].status === "pending" || self.txs[tx.hash].status === "mined") {
-          callback(null, null);
-        }
-      }, this.TX_POLL_INTERVAL);
-    }
-  },
-
-  completeTx: function (tx, callback) {
-    this.txs[tx.hash].status = "confirmed";
-    clearTimeout(this.notifications[tx.hash]);
-    delete this.notifications[tx.hash];
-    if (!isFunction(callback)) return tx;
-    return callback(null, tx);
-  },
-
-  checkConfirmations: function (tx, numConfirmations, callback) {
-    var self = this;
-    var minedBlockNumber = parseInt(tx.blockNumber, 16);
-    this.blockNumber(function (currentBlockNumber) {
-      if (self.debug.tx) {
-        console.log("confirmations:", parseInt(currentBlockNumber, 16) - minedBlockNumber);
-      }
-      if (parseInt(currentBlockNumber, 16) - minedBlockNumber >= numConfirmations) {
-        return self.completeTx(tx, callback);
-      }
-      return self.waitForNextPoll(tx, callback);
-    });
-  },
-
-  checkBlockHash: function (tx, numConfirmations, callback) {
-    if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
-    if (this.txs[tx.hash].count === undefined) this.txs[tx.hash].count = 0;
-    ++this.txs[tx.hash].count;
-    if (this.debug.tx) console.log("checkBlockHash:", tx.blockHash);
-    if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
-      tx.txHash = tx.hash;
-      if (!numConfirmations) {
-        this.txs[tx.hash].status = "mined";
-        clearTimeout(this.notifications[tx.hash]);
-        delete this.notifications[tx.hash];
-        if (!isFunction(callback)) return tx;
-        return callback(null, tx);
-      }
-      return this.checkConfirmations(tx, numConfirmations, callback);
-    }
-    return this.waitForNextPoll(tx, callback);
-  },
-
-  getLoggedReturnValue: function (txHash, callback) {
-    var self = this;
-    if (!isFunction(callback)) {
-      var receipt = this.getTransactionReceipt(txHash);
-      if (!receipt || !receipt.logs || !receipt.logs.length) {
-        throw new this.Error(errors.NULL_CALL_RETURN);
-      }
-      var log = receipt.logs[receipt.logs.length - 1];
-      if (!log || log.data === null || log.data === undefined) {
-        throw new this.Error(errors.NULL_CALL_RETURN);
-      }
-      return {
-        returnValue: log.data,
-        gasUsed: new BigNumber(receipt.gasUsed, 16)
-      };
-    }
-    this.getTransactionReceipt(txHash, function (receipt) {
-      if (self.debug.tx) console.log("got receipt:", receipt);
-      if (!receipt || !receipt.logs || !receipt.logs.length) {
-        return callback(errors.NULL_CALL_RETURN);
-      }
-      var log = receipt.logs[receipt.logs.length - 1];
-      if (!log || log.data === null || log.data === undefined) {
-        return callback(errors.NULL_CALL_RETURN);
-      }
-      callback(null, {
-        returnValue: log.data,
-        gasUsed: new BigNumber(receipt.gasUsed, 16)
-      });
-    });
-  },
-
-  checkDroppedTxForDuplicateNonce: function (txHash, callback) {
-    var duplicateNonce;
-    if (this.debug.tx) console.log("Raw transactions:", this.rawTxs);
-    if (!this.rawTxs[txHash] || !this.rawTxs[txHash].tx) {
-      if (!isFunction(callback)) {
-        throw new this.Error(errors.TRANSACTION_NOT_FOUND);
-      }
-      return callback(errors.TRANSACTION_NOT_FOUND);
-    }
-    for (var hash in this.rawTxs) {
-      if (!this.rawTxs.hasOwnProperty(hash)) continue;
-      if (this.rawTxs[hash].tx.nonce === this.rawTxs[txHash].tx.nonce &&
-        JSON.stringify(this.rawTxs[hash].tx) !== JSON.stringify(this.rawTxs[txHash].tx)) {
-        duplicateNonce = true;
-        console.warn("Warning: duplicate nonce found on raw tx:", txHash);
-        break;
-      }
-    }
-    if (!duplicateNonce) {
-      if (!isFunction(callback)) {
-        throw new this.Error(errors.TRANSACTION_NOT_FOUND);
-      }
-      return callback(errors.TRANSACTION_NOT_FOUND);
-    }
-    if (!isFunction(callback)) return null;
-    callback(null);
-  },
-
-  txNotify: function (txHash, callback) {
-    var self = this;
-    if (!isFunction(callback)) {
-      var tx = this.getTransaction(txHash);
-      if (tx) return tx;
-      --this.rawTxMaxNonce;
-      this.txs[txHash].status = "failed";
-
-      // only resubmit if this is a raw transaction and has a duplicate nonce
-      if (!this.retryDroppedTxs) this.checkDroppedTxForDuplicateNonce(txHash);
-
-      this.txs[txHash].status = "resubmitted";
-      return null;
-    }
-    this.getTransaction(txHash, function (tx) {
-      if (tx) return callback(null, tx);
-      --self.rawTxMaxNonce;
-      self.txs[txHash].status = "failed";
-      if (self.retryDroppedTxs) {
-        if (self.debug.broadcast) console.log(" *** Re-submitting transaction:", txHash);
-        self.txs[txHash].status = "resubmitted";
-        return callback(null, null);
-      }
-      // only resubmit if this is a raw transaction and has a duplicate nonce
-      self.checkDroppedTxForDuplicateNonce(txHash, function (err) {
-        if (err !== null) return callback(err);
-        if (self.debug.broadcast) console.log(" *** Re-submitting transaction:", txHash);
-        self.txs[txHash].status = "resubmitted";
-        return callback(null, null);
-      });
-    });
-  },
-
-  // poll the network until the transaction is included in a block
-  // (i.e., has a non-null blockHash field)
-  pollForTxConfirmation: function (txHash, numConfirmations, callback) {
-    var self = this;
-    if (!isFunction(callback)) {
-      var tx = this.txNotify(txHash);
-      if (tx === null) return null;
-      var minedTx = this.checkBlockHash(tx, numConfirmations);
-      if (minedTx !== null) return minedTx;
-      return this.pollForTxConfirmation(txHash, numConfirmations);
-    }
-    this.txNotify(txHash, function (err, tx) {
-      if (err) return callback(err);
-      if (tx === null) return callback(null, null);
-      self.checkBlockHash(tx, numConfirmations, function (err, minedTx) {
-        if (err) return callback(err);
-        if (minedTx !== null) return callback(null, minedTx);
-        self.pollForTxConfirmation(txHash, numConfirmations, callback);
-      });
-    });
-  },
-
-  /**
-   * synchronous transact: block until the transaction is confirmed or fails
-   * (don't use this in the browser or you will be a sad panda)
-   */
-  transactSync: function (payload) {
-    var callReturn;
-    if (payload.mutable || payload.returns === "null") {
-      callReturn = null;
-    } else {
-      callReturn = this.fire(payload);
-      if (this.debug.tx) console.log("callReturn:", callReturn);
-      if (callReturn === undefined || callReturn === null) {
-        throw new this.Error(errors.NULL_CALL_RETURN);
-      } else if (callReturn.error === "0x") {
-        callReturn = null;
-      } else if (callReturn.error) {
-        throw new this.Error(callReturn);
-      }
-    }
-    payload.send = true;
-    var returns = payload.returns;
-    delete payload.returns;
-    var txHash = (payload.invoke || this.invoke).call(this, payload);
-    if (this.debug.tx) console.log("txHash:", txHash);
-    if (!txHash && !payload.mutable && payload.returns !== "null") {
-      throw new this.Error(errors.NULL_RESPONSE);
-    } else if (txHash && txHash.error) {
-      throw new this.Error(txHash);
-    }
-    payload.returns = returns;
-    txHash = abi.format_int256(txHash);
-    this.verifyTxSubmitted(payload, txHash, callReturn);
-    var tx = this.pollForTxConfirmation(txHash, null);
-    if (tx === null) {
-      payload.tries = (payload.tries) ? payload.tries + 1 : 1;
-      if (payload.tries > this.TX_RETRY_MAX) {
-        throw new this.Error(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
-      }
-      return this.transact(payload);
-    }
-    tx.timestamp = parseInt(this.getBlock(tx.blockNumber, false).timestamp, 16);
-    if (!payload.mutable) {
-      tx.callReturn = callReturn;
-      var receipt = this.getTransactionReceipt(txHash);
-      if (this.debug.tx) console.log("got receipt:", receipt);
-      if (receipt && receipt.gasUsed) {
-        tx.gasFees = new BigNumber(receipt.gasUsed, 16)
-          .times(new BigNumber(tx.gasPrice, 16))
-          .dividedBy(this.ETHER)
-          .toFixed();
-      }
-      return tx;
-    }
-
-    // if mutable return value, then lookup logged return
-    // value in transaction receipt (after confirmation)
-    var log = this.getLoggedReturnValue(txHash);
-    var e = this.errorCodes(payload.method, payload.returns, log.returnValue);
-    if (e && e.error) {
-      e.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
-      if (e.error !== errors.NULL_CALL_RETURN.error) {
-        throw new Error(e);
-      }
-      callReturn = this.fire(payload);
-      throw new Error(this.errorCodes(payload.method, payload.returns, callReturn));
-    }
-    tx.callReturn = this.applyReturns(payload.returns, log.returnValue);
-    tx.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
-    return tx;
-  },
-
-  transact: function (payload, onSent, onSuccess, onFailed) {
-    var self = this;
-    if (this.debug.tx) console.log("payload transact:", payload);
-    payload.send = false;
-
-    // synchronous / blocking transact sequence
-    if (!isFunction(onSent)) return this.transactSync(payload);
-
-    // asynchronous / non-blocking transact sequence
-    var cb = (isFunction(this.txRelay)) ? {
-      sent: this.wrapTxRelayCallback("sent", payload, onSent),
-      success: this.wrapTxRelayCallback("success", payload, onSuccess),
-      failed: this.wrapTxRelayCallback("failed", payload, onFailed)
-    } : {
-        sent: onSent,
-        success: (isFunction(onSuccess)) ? onSuccess : noop,
-        failed: (isFunction(onFailed)) ? onFailed : noop
-      };
-    if (payload.mutable || payload.returns === "null") {
-      return this.transactAsync(payload, null, cb.sent, cb.success, cb.failed);
-    }
-    this.fire(payload, function (callReturn) {
-      if (self.debug.tx) console.log("callReturn:", callReturn);
-      if (callReturn === undefined || callReturn === null) {
-        return cb.failed(errors.NULL_CALL_RETURN);
-      } else if (callReturn.error) {
-        return cb.failed(callReturn);
-      }
-      self.transactAsync(payload, callReturn, cb.sent, cb.success, cb.failed);
-    });
-  }
-};
-
-function validateAndDefaultBlockNumber(block) {
-  if (block === undefined) return "latest";
-  if (block === null) return "latest";
-  if (block === "latest") return block;
-  if (block === "earliest") return block;
-  if (block === "pending") return block;
-  try {
-    return validateNumber(block, "block");
-  } catch (error) {
-    throw new Error("block must be a number, a 0x prefixed hex string, or 'latest' or 'earliest' or 'pending'");
-  }
-}
-
-function validateAddress(address) {
-  if (address === null || address === undefined) throw new Error("address is required");
-  if (typeof address !== "string") throw new Error("address must be a string but was " + typeof address);
-  // fixup malformed addresses
-  if (/^[0-9a-fA-F]*$/.test(address)) address = "0x" + address;
-  if (!/^0x[0-9a-fA-F]*$/.test(address)) throw new Error("address can only contain 0-9 and a-Z and must start with 0x.  Provided: " + address);
-  if (address.length !== 42) throw new Error("address must be 42 characters, 20 bytes (2 hex encoded code points each) plus the 0x prefix.  Length: " + address.length);
-  return address;
-}
-
-function validateNumber(number, parameterName) {
-  if (!parameterName) parameterName = "number";
-  if (number === null) return number;
-  if (number === undefined) return number;
-  if (typeof number === "number") return number;
-  if (typeof number === "string" && /^0x[0-9a-zA-Z]+$/.test(number)) return number;
-  throw new Error(parameterName, " must be a number, null, undefined or a 0x prefixed hex encoded string");
-}
-
-function validateTransaction(transaction) {
-  if (!transaction) throw new Error("transaction is required");
-  transaction.from = validateAddress(transaction.from);
-  if (transaction.to !== undefined && transaction.to !== null) transaction.to = validateAddress(transaction.to);
-  transaction.gas = validateNumber(transaction.gas, "gas");
-  transaction.gasPrice = validateNumber(transaction.gasPrice, "gasPrice");
-  transaction.value = validateNumber(transaction.value, "value");
-  if (transaction.data !== undefined && transaction.data !== null && typeof transaction.data !== "string") throw new Error("data must be a string");
-  if (!/^0x[0-9a-zA-Z]*$/.test(transaction.data)) throw new Error("data must be a hex encoded string with a leader `0x`");
-  transaction.nonce = validateNumber(transaction.nonce, "nonce");
-  transaction.minBlock = validateAndDefaultBlockNumber(transaction.minBlock);
-}
-
-function ethereumEncodePrimitive(primitive) {
-  if (typeof primitive === "undefined") return primitive;
-  if (primitive === null) return primitive;
-  if (typeof primitive === "boolean") return primitive;
-  if (typeof primitive === "string") return primitive;
-  if (typeof primitive === "number") return ethereumEncodeNumber(primitive);
-  if (primitive instanceof Array) return ethereumEncodeArray(primitive);
-  if (typeof primitive === "object") return ethereumEncodeObject(primitive);
-  if (isFunction(primitive)) throw new Error("Cannot encode a function to be sent to Ethereum.");
-  throw new Error("Attempted to encode an unsupported type.  typeof: " + typeof primitive);
-}
-
-function ethereumEncodeObject(object) {
-  for (var property in object) {
-    object[property] = ethereumEncodePrimitive(object[property]);
-  }
-  return object;
-}
-
-function ethereumEncodeArray(array) {
-  if (!(array instanceof Array)) throw new Error("array must be an array.");
-  for (var i = 0; i < array.length; ++i) {
-    array[i] = ethereumEncodePrimitive(array[i]);
-  }
-  return array;
-}
-
-function ethereumEncodeNumber(number) {
-  if (typeof number !== "number") throw new Error("number must be a number.");
-  var numberAsHexString = number.toString(16);
-  return "0x" + numberAsHexString;
-}
-
-},{"./errors.js":57,"./errors.json":56,"./transport/transporter.js":171,"augur-abi":1,"bignumber.js":62,"clone":72,"ethereumjs-tx":94,"js-sha3":111}],60:[function(require,module,exports){
+},{"./hash":48,"buffer":66,"inherits":37}],56:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -18981,7 +16681,7 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":161}],61:[function(require,module,exports){
+},{"util/":157}],57:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -19107,15 +16807,15 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],62:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 arguments[4][2][0].apply(exports,arguments)
-},{"dup":2}],63:[function(require,module,exports){
+},{"dup":2}],59:[function(require,module,exports){
 arguments[4][3][0].apply(exports,arguments)
-},{"buffer":70,"dup":3}],64:[function(require,module,exports){
+},{"buffer":66,"dup":3}],60:[function(require,module,exports){
 arguments[4][4][0].apply(exports,arguments)
-},{"dup":4}],65:[function(require,module,exports){
+},{"dup":4}],61:[function(require,module,exports){
 arguments[4][5][0].apply(exports,arguments)
-},{"crypto":67,"dup":5}],66:[function(require,module,exports){
+},{"crypto":63,"dup":5}],62:[function(require,module,exports){
 // Browser Request
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19611,11 +17311,11 @@ function b64_enc (data) {
 }));
 //UMD FOOTER END
 
-},{}],67:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 
-},{}],68:[function(require,module,exports){
-arguments[4][67][0].apply(exports,arguments)
-},{"dup":67}],69:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
+arguments[4][63][0].apply(exports,arguments)
+},{"dup":63}],65:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -19727,7 +17427,7 @@ exports.allocUnsafeSlow = function allocUnsafeSlow(size) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"buffer":70}],70:[function(require,module,exports){
+},{"buffer":66}],66:[function(require,module,exports){
 (function (global){
 /*!
  * The buffer module from node.js, for the browser.
@@ -21279,9 +18979,9 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":61,"ieee754":106,"isarray":110}],71:[function(require,module,exports){
+},{"base64-js":57,"ieee754":102,"isarray":106}],67:[function(require,module,exports){
 arguments[4][7][0].apply(exports,arguments)
-},{"buffer":70,"dup":7,"inherits":107,"stream":148,"string_decoder":149}],72:[function(require,module,exports){
+},{"buffer":66,"dup":7,"inherits":103,"stream":144,"string_decoder":145}],68:[function(require,module,exports){
 (function (Buffer){
 var clone = (function() {
 'use strict';
@@ -21445,7 +19145,7 @@ if (typeof module === 'object' && module.exports) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":70}],73:[function(require,module,exports){
+},{"buffer":66}],69:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -21556,45 +19256,45 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":108}],74:[function(require,module,exports){
+},{"../../is-buffer/index.js":104}],70:[function(require,module,exports){
 arguments[4][8][0].apply(exports,arguments)
-},{"./md5":76,"buffer":70,"cipher-base":71,"dup":8,"inherits":107,"ripemd160":132,"sha.js":141}],75:[function(require,module,exports){
+},{"./md5":72,"buffer":66,"cipher-base":67,"dup":8,"inherits":103,"ripemd160":128,"sha.js":137}],71:[function(require,module,exports){
 arguments[4][9][0].apply(exports,arguments)
-},{"buffer":70,"dup":9}],76:[function(require,module,exports){
+},{"buffer":66,"dup":9}],72:[function(require,module,exports){
 arguments[4][10][0].apply(exports,arguments)
-},{"./helpers":75,"dup":10}],77:[function(require,module,exports){
+},{"./helpers":71,"dup":10}],73:[function(require,module,exports){
 arguments[4][11][0].apply(exports,arguments)
-},{"../package.json":93,"./elliptic/curve":80,"./elliptic/curves":83,"./elliptic/ec":84,"./elliptic/eddsa":87,"./elliptic/hmac-drbg":90,"./elliptic/utils":92,"brorand":65,"dup":11}],78:[function(require,module,exports){
+},{"../package.json":89,"./elliptic/curve":76,"./elliptic/curves":79,"./elliptic/ec":80,"./elliptic/eddsa":83,"./elliptic/hmac-drbg":86,"./elliptic/utils":88,"brorand":61,"dup":11}],74:[function(require,module,exports){
 arguments[4][12][0].apply(exports,arguments)
-},{"../../elliptic":77,"bn.js":64,"dup":12}],79:[function(require,module,exports){
+},{"../../elliptic":73,"bn.js":60,"dup":12}],75:[function(require,module,exports){
 arguments[4][13][0].apply(exports,arguments)
-},{"../../elliptic":77,"../curve":80,"bn.js":64,"dup":13,"inherits":107}],80:[function(require,module,exports){
+},{"../../elliptic":73,"../curve":76,"bn.js":60,"dup":13,"inherits":103}],76:[function(require,module,exports){
 arguments[4][14][0].apply(exports,arguments)
-},{"./base":78,"./edwards":79,"./mont":81,"./short":82,"dup":14}],81:[function(require,module,exports){
+},{"./base":74,"./edwards":75,"./mont":77,"./short":78,"dup":14}],77:[function(require,module,exports){
 arguments[4][15][0].apply(exports,arguments)
-},{"../../elliptic":77,"../curve":80,"bn.js":64,"dup":15,"inherits":107}],82:[function(require,module,exports){
+},{"../../elliptic":73,"../curve":76,"bn.js":60,"dup":15,"inherits":103}],78:[function(require,module,exports){
 arguments[4][16][0].apply(exports,arguments)
-},{"../../elliptic":77,"../curve":80,"bn.js":64,"dup":16,"inherits":107}],83:[function(require,module,exports){
+},{"../../elliptic":73,"../curve":76,"bn.js":60,"dup":16,"inherits":103}],79:[function(require,module,exports){
 arguments[4][17][0].apply(exports,arguments)
-},{"../elliptic":77,"./precomputed/secp256k1":91,"dup":17,"hash.js":99}],84:[function(require,module,exports){
+},{"../elliptic":73,"./precomputed/secp256k1":87,"dup":17,"hash.js":95}],80:[function(require,module,exports){
 arguments[4][18][0].apply(exports,arguments)
-},{"../../elliptic":77,"./key":85,"./signature":86,"bn.js":64,"dup":18}],85:[function(require,module,exports){
+},{"../../elliptic":73,"./key":81,"./signature":82,"bn.js":60,"dup":18}],81:[function(require,module,exports){
 arguments[4][19][0].apply(exports,arguments)
-},{"bn.js":64,"dup":19}],86:[function(require,module,exports){
+},{"bn.js":60,"dup":19}],82:[function(require,module,exports){
 arguments[4][20][0].apply(exports,arguments)
-},{"../../elliptic":77,"bn.js":64,"dup":20}],87:[function(require,module,exports){
+},{"../../elliptic":73,"bn.js":60,"dup":20}],83:[function(require,module,exports){
 arguments[4][21][0].apply(exports,arguments)
-},{"../../elliptic":77,"./key":88,"./signature":89,"dup":21,"hash.js":99}],88:[function(require,module,exports){
+},{"../../elliptic":73,"./key":84,"./signature":85,"dup":21,"hash.js":95}],84:[function(require,module,exports){
 arguments[4][22][0].apply(exports,arguments)
-},{"../../elliptic":77,"dup":22}],89:[function(require,module,exports){
+},{"../../elliptic":73,"dup":22}],85:[function(require,module,exports){
 arguments[4][23][0].apply(exports,arguments)
-},{"../../elliptic":77,"bn.js":64,"dup":23}],90:[function(require,module,exports){
+},{"../../elliptic":73,"bn.js":60,"dup":23}],86:[function(require,module,exports){
 arguments[4][24][0].apply(exports,arguments)
-},{"../elliptic":77,"dup":24,"hash.js":99}],91:[function(require,module,exports){
+},{"../elliptic":73,"dup":24,"hash.js":95}],87:[function(require,module,exports){
 arguments[4][25][0].apply(exports,arguments)
-},{"dup":25}],92:[function(require,module,exports){
+},{"dup":25}],88:[function(require,module,exports){
 arguments[4][26][0].apply(exports,arguments)
-},{"bn.js":64,"dup":26}],93:[function(require,module,exports){
+},{"bn.js":60,"dup":26}],89:[function(require,module,exports){
 module.exports={
   "_args": [
     [
@@ -21715,7 +19415,7 @@ module.exports={
   "version": "6.3.2"
 }
 
-},{}],94:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -22051,7 +19751,7 @@ module.exports = function () {
   return Transaction;
 }();
 }).call(this,require("buffer").Buffer)
-},{"buffer":70,"ethereum-common/params.json":95,"ethereumjs-util":96}],95:[function(require,module,exports){
+},{"buffer":66,"ethereum-common/params.json":91,"ethereumjs-util":92}],91:[function(require,module,exports){
 module.exports={
   "genesisGasLimit": {
     "v": 5000,
@@ -22288,11 +19988,23 @@ module.exports={
   }
 }
 
-},{}],96:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
-var _typeof10 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof12 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof11 = typeof Symbol === "function" && _typeof12(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof12(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof12(obj);
+};
+
+var _typeof10 = typeof Symbol === "function" && _typeof11(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof11(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof11(obj);
+};
 
 var _typeof9 = typeof Symbol === "function" && _typeof10(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof10(obj);
@@ -23014,7 +20726,7 @@ exports.defineProperties = function (self, fields, data) {
   }
 };
 }).call(this,require("buffer").Buffer)
-},{"assert":60,"bn.js":64,"buffer":70,"create-hash":74,"ethjs-util":97,"keccak":112,"rlp":133,"secp256k1":134}],97:[function(require,module,exports){
+},{"assert":56,"bn.js":60,"buffer":66,"create-hash":70,"ethjs-util":93,"keccak":108,"rlp":129,"secp256k1":130}],93:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -23237,7 +20949,7 @@ module.exports = {
   isHexString: isHexString
 };
 }).call(this,require("buffer").Buffer)
-},{"buffer":70,"is-hex-prefixed":109,"strip-hex-prefix":150}],98:[function(require,module,exports){
+},{"buffer":66,"is-hex-prefixed":105,"strip-hex-prefix":146}],94:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -23540,19 +21252,19 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],99:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 arguments[4][31][0].apply(exports,arguments)
-},{"./hash/common":100,"./hash/hmac":101,"./hash/ripemd":102,"./hash/sha":103,"./hash/utils":104,"dup":31}],100:[function(require,module,exports){
+},{"./hash/common":96,"./hash/hmac":97,"./hash/ripemd":98,"./hash/sha":99,"./hash/utils":100,"dup":31}],96:[function(require,module,exports){
 arguments[4][32][0].apply(exports,arguments)
-},{"../hash":99,"dup":32}],101:[function(require,module,exports){
+},{"../hash":95,"dup":32}],97:[function(require,module,exports){
 arguments[4][33][0].apply(exports,arguments)
-},{"../hash":99,"dup":33}],102:[function(require,module,exports){
+},{"../hash":95,"dup":33}],98:[function(require,module,exports){
 arguments[4][34][0].apply(exports,arguments)
-},{"../hash":99,"dup":34}],103:[function(require,module,exports){
+},{"../hash":95,"dup":34}],99:[function(require,module,exports){
 arguments[4][35][0].apply(exports,arguments)
-},{"../hash":99,"dup":35}],104:[function(require,module,exports){
+},{"../hash":95,"dup":35}],100:[function(require,module,exports){
 arguments[4][36][0].apply(exports,arguments)
-},{"dup":36,"inherits":107}],105:[function(require,module,exports){
+},{"dup":36,"inherits":103}],101:[function(require,module,exports){
 'use strict';
 
 module.exports = Response;
@@ -23597,7 +21309,7 @@ Response.prototype.getBody = function (encoding) {
   return encoding ? this.body.toString(encoding) : this.body;
 };
 
-},{}],106:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -23683,9 +21395,9 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],107:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 arguments[4][37][0].apply(exports,arguments)
-},{"dup":37}],108:[function(require,module,exports){
+},{"dup":37}],104:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -23708,7 +21420,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],109:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 /**
  * Returns a `Boolean` on whether or not the a `String` starts with '0x'
  * @param {String} str the string input value
@@ -23723,20 +21435,20 @@ module.exports = function isHexPrefixed(str) {
   return str.slice(0, 2) === '0x';
 }
 
-},{}],110:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],111:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 arguments[4][38][0].apply(exports,arguments)
-},{"dup":38}],112:[function(require,module,exports){
+},{"dup":38}],108:[function(require,module,exports){
 'use strict'
 module.exports = require('./lib/api')(require('./lib/keccak'))
 
-},{"./lib/api":113,"./lib/keccak":117}],113:[function(require,module,exports){
+},{"./lib/api":109,"./lib/keccak":113}],109:[function(require,module,exports){
 'use strict'
 var createKeccak = require('./keccak')
 var createShake = require('./shake')
@@ -23766,7 +21478,7 @@ module.exports = function (KeccakState) {
   }
 }
 
-},{"./keccak":114,"./shake":115}],114:[function(require,module,exports){
+},{"./keccak":110,"./shake":111}],110:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var Transform = require('stream').Transform
@@ -23853,7 +21565,7 @@ module.exports = function (KeccakState) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":70,"inherits":107,"stream":148}],115:[function(require,module,exports){
+},{"buffer":66,"inherits":103,"stream":144}],111:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var Transform = require('stream').Transform
@@ -23931,7 +21643,7 @@ module.exports = function (KeccakState) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":70,"inherits":107,"stream":148}],116:[function(require,module,exports){
+},{"buffer":66,"inherits":103,"stream":144}],112:[function(require,module,exports){
 'use strict'
 var P1600_ROUND_CONSTANTS = [1, 0, 32898, 0, 32906, 2147483648, 2147516416, 2147483648, 32907, 0, 2147483649, 0, 2147516545, 2147483648, 32777, 2147483648, 138, 0, 136, 0, 2147516425, 0, 2147483658, 0, 2147516555, 0, 139, 2147483648, 32905, 2147483648, 32771, 2147483648, 32770, 2147483648, 128, 2147483648, 32778, 0, 2147483658, 2147483648, 2147516545, 2147483648, 32896, 2147483648, 2147483649, 0, 2147516424, 2147483648]
 
@@ -24120,7 +21832,7 @@ exports.p1600 = function (s) {
   }
 }
 
-},{}],117:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var keccakState = require('./keccak-state-unroll')
@@ -24193,7 +21905,7 @@ Keccak.prototype.copy = function (dest) {
 module.exports = Keccak
 
 }).call(this,require("buffer").Buffer)
-},{"./keccak-state-unroll":116,"buffer":70}],118:[function(require,module,exports){
+},{"./keccak-state-unroll":112,"buffer":66}],114:[function(require,module,exports){
 // This file is the concatenation of many js files.
 // See http://github.com/jimhigson/oboe.js for the raw source
 
@@ -26897,7 +24609,7 @@ oboe.drop = function() {
       }
    }()), Object, Array, Error, JSON);
 
-},{}],119:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -26944,7 +24656,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 }
 
 }).call(this,require('_process'))
-},{"_process":120}],120:[function(require,module,exports){
+},{"_process":116}],116:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -27126,10 +24838,10 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],121:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":122}],122:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":118}],118:[function(require,module,exports){
 // a duplex stream is just a stream that is both readable and writable.
 // Since JS doesn't have multiple prototypal inheritance, this class
 // prototypally inherits from Readable, and then parasitically from
@@ -27205,7 +24917,7 @@ function forEach(xs, f) {
     f(xs[i], i);
   }
 }
-},{"./_stream_readable":124,"./_stream_writable":126,"core-util-is":73,"inherits":107,"process-nextick-args":119}],123:[function(require,module,exports){
+},{"./_stream_readable":120,"./_stream_writable":122,"core-util-is":69,"inherits":103,"process-nextick-args":115}],119:[function(require,module,exports){
 // a passthrough stream.
 // basically just the most minimal sort of Transform stream.
 // Every written chunk gets output as-is.
@@ -27232,7 +24944,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":125,"core-util-is":73,"inherits":107}],124:[function(require,module,exports){
+},{"./_stream_transform":121,"core-util-is":69,"inherits":103}],120:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -28176,7 +25888,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":122,"./internal/streams/BufferList":127,"_process":120,"buffer":70,"buffer-shims":69,"core-util-is":73,"events":98,"inherits":107,"isarray":110,"process-nextick-args":119,"string_decoder/":149,"util":67}],125:[function(require,module,exports){
+},{"./_stream_duplex":118,"./internal/streams/BufferList":123,"_process":116,"buffer":66,"buffer-shims":65,"core-util-is":69,"events":94,"inherits":103,"isarray":106,"process-nextick-args":115,"string_decoder/":145,"util":63}],121:[function(require,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -28359,7 +26071,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":122,"core-util-is":73,"inherits":107}],126:[function(require,module,exports){
+},{"./_stream_duplex":118,"core-util-is":69,"inherits":103}],122:[function(require,module,exports){
 (function (process){
 // A bit simpler than readable streams.
 // Implement an async ._write(chunk, encoding, cb), and it'll handle all
@@ -28916,7 +26628,7 @@ function CorkedRequest(state) {
   };
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":122,"_process":120,"buffer":70,"buffer-shims":69,"core-util-is":73,"events":98,"inherits":107,"process-nextick-args":119,"util-deprecate":158}],127:[function(require,module,exports){
+},{"./_stream_duplex":118,"_process":116,"buffer":66,"buffer-shims":65,"core-util-is":69,"events":94,"inherits":103,"process-nextick-args":115,"util-deprecate":154}],123:[function(require,module,exports){
 'use strict';
 
 var Buffer = require('buffer').Buffer;
@@ -28981,10 +26693,10 @@ BufferList.prototype.concat = function (n) {
   }
   return ret;
 };
-},{"buffer":70,"buffer-shims":69}],128:[function(require,module,exports){
+},{"buffer":66,"buffer-shims":65}],124:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":123}],129:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":119}],125:[function(require,module,exports){
 (function (process){
 var Stream = (function (){
   try {
@@ -29004,19 +26716,19 @@ if (!process.browser && process.env.READABLE_STREAM === 'disable' && Stream) {
 }
 
 }).call(this,require('_process'))
-},{"./lib/_stream_duplex.js":122,"./lib/_stream_passthrough.js":123,"./lib/_stream_readable.js":124,"./lib/_stream_transform.js":125,"./lib/_stream_writable.js":126,"_process":120}],130:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":118,"./lib/_stream_passthrough.js":119,"./lib/_stream_readable.js":120,"./lib/_stream_transform.js":121,"./lib/_stream_writable.js":122,"_process":116}],126:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":125}],131:[function(require,module,exports){
+},{"./lib/_stream_transform.js":121}],127:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":126}],132:[function(require,module,exports){
+},{"./lib/_stream_writable.js":122}],128:[function(require,module,exports){
 arguments[4][40][0].apply(exports,arguments)
-},{"buffer":70,"dup":40}],133:[function(require,module,exports){
+},{"buffer":66,"dup":40}],129:[function(require,module,exports){
 arguments[4][41][0].apply(exports,arguments)
-},{"assert":60,"buffer":70,"dup":41}],134:[function(require,module,exports){
+},{"assert":56,"buffer":66,"dup":41}],130:[function(require,module,exports){
 arguments[4][42][0].apply(exports,arguments)
-},{"./lib":138,"./lib/elliptic":137,"dup":42}],135:[function(require,module,exports){
+},{"./lib":134,"./lib/elliptic":133,"dup":42}],131:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var toString = Object.prototype.toString
@@ -29064,31 +26776,31 @@ exports.isNumberInInterval = function (number, x, y, message) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":108}],136:[function(require,module,exports){
+},{"../../is-buffer/index.js":104}],132:[function(require,module,exports){
 arguments[4][44][0].apply(exports,arguments)
-},{"bip66":63,"buffer":70,"dup":44}],137:[function(require,module,exports){
+},{"bip66":59,"buffer":66,"dup":44}],133:[function(require,module,exports){
 arguments[4][45][0].apply(exports,arguments)
-},{"../messages.json":139,"bn.js":64,"buffer":70,"create-hash":74,"dup":45,"elliptic":77}],138:[function(require,module,exports){
+},{"../messages.json":135,"bn.js":60,"buffer":66,"create-hash":70,"dup":45,"elliptic":73}],134:[function(require,module,exports){
 arguments[4][46][0].apply(exports,arguments)
-},{"./assert":135,"./der":136,"./messages.json":139,"dup":46}],139:[function(require,module,exports){
+},{"./assert":131,"./der":132,"./messages.json":135,"dup":46}],135:[function(require,module,exports){
 arguments[4][47][0].apply(exports,arguments)
-},{"dup":47}],140:[function(require,module,exports){
+},{"dup":47}],136:[function(require,module,exports){
 arguments[4][48][0].apply(exports,arguments)
-},{"buffer":70,"dup":48}],141:[function(require,module,exports){
+},{"buffer":66,"dup":48}],137:[function(require,module,exports){
 arguments[4][49][0].apply(exports,arguments)
-},{"./sha":142,"./sha1":143,"./sha224":144,"./sha256":145,"./sha384":146,"./sha512":147,"dup":49}],142:[function(require,module,exports){
+},{"./sha":138,"./sha1":139,"./sha224":140,"./sha256":141,"./sha384":142,"./sha512":143,"dup":49}],138:[function(require,module,exports){
 arguments[4][50][0].apply(exports,arguments)
-},{"./hash":140,"buffer":70,"dup":50,"inherits":107}],143:[function(require,module,exports){
+},{"./hash":136,"buffer":66,"dup":50,"inherits":103}],139:[function(require,module,exports){
 arguments[4][51][0].apply(exports,arguments)
-},{"./hash":140,"buffer":70,"dup":51,"inherits":107}],144:[function(require,module,exports){
+},{"./hash":136,"buffer":66,"dup":51,"inherits":103}],140:[function(require,module,exports){
 arguments[4][52][0].apply(exports,arguments)
-},{"./hash":140,"./sha256":145,"buffer":70,"dup":52,"inherits":107}],145:[function(require,module,exports){
+},{"./hash":136,"./sha256":141,"buffer":66,"dup":52,"inherits":103}],141:[function(require,module,exports){
 arguments[4][53][0].apply(exports,arguments)
-},{"./hash":140,"buffer":70,"dup":53,"inherits":107}],146:[function(require,module,exports){
+},{"./hash":136,"buffer":66,"dup":53,"inherits":103}],142:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
-},{"./hash":140,"./sha512":147,"buffer":70,"dup":54,"inherits":107}],147:[function(require,module,exports){
+},{"./hash":136,"./sha512":143,"buffer":66,"dup":54,"inherits":103}],143:[function(require,module,exports){
 arguments[4][55][0].apply(exports,arguments)
-},{"./hash":140,"buffer":70,"dup":55,"inherits":107}],148:[function(require,module,exports){
+},{"./hash":136,"buffer":66,"dup":55,"inherits":103}],144:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29217,7 +26929,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":98,"inherits":107,"readable-stream/duplex.js":121,"readable-stream/passthrough.js":128,"readable-stream/readable.js":129,"readable-stream/transform.js":130,"readable-stream/writable.js":131}],149:[function(require,module,exports){
+},{"events":94,"inherits":103,"readable-stream/duplex.js":117,"readable-stream/passthrough.js":124,"readable-stream/readable.js":125,"readable-stream/transform.js":126,"readable-stream/writable.js":127}],145:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29440,7 +27152,7 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":70}],150:[function(require,module,exports){
+},{"buffer":66}],146:[function(require,module,exports){
 var isHexPrefixed = require('is-hex-prefixed');
 
 /**
@@ -29456,7 +27168,7 @@ module.exports = function stripHexPrefix(str) {
   return isHexPrefixed(str) ? str.slice(2) : str;
 }
 
-},{"is-hex-prefixed":109}],151:[function(require,module,exports){
+},{"is-hex-prefixed":105}],147:[function(require,module,exports){
 'use strict';
 
 var Response = require('http-response-object');
@@ -29529,7 +27241,7 @@ function doRequest(method, url, options, callback) {
   return new Response(xhr.status, headers, xhr.responseText);
 }
 
-},{"http-response-object":105,"then-request/lib/handle-qs.js":157}],152:[function(require,module,exports){
+},{"http-response-object":101,"then-request/lib/handle-qs.js":153}],148:[function(require,module,exports){
 'use strict';
 
 var replace = String.prototype.replace;
@@ -29549,7 +27261,7 @@ module.exports = {
     RFC3986: 'RFC3986'
 };
 
-},{}],153:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 'use strict';
 
 var stringify = require('./stringify');
@@ -29562,7 +27274,7 @@ module.exports = {
     stringify: stringify
 };
 
-},{"./formats":152,"./parse":154,"./stringify":155}],154:[function(require,module,exports){
+},{"./formats":148,"./parse":150,"./stringify":151}],150:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -29731,7 +27443,7 @@ module.exports = function (str, opts) {
     return utils.compact(obj);
 };
 
-},{"./utils":156}],155:[function(require,module,exports){
+},{"./utils":152}],151:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -29940,7 +27652,7 @@ module.exports = function (object, opts) {
     return keys.join(delimiter);
 };
 
-},{"./formats":152,"./utils":156}],156:[function(require,module,exports){
+},{"./formats":148,"./utils":152}],152:[function(require,module,exports){
 'use strict';
 
 var has = Object.prototype.hasOwnProperty;
@@ -30124,7 +27836,7 @@ exports.isBuffer = function (obj) {
     return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));
 };
 
-},{}],157:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 'use strict';
 
 var parse = require('qs').parse;
@@ -30148,7 +27860,7 @@ function handleQs(url, query) {
   return start + qs + end;
 }
 
-},{"qs":153}],158:[function(require,module,exports){
+},{"qs":149}],154:[function(require,module,exports){
 (function (global){
 
 /**
@@ -30219,16 +27931,16 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],159:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 arguments[4][37][0].apply(exports,arguments)
-},{"dup":37}],160:[function(require,module,exports){
+},{"dup":37}],156:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],161:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -30818,19 +28530,2328 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":160,"_process":120,"inherits":159}],162:[function(require,module,exports){
+},{"./support/isBuffer":156,"_process":116,"inherits":155}],158:[function(require,module,exports){
+module.exports={
+  "0x": "no response or bad input",
+  "buy": {
+    "0": "market doesn't exist",
+    "-1": "amount/price bad",
+    "-2": "oracle-only branch",
+    "-4": "not enough money",
+    "-5": "bid price exceeds best ask",
+    "21": "trade already exists"
+  },
+  "buyCompleteSets": {
+    "0": "market not found",
+    "-1": "oracle-only branch",
+    "-3": "not enough cash"
+  },
+  "cashFaucet": {
+    "-1": "Hey, you're not broke!"
+  },
+  "claimProceeds": {
+    "0": "reporting not done",
+    "-1": "trader doesn't exist",
+    "-8": "invalid branch"
+  },
+  "closeMarket": {
+    "0": "fail/trading not over yet/event not expired or closed already",
+    "-1": "Market has no cash anyway / already closed",
+    "-2": "0 outcome / not reported on yet",
+    "-3": "not final round 2 event",
+    "-5": "Event forked and not final yet",
+    "-6": "bonded pushed forward market not ready to be resolved",
+    "-7": "event not reportable >.99",
+    "-8": "market isn't in branch"
+  },
+  "collectFees": {
+    "-1": "rep redistribution/rewards/penalizations in consensus not done yet"
+  },
+  "createEvent": {
+    "-1": "we're either already past that date, branch doesn't exist, or description is bad",
+    "0": "not enough money to pay fees or event already exists",
+    "-2": "max value < min value",
+    "-9": "would expire during non-reporting fork period"
+  },
+  "createSingleEventMarket": {
+    "0": "not enough money to pay fees or event already exists",
+    "-1": "we're either already past that date, branch doesn't exist, or description is bad, or bad input or parent doesn't exist",
+    "-2": "max value < min value",
+    "-3": "too many outcomes",
+    "-4": "not enough money",
+    "-5": "fee too low",
+    "-6": "duplicate events",
+    "-7": "event already expired",
+    "-8": "market already exists",
+    "-9": "would expire during non-reporting fork period"
+  },
+  "createMarket": {
+    "-1": "bad input or parent doesn't exist",
+    "-2": "too many events",
+    "-3": "too many outcomes",
+    "-4": "not enough money",
+    "-5": "fee too low",
+    "-6": "duplicate events",
+    "-7": "event already expired",
+    "-8": "market already exists",
+    "-9": "would expire during non-reporting fork period"
+  },
+  "createSubbranch": {
+    "-1": "bad input or parent doesn't exist",
+    "-2": "no money for creation fee or branch already exists"
+  },
+  "penalizationCatchup": {
+    "-1": "not in first half of reporting period",
+    "-2": "doesn't need to be penalized/caught up",
+    "-3": "user isn't behind or reported in the last period (and should thus use the penalization functions in consensus.se)"
+  },
+  "penalizeOnForkedEvent": {
+    "-2": "already past first half of new period and needed to penalize before then",
+    "-4": "fork event isn't resolved yet",
+    "-5": "already done for all events in this period"
+  },
+  "penalizeRoundTwoWrong": {
+    "0": "event is a fork event",
+    "-1": "need to penalize in round 2 penalize function",
+    "-2": "already past first half of new period and needed to penalize before then",
+    "-4": "in fork period only thing that rbcr is done on is the round 2 event in the original branch via round 2 penalize",
+    "-5": "already done for all events in this period",
+    "-6": "forked events should be penalized using the fork penalization function"
+  },
+  "penalizeWrong": {
+    "0": "event is a fork event",
+    "-1": "need to penalize in round 2 penalize function",
+    "-2": "already past first half of new period and needed to penalize before then",
+    "-4": "in fork period only thing that rbcr is done on is the round 2 event in the original branch via round 2 penalize",
+    "-6": "forked events should be penalized using the fork penalization function",
+    "-7": "no outcome"
+  },
+  "proveReporterDidntReportEnough": {
+    "-1": "already done",
+    "-2": "not in right part of period"
+  },
+  "pushMarketForward": {
+    "-1": "fork period cannot be the current or previous period",
+    "-2": "market is already closed or pushed forward",
+    "-3": "not enough cash to post early resolution bond",
+    "-4": "early resolution already attempted or outcome already exists"
+  },
+  "sell": {
+    "0": "market doesn't exist",
+    "-1": "amount/price bad",
+    "-2": "oracle only branch",
+    "-3": "bad outcome to trade",
+    "-4": "not enough shares",
+    "-5": "best bid exceeds ask price",
+    "10": "insufficient balance",
+    "21": "trade already exists"
+  },
+  "sellCompleteSets": {
+    "-1": "oracle-only branch",
+    "-2": "not a participant in this market",
+    "-3": "not enough shares"
+  },
+  "sendReputation": {
+    "-1": "Your reputation account was just created! Earn some reputation before you can send to others",
+    "-2": "Receiving address doesn't exist"
+  },
+  "shortAsk": {
+    "0": "market doesn't exist",
+    "-1": "amount/price bad",
+    "-2": "oracle only branch",
+    "-3": "bad outcome to trade",
+    "-4": "not enough shares",
+    "-5": "best bid exceeds ask price",
+    "10": "insufficient balance",
+    "21": "trade already exists"
+  },
+  "short_sell": {
+    "-1": "trade doesn't exist",
+    "-2": "invalid trade hash/commitment",
+    "-3": "must be a bid, not an ask",
+    "-4": "market is already resolved",
+    "-5": "can't pickup your own trade",
+    "-6": "can't trade on oracle only branch",
+    "-7": "not a large enough trade",
+    "10": "insufficient balance",
+    "22": "trade in same block prohibited"
+  },
+  "slashRep": {
+    "0": "not a valid claim",
+    "-2": "reporter doesn't exist"
+  },
+  "submitReportHash": {
+    "-1": "invalid event",
+    "-3": "not eligible to report on this event"
+  },
+  "submitReport": {
+    "0": "reporter doesn't exist or has <1 rep",
+    "-1": "has already reported",
+    "-2": "not in second half of period [reveal part]",
+    "-3": "hash doesn't match",
+    "-4": "bad report",
+    "-5": "invalid event",
+    "-6": "already resolved",
+    "-7": "<48 hr left in period, too late to report, able to put up readj. bonds though",
+    "-8": "fees couldn't be collected",
+    "-9": "need to pay not reporting bond"
+  },
+  "trade": {
+    "-1": "oracle only branch",
+    "-2": "bad trade hash",
+    "-3": "trader doesn't exist / own shares in this market",
+    "-4": "must trade at least 0.00000001 in value",
+    "-5": "can't pick up your own trade",
+    "10": "insufficient balance",
+    "22": "trade in same block prohibited"
+  },
+  "updateTradingFee": {
+    "-1": "invalid trading fee: either fee is below the minimum trading fee or you are trying to raise the trading fee (trading fees can be lowered, but not raised)",
+    "-4": "sender's address does not match the market creator's address"
+  },
+  "GAS_LIMIT_EXCEEDED": {
+    "error": 40,
+    "message": "trade exceeds the current block gas limit"
+  },
+  "WRONG_NUMBER_OF_OUTCOMES": {
+    "error": 41,
+    "message": "the number of initial fair prices does not match this market's number of outcomes"
+  },
+  "INSUFFICIENT_LIQUIDITY": {
+    "error": 42,
+    "message": "insufficient liquidity to generate order book"
+  },
+  "INITIAL_PRICE_OUT_OF_BOUNDS": {
+    "error": 43,
+    "message": "one or more initial fair prices are out-of-bounds"
+  },
+  "PRICE_WIDTH_OUT_OF_BOUNDS": {
+    "error": 44,
+    "message": "price width is too large for one or more initial fair prices"
+  },
+  "DB_DELETE_FAILED": {
+    "error": 97,
+    "message": "database delete failed"
+  },
+  "DB_WRITE_FAILED": {
+    "error": 98,
+    "message": "database write failed"
+  },
+  "DB_READ_FAILED": {
+    "error": 99,
+    "message": "database read failed"
+  },
+  "INVALID_CONTRACT_PARAMETER": {
+    "error": 400,
+    "message": "cannot send object parameter to contract"
+  },
+  "NOT_LOGGED_IN": {
+    "error": 401,
+    "message": "not logged in"
+  },
+  "PARAMETER_NUMBER_ERROR": {
+    "error": 402,
+    "message": "wrong number of parameters"
+  },
+  "BAD_CREDENTIALS": {
+    "error": 403,
+    "message": "incorrect handle or password"
+  },
+  "TRANSACTION_NOT_FOUND": {
+    "error": 404,
+    "message": "transaction not found"
+  },
+  "PASSWORD_TOO_SHORT": {
+    "error": 405,
+    "message": "password must be at least 6 characters long"
+  },
+  "NULL_CALL_RETURN": {
+    "error": 406,
+    "message": "expected contract call to return value, received null"
+  },
+  "NULL_RESPONSE": {
+    "error": 407,
+    "message": "expected transaction hash from Ethereum node, received null"
+  },
+  "NO_RESPONSE": {
+    "error": 408,
+    "message": "no response"
+  },
+  "INVALID_RESPONSE": {
+    "error": 409,
+    "message": "could not parse response from Ethereum node"
+  },
+  "LOCAL_NODE_FAILURE": {
+    "error": 410,
+    "message": "RPC request to local Ethereum node failed"
+  },
+  "HOSTED_NODE_FAILURE": {
+    "error": 411,
+    "message": "RPC request to hosted nodes failed"
+  },
+  "TRANSACTION_INVALID": {
+    "error": 412,
+    "message": "transaction validation failed"
+  },
+  "TRANSACTION_RETRY_MAX_EXCEEDED": {
+    "error": 413,
+    "message": "maximum number of transaction retry attempts exceeded"
+  },
+  "HANDLE_TAKEN": {
+    "error": 422,
+    "message": "handle already taken"
+  },
+  "FILTER_NOT_CREATED": {
+    "error": 450,
+    "message": "filter could not be created"
+  },
+  "TRANSACTION_FAILED": {
+    "error": 500,
+    "message": "transaction failed"
+  },
+  "TRANSACTION_NOT_CONFIRMED": {
+    "error": 501,
+    "message": "polled network but could not confirm transaction"
+  },
+  "DUPLICATE_TRANSACTION": {
+    "error": 502,
+    "message": "duplicate transaction"
+  },
+  "RAW_TRANSACTION_ERROR": {
+    "error": 503,
+    "message": "error sending client-side transaction"
+  },
+  "RLP_ENCODING_ERROR": {
+    "error": 504,
+    "message": "RLP encoding error"
+  },
+  "TRANSACTION_RECEIPT_NOT_FOUND": {
+    "error": 505,
+    "message": "transaction receipt not found"
+  },
+  "RPC_TIMEOUT": {
+    "error": 599,
+    "message": "timed out while waiting for Ethereum network response"
+  },
+  "LOOPBACK_NOT_FOUND": {
+    "error": 650,
+    "message": "loopback interface required for synchronous local commands"
+  },
+  "ETHEREUM_NOT_FOUND": {
+    "error": 651,
+    "message": "no active ethereum node(s) found"
+  },
+  "CHECK_ORDER_BOOK_FAILED": {
+    "error": 710,
+    "message": "could not check order book using current prices"
+  },
+  "TRADE_FAILED": {
+    "error": 711,
+    "message": "trade failed, instead of success value (1), received "
+  },
+  "TRADE_NOT_FOUND": {
+    "error": 712,
+    "message": "trade not found"
+  },
+  "REPORT_NOT_FOUND": {
+    "error": 812,
+    "message": "report not found"
+  }
+}
+
+},{}],159:[function(require,module,exports){
+"use strict";
+
+function ErrorWithData(message, data) {
+    Error.call(this, message);
+    this.name = "ErrorWithData";
+    this.data = data;
+}
+
+ErrorWithData.prototype = Object.create(Error.prototype);
+ErrorWithData.prototype.constructor = ErrorWithData;
+
+function ErrorWithCode(message, code) {
+  Error.call(this, message);
+  this.name = "ErrorWithCode";
+  this.code = code;
+}
+
+ErrorWithCode.prototype = Object.create(Error.prototype);
+ErrorWithCode.prototype.constructor = ErrorWithCode;
+
+function ErrorWithCodeAndData(message, code, data) {
+  Error.call(this, message);
+  this.name = "ErrorWithCodeAndData";
+  this.code = code;
+  this.data = data;
+}
+
+module.exports = {
+    ErrorWithCode: ErrorWithCode,
+    ErrorWithData: ErrorWithData,
+    ErrorWithCodeAndData: ErrorWithCodeAndData
+};
+
+},{}],160:[function(require,module,exports){
+(function (global){
+var ethrpc = global.ethrpc || require("./");
+global.ethrpc = ethrpc;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./":161}],161:[function(require,module,exports){
+/**
+ * JSON RPC methods for Ethereum
+ * @author Jack Peterson (jack@tinybike.net)
+ */
+
+"use strict";
+
+var clone = require("clone");
+var EthTx = require("ethereumjs-tx");
+var BigNumber = require("bignumber.js");
+var keccak_256 = require("js-sha3").keccak_256;
+var abi = require("augur-abi");
+var errors = require("./errors.json");
+var ErrorWithData = require("./errors.js").ErrorWithData;
+var ErrorWithCodeAndData = require("./errors.js").ErrorWithCodeAndData;
+var Transporter = require("./transport/transporter.js");
+
+BigNumber.config({
+  MODULO_MODE: BigNumber.EUCLID,
+  ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN
+});
+
+function RPCError(err) {
+  this.name = "RPCError";
+  this.message = JSON.stringify(err);
+}
+
+RPCError.prototype = Error.prototype;
+
+function isFunction(f) {
+  return Object.prototype.toString.call(f) === "[object Function]";
+}
+
+function wait(delay) {
+  var until = new Date().getTime() + delay;
+  while (new Date().getTime() < until) { }
+  return;
+}
+
+var noop = function () { };
+
+module.exports = {
+
+  debug: {
+    connect: false,
+    tx: false,
+    broadcast: false,
+    nonce: false,
+    sync: false
+  },
+
+  // if set to true, dropped transactions are automatically resubmitted
+  retryDroppedTxs: true,
+
+  // Number of required confirmations for transact sequence
+  REQUIRED_CONFIRMATIONS: 0,
+
+  // Maximum number of retry attempts for dropped transactions
+  TX_RETRY_MAX: 5,
+
+  // Maximum number of transaction verification attempts
+  TX_POLL_MAX: 1000,
+
+  // Transaction polling interval
+  TX_POLL_INTERVAL: 10000,
+
+  // how frequently to poll when waiting for blocks
+  BLOCK_POLL_INTERVAL: 30000,
+
+  // Default timeout for asynchronous POST
+  POST_TIMEOUT: 30000,
+
+  DEFAULT_GAS: "0x2fd618",
+
+  ETHER: new BigNumber(10, 10).toPower(18),
+
+  Error: RPCError,
+
+  errors: errors,
+
+  requests: null,
+
+  // Hook for transaction callbacks
+  txRelay: null,
+
+  // Do not call txRelay for these methods
+  excludedFromTxRelay: null,
+
+  txs: null,
+
+  rawTxs: null,
+
+  rawTxMaxNonce: null,
+
+  block: null,
+
+  networkID: null,
+
+  notifications: null,
+
+  gasPrice: null,
+
+  configuration: null,
+
+  internalState: null,
+
+  /**
+   * Initiates a connection to Ethereum.  This must be called before any other methods are called.
+   *
+   * @typedef configuration
+   * @type {object}
+   * @property {?string[]} httpAddresses
+   * @property {?string[]} wsAddresses
+   * @property {?string[]} ipcAddresses
+   * @property {?number} connectionTimeout
+   * @property {!function(Error):void} errorHandler - called when an otherwise unhandled asynchronous error occurs during the course of operation.
+   *
+   * @param {!configuration} configuration
+   * @param {!function(?Error):void} initialConnectCallback - if the error parameter is null then the connection was successful
+   * @returns {void}
+   */
+  connect: function (configuration, initialConnectCallback) {
+    this.resetState();
+
+    // overwrite configuration values with user config, throw away unused user config
+    for (var key in this.configuration) {
+      if (!this.configuration.hasOwnProperty(key)) continue;
+      if (configuration[key] === undefined || configuration[key] === null) continue;
+      this.configuration[key] = configuration[key];
+    }
+
+    // validate configuration
+    if (!isFunction(this.configuration.errorHandler)) throw new Error("configuration.errorHandler must be a function");
+    if (!Array.isArray(this.configuration.httpAddresses)) return this.configuration.errorHandler(new Error("configuration.httpAddresses must be an array."));
+    if (this.configuration.httpAddresses.some(function (x) { return typeof x !== "string"; })) return this.configuration.errorHandler(new Error("configuration.httpAddresses must contain only strings."));
+    if (!Array.isArray(this.configuration.wsAddresses)) return this.configuration.errorHandler(new Error("configuration.wsAddresses must be an array."));
+    if (this.configuration.wsAddresses.some(function (x) { return typeof x !== "string"; })) return this.configuration.errorHandler(new Error("configuration.wsAddresses must contain only strings."));
+    if (!Array.isArray(this.configuration.ipcAddresses)) return this.configuration.errorHandler(new Error("configuration.ipcAddresses must be an array."));
+    if (this.configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) return this.configuration.errorHandler(new Error("configuration.ipcAddresses must contain only strings."));
+
+    var syncOnly = !initialConnectCallback;
+    if (syncOnly) initialConnectCallback = function (error) { if (error instanceof Error) throw error; else if (error) throw new ErrorWithData(error); };
+
+    // initialize the transporter, this will be how we send to and receive from the blockchain
+    /* jshint nonew: false */
+    new Transporter(this.configuration, this.internalState.shimMessageHandler, syncOnly, this.debug.connect, function (error, transporter) {
+      if (error !== null) return initialConnectCallback(error);
+      this.internalState.transporter = transporter;
+      // ensure we can do basic JSON-RPC over this connection
+      this.version(function (errorOrResult) {
+        if (errorOrResult instanceof Error || errorOrResult.error) return initialConnectCallback(errorOrResult);
+        this.setupBlockSubscription(function () { initialConnectCallback(null); });
+      }.bind(this));
+    }.bind(this));
+  },
+
+  /**
+   * Resets the global state of this module to default.
+   */
+  resetState: function() {
+    // stop any pending timers
+    clearInterval((this.internalState || {}).newBlockIntervalTimeoutId);
+
+    // reset configuration to defaults
+    this.configuration = {
+      httpAddresses: [],
+      wsAddresses: [],
+      ipcAddresses: [],
+      connectionTimeout: 3000,
+      errorHandler: null,
+    };
+
+    // redirect any not-yet-received responses to /dev/null
+    var oldMessageHandlerObject = (this.internalState || {}).shimMessageHandlerObject || {};
+    var newMessageHandlerObject = { realMessageHandler: this.blockchainMessageHandler.bind(this) };
+    oldMessageHandlerObject.realMessageHandler = function () {};
+
+    // reset state to defaults
+    this.internalState = {
+      transporter: null,
+      outstandingRequests: {},
+      subscriptions: {},
+      newBlockIntervalTimeoutId: null,
+      shimMessageHandlerObject: newMessageHandlerObject,
+      // by binding this function to `shimMessageHandlerObject`, its `this` value will be a pointer to an object that we can mutate before replacing when reset
+      shimMessageHandler: function (error, jso) { this.realMessageHandler(error, jso); }.bind(newMessageHandlerObject)
+    };
+
+    // reset public state
+    this.block = null;
+    this.excludedFromTxRelay = {};
+    this.gasPrice = 20000000000;
+    this.notifications = {};
+    this.rawTxMaxNonce = -1;
+    this.rawTxs = {};
+    this.requests = 1;
+    this.txs = {};
+  },
+
+  // TODO: add support for caller passing in request and response type information
+  /**
+   * Used internally.  Submits a remote procedure call to the blockchain.
+   *
+   * @param {!object} jso - The JSON-RPC call to make.
+   * @param {?string} transportRequirements - ANY, SYNC or DUPLEX.  Will choose best available transport that meets the requirements.
+   * @param {?function(?Error, ?object):void} callback - Called when a response to the request is received.  May only be null if preferredTransport is SYNC.
+   * @returns {void|?Error|?object} - Returns the error or result if the operation is synchronous.
+   */
+  submitRequestToBlockchain: function (jso, transportRequirements, callback) {
+    var syncErrorOrResult;
+    if (transportRequirements === "SYNC") callback = function (error, result) { return (syncErrorOrResult = (error || result)); };
+
+    if (isFunction(transportRequirements) && !callback) {
+      callback = transportRequirements;
+      transportRequirements = null;
+    }
+
+    if (!isFunction(callback)) throw new Error("callback must be a function");
+    if (typeof transportRequirements !== "string" && transportRequirements !== null) return callback(new Error("transportRequirements must be null or a string"));
+    if (typeof jso !== "object") return callback(new Error("jso must be an object"));
+    if (typeof jso.id !== "number") return callback(new Error("jso.id must be a number"));
+
+    // FIXME: return types shouldn't be embedded into the RPC JSO
+    var expectedReturnTypes = this.strip(jso);
+    this.internalState.outstandingRequests[jso.id] = {
+      jso: jso,
+      expectedReturnTypes: expectedReturnTypes,
+      callback: callback
+    };
+
+    this.internalState.transporter.blockchainRpc(jso, transportRequirements, this.debug.broadcast);
+
+    if (transportRequirements === "SYNC") {
+      if (typeof this.internalState.outstandingRequests[jso.id] !== "undefined") return new Error("SYNC request didn't receive messageHandler call before returning.");
+      return syncErrorOrResult;
+    }
+  },
+
+  /**
+   * Used internally.  Processes a response from the blockchain by looking up the associated callback and calling it.
+   */
+  blockchainMessageHandler: function (error, jso) {
+    if (error !== null)
+      return this.configuration.errorHandler(error);
+    if (typeof jso !== "object")
+      return this.configuration.errorHandler(new ErrorWithData("Unexpectedly received a message from the transport that was not an object.", jso));
+
+    var subscriptionHandler = function () {
+      if (jso.method !== "eth_subscription")
+        return this.configuration.errorHandler(new ErrorWithData("Received an RPC request that wasn't an `eth_subscription`.", jso));
+      if (typeof jso.params.subscription !== "string")
+        return this.configuration.errorHandler(new ErrorWithData("Received an `eth_subscription` request without a subscription ID.", jso));
+      if (jso.params.result === null || jso.params.result === undefined)
+        return this.configuration.errorHandler(new ErrorWithData("Received an `eth_subscription` request without a result.", jso));
+
+      var subscriptionCallback = this.internalState.subscriptions[jso.params.subscription];
+      if (subscriptionCallback)
+        subscriptionCallback(jso.params.result);
+    }.bind(this);
+
+    var responseHandler = function () {
+      if (typeof jso.id !== "number")
+        return this.configuration.errorHandler(new ErrorWithData("Received a message from the blockchain that didn't have a valid id.", jso));
+      var outstandingRequest = this.internalState.outstandingRequests[jso.id];
+      delete this.internalState.outstandingRequests[jso.id];
+      if (typeof outstandingRequest !== "object")
+        return this.configuration.errorHandler(new ErrorWithData("Unable to locate original request for blockchain response.", jso));
+
+      // FIXME: outstandingRequest.callback should be function(Error,object) not function(Error|object)
+      this.parse(jso, outstandingRequest.expectedReturnTypes, outstandingRequest.callback);
+    }.bind(this);
+
+    var errorHandler = function () {
+      // errors with IDs can go through the normal result process
+      if (jso.id !== null && jso.id !== undefined)
+        return responseHandler.bind(this)(jso);
+      this.configuration.errorHandler(new ErrorWithCodeAndData(jso.error.message, jso.error.code, jso.error.data));
+    }.bind(this);
+
+    // depending on the type of message it is (request, response, error, invalid) we will handle it differently
+    if (jso.method !== undefined) {
+      subscriptionHandler();
+    } else if (jso.result !== undefined) {
+      responseHandler();
+    } else if (jso.error !== undefined) {
+      errorHandler();
+    } else {
+      this.configuration.errorHandler(new ErrorWithData("Received an invalid JSON-RPC message.", jso));
+    }
+  },
+
+  /**
+   * Used internally.  Setup the initial subscription for new blocks.  Called on first connect, then never again.
+   * 
+   * @param {function():void} callback - called when the subscription is done being setup
+   */
+  setupBlockSubscription: function (callback) {
+    if (!callback) {
+      // sync: we know subscriptions aren't supported, so just skip to setting up the polling
+      clearInterval(this.internalState.newBlockIntervalTimeoutId);
+      this.internalState.newBlockIntervalTimeoutId = setInterval(this.getBlockByNumber.bind(this, "latest", false, this.onNewBlock.bind(this)), this.BLOCK_POLL_INTERVAL);
+    } else {
+      // async: try to subscribe first, if that fails fallback to polling
+      var subscribeToNewBlocks = function(callback) {
+        clearInterval(this.internalState.newBlockIntervalTimeoutId);
+        this.subscribeNewHeads(function (resultOrError) {
+          if (resultOrError instanceof Error || resultOrError.error) {
+            this.internalState.newBlockIntervalTimeoutId = setInterval(this.getBlockByNumber.bind(this, "latest", false, this.onNewBlock.bind(this)), this.BLOCK_POLL_INTERVAL);
+          } else {
+            this.internalState.subscriptions[resultOrError] = this.onNewBlock.bind(this);
+          }
+          callback();
+        }.bind(this));
+      }.bind(this);
+
+      this.internalState.transporter.addReconnectListener(subscribeToNewBlocks.bind(this, function () {}));
+      subscribeToNewBlocks(callback);
+    }
+  },
+
+  onNewBlock: function (block) {
+    if (typeof block !== "object") throw new Error("block must be an object");
+
+    this.block = block;
+    // FIXME: ethrpc should really store the original block and add getters for making it easier to interact with
+    this.block.number = parseInt(block.number, 16);
+
+    // re-process all transactions
+    for (var transactionHash in this.txs) {
+      var transaction = this.txs[transactionHash];
+      this.updateTx(transaction);
+    }
+  },
+
+
+
+
+  registerTxRelay: function (txRelay) {
+    this.txRelay = txRelay;
+  },
+
+  unregisterTxRelay: function () {
+    this.txRelay = null;
+  },
+
+  wrapTxRelayCallback: function (status, payload, callback) {
+    var self = this;
+    return function (response) {
+      if (isFunction(callback)) callback(response);
+      if (payload.method && !self.excludedFromTxRelay[payload.method]) {
+        self.txRelay({
+          type: payload.label || payload.method,
+          status: status,
+          data: payload,
+          response: response
+        });
+      }
+    };
+  },
+
+  excludeFromTxRelay: function (method) {
+    if (method) {
+      if (method.constructor === Array && method.length) {
+        for (var i = 0, numMethods = method.length; i < numMethods; ++i) {
+          this.excludedFromTxRelay[method[i]] = true;
+        }
+      } else {
+        this.excludedFromTxRelay[method] = true;
+      }
+    }
+  },
+
+  includeInTxRelay: function (method) {
+    if (method) {
+      if (method.constructor === Array && method.length) {
+        for (var i = 0, numMethods = method.length; i < numMethods; ++i) {
+          this.excludedFromTxRelay[method[i]] = false;
+        }
+      } else {
+        this.excludedFromTxRelay[method] = false;
+      }
+    }
+  },
+
+  unmarshal: function (string, returns, stride, init) {
+    var elements, array, position;
+    if (string && string.length >= 66) {
+      stride = stride || 64;
+      elements = Math.ceil((string.length - 2) / stride);
+      array = new Array(elements);
+      position = init || 2;
+      for (var i = 0; i < elements; ++i) {
+        array[i] = abi.prefix_hex(string.slice(position, position + stride));
+        position += stride;
+      }
+      if (array.length) {
+        if (parseInt(array[1], 16) === array.length - 2 || parseInt(array[1], 16) / 32 === array.length - 2) {
+          array.splice(0, 2);
+        }
+      }
+      for (i = 0; i < array.length; ++i) {
+        if (returns === "number[]") {
+          array[i] = abi.string(array[i]);
+        } else if (returns === "unfix[]") {
+          array[i] = abi.unfix(array[i], "string");
+        }
+      }
+      return array;
+    } else {
+      return string;
+    }
+  },
+
+  applyReturns: function (returns, result) {
+    var res;
+    if (!returns) return result;
+    if (result && result !== "0x") {
+      if (result.error) return result;
+      returns = returns.toLowerCase();
+      res = clone(result);
+      if (returns && returns.slice(-2) === "[]") {
+        res = this.unmarshal(res, returns);
+        if (returns === "hash[]") res = abi.hex(res);
+      } else if (returns === "string") {
+        res = abi.raw_decode_hex(res);
+      } else if (returns === "number") {
+        res = abi.string(res, true);
+      } else if (returns === "int") {
+        res = abi.number(res, true);
+      } else if (returns === "bignumber") {
+        res = abi.bignum(res, null, true);
+      } else if (returns === "unfix") {
+        res = abi.unfix(res, "string");
+      } else if (returns === "null") {
+        res = null;
+      } else if (returns === "address" || returns === "address[]") {
+        res = abi.format_address(res);
+      }
+    } else {
+      res = result;
+    }
+    return res;
+  },
+
+  parse: function (origResponse, returns, callback) {
+    var results, len, err;
+    var response = clone(origResponse);
+    if ((this.debug.tx && (response && response.error)) || this.debug.broadcast) {
+      console.log("[ethrpc] response:", response);
+    }
+    if (response && typeof response === "string") {
+      try {
+        response = JSON.parse(response);
+      } catch (e) {
+        err = e;
+        if (e && e.name === "SyntaxError") {
+          err = errors.INVALID_RESPONSE;
+        }
+        if (isFunction(callback)) return callback(err);
+        throw new this.Error(err);
+      }
+    }
+    if (response !== undefined && typeof response === "object" && response !== null) {
+      if (response.error) {
+        response = {
+          error: response.error.code,
+          message: response.error.message
+        };
+        if (!isFunction(callback)) return response;
+        return callback(response);
+      } else if (response.result !== undefined) {
+        if (!isFunction(callback)) return response.result;
+        return callback(response.result);
+      } else if (response.constructor === Array && response.length) {
+        len = response.length;
+        results = new Array(len);
+        for (var i = 0; i < len; ++i) {
+          results[i] = response[i].result;
+          if (response.error || (response[i] && response[i].error)) {
+            if (this.debug.broadcast) {
+              if (isFunction(callback)) return callback(response.error);
+              throw new this.Error(response.error);
+            }
+          }
+        }
+        if (!isFunction(callback)) return results;
+        return callback(results);
+      }
+
+      // no result or error field
+      err = errors.NO_RESPONSE;
+      err.bubble = response;
+      if (isFunction(callback)) return callback(err);
+      throw new this.Error(err);
+    }
+  },
+
+  strip: function (tx) {
+    var returns;
+    if (tx.method === "eth_coinbase") return "address";
+    if (tx.params !== undefined && tx.params.length && tx.params[0]) {
+      if (tx.params[0].returns) {
+        returns = tx.params[0].returns;
+        delete tx.params[0].returns;
+      }
+      if (tx.params[0].invocation) {
+        delete tx.params[0].invocation;
+      }
+    }
+    return returns;
+  },
+
+  subscriptions: {},
+
+  unregisterSubscriptionCallback: function (id) {
+    delete this.internalState.subscriptions[id];
+  },
+
+  registerSubscriptionCallback: function (id, callback) {
+    this.internalState.subscriptions[id] = callback;
+  },
+
+  marshal: function (command, params, prefix) {
+    var payload, action;
+    if (prefix === "null" || prefix === null) {
+      action = command.toString();
+    } else {
+      action = (prefix || "eth_") + command.toString();
+    }
+    payload = {
+      id: this.requests++,
+      jsonrpc: "2.0",
+      method: action
+    };
+    if (params === undefined) params = [];
+    if (params === null) params = [];
+    if (this.debug.broadcast && params.debug) {
+      payload.debug = clone(params.debug);
+      delete params.debug;
+    }
+    if (params.timeout) {
+      payload.timeout = params.timeout;
+      delete params.timeout;
+    }
+    payload.params = (params instanceof Array) ? ethereumEncodeArray(params) : [ethereumEncodePrimitive(params)];
+    return payload;
+  },
+
+  // delete cached network, notification, and transaction data
+  clear: function () {
+    this.txs = {};
+    for (var n in this.notifications) {
+      if (!this.notifications.hasOwnProperty(n)) continue;
+      if (this.notifications[n]) {
+        clearTimeout(this.notifications[n]);
+      }
+    }
+    this.notifications = {};
+    this.rawTxs = {};
+    this.txs = {};
+    this.rawTxMaxNonce = -1;
+  },
+
+  /******************************
+   * Ethereum JSON-RPC bindings *
+   ******************************/
+
+  raw: function (command, params, callback) {
+    var transportRequirements = "ANY";
+    if (!callback) transportRequirements = "SYNC";
+    return this.submitRequestToBlockchain(this.marshal(command, params, null), transportRequirements, callback);
+  },
+
+  eth: function (command, params, callback) {
+    return this.raw("eth_" + command, params, callback);
+  },
+
+  net: function (command, params, callback) {
+    return this.raw("net_" + command, params, callback);
+  },
+
+  web3: function (command, params, callback) {
+    return this.raw("web3_" + command, params, callback);
+  },
+
+  shh: function (command, params, callback) {
+    return this.raw("shh_" + command, params, callback);
+  },
+
+  miner: function (command, params, callback) {
+    return this.raw("miner_" + command, params, callback);
+  },
+
+  admin: function (command, params, callback) {
+    return this.raw("admin_" + command, params, callback);
+  },
+
+  personal: function (command, params, callback) {
+    return this.raw("personal_" + command, params, callback);
+  },
+
+  txpool: function (command, params, callback) {
+    return this.raw("txpool_" + command, params, callback);
+  },
+
+  // ****
+  // web3_*
+  // ****
+
+  clientVersion: function (callback) {
+    return this.web3("clientVersion", null, callback);
+  },
+
+  // TODO: make this take a callback like everything else
+  sha3: function (data, isHex) {
+    if (isHex) data = abi.decode_hex(data);
+    return abi.prefix_hex(keccak_256(data));
+  },
+
+  // ****
+  // net_*
+  // ****
+
+  listening: function (callback) {
+    return this.net("listening", null, callback);
+  },
+
+  peerCount: function (callback) {
+    return this.net("peerCount", null, callback);
+  },
+
+  version: function (callback) {
+    return this.net("version", null, callback);
+  },
+
+  netVersion: function (callback) {
+    return this.version(callback);
+  },
+
+  // ****
+  // eth_*
+  // ****
+
+  accounts: function (callback) {
+    return this.eth("accounts", null, callback);
+  },
+
+  blockNumber: function (callback) {
+    return this.eth("blockNumber", null, callback);
+  },
+
+  call: function (transaction, blockNumber, callback) {
+    // support incorrect usage rather than failing fast
+    if (isFunction(blockNumber)) {
+      callback = blockNumber;
+      blockNumber = null;
+    }
+    blockNumber = validateAndDefaultBlockNumber(blockNumber);
+    return this.eth("call", [transaction, blockNumber], callback);
+  },
+
+  coinbase: function (callback) {
+    return this.eth("coinbase", null, callback);
+  },
+
+  // compileLLL intentionally left out, does not make sense as an RPC call
+
+  // compileSerpent intentionally left out, does not make sense as an RPC call
+
+  // compileSolidity intentionally left out, does not make sense as an RPC call
+
+  estimateGas: function (transaction, blockNumber, callback) {
+    // support incorrect usage rather than failing fast
+    if (isFunction(blockNumber)) {
+      callback = blockNumber;
+      blockNumber = null;
+    }
+    blockNumber = validateAndDefaultBlockNumber(blockNumber);
+    return this.eth("estimateGas", [transaction, blockNumber], callback);
+  },
+
+  getGasPrice: function (callback) {
+    return this.eth("gasPrice", null, callback);
+  },
+
+  getBalance: function (address, blockNumber, callback) {
+    // support incorrect usage rather than failing fast
+    if (isFunction(blockNumber)) {
+      callback = blockNumber;
+      blockNumber = null;
+    }
+    blockNumber = validateAndDefaultBlockNumber(blockNumber);
+    return this.eth("getBalance", [address, blockNumber], callback);
+  },
+
+  balance: function (address, blockNumber, callback) {
+    return this.getBalance(address, blockNumber, callback);
+  },
+
+  getBlockByHash: function (hash, shouldReturnFullTransactions, callback) {
+    if (shouldReturnFullTransactions === undefined) shouldReturnFullTransactions = true;
+    return this.eth("getBlockByHash", [hash, !!shouldReturnFullTransactions], callback);
+  },
+
+  getBlockByNumber: function (number, shouldReturnFullTransactions, callback) {
+    if (shouldReturnFullTransactions !== true) shouldReturnFullTransactions = false;
+    var block = validateAndDefaultBlockNumber(number);
+    return this.eth("getBlockByNumber", [block, !!shouldReturnFullTransactions], callback);
+  },
+
+  getBlock: function (number, shouldReturnFullTransactions, callback) {
+    return this.getBlockByNumber(number, shouldReturnFullTransactions, callback);
+  },
+
+  // TODO: getBlockTransactionCountByHash
+
+  // TODO: getBlockTransactionCountByNumber
+
+  getCode: function (address, blockNumber, callback) {
+    blockNumber = validateAndDefaultBlockNumber(blockNumber);
+    return this.eth("getCode", [address, blockNumber], callback);
+  },
+
+  read: function (address, blockNumber, callback) {
+    this.getCode(address, blockNumber, callback);
+  },
+
+  // TODO: getCompilers
+
+  getFilterChanges: function (filter, callback) {
+    return this.eth("getFilterChanges", [filter], callback);
+  },
+
+  getFilterLogs: function (filter, callback) {
+    return this.eth("getFilterLogs", filter, callback);
+  },
+
+  getLogs: function (filter, callback) {
+    return this.eth("getLogs", filter, callback);
+  },
+
+  // TODO: add map lookup support (at the moment, this function doesn't support map lookups due to rounding errors after 51-bits for JS numbers)
+  getStorageAt: function (address, position, blockNumber, callback) {
+    blockNumber = validateAndDefaultBlockNumber(blockNumber);
+    return this.eth("getStorageAt", [address, position, blockNumber], callback);
+  },
+
+  // TODO: getTransactionByBlockHashAndIndex
+
+  // TODO: getTransactionByBlockNumberAndIndex
+
+  getTransactionByHash: function (transactionHash, callback) {
+    return this.eth("getTransactionByHash", [transactionHash], callback);
+  },
+
+  getTransaction: function (transactionHash, callback) {
+    return this.getTransactionByHash(transactionHash, callback);
+  },
+
+  getTx: function (transactionHash, callback) {
+    return this.getTransactionByHash(transactionHash, callback);
+  },
+
+  getTransactionCount: function (address, callback) {
+    return this.eth("getTransactionCount", [address, "latest"], callback);
+  },
+
+  txCount: function (address, callback) {
+    return this.getTransactionCount(address, callback);
+  },
+
+  getPendingTransactionCount: function (address, callback) {
+    return this.eth("getTransactionCount", [address, "pending"], callback);
+  },
+
+  pendingTxCount: function (address, callback) {
+    return this.getPendingTransactionCount(address, callback);
+  },
+
+  getTransactionReceipt: function (transactionHash, callback) {
+    return this.eth("getTransactionReceipt", transactionHash, callback);
+  },
+
+  receipt: function (transactionHash, callback) {
+    return this.getTransactionReceipt(transactionHash, callback);
+  },
+
+  getUncleByBlockHashAndIndex: function (blockHash, index, callback) {
+    return this.eth("getUncleByBlockHashAndIndex", [blockHash, index], callback);
+  },
+
+  getUncleByBlockNumberAndIndex: function (blockNumber, index, callback) {
+    blockNumber = validateAndDefaultBlockNumber(blockNumber);
+    return this.eth("getUncleByBlockNumberAndIndex", [blockNumber, index], callback);
+  },
+
+  getUncle: function (blockNumber, index, callback) {
+    return this.getUncleByBlockNumberAndIndex(blockNumber, index, callback);
+  },
+
+  getUncleCountByBlockHash: function (blockHash, callback) {
+    return this.eth("getUncleCountByBlockHash", [blockHash], callback);
+  },
+
+  getUncleCountByBlockNumber: function (blockNumber, callback) {
+    blockNumber = validateAndDefaultBlockNumber(blockNumber);
+    return this.eth("getUncleCountByBlockNumber", [blockNumber], callback);
+  },
+
+  getUncleCount: function (blockNumber, callback) {
+    return this.getUncleCountByBlockNumber(blockNumber, callback);
+  },
+
+  // TODO: getWork
+
+  hashrate: function (callback) {
+    return this.eth("hashrate", null, callback);
+  },
+
+  mining: function (callback) {
+    return this.eth("mining", null, callback);
+  },
+
+  newBlockFilter: function (callback) {
+    return this.eth("newBlockFilter", null, callback);
+  },
+
+  /**
+   * @param {{fromBlock:number|string, toBlock:number|string, address:string, topics:string[], limit:number}} filterOptions
+   */
+  newFilter: function (filterOptions, callback) {
+    filterOptions.fromBlock = validateAndDefaultBlockNumber(filterOptions.fromBlock);
+    filterOptions.toBlock = validateAndDefaultBlockNumber(filterOptions.toBlock);
+    return this.eth("newFilter", filterOptions, callback);
+  },
+
+  newPendingTransactionFilter: function (callback) {
+    return this.eth("newPendingTransactionFilter", null, callback);
+  },
+
+  protocolVersion: function (callback) {
+    return this.eth("protocolVersion", null, callback);
+  },
+
+  // TODO: provide overload that takes in an unencoded signed transaction
+  /**
+   * @param {string} signedTransaction - RLP encoded transaction signed with private key
+   */
+  sendRawTransaction: function (signedTransaction, callback) {
+    // allow for malformed input
+    if (/^[0-9a-fA-F]*$/.test(signedTransaction)) signedTransaction = "0x" + signedTransaction;
+    if (!/^0x[0-9a-fA-F]*$/.test(signedTransaction)) throw new Error("signedTransaction must be RLP encoded hex byte array encoded into a string");
+    return this.eth("sendRawTransaction", [signedTransaction], callback);
+  },
+
+  /**
+   * @param {{from:string, to:string, gas:number, gasPrice:number, value:number, data:string, nonce:number, minBlock:number|string}} transaction
+   */
+  sendTransaction: function (transaction, callback) {
+    validateTransaction(transaction);
+    return this.eth("sendTransaction", [transaction], callback);
+  },
+
+  sendTx: function (transaction, callback) {
+    return this.sendTransaction(transaction, callback);
+  },
+
+  sign: function (address, data, callback) {
+    return this.eth("sign", [address, data], callback);
+  },
+
+  signTransaction: function (transaction, callback) {
+    validateTransaction(transaction);
+    return this.eth("signTransaction", [transaction], callback);
+  },
+
+  // TODO: submitHashrate
+
+  // TODO: submitWork
+
+  subscribe: function (label, options, callback) {
+    if (options === undefined) options = {};
+    if (options === null) options = {};
+    if (typeof options !== "object") throw new Error("options must be an object");
+    return this.eth("subscribe", [label, options], callback);
+  },
+
+  subscribeLogs: function (options, callback) {
+    return this.subscribe("logs", options, callback);
+  },
+
+  subscribeNewHeads: function (callback) {
+    return this.subscribe("newHeads", null, callback);
+  },
+
+  subscribeNewPendingTransactions: function (callback) {
+    return this.subscribe("newPendingTransactions", null, callback);
+  },
+
+  syncing: function (callback) {
+    return this.eth("syncing", null, callback);
+  },
+
+  uninstallFilter: function (filter, callback) {
+    if (typeof filter !== "number") throw new Error("filter must be a number");
+    return this.eth("uninstallFilter", [filter], callback);
+  },
+
+  unsubscribe: function (label, callback) {
+    return this.eth("unsubscribe", [label], callback);
+  },
+
+  // ****
+  // personal_* (?parity only?)
+  // ****
+
+  // ****
+  // signer_* (?parity only?)
+  // ****
+
+  // ****
+  // shh_* (?geth only?)
+  // ****
+
+  // ****
+  // trace_* (?parity only?)
+  // ****
+
+  // ****
+  // high level access
+  // ****
+
+  /**
+   * Ensures that `this.block` contains the latest block.
+   */
+  ensureLatestBlock: function (callback) {
+    var sync = (!callback);
+    if (sync) {
+      var resultOrError = this.getBlockByNumber("latest", false);
+      if (resultOrError instanceof Error || resultOrError.error) return;
+      this.onNewBlock(resultOrError);
+      return resultOrError;
+    } else {
+      this.getBlockByNumber("latest", false, function (resultOrError) {
+        if (resultOrError instanceof Error || resultOrError.error) return;
+        this.onNewBlock(resultOrError);
+        callback(resultOrError);
+      }.bind(this));
+    }
+  },
+
+  /**
+   * Check to see if the provided account is unlocked for the connected node.
+   */
+  unlocked: function (account, f) {
+    try {
+      if (isFunction(f)) {
+        this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5", function (res) {
+          if (res) {
+            if (res.error) return f(false);
+            return f(true);
+          }
+          f(false);
+        });
+      } else {
+        var res = this.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5");
+        if (res) {
+          if (res.error) {
+            return false;
+          }
+          return true;
+        }
+        return false;
+      }
+    } catch (e) {
+      if (isFunction(f)) return f(false);
+      return false;
+    }
+  },
+
+  /**
+   * Invoke a function from a contract on the blockchain.
+   *
+   * Input tx format:
+   * {
+   *    from: <sender's address> (hexstring; optional, coinbase default)
+   *    to: <contract address> (hexstring)
+   *    method: <function name> (string)
+   *    signature: <function signature, e.g. "iia"> (string)
+   *    params: <parameters passed to the function> (optional)
+   *    returns: <"number[]", "int", "BigNumber", or "string" (default)>
+   *    send: <true to sendTransaction, false to call (default)>
+   * }
+   */
+  invoke: function (payload, f) {
+    if (!payload || payload.constructor !== Object) {
+      if (!isFunction(f)) return errors.TRANSACTION_FAILED;
+      return f(errors.TRANSACTION_FAILED);
+    }
+    var packaged = this.packageRequest(payload);
+    if (this.debug.broadcast) {
+      packaged.debug = clone(payload);
+      packaged.debug.batch = false;
+    }
+    var invocation = (payload.send) ? this.sendTx : this.call;
+    return invocation.call(this, packaged, f);
+  },
+
+  /**
+   * Wait for the specified number of blocks to appear before calling `callback`
+   */
+  fastforward: function (blocks, mine, callback) {
+    var startBlock, endBlock, self = this;
+    function fastforward() {
+      self.blockNumber(function (blockNumber) {
+        blockNumber = parseInt(blockNumber, 16);
+        if (startBlock === undefined) {
+          startBlock = blockNumber;
+          endBlock = blockNumber + parseInt(blocks);
+        }
+        if (blockNumber >= endBlock) {
+          if (!mine) return callback(endBlock);
+          self.miner("stop", [], function () {
+            callback(endBlock);
+          });
+        } else {
+          setTimeout(fastforward, self.BLOCK_POLL_INTERVAL);
+        }
+      });
+    }
+    if (!callback && isFunction(mine)) {
+      callback = mine;
+      mine = null;
+    }
+    if (!mine) return fastforward();
+    this.miner("start", [], fastforward);
+  },
+
+  /**
+   * @typedef FirePayload
+   * @type {object}
+   * @property {!string} method
+   * @property {?string} label
+   * @property {!string} returns
+   * @property {!string} from
+   * @property {!string} to
+   * @property {?string[]} params
+   * 
+   * @param {FirePayload} payload
+   * @param {function(object):void} callback - called with the result, possibly run through `wrapper` if applicable
+   * @param {function(object,object):void} wrapper - a function to transform the result before it is passed to `callback`.  first parameter is result, second is `aux`
+   * @param {object} aux - an optional parameter passed to `wrapper` (second parameter)
+   */
+  fire: function (payload, callback, wrapper, aux) {
+    var self = this;
+    var tx = clone(payload);
+    if (!isFunction(callback)) {
+      var res = this.invoke(tx);
+      if (res === undefined || res === null) {
+        throw new this.Error(errors.NO_RESPONSE);
+      }
+      var err = this.errorCodes(tx.method, tx.returns, res);
+      if (err && err.error) throw new this.Error(err);
+      var converted = this.applyReturns(tx.returns, res);
+      if (isFunction(wrapper)) return wrapper(converted, aux);
+      return converted;
+    }
+    this.invoke(tx, function (res) {
+      if (res === undefined || res === null) {
+        return callback(errors.NO_RESPONSE);
+      }
+      var err = self.errorCodes(tx.method, tx.returns, res);
+      if (err && err.error) return callback(err);
+      var converted = self.applyReturns(tx.returns, res);
+      if (isFunction(wrapper)) converted = wrapper(converted, aux);
+      return callback(converted);
+    });
+  },
+
+  // ****
+  // other
+  // ****
+
+  sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
+    if (to && to.constructor === Object) {
+      value = to.value;
+      from = to.from;
+      if (to.onSent) onSent = to.onSent;
+      if (to.onSuccess) onSuccess = to.onSuccess;
+      if (to.onFailed) onFailed = to.onFailed;
+      to = to.to;
+    }
+    return this.transact({
+      from: from,
+      to: to,
+      value: abi.fix(value, "hex"),
+      returns: "null",
+      gas: "0xcf08"
+    }, onSent, onSuccess, onFailed);
+  },
+
+  // publish a new contract to the blockchain (from the coinbase account)
+  publish: function (compiled, f) {
+    return this.sendTx({ from: this.coinbase(), data: compiled }, f);
+  },
+
+  // Ethereum node status checks
+
+  packageRequest: function (payload) {
+    var tx = clone(payload);
+    if (tx.params === undefined || tx.params === null) {
+      tx.params = [];
+    } else if (tx.params.constructor !== Array) {
+      tx.params = [tx.params];
+    }
+    var numParams = tx.params.length;
+    if (numParams) {
+      if (tx.signature && tx.signature.length !== numParams) {
+        throw new this.Error(errors.PARAMETER_NUMBER_ERROR);
+      }
+      for (var j = 0; j < numParams; ++j) {
+        if (tx.params[j] !== undefined && tx.params[j] !== null && tx.signature[j]) {
+          if (tx.params[j].constructor === Number) {
+            tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
+          }
+          if (tx.signature[j] === "int256") {
+            tx.params[j] = abi.unfork(tx.params[j], true);
+          } else if (tx.signature[j] === "int256[]" &&
+            tx.params[j].constructor === Array && tx.params[j].length) {
+            for (var k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
+              tx.params[j][k] = abi.unfork(tx.params[j][k], true);
+            }
+          }
+        }
+      }
+    }
+    if (tx.to) tx.to = abi.format_address(tx.to);
+    if (tx.from) tx.from = abi.format_address(tx.from);
+    var packaged = {
+      from: tx.from,
+      to: tx.to,
+      data: abi.encode(tx),
+      gas: tx.gas ? abi.hex(tx.gas) : this.DEFAULT_GAS
+    };
+    if (tx.gasPrice) packaged.gasPrice = abi.hex(tx.gasPrice);
+    if (tx.timeout) packaged.timeout = abi.hex(tx.timeout);
+    if (tx.value) packaged.value = abi.hex(tx.value);
+    if (tx.returns) packaged.returns = tx.returns;
+    if (tx.nonce) packaged.nonce = tx.nonce;
+    return packaged;
+  },
+
+  errorCodes: function (method, returns, response) {
+    if (response) {
+      if (response.constructor === Array) {
+        for (var i = 0, len = response.length; i < len; ++i) {
+          response[i] = this.errorCodes(method, returns, response[i]);
+        }
+      } else if (response.name && response.message && response.stack) {
+        response.error = response.name;
+      } else if (!response.error) {
+        if (returns && returns.indexOf("[]") > -1) {
+          if (response.length >= 194) {
+            response = "0x" + response.slice(130, 194);
+          }
+        }
+        if (errors[response]) {
+          response = {
+            error: response,
+            message: errors[response]
+          };
+        } else {
+          if (returns !== "null" && returns !== "string" ||
+            (response && response.constructor === String &&
+              response.slice(0, 2) === "0x")) {
+            var responseNumber = abi.bignum(response, "string", true);
+            if (responseNumber) {
+              if (errors[method] && errors[method][responseNumber]) {
+                response = {
+                  error: responseNumber,
+                  message: errors[method][responseNumber]
+                };
+              }
+            }
+          }
+        }
+      }
+    }
+    return response;
+  },
+
+  /********************
+   * Raw transactions *
+   ********************/
+
+  parseRawTransactionResponse: function (rawTransactionResponse, packaged, address, privateKey, cost, callback) {
+    if (this.debug.broadcast) {
+      console.log("[ethrpc] sendRawTransaction response:", rawTransactionResponse);
+    }
+    if (!rawTransactionResponse) {
+      if (!isFunction(callback)) return errors.RAW_TRANSACTION_ERROR;
+      return callback(errors.RAW_TRANSACTION_ERROR);
+    }
+    if (rawTransactionResponse.error) {
+      if (rawTransactionResponse.message.indexOf("rlp") > -1) {
+        var err = clone(errors.RLP_ENCODING_ERROR);
+        err.bubble = rawTransactionResponse;
+        err.packaged = packaged;
+        if (!isFunction(callback)) return err;
+        return callback(err);
+      } else if (rawTransactionResponse.message.indexOf("Nonce too low") > -1) {
+        if (this.debug.broadcast || this.debug.nonce) {
+          console.info("[ethrpc] Nonce too low, incrementing:", rawTransactionResponse.message, packaged, this.rawTxMaxNonce);
+        }
+        ++this.rawTxMaxNonce;
+        delete packaged.nonce;
+        return this.setNonceThenSubmitRawTransaction(packaged, address, privateKey, callback);
+      }
+      if (!isFunction(callback)) return rawTransactionResponse;
+      return callback(rawTransactionResponse);
+    }
+
+    // rawTransactionResponse is the txhash if nothing failed immediately
+    // (even if the tx is nulled, still index the hash)
+    this.rawTxs[rawTransactionResponse] = {tx: packaged, cost: abi.unfix(cost, "string")};
+
+    // nonce ok, complete sequence
+    if (!isFunction(callback)) return rawTransactionResponse;
+    callback(rawTransactionResponse);
+  },
+
+  submitRawTransaction: function (packaged, address, privateKey, callback) {
+    var rawTxHashes = Object.keys(this.rawTxs);
+    var rawTxHash;
+    for (var i = 0, numRawTxs = rawTxHashes.length; i < numRawTxs; ++i) {
+      rawTxHash = rawTxHashes[i];
+      if (this.rawTxs[rawTxHash].tx.nonce === abi.hex(packaged.nonce) && (!this.txs[rawTxHash] || this.txs[rawTxHash].status !== "failed")) {
+        packaged.nonce = this.rawTxMaxNonce + 1;
+        if (this.debug.broadcast || this.debug.nonce) {
+          console.log("[ethrpc] duplicate nonce, incremented:", packaged.nonce, this.rawTxMaxNonce);
+        }
+        break;
+      }
+    }
+    if (packaged.nonce <= this.rawTxMaxNonce) {
+      packaged.nonce = ++this.rawTxMaxNonce;
+    } else {
+      this.rawTxMaxNonce = packaged.nonce;
+    }
+    if (this.debug.nonce) console.log("[ethrpc] nonce:", packaged.nonce, this.rawTxMaxNonce);
+    if (this.debug.broadcast) console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
+    packaged.nonce = abi.hex(packaged.nonce);
+    var etx = new EthTx(packaged);
+
+    // sign the transaction using privateKey
+    etx.sign(privateKey);
+    if (this.debug.tx || this.debug.broadcast) {
+      console.log("raw nonce:    0x" + etx.nonce.toString("hex"));
+      console.log("raw gasPrice: 0x" + etx.gasPrice.toString("hex"));
+      console.log("raw gasLimit: 0x" + etx.gasLimit.toString("hex"));
+      console.log("raw to:       0x" + etx.to.toString("hex"));
+      console.log("raw value:    0x" + etx.value.toString("hex"));
+      console.log("raw v:        0x" + etx.v.toString("hex"));
+      console.log("raw r:        0x" + etx.r.toString("hex"));
+      console.log("raw s:        0x" + etx.s.toString("hex"));
+      console.log("raw data:     0x" + etx.data.toString("hex"));
+    }
+
+    // calculate the cost (in ether) of this transaction
+    // (note: this is an *upper bound* on the cost, set by the gasLimit)
+    var cost = etx.getUpfrontCost().toString();
+
+    // validate the transaction's signature
+    if (!etx.validate()) return callback(errors.TRANSACTION_INVALID);
+
+    // submit the raw transaction to the network
+    if (!isFunction(callback)) {
+      var rawTransactionResponse = this.sendRawTransaction(etx.serialize().toString("hex"));
+      return this.parseRawTransactionResponse(rawTransactionResponse, packaged, address, privateKey, cost);
+    }
+    var self = this;
+    this.sendRawTransaction(etx.serialize().toString("hex"), function (rawTransactionResponse) {
+      self.parseRawTransactionResponse(rawTransactionResponse, packaged, address, privateKey, cost, callback);
+    });
+  },
+
+  // set transaction nonce to the number of transactions
+  setNonceThenSubmitRawTransaction: function (packaged, address, privateKey, callback) {
+    var self = this;
+    if (packaged.nonce) {
+      return this.submitRawTransaction(packaged, address, privateKey, callback);
+    }
+    if (!isFunction(callback)) {
+      var txCount = this.pendingTxCount(address);
+      if (this.debug.nonce) {
+        console.log('[ethrpc] txCount:', parseInt(txCount, 16));
+      }
+      if (txCount && !txCount.error && !(txCount instanceof Error)) {
+        packaged.nonce = parseInt(txCount, 16);
+      }
+      return this.submitRawTransaction(packaged, address, privateKey);
+    }
+    this.pendingTxCount(address, function (txCount) {
+      if (self.debug.nonce) console.log('[ethrpc] txCount:', parseInt(txCount, 16));
+      if (txCount && !txCount.error && !(txCount instanceof Error)) {
+        packaged.nonce = parseInt(txCount, 16);
+      }
+      self.submitRawTransaction(packaged, address, privateKey, callback);
+    });
+  },
+
+  packageAndSubmitRawTransaction: function (payload, address, privateKey, callback) {
+    var self = this;
+    if (!payload || payload.constructor !== Object) {
+      if (!isFunction(callback)) throw new this.Error(errors.TRANSACTION_FAILED);
+      return callback(errors.TRANSACTION_FAILED);
+    }
+    if (!address || !privateKey) {
+      if (!isFunction(callback)) throw new this.Error(errors.NOT_LOGGED_IN);
+      return callback(errors.NOT_LOGGED_IN);
+    }
+
+    // parse and serialize transaction parameters
+    var packaged = this.packageRequest(payload);
+    packaged.from = address;
+    packaged.nonce = payload.nonce || 0;
+    packaged.value = payload.value || "0x0";
+    if (payload.gasLimit) {
+      packaged.gasLimit = abi.hex(payload.gasLimit);
+    } else if (this.block && this.block.gasLimit) {
+      packaged.gasLimit = abi.hex(this.block.gasLimit);
+    } else {
+      packaged.gasLimit = this.DEFAULT_GAS;
+    }
+    if (this.networkID && parseInt(this.networkID, 10) < 109) {
+      packaged.chainId = parseInt(this.networkID, 10);
+    }
+    if (this.debug.broadcast) console.log("[ethrpc] payload:", payload);
+    if (payload.gasPrice && abi.number(payload.gasPrice) > 0) {
+      packaged.gasPrice = payload.gasPrice;
+      return this.setNonceThenSubmitRawTransaction(packaged, address, privateKey, callback);
+    }
+    if (!isFunction(callback)) {
+      var gasPrice = this.getGasPrice();
+      if (!gasPrice || gasPrice.error) throw new this.Error(errors.TRANSACTION_FAILED);
+      packaged.gasPrice = gasPrice;
+      return this.setNonceThenSubmitRawTransaction(packaged, address, privateKey);
+    }
+    this.getGasPrice(function (gasPrice) {
+      if (!gasPrice || gasPrice.error) return callback(errors.TRANSACTION_FAILED);
+      packaged.gasPrice = gasPrice;
+      self.setNonceThenSubmitRawTransaction(packaged, address, privateKey, callback);
+    });
+  },
+
+  /***************************************
+   * Send-call-confirm callback sequence *
+   ***************************************/
+
+  updatePendingTx: function (tx) {
+    var self = this;
+    this.getTx(tx.hash, function (onChainTx) {
+      tx.tx = abi.copy(onChainTx);
+
+      // if transaction is null, then it was dropped from the txpool
+      if (onChainTx === null) {
+        tx.payload.tries = (tx.payload.tries) ? tx.payload.tries + 1 : 1;
+
+        // if we have retries left, then resubmit the transaction
+        if (!self.retryDroppedTxs || tx.payload.tries > self.TX_RETRY_MAX) {
+          tx.status = "failed";
+          tx.locked = false;
+          if (isFunction(tx.onFailed)) {
+            var e = clone(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
+            e.hash = tx.hash;
+            tx.onFailed(e);
+          }
+        } else {
+          --self.rawTxMaxNonce;
+          tx.status = "resubmitted";
+          tx.locked = false;
+          if (self.debug.tx) console.log("resubmitting tx:", tx.hash);
+          self.transact(tx.payload, tx.onSent, tx.onSuccess, tx.onFailed);
+        }
+
+        // non-null transaction: transaction still alive and kicking!
+        // check if it has been mined yet (block number is non-null)
+      } else {
+        if (onChainTx.blockNumber) {
+          tx.tx.blockNumber = parseInt(onChainTx.blockNumber, 16);
+          tx.tx.blockHash = onChainTx.blockHash;
+          tx.status = "mined";
+          tx.confirmations = self.block.number - tx.tx.blockNumber;
+          self.updateMinedTx(tx);
+        } else {
+          tx.locked = false;
+        }
+      }
+    });
+  },
+
+  updateMinedTx: function (tx) {
+    var self = this;
+    var onChainTx = tx.tx;
+    tx.confirmations = self.block.number - onChainTx.blockNumber;
+    if (self.debug.tx) console.log("confirmations for", tx.hash, tx.confirmations);
+    if (tx.confirmations >= self.REQUIRED_CONFIRMATIONS) {
+      tx.status = "confirmed";
+      if (isFunction(tx.onSuccess)) {
+        self.getBlock(onChainTx.blockNumber, false, function (block) {
+          if (block && block.timestamp) {
+            onChainTx.timestamp = parseInt(block.timestamp, 16);
+          }
+          if (!tx.payload.mutable) {
+            onChainTx.callReturn = tx.callReturn;
+            self.getTransactionReceipt(tx.hash, function (receipt) {
+              if (self.debug.tx) console.log("got receipt:", receipt);
+              if (receipt && receipt.gasUsed) {
+                onChainTx.gasFees = new BigNumber(receipt.gasUsed, 16)
+                  .times(new BigNumber(onChainTx.gasPrice, 16))
+                  .dividedBy(self.ETHER)
+                  .toFixed();
+              }
+              tx.locked = false;
+              tx.onSuccess(onChainTx);
+            });
+          } else {
+            self.getLoggedReturnValue(tx.hash, function (err, log) {
+              if (self.debug.tx) console.log("loggedReturnValue:", err, log);
+              if (err) {
+                tx.payload.send = false;
+                self.fire(tx.payload, function (callReturn) {
+                  tx.locked = false;
+                  if (isFunction(tx.onFailed)) {
+                    if (err.error !== errors.NULL_CALL_RETURN.error) {
+                      err.hash = tx.hash;
+                      tx.onFailed(err);
+                    } else {
+                      var e = self.errorCodes(tx.payload.method, tx.payload.returns, callReturn);
+                      e.hash = tx.hash;
+                      tx.onFailed(e);
+                    }
+                  }
+                });
+              } else {
+                var e = self.errorCodes(tx.payload.method, tx.payload.returns, log.returnValue);
+                if (self.debug.tx) console.log("errorCodes:", e);
+                if (e && e.error) {
+                  e.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
+                  tx.locked = false;
+                  if (isFunction(tx.onFailed)) {
+                    e.hash = tx.hash;
+                    tx.onFailed(e);
+                  }
+                } else {
+                  onChainTx.callReturn = self.applyReturns(tx.payload.returns, log.returnValue);
+                  onChainTx.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
+                  tx.locked = false;
+                  tx.onSuccess(onChainTx);
+                }
+              }
+            });
+          }
+        });
+      } else {
+        tx.locked = false;
+      }
+    } else {
+      tx.locked = false;
+    }
+  },
+
+  updateTx: function (tx) {
+    if (!tx.locked) {
+      if (tx.tx === undefined) {
+        tx.locked = true;
+        return this.updatePendingTx(tx);
+      }
+      switch (tx.status) {
+        case "pending":
+          tx.locked = true;
+          this.updatePendingTx(tx);
+          break;
+        case "mined":
+          tx.locked = true;
+          this.updateMinedTx(tx);
+          break;
+        default:
+          break;
+      }
+    }
+  },
+
+  verifyTxSubmitted: function (payload, txHash, callReturn, onSent, onSuccess, onFailed, callback) {
+    var self = this;
+    if (!isFunction(callback)) {
+      if (!payload || ((!payload.mutable && payload.returns !== "null") && (txHash === null || txHash === undefined))) {
+        throw new this.Error(errors.TRANSACTION_FAILED);
+      }
+      if (this.txs[txHash]) throw new this.Error(errors.DUPLICATE_TRANSACTION);
+      this.txs[txHash] = {
+        hash: txHash,
+        payload: payload,
+        callReturn: callReturn,
+        count: 0,
+        status: "pending"
+      };
+      var tx = this.getTransaction(txHash);
+      if (!tx) throw new this.Error(errors.TRANSACTION_FAILED);
+      this.txs[txHash].tx = tx;
+      return;
+    }
+    if (!payload || txHash === null || txHash === undefined) {
+      console.error("payload undefined or txhash null/undefined:", payload, txHash);
+      return callback(errors.TRANSACTION_FAILED);
+    }
+    if (this.txs[txHash]) return callback(errors.DUPLICATE_TRANSACTION);
+    this.txs[txHash] = {
+      hash: txHash,
+      payload: payload,
+      callReturn: callReturn,
+      onSent: onSent,
+      onSuccess: onSuccess,
+      onFailed: onFailed,
+      count: 0,
+      status: "pending"
+    };
+    if (this.block && this.block.number) {
+      this.updateTx(this.txs[txHash]);
+      return callback(null);
+    }
+    this.blockNumber(function (blockNumber) {
+      if (!blockNumber || blockNumber.error) {
+        return callback(blockNumber || "rpc.blockNumber lookup failed");
+      }
+      self.block = { number: parseInt(blockNumber, 16) };
+      self.updateTx(self.txs[txHash]);
+      callback(null);
+    });
+  },
+
+  /**
+   * asynchronous / non-blocking transact:
+   *  - call onSent when the transaction is broadcast to the network
+   *  - call onSuccess when the transaction has REQUIRED_CONFIRMATIONS
+   *  - call onFailed if the transaction fails
+   */
+  transactAsync: function (payload, callReturn, onSent, onSuccess, onFailed) {
+    var self = this;
+    payload.send = true;
+    var returns = payload.returns;
+    delete payload.returns;
+    (payload.invoke || this.invoke).call(this, payload, function (txHash) {
+      if (self.debug.tx) console.log("txHash:", txHash);
+      if (!txHash) return onFailed(errors.NULL_RESPONSE);
+      if (txHash.error) return onFailed(txHash);
+      payload.returns = returns;
+      txHash = abi.format_int256(txHash);
+
+      // send the transaction hash and return value back
+      // to the client, using the onSent callback
+      onSent({ hash: txHash, txHash: txHash, callReturn: callReturn });
+
+      self.verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, function (err) {
+        if (err) {
+          err.hash = txHash;
+          return onFailed(err);
+        }
+      });
+    });
+  },
+
+  waitForNextPoll: function (tx, callback) {
+    if (this.txs[tx.hash].count >= this.TX_POLL_MAX) {
+      this.txs[tx.hash].status = "unconfirmed";
+      if (!isFunction(callback)) {
+        throw new Error(errors.TRANSACTION_NOT_CONFIRMED);
+      }
+      return callback(errors.TRANSACTION_NOT_CONFIRMED);
+    }
+    if (!isFunction(callback)) {
+      wait(this.TX_POLL_INTERVAL);
+      if (this.txs[tx.hash].status === "pending" || this.txs[tx.hash].status === "mined") {
+        return null;
+      }
+    } else {
+      var self = this;
+      this.notifications[tx.hash] = setTimeout(function () {
+        if (self.txs[tx.hash].status === "pending" || self.txs[tx.hash].status === "mined") {
+          callback(null, null);
+        }
+      }, this.TX_POLL_INTERVAL);
+    }
+  },
+
+  completeTx: function (tx, callback) {
+    this.txs[tx.hash].status = "confirmed";
+    clearTimeout(this.notifications[tx.hash]);
+    delete this.notifications[tx.hash];
+    if (!isFunction(callback)) return tx;
+    return callback(null, tx);
+  },
+
+  checkConfirmations: function (tx, numConfirmations, callback) {
+    var self = this;
+    var minedBlockNumber = parseInt(tx.blockNumber, 16);
+    this.blockNumber(function (currentBlockNumber) {
+      if (self.debug.tx) {
+        console.log("confirmations:", parseInt(currentBlockNumber, 16) - minedBlockNumber);
+      }
+      if (parseInt(currentBlockNumber, 16) - minedBlockNumber >= numConfirmations) {
+        return self.completeTx(tx, callback);
+      }
+      return self.waitForNextPoll(tx, callback);
+    });
+  },
+
+  checkBlockHash: function (tx, numConfirmations, callback) {
+    if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
+    if (this.txs[tx.hash].count === undefined) this.txs[tx.hash].count = 0;
+    ++this.txs[tx.hash].count;
+    if (this.debug.tx) console.log("checkBlockHash:", tx.blockHash);
+    if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
+      tx.txHash = tx.hash;
+      if (!numConfirmations) {
+        this.txs[tx.hash].status = "mined";
+        clearTimeout(this.notifications[tx.hash]);
+        delete this.notifications[tx.hash];
+        if (!isFunction(callback)) return tx;
+        return callback(null, tx);
+      }
+      return this.checkConfirmations(tx, numConfirmations, callback);
+    }
+    return this.waitForNextPoll(tx, callback);
+  },
+
+  getLoggedReturnValue: function (txHash, callback) {
+    var self = this;
+    if (!isFunction(callback)) {
+      var receipt = this.getTransactionReceipt(txHash);
+      if (!receipt || !receipt.logs || !receipt.logs.length) {
+        throw new this.Error(errors.NULL_CALL_RETURN);
+      }
+      var log = receipt.logs[receipt.logs.length - 1];
+      if (!log || log.data === null || log.data === undefined) {
+        throw new this.Error(errors.NULL_CALL_RETURN);
+      }
+      return {
+        returnValue: log.data,
+        gasUsed: new BigNumber(receipt.gasUsed, 16)
+      };
+    }
+    this.getTransactionReceipt(txHash, function (receipt) {
+      if (self.debug.tx) console.log("got receipt:", receipt);
+      if (!receipt || !receipt.logs || !receipt.logs.length) {
+        return callback(errors.NULL_CALL_RETURN);
+      }
+      var log = receipt.logs[receipt.logs.length - 1];
+      if (!log || log.data === null || log.data === undefined) {
+        return callback(errors.NULL_CALL_RETURN);
+      }
+      callback(null, {
+        returnValue: log.data,
+        gasUsed: new BigNumber(receipt.gasUsed, 16)
+      });
+    });
+  },
+
+  checkDroppedTxForDuplicateNonce: function (txHash, callback) {
+    var duplicateNonce;
+    if (this.debug.tx) console.log("Raw transactions:", this.rawTxs);
+    if (!this.rawTxs[txHash] || !this.rawTxs[txHash].tx) {
+      if (!isFunction(callback)) {
+        throw new this.Error(errors.TRANSACTION_NOT_FOUND);
+      }
+      return callback(errors.TRANSACTION_NOT_FOUND);
+    }
+    for (var hash in this.rawTxs) {
+      if (!this.rawTxs.hasOwnProperty(hash)) continue;
+      if (this.rawTxs[hash].tx.nonce === this.rawTxs[txHash].tx.nonce &&
+        JSON.stringify(this.rawTxs[hash].tx) !== JSON.stringify(this.rawTxs[txHash].tx)) {
+        duplicateNonce = true;
+        console.warn("Warning: duplicate nonce found on raw tx:", txHash);
+        break;
+      }
+    }
+    if (!duplicateNonce) {
+      if (!isFunction(callback)) {
+        throw new this.Error(errors.TRANSACTION_NOT_FOUND);
+      }
+      return callback(errors.TRANSACTION_NOT_FOUND);
+    }
+    if (!isFunction(callback)) return null;
+    callback(null);
+  },
+
+  txNotify: function (txHash, callback) {
+    var self = this;
+    if (!isFunction(callback)) {
+      var tx = this.getTransaction(txHash);
+      if (tx) return tx;
+      --this.rawTxMaxNonce;
+      this.txs[txHash].status = "failed";
+
+      // only resubmit if this is a raw transaction and has a duplicate nonce
+      if (!this.retryDroppedTxs) this.checkDroppedTxForDuplicateNonce(txHash);
+
+      this.txs[txHash].status = "resubmitted";
+      return null;
+    }
+    this.getTransaction(txHash, function (tx) {
+      if (tx) return callback(null, tx);
+      --self.rawTxMaxNonce;
+      self.txs[txHash].status = "failed";
+      if (self.retryDroppedTxs) {
+        if (self.debug.broadcast) console.log(" *** Re-submitting transaction:", txHash);
+        self.txs[txHash].status = "resubmitted";
+        return callback(null, null);
+      }
+      // only resubmit if this is a raw transaction and has a duplicate nonce
+      self.checkDroppedTxForDuplicateNonce(txHash, function (err) {
+        if (err !== null) return callback(err);
+        if (self.debug.broadcast) console.log(" *** Re-submitting transaction:", txHash);
+        self.txs[txHash].status = "resubmitted";
+        return callback(null, null);
+      });
+    });
+  },
+
+  // poll the network until the transaction is included in a block
+  // (i.e., has a non-null blockHash field)
+  pollForTxConfirmation: function (txHash, numConfirmations, callback) {
+    var self = this;
+    if (!isFunction(callback)) {
+      var tx = this.txNotify(txHash);
+      if (tx === null) return null;
+      var minedTx = this.checkBlockHash(tx, numConfirmations);
+      if (minedTx !== null) return minedTx;
+      return this.pollForTxConfirmation(txHash, numConfirmations);
+    }
+    this.txNotify(txHash, function (err, tx) {
+      if (err) return callback(err);
+      if (tx === null) return callback(null, null);
+      self.checkBlockHash(tx, numConfirmations, function (err, minedTx) {
+        if (err) return callback(err);
+        if (minedTx !== null) return callback(null, minedTx);
+        self.pollForTxConfirmation(txHash, numConfirmations, callback);
+      });
+    });
+  },
+
+  /**
+   * synchronous transact: block until the transaction is confirmed or fails
+   * (don't use this in the browser or you will be a sad panda)
+   */
+  transactSync: function (payload) {
+    var callReturn;
+    if (payload.mutable || payload.returns === "null") {
+      callReturn = null;
+    } else {
+      callReturn = this.fire(payload);
+      if (this.debug.tx) console.log("callReturn:", callReturn);
+      if (callReturn === undefined || callReturn === null) {
+        throw new this.Error(errors.NULL_CALL_RETURN);
+      } else if (callReturn.error === "0x") {
+        callReturn = null;
+      } else if (callReturn.error) {
+        throw new this.Error(callReturn);
+      }
+    }
+    payload.send = true;
+    var returns = payload.returns;
+    delete payload.returns;
+    var txHash = (payload.invoke || this.invoke).call(this, payload);
+    if (this.debug.tx) console.log("txHash:", txHash);
+    if (!txHash && !payload.mutable && payload.returns !== "null") {
+      throw new this.Error(errors.NULL_RESPONSE);
+    } else if (txHash && txHash.error) {
+      throw new this.Error(txHash);
+    }
+    payload.returns = returns;
+    txHash = abi.format_int256(txHash);
+    this.verifyTxSubmitted(payload, txHash, callReturn);
+    var tx = this.pollForTxConfirmation(txHash, null);
+    if (tx === null) {
+      payload.tries = (payload.tries) ? payload.tries + 1 : 1;
+      if (payload.tries > this.TX_RETRY_MAX) {
+        throw new this.Error(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
+      }
+      return this.transact(payload);
+    }
+    tx.timestamp = parseInt(this.getBlock(tx.blockNumber, false).timestamp, 16);
+    if (!payload.mutable) {
+      tx.callReturn = callReturn;
+      var receipt = this.getTransactionReceipt(txHash);
+      if (this.debug.tx) console.log("got receipt:", receipt);
+      if (receipt && receipt.gasUsed) {
+        tx.gasFees = new BigNumber(receipt.gasUsed, 16)
+          .times(new BigNumber(tx.gasPrice, 16))
+          .dividedBy(this.ETHER)
+          .toFixed();
+      }
+      return tx;
+    }
+
+    // if mutable return value, then lookup logged return
+    // value in transaction receipt (after confirmation)
+    var log = this.getLoggedReturnValue(txHash);
+    var e = this.errorCodes(payload.method, payload.returns, log.returnValue);
+    if (e && e.error) {
+      e.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
+      if (e.error !== errors.NULL_CALL_RETURN.error) {
+        throw new Error(e);
+      }
+      callReturn = this.fire(payload);
+      throw new Error(this.errorCodes(payload.method, payload.returns, callReturn));
+    }
+    tx.callReturn = this.applyReturns(payload.returns, log.returnValue);
+    tx.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
+    return tx;
+  },
+
+  transact: function (payload, onSent, onSuccess, onFailed) {
+    var self = this;
+    if (this.debug.tx) console.log("payload transact:", payload);
+    payload.send = false;
+
+    // synchronous / blocking transact sequence
+    if (!isFunction(onSent)) return this.transactSync(payload);
+
+    // asynchronous / non-blocking transact sequence
+    var cb = (isFunction(this.txRelay)) ? {
+      sent: this.wrapTxRelayCallback("sent", payload, onSent),
+      success: this.wrapTxRelayCallback("success", payload, onSuccess),
+      failed: this.wrapTxRelayCallback("failed", payload, onFailed)
+    } : {
+        sent: onSent,
+        success: (isFunction(onSuccess)) ? onSuccess : noop,
+        failed: (isFunction(onFailed)) ? onFailed : noop
+      };
+    if (payload.mutable || payload.returns === "null") {
+      return this.transactAsync(payload, null, cb.sent, cb.success, cb.failed);
+    }
+    this.fire(payload, function (callReturn) {
+      if (self.debug.tx) console.log("callReturn:", callReturn);
+      if (callReturn === undefined || callReturn === null) {
+        return cb.failed(errors.NULL_CALL_RETURN);
+      } else if (callReturn.error) {
+        return cb.failed(callReturn);
+      }
+      self.transactAsync(payload, callReturn, cb.sent, cb.success, cb.failed);
+    });
+  }
+};
+
+function validateAndDefaultBlockNumber(block) {
+  if (block === undefined) return "latest";
+  if (block === null) return "latest";
+  if (block === "latest") return block;
+  if (block === "earliest") return block;
+  if (block === "pending") return block;
+  try {
+    return validateNumber(block, "block");
+  } catch (error) {
+    throw new Error("block must be a number, a 0x prefixed hex string, or 'latest' or 'earliest' or 'pending'");
+  }
+}
+
+function validateAddress(address) {
+  if (address === null || address === undefined) throw new Error("address is required");
+  if (typeof address !== "string") throw new Error("address must be a string but was " + typeof address);
+  // fixup malformed addresses
+  if (/^[0-9a-fA-F]*$/.test(address)) address = "0x" + address;
+  if (!/^0x[0-9a-fA-F]*$/.test(address)) throw new Error("address can only contain 0-9 and a-Z and must start with 0x.  Provided: " + address);
+  if (address.length !== 42) throw new Error("address must be 42 characters, 20 bytes (2 hex encoded code points each) plus the 0x prefix.  Length: " + address.length);
+  return address;
+}
+
+function validateNumber(number, parameterName) {
+  if (!parameterName) parameterName = "number";
+  if (number === null) return number;
+  if (number === undefined) return number;
+  if (typeof number === "number") return number;
+  if (typeof number === "string" && /^0x[0-9a-zA-Z]+$/.test(number)) return number;
+  throw new Error(parameterName, " must be a number, null, undefined or a 0x prefixed hex encoded string");
+}
+
+function validateTransaction(transaction) {
+  if (!transaction) throw new Error("transaction is required");
+  transaction.from = validateAddress(transaction.from);
+  if (transaction.to !== undefined && transaction.to !== null) transaction.to = validateAddress(transaction.to);
+  transaction.gas = validateNumber(transaction.gas, "gas");
+  transaction.gasPrice = validateNumber(transaction.gasPrice, "gasPrice");
+  transaction.value = validateNumber(transaction.value, "value");
+  if (transaction.data !== undefined && transaction.data !== null && typeof transaction.data !== "string") throw new Error("data must be a string");
+  if (!/^0x[0-9a-zA-Z]*$/.test(transaction.data)) throw new Error("data must be a hex encoded string with a leader `0x`");
+  transaction.nonce = validateNumber(transaction.nonce, "nonce");
+  transaction.minBlock = validateAndDefaultBlockNumber(transaction.minBlock);
+}
+
+function ethereumEncodePrimitive(primitive) {
+  if (typeof primitive === "undefined") return primitive;
+  if (primitive === null) return primitive;
+  if (typeof primitive === "boolean") return primitive;
+  if (typeof primitive === "string") return primitive;
+  if (typeof primitive === "number") return ethereumEncodeNumber(primitive);
+  if (primitive instanceof Array) return ethereumEncodeArray(primitive);
+  if (typeof primitive === "object") return ethereumEncodeObject(primitive);
+  if (isFunction(primitive)) throw new Error("Cannot encode a function to be sent to Ethereum.");
+  throw new Error("Attempted to encode an unsupported type.  typeof: " + typeof primitive);
+}
+
+function ethereumEncodeObject(object) {
+  for (var property in object) {
+    object[property] = ethereumEncodePrimitive(object[property]);
+  }
+  return object;
+}
+
+function ethereumEncodeArray(array) {
+  if (!(array instanceof Array)) throw new Error("array must be an array.");
+  for (var i = 0; i < array.length; ++i) {
+    array[i] = ethereumEncodePrimitive(array[i]);
+  }
+  return array;
+}
+
+function ethereumEncodeNumber(number) {
+  if (typeof number !== "number") throw new Error("number must be a number.");
+  var numberAsHexString = number.toString(16);
+  return "0x" + numberAsHexString;
+}
+
+},{"./errors.js":159,"./errors.json":158,"./transport/transporter.js":171,"augur-abi":1,"bignumber.js":58,"clone":68,"ethereumjs-tx":90,"js-sha3":107}],162:[function(require,module,exports){
 (function (process){
-module.exports = (typeof module !== "undefined") && process && !process.browser
+"use strict";
+
+module.exports = (typeof module !== "undefined") && process && !process.browser;
 
 }).call(this,require('_process'))
-},{"_process":120}],163:[function(require,module,exports){
+},{"_process":116}],163:[function(require,module,exports){
+"use strict";
+
 var isNodeJs = require("./is-node-js.js");
 if (isNodeJs)
-	module.exports = require("request")
+	module.exports = require("request");
 else
 	module.exports = require("browser-request");
 
-},{"./is-node-js.js":162,"browser-request":66,"request":67}],164:[function(require,module,exports){
+},{"./is-node-js.js":162,"browser-request":62,"request":63}],164:[function(require,module,exports){
+"use strict";
+
 var syncRequest = require('sync-request');
 
 // hack to workaround https://github.com/ethereum/go-ethereum/issues/3762
@@ -30841,14 +30862,16 @@ module.exports = function (method, uri, options) {
   return syncRequest(method, uri, options);
 };
 
-},{"sync-request":151}],165:[function(require,module,exports){
-var isNode = require("./is-node-js.js")
+},{"sync-request":147}],165:[function(require,module,exports){
+"use strict";
+
+var isNode = require("./is-node-js.js");
 if (isNode)
 	module.exports = require("websocket").w3cwebsocket;
 else
 	module.exports = WebSocket;
 
-},{"./is-node-js.js":162,"websocket":67}],166:[function(require,module,exports){
+},{"./is-node-js.js":162,"websocket":63}],166:[function(require,module,exports){
 "use strict";
 
 /**
@@ -30889,8 +30912,8 @@ AbstractTransport.prototype.submitWork = function (rpcObject) {
   if (this.awaitingPump) return;
   // force into an async context so behavior doesn't differ depending on whether or not this is first-in-queue
   this.awaitingPump = true;
-  setTimeout(pumpQueue.bind(this));
-}
+  setTimeout(pumpQueue.bind(null, this));
+};
 
 /**
  * Register to be notified when a reconnect occurs for this transport.
@@ -30899,7 +30922,7 @@ AbstractTransport.prototype.submitWork = function (rpcObject) {
  */
 AbstractTransport.prototype.addReconnectListener = function (callback) {
   this.reconnectListeners[callback] = callback;
-}
+};
 
 /**
  * Unregister a previously registered reconnect listener.
@@ -30908,7 +30931,7 @@ AbstractTransport.prototype.addReconnectListener = function (callback) {
  */
 AbstractTransport.prototype.removeReconnectListener = function (callbackToRemove) {
   delete this.reconnectListeners[callbackToRemove];
-}
+};
 
 /**
  * Used internally by derived prototypes to attempt to establish an initial connection.  Should be called from constructor.
@@ -30920,10 +30943,10 @@ AbstractTransport.prototype.initialConnect = function (callback) {
     if (error !== null) return callback(error);
 
     this.connected = true;
-    pumpQueue.bind(this)();
+    pumpQueue(this);
     callback(null, this);
   }.bind(this));
-}
+};
 
 /**
  * Implemented by derived prototypes.  Should submit the given object to Ethereum.
@@ -30932,8 +30955,8 @@ AbstractTransport.prototype.initialConnect = function (callback) {
  * @param {!function(!Error):void} errorCallback - To be called if something goes wrong with the connection.  If the provided error has retryable = true property then the request will be re-queued and connection will be re-established.
  */
 AbstractTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
-  callback(new Error("Must be implemented by derived prototype."));
-}
+  errorCallback(new Error("Must be implemented by derived prototype."));
+};
 
 /**
  * Implemented by derived prototypes.  Should establish a connection or otherwise validate that the remote host is accessible.
@@ -30942,61 +30965,61 @@ AbstractTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) 
  */
 AbstractTransport.prototype.connect = function (callback) {
   callback(new Error("Must be implemented by derived prototype."));
-}
+};
 
 /**
- * Used internally to pump the current work queue.
+ * Pumps the current work queue.
  */
-function pumpQueue() {
-  this.awaitingPump = false;
+function pumpQueue(abstractTransport) {
+  abstractTransport.awaitingPump = false;
   var rpcObject;
-  while (rpcObject = this.workQueue.shift()) {
+  while ((rpcObject = abstractTransport.workQueue.shift())) {
     // it is possible to lose a connection while iterating over the queue, if that happens unroll the latest iteration and stop pumping (reconnect will start pumping again)
-    if (!this.connected) {
-      this.workQueue.unshift(rpcObject);
+    if (!abstractTransport.connected) {
+      abstractTransport.workQueue.unshift(rpcObject);
       return;
-    };
-    processWork.bind(this)(rpcObject);
+    }
+    processWork(abstractTransport, rpcObject);
   }
 }
 
 /**
  * Processes one request off the head of the queue.
  */
-function processWork(rpcObject) {
-  this.submitRpcRequest(rpcObject, function (error) {
+function processWork(abstractTransport, rpcObject) {
+  abstractTransport.submitRpcRequest(rpcObject, function (error) {
     if (error === null) return;
     if (error.retryable) {
       // if the error is retryable, put it back on the queue (at the head) and initiate reconnection in the background
-      this.workQueue.unshift(rpcObject);
+      abstractTransport.workQueue.unshift(rpcObject);
       // if this is the first retriable failure then initiate a reconnect
-      if (this.connected) {
-        this.connected = false;
-        reconnect.bind(this)();
+      if (abstractTransport.connected) {
+        abstractTransport.connected = false;
+        reconnect(abstractTransport);
       }
     }
     else {
       // if we aren't going to retry the request, let the user know that something went wrong so they can handle it
       error.data = rpcObject;
-      this.messageHandler(error);
+      abstractTransport.messageHandler(error);
     }
-  }.bind(this));
+  });
 }
 
 /**
  * Attempts to reconnect with exponential backoff.
  */
-function reconnect() {
-  this.connect(function (error) {
-    if (error !== null) return setTimeout(reconnect.bind(this), this.backoffMilliseconds *= 2);
-    Object.keys(this.reconnectListeners).forEach(function (key) {
-      if (typeof this.reconnectListeners[key] !== "function") return delete this.reconnectListeners[key];
-      this.reconnectListeners[key]();
-    }.bind(this));
-    this.connected = true;
-    this.backoffMilliseconds = 1;
-    pumpQueue.bind(this)();
-  }.bind(this));
+function reconnect(abstractTransport) {
+  abstractTransport.connect(function (error) {
+    if (error !== null) return setTimeout(reconnect(abstractTransport), abstractTransport.backoffMilliseconds *= 2);
+    Object.keys(abstractTransport.reconnectListeners).forEach(function (key) {
+      if (typeof abstractTransport.reconnectListeners[key] !== "function") return delete abstractTransport.reconnectListeners[key];
+      abstractTransport.reconnectListeners[key]();
+    });
+    abstractTransport.connected = true;
+    abstractTransport.backoffMilliseconds = 1;
+    pumpQueue(abstractTransport);
+  });
 }
 
 module.exports = AbstractTransport;
@@ -31029,7 +31052,7 @@ HttpTransport.prototype.connect = function (callback) {
       callback(error);
     } else {
       if (jso.error) {
-        var error = new Error(jso.error.message || "Unknown error.");
+        error = new Error(jso.error.message || "Unknown error.");
         error.code = jso.error.code;
         error.data = jso.error.data;
         callback(error);
@@ -31038,7 +31061,7 @@ HttpTransport.prototype.connect = function (callback) {
       }
     }
   }.bind(this));
-}
+};
 
 HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
   request({
@@ -31056,13 +31079,13 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       this.messageHandler(null, body);
     }
     else {
-      var error = new Error("Unexpected status code.");
+      error = new Error("Unexpected status code.");
       error.code = response.statusCode;
       error.address = this.address;
       errorCallback(error);
     }
   }.bind(this));
-}
+};
 
 module.exports = HttpTransport;
 
@@ -31088,7 +31111,7 @@ IpcTransport.prototype.connect = function (callback) {
   this.ipcClient = net.connect({ path: this.address });
   this.ipcClient.on('connect', function () {
     callback(null);
-    callback = function () { }
+    callback = function () { };
     // FIXME: UTF surrogates that cross buffer boundaries will break oboe (https://github.com/jimhigson/oboe.js/issues/133)
     oboe(this.ipcClient).done(function (jso) {
       // FIXME: oboe sometimes gives an empty object for no apparent reason, ignore it
@@ -31097,20 +31120,20 @@ IpcTransport.prototype.connect = function (callback) {
       this.messageHandler(null, jso);
     }.bind(this));
   }.bind(this));
-  this.ipcClient.on('data', function (message) {
+  this.ipcClient.on('data', function (/*message*/) {
     // handled by oboe
   }.bind(this));
   this.ipcClient.on('error', function (error) {
     // CONSIDER: can we capture unhandled errors somehow?  in at least one code path, the same error comes in via an errorCallback passed to `write` where we handle it correctly.  i'm not certain that all sources of errors come from calls to `.write` though, but I'm not sure how to dedupe without monkey patching the IPC client.
     // if `callback` is not the identity function then it means we haven't connected yet, so fire the callback to let the system know the connect failed.
     callback(error);
-    callback = function () { }
+    callback = function () { };
   }.bind(this));
   this.ipcClient.on('end', function () {
     callback(new Error("IPC socket closed without opening, likely means failed connection."));
-    callback = function () { }
+    callback = function () { };
   }.bind(this));
-}
+};
 
 IpcTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
@@ -31124,11 +31147,11 @@ IpcTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
     if (error.code === "EPIPE") error.retryable = true;
     errorCallback(error);
   }
-}
+};
 
 module.exports = IpcTransport;
 
-},{"./abstract-transport.js":166,"net":68,"oboe":118}],169:[function(require,module,exports){
+},{"./abstract-transport.js":166,"net":64,"oboe":114}],169:[function(require,module,exports){
 "use strict";
 
 var AbstractTransport = require("./abstract-transport.js");
@@ -31149,14 +31172,14 @@ MetaMaskTransport.prototype.connect = function (callback) {
   } else {
     setTimeout(function () { callback(new Error("Nothing found at window.web3.currentProvider.")); }, 1);
   }
-}
+};
 
 MetaMaskTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
   if (typeof window === "undefined") return errorCallback("attempted to access 'window' outside of a browser, this shouldn't happen");
   var web3Provider = ((window || {}).web3 || {}).currentProvider;
   if (!web3Provider) return errorCallback("window.web3.currentProvider no longer available.");
   web3Provider.sendAsync(rpcObject, this.messageHandler.bind(this));
-}
+};
 
 module.exports = MetaMaskTransport;
 
@@ -31170,7 +31193,7 @@ var syncRequest = require("../platform/sync-request.js");
 
 function SyncTransport(address, timeout, messageHandler, syncConnect, initialConnectCallback) {
   AbstractTransport.call(this, address, timeout, messageHandler);
-  
+
   this.syncConnect = syncConnect;
   this.initialConnect(initialConnectCallback);
 }
@@ -31186,7 +31209,7 @@ SyncTransport.prototype.submitWork = function (rpcObject) {
   } catch (error) {
     this.messageHandler(error, null);
   }
-}
+};
 
 SyncTransport.prototype.connect = function (callback) {
   if (this.syncConnect) {
@@ -31200,11 +31223,11 @@ SyncTransport.prototype.connect = function (callback) {
   } else {
     HttpTransport.prototype.connect.bind(this)(callback);
   }
-}
+};
 
-SyncTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
+SyncTransport.prototype.submitRpcRequest = function (/*rpcObject, errorCallback*/) {
   throw new Error("not implemented, code should be unreachable for SYNC requests");
-}
+};
 
 module.exports = SyncTransport;
 
@@ -31238,11 +31261,11 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
   // validate configuration
   if (typeof configuration !== "object") return callback(new Error("configuration must be an object."));
   if (!Array.isArray(configuration.httpAddresses)) return callback(new Error("configuration.httpAddresses must be an array."));
-  if (configuration.httpAddresses.some(function (x) { typeof x !== "string" })) return callback(new Error("configuration.httpAddresses must contain only strings."));
+  if (configuration.httpAddresses.some(function (x) { return typeof x !== "string"; })) return callback(new Error("configuration.httpAddresses must contain only strings."));
   if (!Array.isArray(configuration.wsAddresses)) return callback(new Error("configuration.wsAddresses must be an array."));
-  if (configuration.wsAddresses.some(function (x) { typeof x !== "string" })) return callback(new Error("configuration.wsAddresses must contain only strings."));
+  if (configuration.wsAddresses.some(function (x) { return typeof x !== "string"; })) return callback(new Error("configuration.wsAddresses must contain only strings."));
   if (!Array.isArray(configuration.ipcAddresses)) return callback(new Error("configuration.ipcAddresses must be an array."));
-  if (configuration.ipcAddresses.some(function (x) { typeof x !== "string" })) return callback(new Error("configuration.ipcAddresses must contain only strings."));
+  if (configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) return callback(new Error("configuration.ipcAddresses must contain only strings."));
   if (typeof configuration.connectionTimeout !== "number") return callback(new Error("configuration.connectionTimeout must be a number."));
 
   // default to all transports undefined, we will look for all of them becoming !== undefined to determine when we are done attempting all connects
@@ -31252,7 +31275,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
     wsTransports: createArrayWithDefaultValue(configuration.wsAddresses.length, undefined),
     httpTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined),
     syncTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined),
-  }
+  };
 
   // set the internal state reasonable default values
   this.internalState = {
@@ -31263,22 +31286,23 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
     syncTransport: null,
     outstandingRequests: {},
     debugLogging: !!debugLogging,
-  }
+  };
 
   if (syncOnly) {
     resultAggregator.metaMaskTransports = [];
-    if (configuration.wsAddresses.length != 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
-    if (configuration.ipcAddresses.length != 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
+    if (configuration.wsAddresses.length !== 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
+    if (configuration.ipcAddresses.length !== 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
     configuration.httpAddresses.forEach(function (httpAddress, index) {
+      /* jshint nonew: false */
       new SyncTransport(httpAddress, configuration.connectionTimeout, messageHandler, true, function (error, syncTransport) {
         resultAggregator.syncTransports[index] = (error !== null) ? null : syncTransport;
         // TODO: propagate the error up to the caller for reporting
-        checkIfComplete.bind(this)(resultAggregator, callback);
+        checkIfComplete(this, resultAggregator, callback);
         // instantiate an HttpTransport with all the same parameters, we don't need to worry about validating the connection since that is already done by now.
         // we want an HTTP transport because there are some necessarily async operations that need an async transport like background polling for blocks
         configuration.httpAddresses.forEach(function (httpAddress, index) {
           resultAggregator.httpTransports[index] = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function () { });
-          checkIfComplete.bind(this)(resultAggregator, callback);
+          checkIfComplete(this, resultAggregator, callback);
         }.bind(this));
       }.bind(this));
     }.bind(this));
@@ -31286,36 +31310,36 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
   }
 
   // initiate connections to all provided addresses, as each completes it will check to see if everything is done
-  new MetaMaskTransport(messageHandler, function (error, metaMaskTransport) {
+  var metaMaskTransport = new MetaMaskTransport(messageHandler, function (error) {
     resultAggregator.metaMaskTransports[0] = (error !== null) ? null : metaMaskTransport;
-    checkIfComplete.bind(this)(resultAggregator, callback);
+    checkIfComplete(this, resultAggregator, callback);
   }.bind(this));
   configuration.ipcAddresses.forEach(function (ipcAddress, index) {
-    new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error, ipcTransport) {
+    var ipcTransport = new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error) {
       resultAggregator.ipcTransports[index] = (error !== null) ? null : ipcTransport;
       // TODO: propagate the error up to the caller for reporting
-      checkIfComplete.bind(this)(resultAggregator, callback);
+      checkIfComplete(this, resultAggregator, callback);
     }.bind(this));
   }.bind(this));
   configuration.wsAddresses.forEach(function (wsAddress, index) {
-    new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error, wsTransport) {
+    var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error) {
       resultAggregator.wsTransports[index] = (error !== null) ? null : wsTransport;
       // TODO: propagate the error up to the caller for reporting
-      checkIfComplete.bind(this)(resultAggregator, callback);
+      checkIfComplete(this, resultAggregator, callback);
     }.bind(this));
   }.bind(this));
   configuration.httpAddresses.forEach(function (httpAddress, index) {
-    new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error, httpTransport) {
+    var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error) {
       resultAggregator.httpTransports[index] = (error !== null) ? null : httpTransport;
       // TODO: propagate the error up to the caller for reporting
-      checkIfComplete.bind(this)(resultAggregator, callback);
+      checkIfComplete(this, resultAggregator, callback);
     }.bind(this));
   }.bind(this));
   configuration.httpAddresses.forEach(function (httpAddress, index) {
-    new SyncTransport(httpAddress, configuration.connectionTimeout, messageHandler, false, function (error, syncTransport) {
+    var syncTransport = new SyncTransport(httpAddress, configuration.connectionTimeout, messageHandler, false, function (error) {
       resultAggregator.syncTransports[index] = (error !== null) ? null : syncTransport;
       // TODO: propagate the error up to the caller for reporting
-      checkIfComplete.bind(this)(resultAggregator, callback);
+      checkIfComplete(this, resultAggregator, callback);
     }.bind(this));
   }.bind(this));
 }
@@ -31329,28 +31353,30 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
  * @returns {void}
  */
 Transporter.prototype.blockchainRpc = function (jso, requirements, debugLogging) {
-  var chosenTransport = chooseTransport.bind(this)(requirements);
+  var chosenTransport = chooseTransport(this.internalState, requirements);
   if (debugLogging) console.log("Blockchain RPC to " + chosenTransport.address + " via " + chosenTransport.constructor.name + " with payload: " + JSON.stringify(jso));
   chosenTransport.submitWork(jso);
-}
+};
 
 Transporter.prototype.addReconnectListener = function (callback) {
   [this.internalState.metaMaskTransport, this.internalState.ipcTransport, this.internalState.wsTransport, this.internalState.httpTransport, this.internalState.syncTransport].forEach(function (transport) {
     if (!transport) return;
     transport.addReconnectListener(callback);
   });
-}
+};
 Transporter.prototype.removeReconnectListener = function (callback) {
-  [this.internalState.metaMaskTransport, ipcTransport, wsTransport, httpTransport, syncTransport].forEach(function (transport) {
+  [this.internalState.metaMaskTransport, this.internalState.ipcTransport, this.internalState.wsTransport, this.internalState.httpTransport, this.internalState.syncTransport].forEach(function (transport) {
     if (!transport) return;
     transport.removeReconnectListener(callback);
   });
-}
+};
 
 /**
  * Checks to see if result aggregation is complete and if so, calls the provided callback.
  */
-function checkIfComplete(resultAggregator, onCompleteCallback) {
+function checkIfComplete(transporter, resultAggregator, onCompleteCallback) {
+  var internalState = transporter.internalState;
+  
   if (resultAggregator.metaMaskTransports.some(isUndefined)) return;
   if (resultAggregator.syncTransports.some(isUndefined)) return;
   if (resultAggregator.httpTransports.some(isUndefined)) return;
@@ -31364,21 +31390,21 @@ function checkIfComplete(resultAggregator, onCompleteCallback) {
     && resultAggregator.ipcTransports.every(isNull))
     return onCompleteCallback(new Error("Unable to connect to an Ethereum node via any tranpsort (MetaMask, HTTP, WS, IPC)."), null);
 
-  this.internalState.metaMaskTransport = resultAggregator.metaMaskTransports.filter(isNotNull)[0] || null;
-  this.internalState.syncTransport = resultAggregator.syncTransports.filter(isNotNull)[0] || null;
-  this.internalState.httpTransport = resultAggregator.httpTransports.filter(isNotNull)[0] || null;
-  this.internalState.wsTransport = resultAggregator.wsTransports.filter(isNotNull)[0] || null;
-  this.internalState.ipcTransport = resultAggregator.ipcTransports.filter(isNotNull)[0] || null;
+  internalState.metaMaskTransport = resultAggregator.metaMaskTransports.filter(isNotNull)[0] || null;
+  internalState.syncTransport = resultAggregator.syncTransports.filter(isNotNull)[0] || null;
+  internalState.httpTransport = resultAggregator.httpTransports.filter(isNotNull)[0] || null;
+  internalState.wsTransport = resultAggregator.wsTransports.filter(isNotNull)[0] || null;
+  internalState.ipcTransport = resultAggregator.ipcTransports.filter(isNotNull)[0] || null;
 
-  if (this.internalState.debugLogging) {
-    console.log("MetaMask: " + (this.internalState.metaMaskTransport ? "connected" : "not connected"));
-    console.log("Sync: " + (this.internalState.syncTransport ? this.internalState.syncTransport.address : "not connected"));
-    console.log("HTTP: " + (this.internalState.httpTransport ? this.internalState.httpTransport.address : "not connected"));
-    console.log("WS: " + (this.internalState.wsTransport ? this.internalState.wsTransport.address : "not connected"));
-    console.log("IPC: " + (this.internalState.ipcTransport ? this.internalState.ipcTransport.address : "not connected"));
+  if (internalState.debugLogging) {
+    console.log("MetaMask: " + (internalState.metaMaskTransport ? "connected" : "not connected"));
+    console.log("Sync: " + (internalState.syncTransport ? internalState.syncTransport.address : "not connected"));
+    console.log("HTTP: " + (internalState.httpTransport ? internalState.httpTransport.address : "not connected"));
+    console.log("WS: " + (internalState.wsTransport ? internalState.wsTransport.address : "not connected"));
+    console.log("IPC: " + (internalState.ipcTransport ? internalState.ipcTransport.address : "not connected"));
   }
 
-  onCompleteCallback(null, this);
+  onCompleteCallback(null, transporter);
 }
 
 /**
@@ -31387,17 +31413,17 @@ function checkIfComplete(resultAggregator, onCompleteCallback) {
  * @param {!string} requirements - ANY, SYNC or DUPLEX.  Will choose best available transport that meets the requirements.
  * @returns {!AbstractTransport}
  */
-function chooseTransport(requirements) {
+function chooseTransport(internalState, requirements) {
   var eligibleTransports;
   switch (requirements) {
     case "ANY":
-      eligibleTransports = [this.internalState.metaMaskTransport, this.internalState.ipcTransport, this.internalState.wsTransport, this.internalState.httpTransport];
+      eligibleTransports = [internalState.metaMaskTransport, internalState.ipcTransport, internalState.wsTransport, internalState.httpTransport];
       break;
     case "SYNC":
-      eligibleTransports = [this.internalState.syncTransport];
+      eligibleTransports = [internalState.syncTransport];
       break;
     case "DUPLEX":
-      eligibleTransports = [this.internalState.ipcTransport, this.internalState.wsTransport];
+      eligibleTransports = [internalState.ipcTransport, internalState.wsTransport];
       break;
     default:
       throw new Error("requirements must be one of ANY, SYNC or DUPLEX");
@@ -31419,12 +31445,8 @@ function isNotNull(value) {
   return value !== null;
 }
 
-function isTruthy(value) {
-  return !!value;
-}
-
 function createArrayWithDefaultValue(size, defaultValue) {
-  return Array.apply(null, Array(size)).map(function () { return defaultValue; })
+  return Array.apply(null, Array(size)).map(function () { return defaultValue; });
 }
 
 module.exports = Transporter;
@@ -31433,7 +31455,7 @@ module.exports = Transporter;
 "use strict";
 
 var AbstractTransport = require("./abstract-transport.js");
-var WebSocketClient = require("../platform/web-socket-client.js")
+var WebSocketClient = require("../platform/web-socket-client.js");
 
 function WsTransport(address, timeout, messageHandler, initialConnectCallback) {
   AbstractTransport.call(this, address, timeout, messageHandler);
@@ -31450,7 +31472,7 @@ WsTransport.prototype.connect = function (callback) {
   var messageHandler = function () { };
   this.webSocketClient.onopen = function () {
     callback(null);
-    callback = function () { }
+    callback = function () { };
     messageHandler = this.messageHandler;
   }.bind(this);
   this.webSocketClient.onmessage = function (message) {
@@ -31462,9 +31484,9 @@ WsTransport.prototype.connect = function (callback) {
   }.bind(this);
   this.webSocketClient.onclose = function () {
     callback(new Error("Web socket closed without opening, usually means failed connection."));
-    callback = function () { }
+    callback = function () { };
   }.bind(this);
-}
+};
 
 WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
@@ -31474,8 +31496,8 @@ WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
     if (error.message === "cannot call send() while not connected") error.retryable = true;
     errorCallback(error);
   }
-}
+};
 
 module.exports = WsTransport;
 
-},{"../platform/web-socket-client.js":165,"./abstract-transport.js":166}]},{},[58]);
+},{"../platform/web-socket-client.js":165,"./abstract-transport.js":166}]},{},[160]);
