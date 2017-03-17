@@ -137,7 +137,7 @@ function processWork(abstractTransport, rpcObject) {
  */
 function reconnect(abstractTransport) {
   abstractTransport.connect(function (error) {
-    if (error !== null) return setTimeout(reconnect(abstractTransport), abstractTransport.backoffMilliseconds *= 2);
+    if (error !== null) return setTimeout(reconnect.bind(this, abstractTransport), abstractTransport.backoffMilliseconds *= 2);
     Object.keys(abstractTransport.reconnectListeners).forEach(function (key) {
       if (typeof abstractTransport.reconnectListeners[key] !== "function") return delete abstractTransport.reconnectListeners[key];
       abstractTransport.reconnectListeners[key]();
