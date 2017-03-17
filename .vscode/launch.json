@@ -12,8 +12,6 @@
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha",
             "windows": { "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha.cmd" },
             "runtimeArgs": [
-                "-u", "bdd",
-                "--colors",
                 "--no-timeouts",
                 "${workspaceRoot}/test/"
             ],
