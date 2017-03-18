@@ -1,22 +1,26 @@
 "use strict";
 
-function ErrorWithData(message, data) {
-    Error.call(this, message);
-    this.name = "ErrorWithData";
-    this.data = data;
+function BetterError(message) {
+  var underlying = Error.call(this, message);
+  this.name = underlying.name;
+  this.message = underlying.message;
+  Object.defineProperty(this, "stack", { get: function () { return underlying.stack; } });
 }
+BetterError.prototype = Object.create(Error.prototype, { constructor: { value: BetterError }});
 
-ErrorWithData.prototype = Object.create(Error.prototype);
-ErrorWithData.prototype.constructor = ErrorWithData;
+function ErrorWithData(message, data) {
+  BetterError.call(this, message);
+  this.name = "ErrorWithData";
+  this.data = data;
+}
+ErrorWithData.prototype = Object.create(BetterError.prototype, { constructor: { value: ErrorWithData } });
 
 function ErrorWithCode(message, code) {
-  Error.call(this, message);
+  BetterError.call(this, message);
   this.name = "ErrorWithCode";
   this.code = code;
 }
-
-ErrorWithCode.prototype = Object.create(Error.prototype);
-ErrorWithCode.prototype.constructor = ErrorWithCode;
+ErrorWithCode.prototype = Object.create(BetterError.prototype, { constructor: { value: ErrorWithData } });
 
 function ErrorWithCodeAndData(message, code, data) {
   Error.call(this, message);
@@ -24,9 +28,10 @@ function ErrorWithCodeAndData(message, code, data) {
   this.code = code;
   this.data = data;
 }
+ErrorWithCodeAndData.prototype = Object.create(BetterError.prototype, { constructor: { value: ErrorWithData } });
 
 module.exports = {
-    ErrorWithCode: ErrorWithCode,
-    ErrorWithData: ErrorWithData,
-    ErrorWithCodeAndData: ErrorWithCodeAndData
+  ErrorWithCode: ErrorWithCode,
+  ErrorWithData: ErrorWithData,
+  ErrorWithCodeAndData: ErrorWithCodeAndData
 };

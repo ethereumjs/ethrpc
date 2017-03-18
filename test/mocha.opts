@@ -1,1 +1,4 @@
 --timeout 3000
+--recursive
+--colors
+-u bdd
