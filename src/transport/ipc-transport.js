@@ -53,7 +53,7 @@ IpcTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
     });
   } catch (error) {
     if (error.code === "EPIPE") error.retryable = true;
-    errorCallback(error);
+    setTimeout(function() { errorCallback(error); });
   }
 };
 
