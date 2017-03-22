@@ -19992,7 +19992,19 @@ module.exports={
 (function (Buffer){
 'use strict';
 
-var _typeof12 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof14 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof13 = typeof Symbol === "function" && _typeof14(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof14(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof14(obj);
+};
+
+var _typeof12 = typeof Symbol === "function" && _typeof13(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof13(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof13(obj);
+};
 
 var _typeof11 = typeof Symbol === "function" && _typeof12(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof12(obj);
@@ -28862,23 +28874,27 @@ module.exports={
 },{}],159:[function(require,module,exports){
 "use strict";
 
-function ErrorWithData(message, data) {
-    Error.call(this, message);
-    this.name = "ErrorWithData";
-    this.data = data;
+function BetterError(message) {
+  var underlying = Error.call(this, message);
+  this.name = underlying.name;
+  this.message = underlying.message;
+  Object.defineProperty(this, "stack", { get: function () { return underlying.stack; } });
 }
+BetterError.prototype = Object.create(Error.prototype, { constructor: { value: BetterError }});
 
-ErrorWithData.prototype = Object.create(Error.prototype);
-ErrorWithData.prototype.constructor = ErrorWithData;
+function ErrorWithData(message, data) {
+  BetterError.call(this, message);
+  this.name = "ErrorWithData";
+  this.data = data;
+}
+ErrorWithData.prototype = Object.create(BetterError.prototype, { constructor: { value: ErrorWithData } });
 
 function ErrorWithCode(message, code) {
-  Error.call(this, message);
+  BetterError.call(this, message);
   this.name = "ErrorWithCode";
   this.code = code;
 }
-
-ErrorWithCode.prototype = Object.create(Error.prototype);
-ErrorWithCode.prototype.constructor = ErrorWithCode;
+ErrorWithCode.prototype = Object.create(BetterError.prototype, { constructor: { value: ErrorWithData } });
 
 function ErrorWithCodeAndData(message, code, data) {
   Error.call(this, message);
@@ -28886,11 +28902,12 @@ function ErrorWithCodeAndData(message, code, data) {
   this.code = code;
   this.data = data;
 }
+ErrorWithCodeAndData.prototype = Object.create(BetterError.prototype, { constructor: { value: ErrorWithData } });
 
 module.exports = {
-    ErrorWithCode: ErrorWithCode,
-    ErrorWithData: ErrorWithData,
-    ErrorWithCodeAndData: ErrorWithCodeAndData
+  ErrorWithCode: ErrorWithCode,
+  ErrorWithData: ErrorWithData,
+  ErrorWithCodeAndData: ErrorWithCodeAndData
 };
 
 },{}],160:[function(require,module,exports){
@@ -28930,7 +28947,7 @@ function RPCError(err) {
 RPCError.prototype = Error.prototype;
 
 function isFunction(f) {
-  return Object.prototype.toString.call(f) === "[object Function]";
+  return typeof f === "function";
 }
 
 function wait(delay) {
@@ -29624,7 +29641,7 @@ module.exports = {
   },
 
   read: function (address, blockNumber, callback) {
-    this.getCode(address, blockNumber, callback);
+    return this.getCode(address, blockNumber, callback);
   },
 
   // TODO: getCompilers
@@ -29828,6 +29845,39 @@ module.exports = {
   // trace_* (?parity only?)
   // ****
 
+  /************************
+   * Convenience wrappers *
+   ************************/
+
+  sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
+    if (to && to.constructor === Object) {
+      value = to.value;
+      from = to.from;
+      if (to.onSent) onSent = to.onSent;
+      if (to.onSuccess) onSuccess = to.onSuccess;
+      if (to.onFailed) onFailed = to.onFailed;
+      to = to.to;
+    }
+    return this.transact({
+      from: from,
+      to: to,
+      value: abi.fix(value, "hex"),
+      returns: "null",
+      gas: "0xcf08"
+    }, onSent, onSuccess, onFailed);
+  },
+
+  // publish a new contract to the blockchain (from the coinbase account)
+  publish: function (compiled, f) {
+    var self = this;
+    if (!isFunction(f)) {
+      return this.sendTx({ from: this.coinbase(), data: compiled });
+    }
+    this.coinbase(function (coinbase) {
+      self.sendTx({ from: coinbase, data: compiled }, f);
+    });
+  },
+
   // ****
   // high level access
   // ****
@@ -29900,10 +29950,7 @@ module.exports = {
       return f(errors.TRANSACTION_FAILED);
     }
     var packaged = this.packageRequest(payload);
-    if (this.debug.broadcast) {
-      packaged.debug = clone(payload);
-      packaged.debug.batch = false;
-    }
+    if (this.debug.broadcast) packaged.debug = clone(payload);
     var invocation = (payload.send) ? this.sendTx : this.call;
     return invocation.call(this, packaged, f);
   },
@@ -29978,35 +30025,6 @@ module.exports = {
       return callback(converted);
     });
   },
-
-  // ****
-  // other
-  // ****
-
-  sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
-    if (to && to.constructor === Object) {
-      value = to.value;
-      from = to.from;
-      if (to.onSent) onSent = to.onSent;
-      if (to.onSuccess) onSuccess = to.onSuccess;
-      if (to.onFailed) onFailed = to.onFailed;
-      to = to.to;
-    }
-    return this.transact({
-      from: from,
-      to: to,
-      value: abi.fix(value, "hex"),
-      returns: "null",
-      gas: "0xcf08"
-    }, onSent, onSuccess, onFailed);
-  },
-
-  // publish a new contract to the blockchain (from the coinbase account)
-  publish: function (compiled, f) {
-    return this.sendTx({ from: this.coinbase(), data: compiled }, f);
-  },
-
-  // Ethereum node status checks
 
   packageRequest: function (payload) {
     var tx = clone(payload);
@@ -31011,7 +31029,7 @@ function processWork(abstractTransport, rpcObject) {
  */
 function reconnect(abstractTransport) {
   abstractTransport.connect(function (error) {
-    if (error !== null) return setTimeout(reconnect(abstractTransport), abstractTransport.backoffMilliseconds *= 2);
+    if (error !== null) return setTimeout(reconnect.bind(this, abstractTransport), abstractTransport.backoffMilliseconds *= 2);
     Object.keys(abstractTransport.reconnectListeners).forEach(function (key) {
       if (typeof abstractTransport.reconnectListeners[key] !== "function") return delete abstractTransport.reconnectListeners[key];
       abstractTransport.reconnectListeners[key]();

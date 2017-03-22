@@ -28,7 +28,7 @@ function RPCError(err) {
 RPCError.prototype = Error.prototype;
 
 function isFunction(f) {
-  return Object.prototype.toString.call(f) === "[object Function]";
+  return typeof f === "function";
 }
 
 function wait(delay) {
@@ -722,7 +722,7 @@ module.exports = {
   },
 
   read: function (address, blockNumber, callback) {
-    this.getCode(address, blockNumber, callback);
+    return this.getCode(address, blockNumber, callback);
   },
 
   // TODO: getCompilers
@@ -926,6 +926,39 @@ module.exports = {
   // trace_* (?parity only?)
   // ****
 
+  /************************
+   * Convenience wrappers *
+   ************************/
+
+  sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
+    if (to && to.constructor === Object) {
+      value = to.value;
+      from = to.from;
+      if (to.onSent) onSent = to.onSent;
+      if (to.onSuccess) onSuccess = to.onSuccess;
+      if (to.onFailed) onFailed = to.onFailed;
+      to = to.to;
+    }
+    return this.transact({
+      from: from,
+      to: to,
+      value: abi.fix(value, "hex"),
+      returns: "null",
+      gas: "0xcf08"
+    }, onSent, onSuccess, onFailed);
+  },
+
+  // publish a new contract to the blockchain (from the coinbase account)
+  publish: function (compiled, f) {
+    var self = this;
+    if (!isFunction(f)) {
+      return this.sendTx({ from: this.coinbase(), data: compiled });
+    }
+    this.coinbase(function (coinbase) {
+      self.sendTx({ from: coinbase, data: compiled }, f);
+    });
+  },
+
   // ****
   // high level access
   // ****
@@ -998,10 +1031,7 @@ module.exports = {
       return f(errors.TRANSACTION_FAILED);
     }
     var packaged = this.packageRequest(payload);
-    if (this.debug.broadcast) {
-      packaged.debug = clone(payload);
-      packaged.debug.batch = false;
-    }
+    if (this.debug.broadcast) packaged.debug = clone(payload);
     var invocation = (payload.send) ? this.sendTx : this.call;
     return invocation.call(this, packaged, f);
   },
@@ -1076,35 +1106,6 @@ module.exports = {
       return callback(converted);
     });
   },
-
-  // ****
-  // other
-  // ****
-
-  sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
-    if (to && to.constructor === Object) {
-      value = to.value;
-      from = to.from;
-      if (to.onSent) onSent = to.onSent;
-      if (to.onSuccess) onSuccess = to.onSuccess;
-      if (to.onFailed) onFailed = to.onFailed;
-      to = to.to;
-    }
-    return this.transact({
-      from: from,
-      to: to,
-      value: abi.fix(value, "hex"),
-      returns: "null",
-      gas: "0xcf08"
-    }, onSent, onSuccess, onFailed);
-  },
-
-  // publish a new contract to the blockchain (from the coinbase account)
-  publish: function (compiled, f) {
-    return this.sendTx({ from: this.coinbase(), data: compiled }, f);
-  },
-
-  // Ethereum node status checks
 
   packageRequest: function (payload) {
     var tx = clone(payload);
