@@ -41,4 +41,4 @@ gulp.task("build", function (callback) {
   });
 });
 
-gulp.task("default", ["lint", "test", "build"]);
+gulp.task("default", ["lint", "build"]);

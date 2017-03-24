@@ -902,7 +902,6 @@ module.exports = {
   },
 
   uninstallFilter: function (filter, callback) {
-    if (typeof filter !== "number") throw new Error("filter must be a number");
     return this.eth("uninstallFilter", [filter], callback);
   },
 
