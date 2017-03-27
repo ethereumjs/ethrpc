@@ -19419,7 +19419,11 @@ module.exports={
 (function (Buffer){
 'use strict';
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
 
 var ethUtil = require('ethereumjs-util');
 var fees = require('ethereum-common/params.json');
@@ -19540,7 +19544,6 @@ module.exports = function () {
    * @return {Boolean}
    */
 
-
   Transaction.prototype.toCreationAddress = function toCreationAddress() {
     return this.to.toString('hex') === '';
   };
@@ -19550,7 +19553,6 @@ module.exports = function () {
    * @param {Boolean} [includeSignature=true] whether or not to inculde the signature
    * @return {Buffer}
    */
-
 
   Transaction.prototype.hash = function hash(includeSignature) {
     if (includeSignature === undefined) includeSignature = true;
@@ -19585,7 +19587,6 @@ module.exports = function () {
    * @return {Buffer}
    */
 
-
   Transaction.prototype.getChainId = function getChainId() {
     return this._chainId;
   };
@@ -19594,7 +19595,6 @@ module.exports = function () {
    * returns the sender's address
    * @return {Buffer}
    */
-
 
   Transaction.prototype.getSenderAddress = function getSenderAddress() {
     if (this._from) {
@@ -19610,7 +19610,6 @@ module.exports = function () {
    * @return {Buffer}
    */
 
-
   Transaction.prototype.getSenderPublicKey = function getSenderPublicKey() {
     if (!this._senderPubKey || !this._senderPubKey.length) {
       if (!this.verifySignature()) throw new Error('Invalid Signature');
@@ -19622,7 +19621,6 @@ module.exports = function () {
    * Determines if the signature is valid
    * @return {Boolean}
    */
-
 
   Transaction.prototype.verifySignature = function verifySignature() {
     var msgHash = this.hash(false);
@@ -19649,7 +19647,6 @@ module.exports = function () {
    * @param {Buffer} privateKey
    */
 
-
   Transaction.prototype.sign = function sign(privateKey) {
     var msgHash = this.hash(false);
     var sig = ethUtil.ecsign(msgHash, privateKey);
@@ -19663,7 +19660,6 @@ module.exports = function () {
    * The amount of gas paid for the data in this tx
    * @return {BN}
    */
-
 
   Transaction.prototype.getDataFee = function getDataFee() {
     var data = this.raw[5];
@@ -19679,7 +19675,6 @@ module.exports = function () {
    * @return {BN}
    */
 
-
   Transaction.prototype.getBaseFee = function getBaseFee() {
     var fee = this.getDataFee().iaddn(fees.txGas.v);
     if (this._homestead && this.toCreationAddress()) {
@@ -19693,7 +19688,6 @@ module.exports = function () {
    * @return {BN}
    */
 
-
   Transaction.prototype.getUpfrontCost = function getUpfrontCost() {
     return new BN(this.gasLimit).imul(new BN(this.gasPrice)).iadd(new BN(this.value));
   };
@@ -19703,7 +19697,6 @@ module.exports = function () {
    * @param {Boolean} [stringError=false] whether to return a string with a dscription of why the validation failed or return a Bloolean
    * @return {Boolean|String}
    */
-
 
   Transaction.prototype.validate = function validate(stringError) {
     var errors = [];
@@ -19964,7 +19957,13 @@ module.exports={
 
 },{}],92:[function(require,module,exports){
 (function (Buffer){
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
 
 var createKeccakHash = require('keccak');
 var secp256k1 = require('secp256k1');
@@ -29213,7 +29212,7 @@ module.exports = {
         if (returns === "number[]") {
           array[i] = abi.string(array[i]);
         } else if (returns === "unfix[]") {
-          array[i] = abi.unfix(array[i], "string");
+          array[i] = abi.unfix_signed(array[i], "string");
         }
       }
       return array;
@@ -29241,7 +29240,7 @@ module.exports = {
       } else if (returns === "bignumber") {
         res = abi.bignum(res, null, true);
       } else if (returns === "unfix") {
-        res = abi.unfix(res, "string");
+        res = abi.unfix_signed(res, "string");
       } else if (returns === "null") {
         res = null;
       } else if (returns === "address" || returns === "address[]") {

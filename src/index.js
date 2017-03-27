@@ -402,7 +402,7 @@ module.exports = {
         if (returns === "number[]") {
           array[i] = abi.string(array[i]);
         } else if (returns === "unfix[]") {
-          array[i] = abi.unfix(array[i], "string");
+          array[i] = abi.unfix_signed(array[i], "string");
         }
       }
       return array;
@@ -430,7 +430,7 @@ module.exports = {
       } else if (returns === "bignumber") {
         res = abi.bignum(res, null, true);
       } else if (returns === "unfix") {
-        res = abi.unfix(res, "string");
+        res = abi.unfix_signed(res, "string");
       } else if (returns === "null") {
         res = null;
       } else if (returns === "address" || returns === "address[]") {
