@@ -22,7 +22,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            // docker run --rm -p 9229:9229 --name=ethrpc ethrpc --debug-brk --inspect --colors test/stub-node-only.js
+            // docker run --rm -p 9229:9229 --name=ethrpc ethrpc --debug-brk --inspect test/stub-node-only.js
             "type": "node2",
             "request": "attach",
             "name": "Attach to Docker",
