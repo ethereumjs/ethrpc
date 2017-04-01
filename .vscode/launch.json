@@ -19,7 +19,10 @@
             //     "ETHRPC_TEST_HTTP_ADDRESS": "https://eth3.augur.net:443",
             //     "ETHRPC_TEST_WS_ADRESS": "wss://ws.augur.net:443"
             // },
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "outFiles": [
+                "${workspaceRoot}/node_modules/ethereumjs-blockstream/**/*.js"
+            ]
         },
         {
             // docker run --rm -p 9229:9229 --name=ethrpc ethrpc --debug-brk --inspect test/stub-node-only.js

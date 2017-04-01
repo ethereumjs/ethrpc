@@ -15,7 +15,7 @@ describe("BlockNotifier", function () {
 
   it("uses subscriptions when available", function (done) {
     blockNotifier = new BlockNotifier(mockTransport, 1);
-    mockTransport.getBlockByNumber = assertingCallback;
+    mockTransport.getLatestBlock = assertingCallback;
     var pushing = false;
     blockNotifier.subscribe(function (block) {
       assert.isTrue(pushing);

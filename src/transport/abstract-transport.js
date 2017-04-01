@@ -20,6 +20,7 @@ function AbstractTransport(address, timeout, messageHandler) {
   this.awaitingPump = false;
   this.connected = false;
   this.backoffMilliseconds = 1;
+  this.nextReconnectListenerToken = 1;
   this.reconnectListeners = {};
 }
 
@@ -47,7 +48,9 @@ AbstractTransport.prototype.submitWork = function (rpcObject) {
  * @param {function():void} callback - called when this transport reconnects (possibly never)
  */
 AbstractTransport.prototype.addReconnectListener = function (callback) {
-  this.reconnectListeners[callback] = callback;
+  var token = (this.nextReconnectListenerToken++).toString();
+  this.reconnectListeners[token] = callback;
+  return token;
 };
 
 /**
@@ -55,8 +58,8 @@ AbstractTransport.prototype.addReconnectListener = function (callback) {
  * 
  * @param {function():void} callbackToRemove - the callback you want to un-register from this transport
  */
-AbstractTransport.prototype.removeReconnectListener = function (callbackToRemove) {
-  delete this.reconnectListeners[callbackToRemove];
+AbstractTransport.prototype.removeReconnectListener = function (token) {
+  delete this.reconnectListeners[token];
 };
 
 /**

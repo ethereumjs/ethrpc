@@ -10,6 +10,9 @@ var EthTx = require("ethereumjs-tx");
 var BigNumber = require("bignumber.js");
 var keccak_256 = require("js-sha3").keccak_256;
 var abi = require("augur-abi");
+var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
+var BlockNotifier = require("./block-management/block-notifier.js");
+var createTransportAdapter = require("./block-management/ethrpc-transport-adapter.js");
 var errors = require("./errors.json");
 var ErrorWithData = require("./errors.js").ErrorWithData;
 var ErrorWithCodeAndData = require("./errors.js").ErrorWithCodeAndData;
@@ -113,6 +116,8 @@ module.exports = {
    * @property {?string[]} wsAddresses
    * @property {?string[]} ipcAddresses
    * @property {?number} connectionTimeout
+   * @property {?number} pollingIntervalMilliseconds
+   * @property {?number} blockRetention
    * @property {!function(Error):void} errorHandler - called when an otherwise unhandled asynchronous error occurs during the course of operation.
    *
    * @param {!configuration} configuration
@@ -149,7 +154,9 @@ module.exports = {
       // ensure we can do basic JSON-RPC over this connection
       this.version(function (errorOrResult) {
         if (errorOrResult instanceof Error || errorOrResult.error) return initialConnectCallback(errorOrResult);
-        this.setupBlockSubscription(function () { initialConnectCallback(null); });
+        this.createBlockAndLogStreamer({ pollingIntervalMilliseconds: configuration.pollingIntervalMilliseconds, blockRetention: configuration.blockRetention }, createTransportAdapter(this));
+        this.internalState.blockAndLogStreamer.subscribeToOnBlockAdded(this.onNewBlock.bind(this));
+        initialConnectCallback(null);
       }.bind(this));
     }.bind(this));
   },
@@ -167,8 +174,13 @@ module.exports = {
       wsAddresses: [],
       ipcAddresses: [],
       connectionTimeout: 3000,
+      pollingIntervalMilliseconds: 30000,
+      blockRetention: 100,
       errorHandler: null,
     };
+
+    // destroy the old BlockNotifier so it doesn't try to reconnect or continue polling
+    (((this.internalState || {}).blockNotifier || {}).destroy || function () {})();
 
     // redirect any not-yet-received responses to /dev/null
     var oldMessageHandlerObject = (this.internalState || {}).shimMessageHandlerObject || {};
@@ -178,6 +190,8 @@ module.exports = {
     // reset state to defaults
     this.internalState = {
       transporter: null,
+      blockNotifier: null,
+      blockAndLogStreamer: null,
       outstandingRequests: {},
       subscriptions: {},
       newBlockIntervalTimeoutId: null,
@@ -197,7 +211,6 @@ module.exports = {
     this.txs = {};
   },
 
-  // TODO: add support for caller passing in request and response type information
   /**
    * Used internally.  Submits a remote procedure call to the blockchain.
    *
@@ -290,38 +303,58 @@ module.exports = {
   },
 
   /**
-   * Used internally.  Setup the initial subscription for new blocks.  Called on first connect, then never again.
+   * Used internally.  Instantiates a new BlockAndLogStreamer backed by ethrpc and BlockNotifier.
    * 
-   * @param {function():void} callback - called when the subscription is done being setup
+   * @typedef Block
+   * @type object
+   * @property hash
+   * @property parentHash
+   *
+   * @typedef FilterOptions
+   * @type object
+   * @property {(string|undefined)} address
+   * @property {(string|string[]|null)[]} topics
+   * @property {(string|undefined)} fromBlock
+   * @property {(string|undefined)} toBlock
+   * @property {(string|undefined)} limit
+   *
+   * @typedef Configuration
+   * @type object
+   * @property {number} pollingIntervalMilliseconds
+   * @property {number} blockRetention
+   *
+   * @typedef Transport
+   * @type object
+   * @property {function(function(Error, Block):void):void} getLatestBlock
+   * @property {function(string, function(Error, Block):void):void} getBlockByHash
+   * @property {function(FilterOptions, function(Error, Log[]):void):void} getLogs
+   * @property {function(function():void, function(Error):void):string} subscribeToReconnects
+   * @property {function(string):void} unsubscribeFromReconnects
+   * @property {function(function(Block):void, function(Error):void):string} subscribeToNewHeads
+   * @property {function(string):void} unsubscribeFromNewHeads
+   *
+   * @param {Configuration} configuration
+   * @param {Transport} transport
    */
-  setupBlockSubscription: function (callback) {
-    if (!callback) {
-      // sync: we know subscriptions aren't supported, so just skip to setting up the polling
-      clearInterval(this.internalState.newBlockIntervalTimeoutId);
-      this.internalState.newBlockIntervalTimeoutId = setInterval(this.getBlockByNumber.bind(this, "latest", false, this.onNewBlock.bind(this)), this.BLOCK_POLL_INTERVAL);
-    } else {
-      // async: try to subscribe first, if that fails fallback to polling
-      var subscribeToNewBlocks = function(callback) {
-        clearInterval(this.internalState.newBlockIntervalTimeoutId);
-        this.subscribeNewHeads(function (resultOrError) {
-          if (resultOrError instanceof Error || resultOrError.error) {
-            this.internalState.newBlockIntervalTimeoutId = setInterval(this.getBlockByNumber.bind(this, "latest", false, this.onNewBlock.bind(this)), this.BLOCK_POLL_INTERVAL);
-          } else {
-            this.internalState.subscriptions[resultOrError] = this.onNewBlock.bind(this);
-          }
-          callback();
-        }.bind(this));
-      }.bind(this);
+  createBlockAndLogStreamer: function (configuration, transport) {
+    this.internalState.blockNotifier = new BlockNotifier(transport, configuration.pollingIntervalMilliseconds);
+    this.internalState.blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, { blockRetention: configuration.blockRetention });
+    var reconcileWithErrorLogging = function (block) { this.internalState.blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (error) { if (error) console.log(error); }); }.bind(this);
+    this.internalState.blockNotifier.subscribe(reconcileWithErrorLogging);
+  },
 
-      this.internalState.transporter.addReconnectListener(subscribeToNewBlocks.bind(this, function () {}));
-      subscribeToNewBlocks(callback);
-    }
+  /**
+   * Provides access to the internally managed BlockAndLogStreamer instance.
+   */
+  getBlockAndLogStreamer: function () {
+    return this.internalState.blockAndLogStreamer;
   },
 
   onNewBlock: function (block) {
     if (typeof block !== "object") throw new Error("block must be an object");
 
-    this.block = block;
+    // for legacy compatability, use getBlockAndLogStream().getLatestReconciledBlock()
+    this.block = clone(block);
     // FIXME: ethrpc should really store the original block and add getters for making it easier to interact with
     this.block.number = parseInt(block.number, 16);
 
@@ -1853,14 +1886,14 @@ module.exports = {
   }
 };
 
-function validateAndDefaultBlockNumber(block) {
-  if (block === undefined) return "latest";
-  if (block === null) return "latest";
-  if (block === "latest") return block;
-  if (block === "earliest") return block;
-  if (block === "pending") return block;
+function validateAndDefaultBlockNumber(blockNumber) {
+  if (blockNumber === undefined) return "latest";
+  if (blockNumber === null) return "latest";
+  if (blockNumber === "latest") return blockNumber;
+  if (blockNumber === "earliest") return blockNumber;
+  if (blockNumber === "pending") return blockNumber;
   try {
-    return validateNumber(block, "block");
+    return validateNumber(blockNumber, "block");
   } catch (error) {
     throw new Error("block must be a number, a 0x prefixed hex string, or 'latest' or 'earliest' or 'pending'");
   }
@@ -1880,7 +1913,7 @@ function validateNumber(number, parameterName) {
   if (!parameterName) parameterName = "number";
   if (number === null) return number;
   if (number === undefined) return number;
-  if (typeof number === "number") return number;
+  if (typeof number === "number") return "0x" + number.toString(16);
   if (typeof number === "string" && /^0x[0-9a-zA-Z]+$/.test(number)) return number;
   throw new Error(parameterName, " must be a number, null, undefined or a 0x prefixed hex encoded string");
 }

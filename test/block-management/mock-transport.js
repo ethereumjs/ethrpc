@@ -98,14 +98,14 @@ function MockTransport(noSubscriptionSupport) {
     ]
   ]
 
-  this.getBlockByNumber = function (number, fullBlock, callback) {
-    var block = (number === "latest") ? this.getCurrentBlock() : blocks[currentBranch][number];
-    setImmediate(function () { callback(block); });
+  this.getLatestBlock = function (callback) {
+    var block = this.getCurrentBlock();
+    setImmediate(function () { callback(undefined, block); });
   }.bind(this);
 
-  this.getBlockByHash = function(hash, fullBlock, callback) {
+  this.getBlockByHash = function(hash, callback) {
     var block = blocks[currentBranch].find(function (block) { return block.hash === hash });
-    setImmediate(function () { callback(block); });
+    setImmediate(function () { callback(undefined, block); });
   }.bind(this);
 
   this.subscribeToNewHeads = function (callback, onSubscriptionError) {

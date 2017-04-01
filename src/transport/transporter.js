@@ -52,6 +52,8 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
     syncTransport: null,
     outstandingRequests: {},
     debugLogging: !!debugLogging,
+    nextReconnectListenerToken: 1,
+    reconnectListeners: {},
   };
 
   if (syncOnly) {
@@ -125,16 +127,12 @@ Transporter.prototype.blockchainRpc = function (jso, requirements, debugLogging)
 };
 
 Transporter.prototype.addReconnectListener = function (callback) {
-  [this.internalState.metaMaskTransport, this.internalState.ipcTransport, this.internalState.wsTransport, this.internalState.httpTransport, this.internalState.syncTransport].forEach(function (transport) {
-    if (!transport) return;
-    transport.addReconnectListener(callback);
-  });
+  var token = (this.internalState.nextReconnectListenerToken++).toString();
+  this.internalState.reconnectListeners[token] = callback;
+  return token;
 };
-Transporter.prototype.removeReconnectListener = function (callback) {
-  [this.internalState.metaMaskTransport, this.internalState.ipcTransport, this.internalState.wsTransport, this.internalState.httpTransport, this.internalState.syncTransport].forEach(function (transport) {
-    if (!transport) return;
-    transport.removeReconnectListener(callback);
-  });
+Transporter.prototype.removeReconnectListener = function (token) {
+  delete this.internalState.reconnectListeners[token];
 };
 
 /**
@@ -169,6 +167,16 @@ function checkIfComplete(transporter, resultAggregator, onCompleteCallback) {
     console.log("WS: " + (internalState.wsTransport ? internalState.wsTransport.address : "not connected"));
     console.log("IPC: " + (internalState.ipcTransport ? internalState.ipcTransport.address : "not connected"));
   }
+
+  // subscribe to reconnect callbacks for all transports
+  [internalState.metaMaskTransport, internalState.ipcTransport, internalState.wsTransport, internalState.httpTransport, internalState.syncTransport].forEach(function (transport) {
+    if (!transport) return;
+    transport.addReconnectListener(function () {
+      Object.keys(transporter.internalState.reconnectListeners).forEach(function (key) {
+        transporter.internalState.reconnectListeners[key]();
+      });
+    });
+  });
 
   onCompleteCallback(null, transporter);
 }
