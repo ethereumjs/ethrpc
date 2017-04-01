@@ -20,9 +20,12 @@ function SubscribingBlockNotifier(transport, onUnrecoverableSubscriptionFailure)
     onUnrecoverableSubscriptionFailure();
   }.bind(this);
 
-  var onNewHead = function (newBlock) {
-    validateBlock(newBlock);
-    this.notifySubscribers(newBlock);
+  var onNewHead = function (/*blockHeader*/) {
+    // unfortunately we have to fetch the new block until https://github.com/ethereum/go-ethereum/issues/13858 is fixed
+    transport.getLatestBlock(function (error, newBlock) {
+      validateBlock(newBlock);
+      this.notifySubscribers(newBlock);
+    }.bind(this));
   }.bind(this);
 
   var setupSubscriptions = function () {
