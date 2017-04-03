@@ -78,6 +78,8 @@ module.exports = {
 
   errors: errors,
 
+  gasPrice: 20000000000,
+
   requests: null,
 
   // Hook for transaction callbacks
@@ -97,8 +99,6 @@ module.exports = {
   networkID: null,
 
   notifications: null,
-
-  gasPrice: null,
 
   configuration: null,
 
@@ -129,8 +129,12 @@ module.exports = {
       this.configuration[key] = configuration[key];
     }
 
+    // use default (console.error) error handler if not set
+    if (!isFunction(this.configuration.errorHandler)) {
+      this.configuration.errorHandler = function (err) { console.error(err); };
+    }
+
     // validate configuration
-    if (!isFunction(this.configuration.errorHandler)) throw new Error("configuration.errorHandler must be a function");
     if (!Array.isArray(this.configuration.httpAddresses)) return this.configuration.errorHandler(new Error("configuration.httpAddresses must be an array."));
     if (this.configuration.httpAddresses.some(function (x) { return typeof x !== "string"; })) return this.configuration.errorHandler(new Error("configuration.httpAddresses must contain only strings."));
     if (!Array.isArray(this.configuration.wsAddresses)) return this.configuration.errorHandler(new Error("configuration.wsAddresses must be an array."));
@@ -842,7 +846,6 @@ module.exports = {
     return this.eth("protocolVersion", null, callback);
   },
 
-  // TODO: provide overload that takes in an unencoded signed transaction
   /**
    * @param {string} signedTransaction - RLP encoded transaction signed with private key
    */
@@ -1193,134 +1196,150 @@ module.exports = {
    * Raw transactions *
    ********************/
 
-  parseRawTransactionResponse: function (rawTransactionResponse, packaged, address, privateKey, cost, callback) {
-    if (this.debug.broadcast) {
-      console.log("[ethrpc] sendRawTransaction response:", rawTransactionResponse);
-    }
-    if (!rawTransactionResponse) {
-      if (!isFunction(callback)) return errors.RAW_TRANSACTION_ERROR;
-      return callback(errors.RAW_TRANSACTION_ERROR);
-    }
-    if (rawTransactionResponse.error) {
-      if (rawTransactionResponse.message.indexOf("rlp") > -1) {
-        var err = clone(errors.RLP_ENCODING_ERROR);
-        err.bubble = rawTransactionResponse;
-        err.packaged = packaged;
-        if (!isFunction(callback)) return err;
-        return callback(err);
-      } else if (rawTransactionResponse.message.indexOf("Nonce too low") > -1) {
-        if (this.debug.broadcast || this.debug.nonce) {
-          console.info("[ethrpc] Nonce too low, incrementing:", rawTransactionResponse.message, packaged, this.rawTxMaxNonce);
-        }
-        ++this.rawTxMaxNonce;
-        delete packaged.nonce;
-        return this.setNonceThenSubmitRawTransaction(packaged, address, privateKey, callback);
-      }
-      if (!isFunction(callback)) return rawTransactionResponse;
-      return callback(rawTransactionResponse);
-    }
-
-    // rawTransactionResponse is the txhash if nothing failed immediately
-    // (even if the tx is nulled, still index the hash)
-    this.rawTxs[rawTransactionResponse] = {tx: packaged, cost: abi.unfix(cost, "string")};
-
-    // nonce ok, complete sequence
-    if (!isFunction(callback)) return rawTransactionResponse;
-    callback(rawTransactionResponse);
+  /**
+   * Save a raw transaction's info to the rawTxs object.
+   * @param {string} txhash Hash of a raw transaction.
+   * @param {Object} packaged Packaged transaction.
+   * @param {string} cost Upper-limit estimate of the transaction cost.
+   */
+  saveRawTransaction: function (txhash, packaged, cost) {
+    this.rawTxs[txhash] = {
+      tx: packaged,
+      cost: abi.unfix(cost, "string")
+    };
   },
 
-  submitRawTransaction: function (packaged, address, privateKey, callback) {
-    var rawTxHashes = Object.keys(this.rawTxs);
-    var rawTxHash;
-    for (var i = 0, numRawTxs = rawTxHashes.length; i < numRawTxs; ++i) {
-      rawTxHash = rawTxHashes[i];
-      if (this.rawTxs[rawTxHash].tx.nonce === abi.hex(packaged.nonce) && (!this.txs[rawTxHash] || this.txs[rawTxHash].status !== "failed")) {
-        packaged.nonce = this.rawTxMaxNonce + 1;
-        if (this.debug.broadcast || this.debug.nonce) {
-          console.log("[ethrpc] duplicate nonce, incremented:", packaged.nonce, this.rawTxMaxNonce);
-        }
-        break;
+  /**
+   * Validate and submit a signed raw transaction to the network.
+   * @param {Object} rawTransactionResponse Error response from the Ethereum node.
+   * @return {Object|null} Error or null if retrying due to low nonce.
+   */
+  handleRawTransactionError: function (rawTransactionResponse) {
+    if (rawTransactionResponse.message.indexOf("rlp") > -1) {
+      return errors.RLP_ENCODING_ERROR;
+    } else if (rawTransactionResponse.message.indexOf("Nonce too low") > -1) {
+      if (this.debug.broadcast || this.debug.nonce) {
+        console.info("[ethrpc] nonce too low:", this.rawTxMaxNonce);
       }
+      ++this.rawTxMaxNonce;
+      return null;
     }
-    if (packaged.nonce <= this.rawTxMaxNonce) {
-      packaged.nonce = ++this.rawTxMaxNonce;
-    } else {
-      this.rawTxMaxNonce = packaged.nonce;
-    }
-    if (this.debug.nonce) console.log("[ethrpc] nonce:", packaged.nonce, this.rawTxMaxNonce);
-    if (this.debug.broadcast) console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
-    packaged.nonce = abi.hex(packaged.nonce);
-    var etx = new EthTx(packaged);
+    return rawTransactionResponse;
+  },
 
-    // sign the transaction using privateKey
-    etx.sign(privateKey);
+  /**
+   * Validate and submit a signed raw transaction to the network.
+   * @param {Object} signedRawTransaction Unsigned transaction.
+   * @param {function=} callback Callback function (optional).
+   * @return {string|Object} Response (tx hash or error) from the Ethereum node.
+   */
+  submitSignedRawTransaction: function (signedRawTransaction, callback) {
+    if (!signedRawTransaction.validate()) {
+      if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_INVALID);
+      return callback(errors.TRANSACTION_INVALID);
+    }
+    return this.sendRawTransaction(signedRawTransaction.serialize().toString("hex"), callback);
+  },
+
+  /**
+   * Sign the transaction using the private key.
+   * @param {Object} packaged Unsigned transaction.
+   * @param {buffer} privateKey The sender's plaintext private key.
+   * @return {Object} Signed ethereumjs-tx transaction object.
+   */
+  signRawTransaction: function (packaged, privateKey) {
+    var rawTransaction = new EthTx(packaged);
+    rawTransaction.sign(privateKey);
     if (this.debug.tx || this.debug.broadcast) {
-      console.log("raw nonce:    0x" + etx.nonce.toString("hex"));
-      console.log("raw gasPrice: 0x" + etx.gasPrice.toString("hex"));
-      console.log("raw gasLimit: 0x" + etx.gasLimit.toString("hex"));
-      console.log("raw to:       0x" + etx.to.toString("hex"));
-      console.log("raw value:    0x" + etx.value.toString("hex"));
-      console.log("raw v:        0x" + etx.v.toString("hex"));
-      console.log("raw r:        0x" + etx.r.toString("hex"));
-      console.log("raw s:        0x" + etx.s.toString("hex"));
-      console.log("raw data:     0x" + etx.data.toString("hex"));
+      console.log("raw nonce:    0x" + rawTransaction.nonce.toString("hex"));
+      console.log("raw gasPrice: 0x" + rawTransaction.gasPrice.toString("hex"));
+      console.log("raw gasLimit: 0x" + rawTransaction.gasLimit.toString("hex"));
+      console.log("raw to:       0x" + rawTransaction.to.toString("hex"));
+      console.log("raw value:    0x" + rawTransaction.value.toString("hex"));
+      console.log("raw v:        0x" + rawTransaction.v.toString("hex"));
+      console.log("raw r:        0x" + rawTransaction.r.toString("hex"));
+      console.log("raw s:        0x" + rawTransaction.s.toString("hex"));
+      console.log("raw data:     0x" + rawTransaction.data.toString("hex"));
     }
-
-    // calculate the cost (in ether) of this transaction
-    // (note: this is an *upper bound* on the cost, set by the gasLimit)
-    var cost = etx.getUpfrontCost().toString();
-
-    // validate the transaction's signature
-    if (!etx.validate()) return callback(errors.TRANSACTION_INVALID);
-
-    // submit the raw transaction to the network
-    if (!isFunction(callback)) {
-      var rawTransactionResponse = this.sendRawTransaction(etx.serialize().toString("hex"));
-      return this.parseRawTransactionResponse(rawTransactionResponse, packaged, address, privateKey, cost);
-    }
-    var self = this;
-    this.sendRawTransaction(etx.serialize().toString("hex"), function (rawTransactionResponse) {
-      self.parseRawTransactionResponse(rawTransactionResponse, packaged, address, privateKey, cost, callback);
-    });
+    return rawTransaction;
   },
 
-  // set transaction nonce to the number of transactions
-  setNonceThenSubmitRawTransaction: function (packaged, address, privateKey, callback) {
-    var self = this;
-    if (packaged.nonce) {
-      return this.submitRawTransaction(packaged, address, privateKey, callback);
+  /**
+   * Compare nonce to the maximum nonce seen so far.
+   * @param {number} nonce Raw transaction nonce as a base 10 integer.
+   * @return {string} Adjusted (if needed) nonce as a hex string.
+   */
+  verifyRawTransactionNonce: function (nonce) {
+    if (nonce <= this.rawTxMaxNonce) {
+      nonce = ++this.rawTxMaxNonce;
+    } else {
+      this.rawTxMaxNonce = nonce;
     }
+    if (this.debug.nonce) console.log("[ethrpc] nonce:", nonce, this.rawTxMaxNonce);
+    return abi.hex(nonce);
+  },
+
+  /**
+   * Use the number of transactions from this account to set the nonce.
+   * @param {Object} packaged Packaged transaction.
+   * @param {string} address The sender's Ethereum address.
+   * @param {function=} callback Callback function (optional).
+   * @return {Object} Packaged transaction with nonce set.
+   */
+  setRawTransactionNonce: function (packaged, address, callback) {
+    var self = this;
     if (!isFunction(callback)) {
-      var txCount = this.pendingTxCount(address);
+      var transactionCount = this.pendingTxCount(address);
       if (this.debug.nonce) {
-        console.log('[ethrpc] txCount:', parseInt(txCount, 16));
+        console.log("[ethrpc] transaction count:", parseInt(transactionCount, 16));
       }
-      if (txCount && !txCount.error && !(txCount instanceof Error)) {
-        packaged.nonce = parseInt(txCount, 16);
+      if (transactionCount && !transactionCount.error && !(transactionCount instanceof Error)) {
+        packaged.nonce = parseInt(transactionCount, 16);
       }
-      return this.submitRawTransaction(packaged, address, privateKey);
+      packaged.nonce = this.verifyRawTransactionNonce(packaged.nonce);
+      return packaged;
     }
-    this.pendingTxCount(address, function (txCount) {
-      if (self.debug.nonce) console.log('[ethrpc] txCount:', parseInt(txCount, 16));
-      if (txCount && !txCount.error && !(txCount instanceof Error)) {
-        packaged.nonce = parseInt(txCount, 16);
+    this.pendingTxCount(address, function (transactionCount) {
+      if (self.debug.nonce) {
+        console.log("[ethrpc] transaction count:", parseInt(transactionCount, 16));
       }
-      self.submitRawTransaction(packaged, address, privateKey, callback);
+      if (transactionCount && !transactionCount.error && !(transactionCount instanceof Error)) {
+        packaged.nonce = parseInt(transactionCount, 16);
+      }
+      packaged.nonce = self.verifyRawTransactionNonce(packaged.nonce);
+      callback(packaged);
     });
   },
 
-  packageAndSubmitRawTransaction: function (payload, address, privateKey, callback) {
-    var self = this;
-    if (!payload || payload.constructor !== Object) {
-      if (!isFunction(callback)) throw new this.Error(errors.TRANSACTION_FAILED);
-      return callback(errors.TRANSACTION_FAILED);
+  /**
+   * Set the gas price for a raw transaction.
+   * @param {Object} packaged Packaged transaction.
+   * @param {function=} callback Callback function (optional).
+   * @return {Object} Packaged transaction with gasPrice set.
+   */
+  setRawTransactionGasPrice: function (packaged, callback) {
+    if (!isFunction(callback)) {
+      if (packaged.gasPrice) return packaged;
+      var gasPrice = this.getGasPrice();
+      if (!gasPrice || gasPrice.error) throw new RPCError(errors.TRANSACTION_FAILED);
+      packaged.gasPrice = gasPrice;
+      return packaged;
     }
-    if (!address || !privateKey) {
-      if (!isFunction(callback)) throw new this.Error(errors.NOT_LOGGED_IN);
-      return callback(errors.NOT_LOGGED_IN);
-    }
+    if (packaged.gasPrice) return callback(packaged);
+    this.getGasPrice(function (gasPrice) {
+      if (!gasPrice || gasPrice.error) return callback(errors.TRANSACTION_FAILED);
+      packaged.gasPrice = gasPrice;
+      callback(packaged);
+    });
+  },
 
-    // parse and serialize transaction parameters
+  /**
+   * Package a raw transaction.
+   * @param {Object} payload Static API data with "params" and "from" set.
+   * @param {string} address The sender's Ethereum address.
+   * @return {Object} Packaged transaction.
+   */
+  packageRawTransaction: function (payload, address) {
     var packaged = this.packageRequest(payload);
     packaged.from = address;
     packaged.nonce = payload.nonce || 0;
@@ -1337,19 +1356,89 @@ module.exports = {
     }
     if (this.debug.broadcast) console.log("[ethrpc] payload:", payload);
     if (payload.gasPrice && abi.number(payload.gasPrice) > 0) {
-      packaged.gasPrice = payload.gasPrice;
-      return this.setNonceThenSubmitRawTransaction(packaged, address, privateKey, callback);
+      packaged.gasPrice = abi.hex(payload.gasPrice);
+    }
+    return packaged;
+  },
+
+  /**
+   * Package and sign a raw transaction.
+   * @param {Object} payload Static API data with "params" and "from" set.
+   * @param {string} address The sender's Ethereum address.
+   * @param {buffer} privateKey The sender's plaintext private key.
+   * @param {function=} callback Callback function (optional).
+   * @return {string} Signed transaction.
+   */
+  packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
+    var self = this;
+    if (!payload || payload.constructor !== Object) {
+      if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_FAILED);
+      return callback(errors.TRANSACTION_FAILED);
+    }
+    if (!address || !privateKey) {
+      if (!isFunction(callback)) throw new RPCError(errors.NOT_LOGGED_IN);
+      return callback(errors.NOT_LOGGED_IN);
+    }
+    var packaged = this.packageRawTransaction(payload, address);
+    if (payload.gasPrice) packaged.gasPrice = payload.gasPrice;
+    if (this.debug.broadcast) {
+      console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
     }
     if (!isFunction(callback)) {
-      var gasPrice = this.getGasPrice();
-      if (!gasPrice || gasPrice.error) throw new this.Error(errors.TRANSACTION_FAILED);
-      packaged.gasPrice = gasPrice;
-      return this.setNonceThenSubmitRawTransaction(packaged, address, privateKey);
+      return {
+        signed: this.signRawTransaction(
+          this.setRawTransactionNonce(this.setRawTransactionGasPrice(packaged), address),
+          privateKey
+        ),
+        packaged: packaged
+      };
     }
-    this.getGasPrice(function (gasPrice) {
-      if (!gasPrice || gasPrice.error) return callback(errors.TRANSACTION_FAILED);
-      packaged.gasPrice = gasPrice;
-      self.setNonceThenSubmitRawTransaction(packaged, address, privateKey, callback);
+    this.setRawTransactionGasPrice(packaged, function (packaged) {
+      if (packaged.error) return callback(packaged);
+      self.setRawTransactionNonce(packaged, address, function (packaged) {
+        callback(self.signRawTransaction(packaged, privateKey), packaged);
+      });
+    });
+  },
+
+  /**
+   * Package, sign, and submit a raw transaction to Ethereum.
+   * @param {Object} payload Static API data with "params" and "from" set.
+   * @param {string} address The sender's Ethereum address.
+   * @param {buffer} privateKey The sender's plaintext private key.
+   * @param {function=} callback Callback function (optional).
+   * @return {string} Transaction hash (if successful).
+   */
+  packageAndSubmitRawTransaction: function (payload, address, privateKey, callback) {
+    var signedRawTransaction, response, err, self = this;
+    if (!isFunction(callback)) {
+      signedRawTransaction = this.packageAndSignRawTransaction(payload, address, privateKey);
+      response = this.submitSignedRawTransaction(signedRawTransaction.signed);
+      if (this.debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
+      if (!response) throw new RPCError(errors.RAW_TRANSACTION_ERROR);
+      if (response.error) {
+        err = this.handleRawTransactionError(response);
+        if (err !== null) throw new RPCError(err);
+        return this.packageAndSubmitRawTransaction(payload, address, privateKey);
+      }
+      this.saveRawTransaction(response, signedRawTransaction.packaged, signedRawTransaction.signed.getUpfrontCost().toString());
+      return response;
+    }
+    this.packageAndSignRawTransaction(payload, address, privateKey, function (signedRawTransaction, packaged) {
+      if (signedRawTransaction.error) return callback(signedRawTransaction);
+      self.submitSignedRawTransaction(signedRawTransaction, function (response) {
+        var err;
+        if (self.debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
+        if (!response) return callback(errors.RAW_TRANSACTION_ERROR);
+        if (response.error) {
+          err = self.handleRawTransactionError(response);
+          if (err !== null) return callback(err);
+          self.packageAndSubmitRawTransaction(payload, address, privateKey, callback);
+        } else {
+          self.saveRawTransaction(response, packaged, signedRawTransaction.getUpfrontCost().toString());
+          callback(response);
+        }
+      });
     });
   },
 
