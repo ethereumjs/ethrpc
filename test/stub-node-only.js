@@ -20,6 +20,7 @@ describe("tests that only work against stub server", function () {
           done();
         });
         afterEach(function (done) {
+          rpc.resetState();
           stubRpcServer.destroy(done);
         });
 
@@ -90,6 +91,7 @@ describe("tests that only work against stub server", function () {
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
+          rpc.resetState();
           server.destroy(done);
         });
 
@@ -111,6 +113,7 @@ describe("tests that only work against stub server", function () {
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
+          rpc.resetState();
           server.destroy(done);
         });
 
@@ -139,6 +142,7 @@ describe("tests that only work against stub server", function () {
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
+          rpc.resetState();
           server.destroy(done);
         });
 
@@ -190,6 +194,7 @@ describe("tests that only work against stub server", function () {
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
+          rpc.resetState();
           server.destroy(done);
         });
 
@@ -1004,6 +1009,7 @@ describe("tests that only work against stub server", function () {
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
+          rpc.resetState();
           server.destroy(done);
         });
 
@@ -1029,6 +1035,7 @@ describe("tests that only work against stub server", function () {
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
+          rpc.resetState();
           server.destroy(done);
         });
 
@@ -1050,6 +1057,7 @@ describe("tests that only work against stub server", function () {
           interval = setInterval(function () { server.mine(); }, 1);
         });
         afterEach(function (done) {
+          rpc.resetState();
           server.destroy(done);
           clearInterval(interval);
         });
@@ -1173,6 +1181,60 @@ describe("tests that only work against stub server", function () {
           server.addResponder(function (jso) { if (jso.method === "eth_call") return expectedResults; });
           rpc.invoke(payload, function (resultOrError) {
             assert.strictEqual(resultOrError, expectedResults);
+            done();
+          });
+        });
+
+        it("can subscribe to new blocks", function (done) {
+          var called = false;
+          rpc.getBlockAndLogStreamer().subscribeToOnBlockAdded(function (block) { done(); });
+        });
+
+        it("can subscribe to new logs", function (done) {
+          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
+          var called = false;
+          rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { done(); });
+        });
+
+        it("can supply a log filter", function (done) {
+          server.addResponder(function (jso) { if (jso.method == "eth_getLogs") return [{}]; });
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getLogs"
+              && jso.params.length === 1
+              && typeof jso.params[0] === "object"
+              && jso.params[0].address === "0xbadf00d"
+              && jso.params[0].topics instanceof Array
+              && jso.params[0].topics.length === 1
+              && jso.params[0].topics[0] === "0xdeadbeef";
+          });
+          rpc.getBlockAndLogStreamer().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
+          rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) {
+            server.assertExpectations();
+            done();
+          });
+        });
+
+        it("can unsubscribe from log filter", function (done) {
+          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
+          var called = false;
+          var token = rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { called = true; });
+          rpc.getBlockAndLogStreamer().unsubscribeFromOnLogAdded(token);
+          rpc.getBlockAndLogStreamer().subscribeToOnBlockAdded(function (block) { done(called ? new Error("log handler was called") : undefined); })
+        });
+
+        it("can remove log filter", function (done) {
+          server.addResponder(function (jso) { if (jso.method == "eth_getLogs") return [{}]; });
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getLogs"
+              && jso.params.length === 1
+              && typeof jso.params[0] === "object"
+              && jso.params[0].address === undefined
+              && jso.params[0].topics === undefined;
+          });
+          var token = rpc.getBlockAndLogStreamer().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
+          rpc.getBlockAndLogStreamer().removeLogFilter(token);
+          rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) {
+            server.assertExpectations();
             done();
           });
         });
