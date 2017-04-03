@@ -1262,7 +1262,7 @@ module.exports = {
    * Sign the transaction using the private key.
    * @param {Object} packaged Unsigned transaction.
    * @param {buffer} privateKey The sender's plaintext private key.
-   * @return {Object} Signed ethereumjs-tx transaction object.
+   * @return {string} Signed and serialized raw transaction.
    */
   signRawTransaction: function (packaged, privateKey) {
     var rawTransaction = new EthTx(packaged);
