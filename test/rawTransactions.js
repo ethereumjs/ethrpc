@@ -7,118 +7,6 @@ var errors = require("../src/errors.json");
 var abi = require("augur-abi");
 var EthTx = require("ethereumjs-tx");
 
-describe("saveRawTransaction", function () {
-  var test = function (t) {
-    it(t.description, function () {
-      rpc.resetState();
-      rpc.rawTxs = t.state.rawTxs;
-      rpc.saveRawTransaction(t.params.txhash, t.params.packaged, t.params.cost);
-      t.assertions(rpc.rawTxs);
-    });
-  };
-  test({
-    description: "Save raw transaction to empty state",
-    params: {
-      txhash: "0xdeadbeef",
-      packaged: {
-        from: "0xb0b",
-        to: "0xd00d",
-        data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-        gas: "0x2fd618",
-        nonce: 0,
-        value: "0x0",
-        gasLimit: "0x2fd618",
-        gasPrice: "0x4a817c800"
-      },
-      cost: abi.fix("1", "string")
-    },
-    state: {
-      rawTxs: {}
-    },
-    assertions: function (rawTxs) {
-      assert.deepEqual(rawTxs, {
-        "0xdeadbeef": {
-          tx: {
-            from: "0xb0b",
-            to: "0xd00d",
-            data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-            gas: "0x2fd618",
-            nonce: 0,
-            value: "0x0",
-            gasLimit: "0x2fd618",
-            gasPrice: "0x4a817c800"
-          },
-          cost: "1"
-        }
-      });
-    }
-  });
-  test({
-    description: "Save raw transaction to non-empty state",
-    params: {
-      txhash: "0xdeadbeef",
-      packaged: {
-        from: "0xb0b",
-        to: "0xd00d",
-        data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-        gas: "0x2fd618",
-        nonce: 0,
-        value: "0x0",
-        gasLimit: "0x2fd618",
-        gasPrice: "0x4a817c800"
-      },
-      cost: abi.fix("1", "string")
-    },
-    state: {
-      rawTxs: {
-        "0xdeadb0b": {
-          tx: {
-            from: "0xb0b",
-            to: "0xd00d",
-            data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-            gas: "0x2fd618",
-            nonce: 0,
-            value: "0x10",
-            gasLimit: "0x2fd618",
-            gasPrice: "0x4a817c800"
-          },
-          cost: "2"
-        }
-      }
-    },
-    assertions: function (rawTxs) {
-      assert.deepEqual(rawTxs, {
-        "0xdeadb0b": {
-          tx: {
-            from: "0xb0b",
-            to: "0xd00d",
-            data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-            gas: "0x2fd618",
-            nonce: 0,
-            value: "0x10",
-            gasLimit: "0x2fd618",
-            gasPrice: "0x4a817c800"
-          },
-          cost: "2"
-        },
-        "0xdeadbeef": {
-          tx: {
-            from: "0xb0b",
-            to: "0xd00d",
-            data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-            gas: "0x2fd618",
-            nonce: 0,
-            value: "0x0",
-            gasLimit: "0x2fd618",
-            gasPrice: "0x4a817c800"
-          },
-          cost: "1"
-        }
-      });
-    }
-  });
-});
-
 describe("handleRawTransactionError", function () {
   var test = function (t) {
     it(t.description, function () {
@@ -291,17 +179,7 @@ describe("signRawTransaction", function () {
       privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex")
     },
     assertions: function (signedRawTransaction) {
-      assert.deepEqual(signedRawTransaction.toJSON(), [
-        "0x",
-        "0x04a817c800",
-        "0x2fd618",
-        "0x000000000000000000000000000000000000d00d",
-        "0x",
-        "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-        "0x1b",
-        "0xccd0945031f9bf92ea19c03bdcdbb87663143e00b91387ce987f0abc1d72c9c6",
-        "0x6250f610402e2d1a0c34174a8d606345c80515451cfb21567b911fd77eabfa31"
-      ]);
+      assert.deepEqual(signedRawTransaction, "f8aa808504a817c800832fd61894000000000000000000000000000000000000d00d80b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a11ba0ccd0945031f9bf92ea19c03bdcdbb87663143e00b91387ce987f0abc1d72c9c6a06250f610402e2d1a0c34174a8d606345c80515451cfb21567b911fd77eabfa31");
     }
   });
 });
@@ -651,30 +529,8 @@ describe("packageAndSignRawTransaction", function () {
       gasPrice: "0x64",
       transactionCount: "0xa"
     },
-    assertions: function (rawTransaction) {
-      assert.deepEqual(rawTransaction.packaged, {
-        from: "0x0000000000000000000000000000000000000b0b",
-        to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
-        data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-        gas: "0x2fd618",
-        returns: "int256",
-        nonce: 10,
-        value: "0x0",
-        gasLimit: "0x2fd618",
-        gasPrice: "0x64",
-        chainId: 7,
-      });
-      assert.deepEqual(rawTransaction.signed.toJSON(), [
-        "0x0a",
-        "0x64",
-        "0x2fd618",
-        "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
-        "0x",
-        "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-        "0x32",
-        "0x16a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfd",
-        "0x286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1"
-      ]);
+    assertions: function (signedRawTransaction) {
+      assert.strictEqual(signedRawTransaction, "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1");
     }
   });
   test({
@@ -690,30 +546,8 @@ describe("packageAndSignRawTransaction", function () {
       },
       address: "0x0000000000000000000000000000000000000b0b",
       privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex"),
-      callback: function (signed, packaged) {
-        assert.deepEqual(packaged, {
-          from: "0x0000000000000000000000000000000000000b0b",
-          to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
-          data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-          gas: "0x2fd618",
-          returns: "int256",
-          nonce: 10,
-          value: "0x0",
-          gasLimit: "0x2fd618",
-          gasPrice: "0x64",
-          chainId: 7,
-        });
-        assert.deepEqual(signed.toJSON(), [
-          "0x0a",
-          "0x64",
-          "0x2fd618",
-          "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
-          "0x",
-          "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-          "0x32",
-          "0x16a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfd",
-          "0x286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1"
-        ]);
+      callback: function (signedRawTransaction) {
+        assert.deepEqual(signedRawTransaction, "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1");
       }
     },
     blockchain: {
