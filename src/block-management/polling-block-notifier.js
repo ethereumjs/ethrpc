@@ -13,13 +13,14 @@ function PollingBlockNotifier(transport, pollingIntervalMilliseconds) {
     clearInterval(pollingIntervalToken);
   }.bind(this);
 
-  var processNewBlock = function (newBlock) {
+  var processNewBlock = function (error, newBlock) {
+    if (error) return;
     validateBlock(newBlock);
     this.notifySubscribers(newBlock);
   }.bind(this);
 
   var pollForLatestBlock = function() {
-    transport.getBlockByNumber("latest", false, processNewBlock);
+    transport.getLatestBlock(processNewBlock);
   }.bind(this);
 
   pollingIntervalToken = setInterval(pollForLatestBlock, pollingIntervalMilliseconds);

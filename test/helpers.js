@@ -37,6 +37,8 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         ipcAddresses: [transportAddress],
         wsAddresses: [],
         httpAddresses: [],
+        pollingIntervalMilliseconds: 1,
+        blockRetention: 5,
         errorHandler: errorHandler,
       };
     case 'WS':
@@ -44,6 +46,8 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         ipcAddresses: [],
         wsAddresses: [transportAddress],
         httpAddresses: [],
+        pollingIntervalMilliseconds: 1,
+        blockRetention: 5,
         errorHandler: errorHandler,
       };
     case 'HTTP':
@@ -51,6 +55,8 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         ipcAddresses: [],
         wsAddresses: [],
         httpAddresses: [transportAddress],
+        pollingIntervalMilliseconds: 1,
+        blockRetention: 5,
         errorHandler: errorHandler,
       };
     default:
