@@ -1290,7 +1290,7 @@ module.exports = {
    * @param {Object} packaged Packaged transaction.
    * @param {string} address The sender's Ethereum address.
    * @param {function=} callback Callback function (optional).
-   * @return {Object} Packaged transaction with nonce set.
+   * @return {Object|void} Packaged transaction with nonce set.
    */
   setRawTransactionNonce: function (packaged, address, callback) {
     var transactionCount, self = this;
@@ -1321,7 +1321,7 @@ module.exports = {
    * Set the gas price for a raw transaction.
    * @param {Object} packaged Packaged transaction.
    * @param {function=} callback Callback function (optional).
-   * @return {Object} Packaged transaction with gasPrice set.
+   * @return {Object|void} Packaged transaction with gasPrice set.
    */
   setRawTransactionGasPrice: function (packaged, callback) {
     var gasPrice;
@@ -1374,7 +1374,7 @@ module.exports = {
    * @param {string} address The sender's Ethereum address.
    * @param {buffer} privateKey The sender's plaintext private key.
    * @param {function=} callback Callback function (optional).
-   * @return {string} Signed transaction.
+   * @return {string|void} Signed transaction.
    */
   packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
     var packaged, self = this;
@@ -1417,7 +1417,7 @@ module.exports = {
    * @param {string} address The sender's Ethereum address.
    * @param {buffer} privateKey The sender's plaintext private key.
    * @param {function=} callback Callback function (optional).
-   * @return {string} Transaction hash (if successful).
+   * @return {string|void} Transaction hash (if successful).
    */
   packageAndSubmitRawTransaction: function (payload, address, privateKey, callback) {
     var response, err, self = this;
