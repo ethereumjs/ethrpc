@@ -20073,14 +20073,15 @@ function reconcileLogHistoryWithAddedBlock(getLogs, logHistory, newBlock, onLogA
 exports.reconcileLogHistoryWithAddedBlock = reconcileLogHistoryWithAddedBlock;
 function getFilteredLogs(getLogs, newBlock, filters) {
     return __awaiter(this, void 0, void 0, function () {
-        var filterOptions;
+        var logPromises;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (filters.length === 0)
-                        filters = [{}];
-                    filterOptions = filters.map(function (filter) { return ({ fromBlock: newBlock.number, toBlock: newBlock.number, address: filter.address, topics: filter.topics, }); });
-                    return [4 /*yield*/, getLogs(filterOptions)];
+                    logPromises = filters
+                        .map(function (filter) { return ({ fromBlock: newBlock.number, toBlock: newBlock.number, address: filter.address, topics: filter.topics, }); })
+                        .map(function (filter) { return getLogs(filter); });
+                    return [4 /*yield*/, Promise.all(logPromises)
+                            .then(function (nestedLogs) { return nestedLogs.reduce(function (allLogs, logs) { return allLogs.concat(logs); }, []); })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -20717,7 +20718,13 @@ module.exports={
 
 },{}],101:[function(require,module,exports){
 (function (Buffer){
-var _typeof7 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof8 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof7 = typeof Symbol === "function" && _typeof8(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof8(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof8(obj);
+};
 
 var _typeof6 = typeof Symbol === "function" && _typeof7(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof7(obj);
