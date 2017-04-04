@@ -850,8 +850,7 @@ describe("tests that only work against stub server", function () {
               && jso.params[0].gasPrice === "0x9184e72a000"
               && jso.params[0].value === "0x9184e72a"
               && jso.params[0].data === "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
-              && jso.params[0].nonce === "0x23"
-              && jso.params[0].minBlock === "latest";
+              && jso.params[0].nonce === "0x23";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_sendTransaction") return expectedResult; });
           rpc.sendTransaction({
@@ -911,8 +910,7 @@ describe("tests that only work against stub server", function () {
               && jso.params[0].gasPrice === "0x9184e72a000"
               && jso.params[0].value === "0x7f110"
               && jso.params[0].data === "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
-              && jso.params[0].nonce === "0x23"
-              && jso.params[0].minBlock === "0x7b";
+              && jso.params[0].nonce === "0x23";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_signTransaction") return expectedResult; });
           rpc.signTransaction({
@@ -923,7 +921,6 @@ describe("tests that only work against stub server", function () {
             value: 520464,
             data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
             nonce: 35,
-            minBlock: 123
           }, function (resultOrError) {
             assert.deepEqual(resultOrError, expectedResult);
             server.assertExpectations();

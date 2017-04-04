@@ -887,7 +887,7 @@ module.exports = {
   },
 
   /**
-   * @param {{from:string, to:string, gas:number, gasPrice:number, value:number, data:string, nonce:number, minBlock:number|string}} transaction
+   * @param {{from:string, to:string, gas:number, gasPrice:number, value:number, data:string, nonce:number}} transaction
    */
   sendTransaction: function (transaction, callback) {
     validateTransaction(transaction);
@@ -1949,7 +1949,6 @@ function validateTransaction(transaction) {
   if (transaction.data !== undefined && transaction.data !== null && typeof transaction.data !== "string") throw new Error("data must be a string");
   if (!/^0x[0-9a-zA-Z]*$/.test(transaction.data)) throw new Error("data must be a hex encoded string with a leader `0x`");
   transaction.nonce = validateNumber(transaction.nonce, "nonce");
-  transaction.minBlock = validateAndDefaultBlockNumber(transaction.minBlock);
 }
 
 function ethereumEncodePrimitive(primitive) {
