@@ -20718,7 +20718,19 @@ module.exports={
 
 },{}],101:[function(require,module,exports){
 (function (Buffer){
-var _typeof9 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof11 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof10 = typeof Symbol === "function" && _typeof11(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof11(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof11(obj);
+};
+
+var _typeof9 = typeof Symbol === "function" && _typeof10(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof10(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof10(obj);
+};
 
 var _typeof8 = typeof Symbol === "function" && _typeof9(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof9(obj);
@@ -34969,7 +34981,7 @@ module.exports = {
       // ensure we can do basic JSON-RPC over this connection
       this.version(function (errorOrResult) {
         if (errorOrResult instanceof Error || errorOrResult.error) return initialConnectCallback(errorOrResult);
-        this.createBlockAndLogStreamer({ pollingIntervalMilliseconds: configuration.pollingIntervalMilliseconds, blockRetention: configuration.blockRetention }, createTransportAdapter(this));
+        this.createBlockAndLogStreamer({ pollingIntervalMilliseconds: this.configuration.pollingIntervalMilliseconds, blockRetention: this.configuration.blockRetention }, createTransportAdapter(this));
         this.internalState.blockAndLogStreamer.subscribeToOnBlockAdded(this.onNewBlock.bind(this));
         initialConnectCallback(null);
       }.bind(this));
