@@ -157,7 +157,7 @@ module.exports = {
       // ensure we can do basic JSON-RPC over this connection
       this.version(function (errorOrResult) {
         if (errorOrResult instanceof Error || errorOrResult.error) return initialConnectCallback(errorOrResult);
-        this.createBlockAndLogStreamer({ pollingIntervalMilliseconds: configuration.pollingIntervalMilliseconds, blockRetention: configuration.blockRetention }, createTransportAdapter(this));
+        this.createBlockAndLogStreamer({ pollingIntervalMilliseconds: this.configuration.pollingIntervalMilliseconds, blockRetention: this.configuration.blockRetention }, createTransportAdapter(this));
         this.internalState.blockAndLogStreamer.subscribeToOnBlockAdded(this.onNewBlock.bind(this));
         initialConnectCallback(null);
       }.bind(this));
