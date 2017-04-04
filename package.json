@@ -25,7 +25,7 @@
     "bignumber.js": "2.3.0",
     "browser-request": "0.3.3",
     "clone": "1.0.2",
-    "ethereumjs-blockstream": "2.0.3",
+    "ethereumjs-blockstream": "2.0.4",
     "ethereumjs-tx": "1.2.5",
     "js-sha3": "0.3.1",
     "oboe": "2.1.3",
