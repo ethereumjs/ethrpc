@@ -1193,6 +1193,7 @@ describe("tests that only work against stub server", function () {
         it("can subscribe to new logs", function (done) {
           server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
           var called = false;
+          rpc.getBlockAndLogStreamer().addLogFilter({});
           rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { done(); });
         });
 
@@ -1223,20 +1224,13 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can remove log filter", function (done) {
-          server.addResponder(function (jso) { if (jso.method == "eth_getLogs") return [{}]; });
-          server.addExpectation(function (jso) {
-            return jso.method === "eth_getLogs"
-              && jso.params.length === 1
-              && typeof jso.params[0] === "object"
-              && jso.params[0].address === undefined
-              && jso.params[0].topics === undefined;
-          });
+          server.addResponder(function (jso) { if (jso.method == "eth_getLogs") done(new Error("should not be called")); });
           var token = rpc.getBlockAndLogStreamer().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
           rpc.getBlockAndLogStreamer().removeLogFilter(token);
           rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) {
-            server.assertExpectations();
-            done();
+            done(new Error("should not be called"));
           });
+          setTimeout(done, 10);
         });
       });
     });
