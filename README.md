@@ -18,16 +18,20 @@ After installing, to use it with Node, require it and call connect:
 
 ```javascript
 var rpc = require("ethrpc");
-var outOfBandErrorHandler = (error) => console.log(error);
 var connectionConfiguration = {
   httpAddresses: ["http://localhost:8545"], // optional, default empty array
   wsAddresses: [], // optional, default empty array
   ipcAddresses: [], // optional, default empty array
   connectionTimeout: 3000, // optional, default 3000
-  errorHandler: outOfBandErrorHandler, // required, only used for errors that can't be correlated back to a request
+  errorHandler: err => console.error("out-of-band error:", err), // optional, used for errors that can't be correlated back to a request
 };
-var connectCompleteCallback = (connected) => if (connected) console.log("connected to Ethereum node!") else console.log("Failed to connect to Ethereum node.");
-rpc.connect(connectionConfiguration, connectCompleteCallback);
+rpc.connect(connectionConfiguration, (isConnected) => {
+  if (!isConnected) {
+    console.error("Failed to connect to Ethereum node.");
+  } else {
+    console.log("Connected to Ethereum node!");
+  }
+});
 ```
 
 A minified, browserified file `dist/ethrpc.min.js` is included for use in the browser.  Including this file simply attaches an `ethrpc` object to `window`:

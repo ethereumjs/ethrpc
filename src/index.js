@@ -26,7 +26,7 @@ BigNumber.config({
 function RPCError(err) {
   this.name = "RPCError";
   this.error = err.error;
-  this.message = JSON.stringify(err);
+  this.message = err.message;
 }
 
 RPCError.prototype = Error.prototype;
@@ -1242,20 +1242,6 @@ module.exports = {
       return null;
     }
     return rawTransactionResponse;
-  },
-
-  /**
-   * Validate and submit a signed raw transaction to the network.
-   * @param {Object} signedRawTransaction Unsigned transaction.
-   * @param {function=} callback Callback function (optional).
-   * @return {string|Object} Response (tx hash or error) from the Ethereum node.
-   */
-  submitSignedRawTransaction: function (signedRawTransaction, callback) {
-    if (!signedRawTransaction.validate()) {
-      if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_INVALID);
-      return callback(errors.TRANSACTION_INVALID);
-    }
-    return this.sendRawTransaction(signedRawTransaction.serialize().toString("hex"), callback);
   },
 
   /**

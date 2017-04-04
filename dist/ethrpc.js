@@ -20717,7 +20717,19 @@ module.exports={
 
 },{}],101:[function(require,module,exports){
 (function (Buffer){
-var _typeof5 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof7 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof6 = typeof Symbol === "function" && _typeof7(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof7(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof7(obj);
+};
+
+var _typeof5 = typeof Symbol === "function" && _typeof6(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof6(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof6(obj);
+};
 
 var _typeof4 = typeof Symbol === "function" && _typeof5(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof5(obj);
@@ -34813,7 +34825,7 @@ BigNumber.config({
 function RPCError(err) {
   this.name = "RPCError";
   this.error = err.error;
-  this.message = JSON.stringify(err);
+  this.message = err.message;
 }
 
 RPCError.prototype = Error.prototype;
@@ -36032,24 +36044,10 @@ module.exports = {
   },
 
   /**
-   * Validate and submit a signed raw transaction to the network.
-   * @param {Object} signedRawTransaction Unsigned transaction.
-   * @param {function=} callback Callback function (optional).
-   * @return {string|Object} Response (tx hash or error) from the Ethereum node.
-   */
-  submitSignedRawTransaction: function (signedRawTransaction, callback) {
-    if (!signedRawTransaction.validate()) {
-      if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_INVALID);
-      return callback(errors.TRANSACTION_INVALID);
-    }
-    return this.sendRawTransaction(signedRawTransaction.serialize().toString("hex"), callback);
-  },
-
-  /**
    * Sign the transaction using the private key.
    * @param {Object} packaged Unsigned transaction.
    * @param {buffer} privateKey The sender's plaintext private key.
-   * @return {Object} Signed ethereumjs-tx transaction object.
+   * @return {string} Signed and serialized raw transaction.
    */
   signRawTransaction: function (packaged, privateKey) {
     var rawTransaction = new EthTx(packaged);
