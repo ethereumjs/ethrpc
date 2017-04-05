@@ -60,6 +60,30 @@ rpc.blockNumber();
 "0x35041"
 ```
 
+### Block and Log Notifications
+
+If you want to subscribe to new blocks or new logs you can get access to a [`BlockAndLogStreamer`](https://github.com/ethereumjs/ethereumjs-blockstream) via
+```javascript
+const blockAndLogStreamer = rpc.getBlockAndLogStreamer();
+```
+With that, you can then subscribe to new blocks, subscribe to new logs, add log filters (by default you will receive no logs) and subscribe to be notified when blocks/logs are removed as well.
+```javascript
+const onBlockAddedSubscriptionToken = blockAndLogStreamer.subscribeToOnBlockAdded(block => console.log(block));
+const onLogAddedSubscriptionToken = blockAndLogStreamer.subscribeToOnLogAdded(log => console.log(log));
+const onBlockRemovedSubscriptionToken = blockAndLogStreamer.subscribeToOnBlockRemoved(block => console.log(block));
+const onLogRemovedSubscriptionToken = blockAndLogStreamer.subscribeToOnLogRemoved(log => console.log(log));
+const logFilterToken = blockAndLogStreamer.addLogFilter({
+  address: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+  topics: ["0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbaadf00d"]
+});
+blockAndLogStreamer.unsubscribeFromOnBlockAdded(onBlockAddedSubscriptionToken);
+blockAndLogStreamer.unsubscribeFromOnBlockRemoved(onBlockRemovedSubscriptionToken);
+blockAndLogStreamer.unsubscribeFromOnLogAdded(onLogAddedSubscriptionToken);
+blockAndLogStreamer.unsubscribeFromOnLogRemoved(onLogRemovedSubscriptionToken);
+blockAndLogStreamer.removeLogFilter(logFilterToken);
+```
+
+
 ### Contract upload and download
 
 `publish` broadcasts (uploads) a compiled contract to the network:
