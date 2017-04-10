@@ -7,7 +7,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "mocha test/",
-    "lint": "jshint src/",
+    "lint": "eslint src",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/",
     "link": "npm link augur-contracts"
   },
@@ -45,6 +45,7 @@
     "chalk": "^1.1.1",
     "coveralls": "^2.11.4",
     "del": "^1.2.1",
+    "eslint": "^3.17.1",
     "ethereumjs-abi": "0.6.4",
     "ethereumjs-stub-rpc-server": "2.1.4",
     "geth": "^0.1.4",
@@ -52,7 +53,6 @@
     "gulp-uglify": "^1.5.1",
     "istanbul": "^0.3.18",
     "it-each": "^0.3.1",
-    "jshint": "^2.8.0",
     "mocha": "3.2.0",
     "uglify-js": "^2.4.24",
     "ws": "2.0.3"
