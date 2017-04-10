@@ -21700,7 +21700,13 @@ module.exports={
 
 },{}],103:[function(require,module,exports){
 (function (Buffer){
-var _typeof16 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof17 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof16 = typeof Symbol === "function" && _typeof17(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof17(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof17(obj);
+};
 
 var _typeof15 = typeof Symbol === "function" && _typeof16(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof16(obj);
@@ -37765,9 +37771,9 @@ var packageRawTransaction = require("./package-raw-transaction");
 var setRawTransactionNonce = require("./set-raw-transaction-nonce");
 var setRawTransactionGasPrice = require("./set-raw-transaction-gas-price");
 var signRawTransaction = require("./sign-raw-transaction");
+var isFunction = require("../utils/is-function");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
-var isFunction = require("../utils/is-function");
 
 /**
  * Package and sign a raw transaction.
@@ -37787,7 +37793,7 @@ var packageAndSignRawTransaction = function (payload, address, privateKey, callb
     if (!isFunction(callback)) throw new RPCError(errors.NOT_LOGGED_IN);
     return callback(errors.NOT_LOGGED_IN);
   }
-  packaged = packageRawTransaction(payload, address);
+  packaged = packageRawTransaction(payload, address, this.block, this.networkID);
   if (payload.gasPrice) packaged.gasPrice = payload.gasPrice;
   // if (this.debug.broadcast) {
   //   console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
@@ -37876,20 +37882,20 @@ var constants = require("../constants");
  * @param {string} address The sender's Ethereum address.
  * @return {Object} Packaged transaction.
  */
-var packageRawTransaction = function (payload, address) {
+var packageRawTransaction = function (payload, address, networkID, currentBlock) {
   var packaged = packageRequest(payload);
   packaged.from = address;
   packaged.nonce = payload.nonce || 0;
   packaged.value = payload.value || "0x0";
   if (payload.gasLimit) {
     packaged.gasLimit = abi.hex(payload.gasLimit);
-  } else if (this.block && this.block.gasLimit) {
-    packaged.gasLimit = abi.hex(this.block.gasLimit);
+  } else if (currentBlock && currentBlock.gasLimit) {
+    packaged.gasLimit = abi.hex(currentBlock.gasLimit);
   } else {
     packaged.gasLimit = constants.DEFAULT_GAS;
   }
-  if (this.networkID && parseInt(this.networkID, 10) < 109) {
-    packaged.chainId = parseInt(this.networkID, 10);
+  if (networkID && parseInt(networkID, 10) < 109) {
+    packaged.chainId = parseInt(networkID, 10);
   }
   // if (this.debug.broadcast) console.log("[ethrpc] payload:", payload);
   if (payload.gasPrice && abi.number(payload.gasPrice) > 0) {
@@ -37903,9 +37909,9 @@ module.exports = packageRawTransaction;
 },{"../constants":176,"../encode-request/package-request":185,"augur-abi":1}],200:[function(require,module,exports){
 "use strict";
 
+var isFunction = require("../utils/is-function");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
-var isFunction = require("../utils/is-function");
 
 /**
  * Set the gas price for a raw transaction.
@@ -37989,15 +37995,15 @@ var signRawTransaction = function (packaged, privateKey) {
   var rawTransaction = new Transaction(packaged);
   rawTransaction.sign(privateKey);
   // if (this.debug.tx || this.debug.broadcast) {
-  console.log("raw nonce:    0x" + rawTransaction.nonce.toString("hex"));
-  console.log("raw gasPrice: 0x" + rawTransaction.gasPrice.toString("hex"));
-  console.log("raw gasLimit: 0x" + rawTransaction.gasLimit.toString("hex"));
-  console.log("raw to:       0x" + rawTransaction.to.toString("hex"));
-  console.log("raw value:    0x" + rawTransaction.value.toString("hex"));
-  console.log("raw v:        0x" + rawTransaction.v.toString("hex"));
-  console.log("raw r:        0x" + rawTransaction.r.toString("hex"));
-  console.log("raw s:        0x" + rawTransaction.s.toString("hex"));
-  console.log("raw data:     0x" + rawTransaction.data.toString("hex"));
+  // console.log("raw nonce:    0x" + rawTransaction.nonce.toString("hex"));
+  // console.log("raw gasPrice: 0x" + rawTransaction.gasPrice.toString("hex"));
+  // console.log("raw gasLimit: 0x" + rawTransaction.gasLimit.toString("hex"));
+  // console.log("raw to:       0x" + rawTransaction.to.toString("hex"));
+  // console.log("raw value:    0x" + rawTransaction.value.toString("hex"));
+  // console.log("raw v:        0x" + rawTransaction.v.toString("hex"));
+  // console.log("raw r:        0x" + rawTransaction.r.toString("hex"));
+  // console.log("raw s:        0x" + rawTransaction.s.toString("hex"));
+  // console.log("raw data:     0x" + rawTransaction.data.toString("hex"));
   // }
   if (!rawTransaction.validate()) {
     throw new RPCError(errors.TRANSACTION_INVALID);

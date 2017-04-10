@@ -1,8 +1,8 @@
 "use strict";
 
+var isFunction = require("../utils/is-function");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
-var isFunction = require("../utils/is-function");
 
 /**
  * Set the gas price for a raw transaction.

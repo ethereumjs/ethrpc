@@ -4,9 +4,9 @@ var packageRawTransaction = require("./package-raw-transaction");
 var setRawTransactionNonce = require("./set-raw-transaction-nonce");
 var setRawTransactionGasPrice = require("./set-raw-transaction-gas-price");
 var signRawTransaction = require("./sign-raw-transaction");
+var isFunction = require("../utils/is-function");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
-var isFunction = require("../utils/is-function");
 
 /**
  * Package and sign a raw transaction.
@@ -26,7 +26,7 @@ var packageAndSignRawTransaction = function (payload, address, privateKey, callb
     if (!isFunction(callback)) throw new RPCError(errors.NOT_LOGGED_IN);
     return callback(errors.NOT_LOGGED_IN);
   }
-  packaged = packageRawTransaction(payload, address);
+  packaged = packageRawTransaction(payload, address, this.block, this.networkID);
   if (payload.gasPrice) packaged.gasPrice = payload.gasPrice;
   // if (this.debug.broadcast) {
   //   console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
