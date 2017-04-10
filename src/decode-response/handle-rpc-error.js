@@ -1,12 +1,13 @@
 "use strict";
 
 var abi = require("augur-abi");
-var errors = require("./errors/codes");
+var errors = require("../errors/codes");
 
 var handleRPCError = function (method, returns, response) {
+  var i, len, responseNumber;
   if (response) {
     if (response.constructor === Array) {
-      for (var i = 0, len = response.length; i < len; ++i) {
+      for (i = 0, len = response.length; i < len; ++i) {
         response[i] = handleRPCError(method, returns, response[i]);
       }
     } else if (response.name && response.message && response.stack) {
@@ -23,7 +24,7 @@ var handleRPCError = function (method, returns, response) {
           message: errors[response]
         };
       } else if (returns !== "null" && returns !== "string" || (response && response.constructor === String && response.slice(0, 2) === "0x")) {
-        var responseNumber = abi.bignum(response, "string", true);
+        responseNumber = abi.bignum(response, "string", true);
         if (responseNumber) {
           if (errors[method] && errors[method][responseNumber]) {
             response = {

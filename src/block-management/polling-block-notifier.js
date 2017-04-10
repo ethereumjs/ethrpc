@@ -4,22 +4,23 @@ var Notifier = require("./notifier.js");
 var validateBlock = require("./validate-block.js");
 
 function PollingBlockNotifier(transport, pollingIntervalMilliseconds) {
+  var pollingIntervalToken, processNewBlock, pollForLatestBlock;
   Notifier.call(this);
 
-  var pollingIntervalToken = null;
+  pollingIntervalToken = null;
 
   this.destroy = function () {
     this.unsubscribeAll();
     clearInterval(pollingIntervalToken);
   }.bind(this);
 
-  var processNewBlock = function (error, newBlock) {
+  processNewBlock = function (error, newBlock) {
     if (error) return;
     validateBlock(newBlock);
     this.notifySubscribers(newBlock);
   }.bind(this);
 
-  var pollForLatestBlock = function () {
+  pollForLatestBlock = function () {
     transport.getLatestBlock(processNewBlock);
   };
 

@@ -3,7 +3,8 @@
 var encodePrimitive = require("./encode-primitive");
 
 var encodeObject = function (object) {
-  for (var property in object) {
+  var property;
+  for (property in object) {
     if (object.hasOwnProperty(property)) {
       object[property] = encodePrimitive(object[property]);
     }

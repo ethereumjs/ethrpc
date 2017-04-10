@@ -1,6 +1,6 @@
 "use strict";
 
-var ErrorWithData = require("../errors.js").ErrorWithData;
+var ErrorWithData = require("../errors").ErrorWithData;
 
 module.exports = function (block) {
   // validate that the parameter looks like a block

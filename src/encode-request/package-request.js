@@ -2,9 +2,9 @@
 
 var abi = require("augur-abi");
 var clone = require("clone");
-var RPCError = require("./errors/rpc-error");
-var errors = require("./errors/codes");
-var constants = require("./constants");
+var RPCError = require("../errors/rpc-error");
+var errors = require("../errors/codes");
+var constants = require("../constants");
 
 /**
  * Package a transaction payload so that it can be sent to the network.
@@ -12,18 +12,19 @@ var constants = require("./constants");
  * @return {Object} Packaged transaction.
  */
 var packageRequest = function (payload) {
-  var tx = clone(payload);
+  var tx, numParams, j, k, packaged, arrayLen;
+  tx = clone(payload);
   if (tx.params === undefined || tx.params === null) {
     tx.params = [];
   } else if (tx.params.constructor !== Array) {
     tx.params = [tx.params];
   }
-  var numParams = tx.params.length;
+  numParams = tx.params.length;
   if (numParams) {
     if (tx.signature && tx.signature.length !== numParams) {
       throw new RPCError(errors.PARAMETER_NUMBER_ERROR);
     }
-    for (var j = 0; j < numParams; ++j) {
+    for (j = 0; j < numParams; ++j) {
       if (tx.params[j] !== undefined && tx.params[j] !== null && tx.signature[j]) {
         if (tx.params[j].constructor === Number) {
           tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
@@ -32,7 +33,7 @@ var packageRequest = function (payload) {
           tx.params[j] = abi.unfork(tx.params[j], true);
         } else if (tx.signature[j] === "int256[]" &&
           tx.params[j].constructor === Array && tx.params[j].length) {
-          for (var k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
+          for (k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
             tx.params[j][k] = abi.unfork(tx.params[j][k], true);
           }
         }
@@ -41,7 +42,7 @@ var packageRequest = function (payload) {
   }
   if (tx.to) tx.to = abi.format_address(tx.to);
   if (tx.from) tx.from = abi.format_address(tx.from);
-  var packaged = {
+  packaged = {
     from: tx.from,
     to: tx.to,
     data: abi.encode(tx),

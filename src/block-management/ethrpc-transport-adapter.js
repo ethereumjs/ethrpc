@@ -35,8 +35,9 @@ module.exports = function (ethrpc) {
       return token;
     },
     unsubscribeFromNewHeads: function (token) {
+      var subscriptionId;
       if (!token) return;
-      var subscriptionId = subscriptionMapping[token];
+      subscriptionId = subscriptionMapping[token];
       delete subscriptionMapping[token];
       delete ethrpc.internalState.subscriptions[subscriptionId];
       if (!subscriptionId) return;

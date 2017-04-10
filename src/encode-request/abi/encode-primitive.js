@@ -3,7 +3,7 @@
 var encodeArray = require("./encode-array");
 var encodeNumber = require("./encode-number");
 var encodeObject = require("./encode-object");
-var isFunction = require("../utils/is-function");
+var isFunction = require("../../utils/is-function");
 
 var encodePrimitive = function (primitive) {
   if (typeof primitive === "undefined") return primitive;

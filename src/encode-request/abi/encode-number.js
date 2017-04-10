@@ -2,8 +2,7 @@
 
 var encodeNumber = function (number) {
   if (typeof number !== "number") throw new Error("number must be a number.");
-  var numberAsHexString = number.toString(16);
-  return "0x" + numberAsHexString;
+  return "0x" + number.toString(16);
 };
 
 module.exports = encodeNumber;
