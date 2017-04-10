@@ -14,24 +14,24 @@ WsTransport.prototype = Object.create(AbstractTransport.prototype);
 WsTransport.prototype.constructor = WsTransport;
 
 WsTransport.prototype.connect = function (callback) {
-  this.webSocketClient = new WebSocketClient(this.address, undefined, undefined, undefined, { timeout: this.timeout });
   var messageHandler = function () { };
+  this.webSocketClient = new WebSocketClient(this.address, undefined, undefined, undefined, { timeout: this.timeout });
   this.webSocketClient.onopen = function () {
     callback(null);
     callback = function () { };
     messageHandler = this.messageHandler;
-  }.bind(this);
+  };
   this.webSocketClient.onmessage = function (message) {
     messageHandler(null, JSON.parse(message.data));
-  }.bind(this);
+  };
   this.webSocketClient.onerror = function () {
     // unfortunately, we get no error details: https://www.w3.org/TR/websockets/#concept-websocket-close-fail
     messageHandler(new Error("Web socket error."), null);
-  }.bind(this);
+  };
   this.webSocketClient.onclose = function () {
     callback(new Error("Web socket closed without opening, usually means failed connection."));
     callback = function () { };
-  }.bind(this);
+  };
 };
 
 WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
