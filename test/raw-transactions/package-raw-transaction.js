@@ -36,7 +36,7 @@ describe("raw-transactions/package-raw-transaction", function () {
         nonce: 0,
         value: "0x0",
         gasLimit: "0xa",
-        chainId: 7,
+        chainId: 7
       });
     }
   });
