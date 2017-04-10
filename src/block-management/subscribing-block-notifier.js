@@ -30,7 +30,7 @@ function SubscribingBlockNotifier(transport, onUnrecoverableSubscriptionFailure)
 
   var setupSubscriptions = function () {
     subscriptionToken = transport.subscribeToNewHeads(onNewHead, onNewHeadsSubscriptionError);
-  }.bind(this);
+  };
 
   var onReconnectsSubscriptionError = function () {
     this.destroy();
@@ -39,7 +39,7 @@ function SubscribingBlockNotifier(transport, onUnrecoverableSubscriptionFailure)
 
   var onReconnect = function () {
     setupSubscriptions();
-  }.bind(this);
+  };
 
   reconnectToken = transport.subscribeToReconnects(onReconnect, onReconnectsSubscriptionError);
   setupSubscriptions();

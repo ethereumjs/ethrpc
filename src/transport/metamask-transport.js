@@ -4,7 +4,6 @@ var AbstractTransport = require("./abstract-transport.js");
 
 function MetaMaskTransport(messageHandler, initialConnectCallback) {
   AbstractTransport.call(this, "metamask", -1, messageHandler);
-
   this.initialConnect(initialConnectCallback);
 }
 
@@ -21,8 +20,9 @@ MetaMaskTransport.prototype.connect = function (callback) {
 };
 
 MetaMaskTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
+  var web3Provider;
   if (typeof window === "undefined") return errorCallback("attempted to access 'window' outside of a browser, this shouldn't happen");
-  var web3Provider = ((window || {}).web3 || {}).currentProvider;
+  web3Provider = ((window || {}).web3 || {}).currentProvider;
   if (!web3Provider) return errorCallback("window.web3.currentProvider no longer available.");
   web3Provider.sendAsync(rpcObject, this.messageHandler.bind(this));
 };

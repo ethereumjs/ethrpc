@@ -3,9 +3,10 @@
 var assert = require("chai").assert;
 var clone = require("clone");
 var rpc = require("../src");
-var errors = require("../src/errors.json");
 var abi = require("augur-abi");
 var EthTx = require("ethereumjs-tx");
+var errors = require("../src/errors/codes");
+var RPCError = require("../src/errors/rpc-error");
 
 describe("handleRawTransactionError", function () {
   var test = function (t) {
@@ -549,7 +550,7 @@ describe("packageAndSubmitRawTransaction", function () {
         assert.strictEqual(address, "0x0000000000000000000000000000000000000b0b");
         assert.strictEqual(privateKey.toString("hex"), "1111111111111111111111111111111111111111111111111111111111111111");
         var err = errors.TRANSACTION_FAILED;
-        if (!callback) throw new rpc.Error(err);
+        if (!callback) throw new RPCError(err);
         callback(err);
       },
       sendRawTransaction: function (signedRawTransaction, callback) {
@@ -588,7 +589,7 @@ describe("packageAndSubmitRawTransaction", function () {
         assert.strictEqual(address, "0x0000000000000000000000000000000000000b0b");
         assert.strictEqual(privateKey.toString("hex"), "1111111111111111111111111111111111111111111111111111111111111111");
         var err = errors.NOT_LOGGED_IN;
-        if (!callback) throw new rpc.Error(err);
+        if (!callback) throw new RPCError(err);
         callback(err);
       },
       sendRawTransaction: function (signedRawTransaction, callback) {
@@ -633,7 +634,7 @@ describe("packageAndSubmitRawTransaction", function () {
       sendRawTransaction: function (signedRawTransaction, callback) {
         assert.strictEqual(signedRawTransaction, "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1");
         var err = errors.RAW_TRANSACTION_ERROR;
-        if (!callback) throw new rpc.Error(err);
+        if (!callback) throw new RPCError(err);
         callback(err);
       }
     },

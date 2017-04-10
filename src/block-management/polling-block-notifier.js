@@ -19,9 +19,9 @@ function PollingBlockNotifier(transport, pollingIntervalMilliseconds) {
     this.notifySubscribers(newBlock);
   }.bind(this);
 
-  var pollForLatestBlock = function() {
+  var pollForLatestBlock = function () {
     transport.getLatestBlock(processNewBlock);
-  }.bind(this);
+  };
 
   pollingIntervalToken = setInterval(pollForLatestBlock, pollingIntervalMilliseconds);
 }

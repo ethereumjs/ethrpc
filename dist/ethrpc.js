@@ -35945,7 +35945,7 @@ module.exports = {
       if (res === undefined || res === null) {
         throw new this.Error(errors.NO_RESPONSE);
       }
-      var err = this.errorCodes(tx.method, tx.returns, res);
+      var err = handleRPCError(tx.method, tx.returns, res);
       if (err && err.error) throw new this.Error(err);
       var converted = this.applyReturns(tx.returns, res);
       if (isFunction(wrapper)) return wrapper(converted, aux);
@@ -35955,7 +35955,7 @@ module.exports = {
       if (res === undefined || res === null) {
         return callback(errors.NO_RESPONSE);
       }
-      var err = self.errorCodes(tx.method, tx.returns, res);
+      var err = handleRPCError(tx.method, tx.returns, res);
       if (err && err.error) return callback(err);
       var converted = self.applyReturns(tx.returns, res);
       if (isFunction(wrapper)) converted = wrapper(converted, aux);
@@ -36011,7 +36011,7 @@ module.exports = {
     if (response) {
       if (response.constructor === Array) {
         for (var i = 0, len = response.length; i < len; ++i) {
-          response[i] = this.errorCodes(method, returns, response[i]);
+          response[i] = handleRPCError(method, returns, response[i]);
         }
       } else if (response.name && response.message && response.stack) {
         response.error = response.name;
@@ -36356,14 +36356,14 @@ module.exports = {
                       err.hash = tx.hash;
                       tx.onFailed(err);
                     } else {
-                      var e = self.errorCodes(tx.payload.method, tx.payload.returns, callReturn);
+                      var e = handleRPCError(tx.payload.method, tx.payload.returns, callReturn);
                       e.hash = tx.hash;
                       tx.onFailed(e);
                     }
                   }
                 });
               } else {
-                var e = self.errorCodes(tx.payload.method, tx.payload.returns, log.returnValue);
+                var e = handleRPCError(tx.payload.method, tx.payload.returns, log.returnValue);
                 if (self.debug.tx) console.log("errorCodes:", e);
                 if (e && e.error) {
                   e.gasFees = log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)).dividedBy(self.ETHER).toFixed();
@@ -36684,14 +36684,14 @@ module.exports = {
     // if mutable return value, then lookup logged return
     // value in transaction receipt (after confirmation)
     var log = this.getLoggedReturnValue(txHash);
-    var e = this.errorCodes(payload.method, payload.returns, log.returnValue);
+    var e = handleRPCError(payload.method, payload.returns, log.returnValue);
     if (e && e.error) {
       e.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
       if (e.error !== errors.NULL_CALL_RETURN.error) {
         throw new Error(e);
       }
       callReturn = this.fire(payload);
-      throw new Error(this.errorCodes(payload.method, payload.returns, callReturn));
+      throw new Error(handleRPCError(payload.method, payload.returns, callReturn));
     }
     tx.callReturn = this.applyReturns(payload.returns, log.returnValue);
     tx.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();

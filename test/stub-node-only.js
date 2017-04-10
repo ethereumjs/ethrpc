@@ -1,13 +1,13 @@
 "use strict";
 
-var helpers = require("./helpers.js");
-var rpc = require("../src/index.js");
-var StubServer = require("ethereumjs-stub-rpc-server");
-var ErrorWithCode = require("../src/errors.js").ErrorWithCode;
-
 var assert = require("chai").assert;
 var ethereumjsAbi = require("ethereumjs-abi");
 var os = require("os");
+var StubServer = require("ethereumjs-stub-rpc-server");
+var helpers = require("./helpers");
+var rpc = require("../src");
+var ErrorWithCode = require("../src/errors").ErrorWithCode;
+var constants = require("../src/constants");
 
 describe("tests that only work against stub server", function () {
   function tests(transportType, transportAddress) {

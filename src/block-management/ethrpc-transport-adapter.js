@@ -42,6 +42,6 @@ module.exports = function (ethrpc) {
       if (!subscriptionId) return;
       // we don't care about the result, this unsubscribe is just to be nice to the remote host
       ethrpc.unsubscribe(subscriptionId, function () { });
-    },
+    }
   };
 };
