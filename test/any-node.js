@@ -1,10 +1,9 @@
 "use strict";
 
-var helpers = require("./helpers.js");
-var rpc = require("../src/index.js");
-
 var assert = require("chai").assert;
 var StubServer = require("ethereumjs-stub-rpc-server");
+var helpers = require("./helpers");
+var rpc = require("../src");
 
 describe("tests that work against any node (test or live)", function () {
   function tests(transportType, transportAddress) {

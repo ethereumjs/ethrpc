@@ -3,7 +3,7 @@
 var chalk = require("chalk");
 var assert = require("chai").assert;
 var contracts = require("augur-contracts")['7'];
-var rpc = require("../src/index.js");
+var rpc = require("../src");
 
 var log = function (label, res) {
   console.log(

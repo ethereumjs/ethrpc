@@ -25,7 +25,12 @@ describe("tests that only work against stub server", function () {
         });
 
         it("has no addresses", function (done) {
-          rpc.connect({ httpAddresses: [], wsAddresses: [], ipcAddresses: [], errorHandler: function (error) { assert.fail(error); } }, function (error) {
+          rpc.connect({
+            httpAddresses: [],
+            wsAddresses: [],
+            ipcAddresses: [],
+            errorHandler: function (error) { assert.fail(error); }
+          }, function (error) {
             assert.isNotNull(error);
             assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any tranpsort (MetaMask, HTTP, WS, IPC).");
             done();
@@ -58,7 +63,7 @@ describe("tests that only work against stub server", function () {
           });
         });
 
-        // NOTE: this test is brittle on Linux.  see: https://github.com/nodejs/node/issues/11973
+        // // NOTE: this test is brittle on Linux.  see: https://github.com/nodejs/node/issues/11973
         it("starts connected > uses connection > loses connection > uses connection > reconnects > uses connection (brittle)", function (done) {
           this.timeout(6000);
           stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple" });
@@ -1132,7 +1137,6 @@ describe("tests that only work against stub server", function () {
           });
         });
 
-        // CONSIDER: removing this test as it is testing an internal implementation detail
         it("unlocked (locked)", function (done) {
           server.addResponder(function (jso) { if (jso.method === "eth_sign") return new ErrorWithCode("account is locked", -32000); });
           rpc.unlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
@@ -1141,7 +1145,6 @@ describe("tests that only work against stub server", function () {
           });
         });
 
-        // CONSIDER: removing this test as it is testing an internal implementation detail
         it("unlocked (unlocked)", function (done) {
           server.addResponder(function (jso) { if (jso.method === "eth_sign") return "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"; });
           rpc.unlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
@@ -1150,21 +1153,19 @@ describe("tests that only work against stub server", function () {
           });
         });
 
-        // CONSIDER: removing this test as it is testing an internal implementation detail
-        it("fastForward", function (done) {
-          rpc.BLOCK_POLL_INTERVAL = 1;
+        it("fastforward", function (done) {
+          constants.BLOCK_POLL_INTERVAL = 1;
           var currentBlock = 5;
           server.addExpectations(3, function (jso) { return jso.method === "eth_blockNumber"; });
           server.addResponder(function (jso) { if (jso.method === "eth_blockNumber") return "0x" + (currentBlock++).toString(16); });
           rpc.fastforward(2, null, function (resultOrError) {
             assert.strictEqual(resultOrError, 7);
             server.assertExpectations();
-            rpc.BLOCK_POLL_INTERVAL = 30000;
+            constants.BLOCK_POLL_INTERVAL = 30000;
             done();
           });
         });
 
-        // CONSIDER: removing this test as it is testing an internal implementation detail
         it("invoke", function (done) {
           var expectedResults = "0x" + ethereumjsAbi.rawEncode(['uint256[]'], [[1, 100, 100000]]).toString('hex');
           var payload = {

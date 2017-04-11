@@ -1,7 +1,5 @@
 "use strict";
 
-var pumpQueue = require("./helpers/pump-queue");
-
 /**
  * Constructs an AbstractTransporter.  Should not be called directly, used by derived prototypes.
  *
@@ -108,5 +106,69 @@ AbstractTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) 
 AbstractTransport.prototype.connect = function (callback) {
   callback(new Error("Must be implemented by derived prototype."));
 };
+
+/**
+ * Pumps the current work queue.
+ */
+function pumpQueue(abstractTransport) {
+  var rpcObject;
+  abstractTransport.awaitingPump = false;
+  while ((rpcObject = abstractTransport.workQueue.shift())) {
+    // it is possible to lose a connection while iterating over the queue,
+    // if that happens unroll the latest iteration and stop pumping
+    // (reconnect will start pumping again)
+    if (!abstractTransport.connected) {
+      abstractTransport.workQueue.unshift(rpcObject);
+      return;
+    }
+    processWork(abstractTransport, rpcObject);
+  }
+}
+
+/**
+ * Processes one request off the head of the queue.
+ */
+function processWork(abstractTransport, rpcObject) {
+  abstractTransport.submitRpcRequest(rpcObject, function (error) {
+    if (error === null) return;
+    if (error.retryable) {
+      // if the error is retryable, put it back on the queue (at the head) and
+      // initiate reconnection in the background
+      abstractTransport.workQueue.unshift(rpcObject);
+      // if this is the first retriable failure then initiate a reconnect
+      if (abstractTransport.connected) {
+        abstractTransport.connected = false;
+        reconnect(abstractTransport);
+      }
+    } else {
+      // if we aren't going to retry the request, let the user know that
+      // something went wrong so they can handle it
+      error.data = rpcObject;
+      abstractTransport.messageHandler(error);
+    }
+  });
+}
+
+/**
+ * Attempts to reconnect with exponential backoff.
+ */
+function reconnect(abstractTransport) {
+  abstractTransport.connect(function (error) {
+    if (error !== null) {
+      setTimeout(reconnect.bind(this, abstractTransport), abstractTransport.backoffMilliseconds *= 2);
+    } else {
+      Object.keys(abstractTransport.reconnectListeners).forEach(function (key) {
+        if (typeof abstractTransport.reconnectListeners[key] !== "function") {
+          delete abstractTransport.reconnectListeners[key];
+        } else {
+          abstractTransport.reconnectListeners[key]();
+        }
+      });
+      abstractTransport.connected = true;
+      abstractTransport.backoffMilliseconds = 1;
+      pumpQueue(abstractTransport);
+    }
+  });
+}
 
 module.exports = AbstractTransport;

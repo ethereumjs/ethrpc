@@ -11,9 +11,6 @@ var handleRawTransactionError = function (rawTransactionResponse) {
   if (rawTransactionResponse.message.indexOf("rlp") > -1) {
     return errors.RLP_ENCODING_ERROR;
   } else if (rawTransactionResponse.message.indexOf("Nonce too low") > -1) {
-    // if (this.debug.broadcast || this.debug.nonce) {
-    //   console.info("[ethrpc] nonce too low:", this.rawTxMaxNonce);
-    // }
     ++this.rawTxMaxNonce;
     return null;
   }

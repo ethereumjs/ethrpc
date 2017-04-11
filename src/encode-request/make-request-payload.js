@@ -1,7 +1,8 @@
 "use strict";
 
-var encodeArray = require("./abi/encode-array");
-var encodePrimitive = require("./abi/encode-primitive");
+var abiEncode = require("./abi-encode");
+var encodeArray = abiEncode.encodeArray;
+var encodePrimitive = abiEncode.encodePrimitive;
 
 var numRequests = 1;
 
