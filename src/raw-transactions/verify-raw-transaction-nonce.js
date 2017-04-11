@@ -1,6 +1,7 @@
 "use strict";
 
 var abi = require("augur-abi");
+var store = require("../store");
 
 /**
  * Compare nonce to the maximum nonce seen so far.
@@ -8,10 +9,14 @@ var abi = require("augur-abi");
  * @return {string} Adjusted (if needed) nonce as a hex string.
  */
 var verifyRawTransactionNonce = function (nonce) {
-  if (nonce <= this.rawTxMaxNonce) {
-    nonce = ++this.rawTxMaxNonce;
+  var highestNonce = store.getState().highestNonce;
+  if (nonce <= highestNonce) {
+    nonce = highestNonce + 1;
+    store.dispatch({ type: "INCREMENT_HIGHEST_NONCE" });
+    // nonce = ++this.rawTxMaxNonce;
   } else {
-    this.rawTxMaxNonce = nonce;
+    store.dispatch({ type: "SET_HIGHEST_NONCE", nonce: nonce });
+    // this.rawTxMaxNonce = nonce;
   }
   // if (this.debug.nonce) console.log("[ethrpc] nonce:", nonce, this.rawTxMaxNonce);
   return abi.hex(nonce);

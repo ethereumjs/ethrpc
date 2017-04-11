@@ -40,6 +40,7 @@ var ErrorWithCodeAndData = require("./errors").ErrorWithCodeAndData;
 var RPCError = require("./errors/rpc-error");
 var errors = require("./errors/codes");
 
+var store = require("./store");
 var constants = require("./constants");
 
 BigNumber.config({
@@ -384,17 +385,23 @@ module.exports = {
   },
 
   onNewBlock: function (block) {
-    var transactionHash;
+    var transactionHash, transactions;
     if (typeof block !== "object") throw new Error("block must be an object");
+    transactions = store.getState().transactions;
 
     // for legacy compatability, use getBlockAndLogStream().getLatestReconciledBlock()
-    this.block = clone(block);
-    this.block.number = parseInt(block.number, 16);
+    block.number = parseInt(block.number, 16);
+    store.dispatch({
+      type: "UPDATE_CURRENT_BLOCK",
+      block: block
+    });
+    // this.block = clone(block);
+    // this.block.number = parseInt(block.number, 16);
 
     // re-process all transactions
-    for (transactionHash in this.txs) {
-      if (this.txs.hasOwnProperty(transactionHash)) {
-        this.updateTx(this.txs[transactionHash]);
+    for (transactionHash in transactions) {
+      if (transactions.hasOwnProperty(transactionHash)) {
+        this.updateTx(transactions[transactionHash]);
       }
     }
   },
@@ -415,7 +422,7 @@ module.exports = {
     var self = this;
     return function (response) {
       if (isFunction(callback)) callback(response);
-      if (payload.method && !self.excludedFromTxRelay[payload.method]) {
+      if (payload.method && !store.getState().noRelay[payload.method]) {
         self.txRelay({
           type: payload.label || payload.method,
           status: status,
@@ -431,10 +438,18 @@ module.exports = {
     if (method) {
       if (method.constructor === Array && method.length) {
         for (i = 0, numMethods = method.length; i < numMethods; ++i) {
-          this.excludedFromTxRelay[method[i]] = true;
+          store.dispatch({
+            type: "EXCLUDE_METHOD_FROM_TRANSACTION_RELAY",
+            method: method[i]
+          });
+          // this.excludedFromTxRelay[method[i]] = true;
         }
       } else {
-        this.excludedFromTxRelay[method] = true;
+        store.dispatch({
+          type: "EXCLUDE_METHOD_FROM_TRANSACTION_RELAY",
+          method: method
+        });
+        // this.excludedFromTxRelay[method] = true;
       }
     }
   },
@@ -444,26 +459,38 @@ module.exports = {
     if (method) {
       if (method.constructor === Array && method.length) {
         for (i = 0, numMethods = method.length; i < numMethods; ++i) {
-          this.excludedFromTxRelay[method[i]] = false;
+          store.dispatch({
+            type: "INCLUDE_METHOD_IN_TRANSACTION_RELAY",
+            method: method[i]
+          });
+          // this.excludedFromTxRelay[method[i]] = false;
         }
       } else {
-        this.excludedFromTxRelay[method] = false;
+        store.dispatch({
+          type: "INCLUDE_METHOD_IN_TRANSACTION_RELAY",
+          method: method
+        });
+        // this.excludedFromTxRelay[method] = false;
       }
     }
   },
 
   // delete cached network, notification, and transaction data
   clear: function () {
-    var n;
-    for (n in this.notifications) {
-      if (this.notifications.hasOwnProperty(n)) {
-        if (this.notifications[n]) {
-          clearTimeout(this.notifications[n]);
-        }
-      }
-    }
-    this.txs = {};
-    this.rawTxMaxNonce = -1;
+    store.dispatch({ type: "CLEAR_ALL_NOTIFICATIONS" });
+    store.dispatch({ type: "REMOVE_ALL_TRANSACTIONS" });
+    store.dispatch({ type: "RESET_HIGHEST_NONCE" });
+    // var n;
+    // for (n in this.notifications) {
+    //   if (this.notifications.hasOwnProperty(n)) {
+    //     if (this.notifications[n]) {
+    //       clearTimeout(this.notifications[n]);
+    //     }
+    //   }
+    // }
+    // this.notifications = {};
+    // this.txs = {};
+    // this.rawTxMaxNonce = -1;
   },
 
   /******************************
@@ -1041,25 +1068,37 @@ module.exports = {
     var self = this;
     this.getTx(tx.hash, function (onChainTx) {
       var e;
-      tx.tx = abi.copy(onChainTx);
+      store.dispatch({
+        type: "UPDATE_TRANSACTION",
+        hash: tx.hash,
+        key: "tx",
+        value: onChainTx
+      });
+      // tx.tx = abi.copy(onChainTx);
 
       // if transaction is null, then it was dropped from the txpool
       if (onChainTx === null) {
-        tx.payload.tries = (tx.payload.tries) ? tx.payload.tries + 1 : 1;
+        store.dispatch({ type: "INCREMENT_TRANSACTION_PAYLOAD_TRIES", hash: tx.hash });
+        // tx.payload.tries = (tx.payload.tries) ? tx.payload.tries + 1 : 1;
 
         // if we have retries left, then resubmit the transaction
         if (tx.payload.tries > constants.TX_RETRY_MAX) {
-          tx.status = "failed";
-          tx.locked = false;
+          store.dispatch({ type: "TRANSACTION_FAILED", hash: tx.hash });
+          // tx.status = "failed";
+          store.dispatch({ type: "UNLOCK_TRANSACTION", hash: tx.hash });
+          // tx.locked = false;
           if (isFunction(tx.onFailed)) {
             e = clone(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
             e.hash = tx.hash;
             tx.onFailed(e);
           }
         } else {
-          --self.rawTxMaxNonce;
-          tx.status = "resubmitted";
-          tx.locked = false;
+          store.dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
+          // --self.rawTxMaxNonce;
+          store.dispatch({ type: "TRANSACTION_RESUBMITTED", hash: tx.hash });
+          // tx.status = "resubmitted";
+          store.dispatch({ type: "UNLOCK_TRANSACTION", hash: tx.hash });
+          // tx.locked = false;
           if (self.debug.tx) console.log("resubmitting tx:", tx.hash);
           self.transact(tx.payload, tx.onSent, tx.onSuccess, tx.onFailed);
         }
@@ -1068,13 +1107,26 @@ module.exports = {
         // check if it has been mined yet (block number is non-null)
       } else {
         if (onChainTx.blockNumber) {
-          tx.tx.blockNumber = parseInt(onChainTx.blockNumber, 16);
-          tx.tx.blockHash = onChainTx.blockHash;
-          tx.status = "mined";
-          tx.confirmations = self.block.number - tx.tx.blockNumber;
+          store.dispatch({
+            type: "UPDATE_TRANSACTION_BLOCK",
+            hash: tx.hash,
+            blockNumber: parseInt(onChainTx.blockNumber, 16),
+            blockHash: onChainTx.blockHash
+          });
+          // tx.tx.blockNumber = parseInt(onChainTx.blockNumber, 16);
+          // tx.tx.blockHash = onChainTx.blockHash;
+          store.dispatch({ type: "TRANSACTION_MINED", hash: tx.hash });
+          // tx.status = "mined";
+          store.dispatch({
+            type: "SET_TRANSACTION_CONFIRMATIONS",
+            hash: tx.hash,
+            currentBlockNumber: store.getState().currentBlock.number
+          });
+          // tx.confirmations = self.block.number - tx.tx.blockNumber;
           self.updateMinedTx(tx);
         } else {
-          tx.locked = false;
+          store.dispatch({ type: "UNLOCK_TRANSACTION", hash: tx.hash });
+          // tx.locked = false;
         }
       }
     });
@@ -1083,10 +1135,16 @@ module.exports = {
   updateMinedTx: function (tx) {
     var self = this;
     var onChainTx = tx.tx;
-    tx.confirmations = self.block.number - onChainTx.blockNumber;
+    store.dispatch({
+      type: "SET_TRANSACTION_CONFIRMATIONS",
+      hash: tx.hash,
+      currentBlockNumber: store.getState().currentBlock.number
+    });
+    // tx.confirmations = self.block.number - onChainTx.blockNumber;
     if (self.debug.tx) console.log("confirmations for", tx.hash, tx.confirmations);
     if (tx.confirmations >= constants.REQUIRED_CONFIRMATIONS) {
-      tx.status = "confirmed";
+      store.dispatch({ type: "TRANSACTION_CONFIRMED", hash: tx.hash });
+      // tx.status = "confirmed";
       if (isFunction(tx.onSuccess)) {
         self.getBlock(onChainTx.blockNumber, false, function (block) {
           if (block && block.timestamp) {
@@ -1175,49 +1233,84 @@ module.exports = {
   },
 
   verifyTxSubmitted: function (payload, txHash, callReturn, onSent, onSuccess, onFailed, callback) {
-    var tx, self = this;
+    var state, storedTransaction, tx, self = this;
+    state = store.getState();
+    storedTransaction = state.transactions[txHash];
     if (!isFunction(callback)) {
       if (!payload || ((!payload.mutable && payload.returns !== "null") && (txHash === null || txHash === undefined))) {
         throw new RPCError(errors.TRANSACTION_FAILED);
       }
-      if (this.txs[txHash]) throw new RPCError(errors.DUPLICATE_TRANSACTION);
-      this.txs[txHash] = {
+      if (storedTransaction) throw new RPCError(errors.DUPLICATE_TRANSACTION);
+      store.dispatch({
+        type: "ADD_TRANSACTION",
         hash: txHash,
-        payload: payload,
-        callReturn: callReturn,
-        count: 0,
-        status: "pending"
-      };
+        transaction: {
+          hash: txHash,
+          payload: payload,
+          callReturn: callReturn,
+          count: 0,
+          status: "pending"
+        }
+      });
+      // this.txs[txHash] = {
+      //   hash: txHash,
+      //   payload: payload,
+      //   callReturn: callReturn,
+      //   count: 0,
+      //   status: "pending"
+      // };
       tx = this.getTransaction(txHash);
       if (!tx) throw new RPCError(errors.TRANSACTION_FAILED);
-      this.txs[txHash].tx = tx;
+      // this.txs[txHash].tx = tx;
+      store.dispatch({
+        type: "UPDATE_TRANSACTION",
+        hash: txHash,
+        key: "tx",
+        value: tx
+      });
       return;
     }
     if (!payload || txHash === null || txHash === undefined) {
-      console.error("payload undefined or txhash null/undefined:", payload, txHash);
       return callback(errors.TRANSACTION_FAILED);
     }
-    if (this.txs[txHash]) return callback(errors.DUPLICATE_TRANSACTION);
-    this.txs[txHash] = {
-      hash: txHash,
-      payload: payload,
-      callReturn: callReturn,
-      onSent: onSent,
-      onSuccess: onSuccess,
-      onFailed: onFailed,
-      count: 0,
-      status: "pending"
-    };
-    if (this.block && this.block.number) {
-      this.updateTx(this.txs[txHash]);
+    if (storedTransaction) return callback(errors.DUPLICATE_TRANSACTION);
+    store.dispatch({
+      type: "ADD_TRANSACTION",
+      transaction: {
+        hash: txHash,
+        payload: payload,
+        callReturn: callReturn,
+        onSent: onSent,
+        onSuccess: onSuccess,
+        onFailed: onFailed,
+        count: 0,
+        status: "pending"
+      }
+    });
+    // this.txs[txHash] = {
+    //   hash: txHash,
+    //   payload: payload,
+    //   callReturn: callReturn,
+    //   onSent: onSent,
+    //   onSuccess: onSuccess,
+    //   onFailed: onFailed,
+    //   count: 0,
+    //   status: "pending"
+    // };
+    if (state.currentBlock && state.currentBlock.number) {
+      this.updateTx(storedTransaction);
       return callback(null);
     }
     this.blockNumber(function (blockNumber) {
       if (!blockNumber || blockNumber.error) {
         return callback(blockNumber || "rpc.blockNumber lookup failed");
       }
-      self.block = { number: parseInt(blockNumber, 16) };
-      self.updateTx(self.txs[txHash]);
+      // self.block = { number: parseInt(blockNumber, 16) };
+      store.dispatch({
+        type: "SET_CURRENT_BLOCK",
+        block: { number: parseInt(blockNumber, 16) }
+      });
+      self.updateTx(storedTransaction);
       callback(null);
     });
   },
@@ -1254,9 +1347,10 @@ module.exports = {
   },
 
   waitForNextPoll: function (tx, callback) {
-    var self = this;
-    if (this.txs[tx.hash].count >= constants.TX_POLL_MAX) {
-      this.txs[tx.hash].status = "unconfirmed";
+    var storedTransaction, self = this;
+    storedTransaction = store.getState().transactions[tx.hash];
+    if (storedTransaction.count >= constants.TX_POLL_MAX) {
+      storedTransaction.status = "unconfirmed";
       if (!isFunction(callback)) {
         throw new RPCError(errors.TRANSACTION_NOT_CONFIRMED);
       }
@@ -1264,22 +1358,41 @@ module.exports = {
     }
     if (!isFunction(callback)) {
       wait(constants.TX_POLL_INTERVAL);
-      if (this.txs[tx.hash].status === "pending" || this.txs[tx.hash].status === "mined") {
+      if (storedTransaction.status === "pending" || storedTransaction.status === "mined") {
         return null;
       }
     } else {
-      this.notifications[tx.hash] = setTimeout(function () {
-        if (self.txs[tx.hash].status === "pending" || self.txs[tx.hash].status === "mined") {
-          callback(null, null);
-        }
-      }, constants.TX_POLL_INTERVAL);
+      store.dispatch({
+        type: "ADD_NOTIFICATION",
+        hash: tx.hash,
+        notification: setTimeout(function () {
+          if (storedTransaction.status === "pending" || storedTransaction.status === "mined") {
+            callback(null, null);
+          }
+        }, constants.TX_POLL_INTERVAL);
+      });
+      // this.notifications[tx.hash] = setTimeout(function () {
+      //   if (storedTransaction.status === "pending" || storedTransaction.status === "mined") {
+      //     callback(null, null);
+      //   }
+      // }, constants.TX_POLL_INTERVAL);
     }
   },
 
   completeTx: function (tx, callback) {
-    this.txs[tx.hash].status = "confirmed";
-    clearTimeout(this.notifications[tx.hash]);
-    delete this.notifications[tx.hash];
+    store.dispatch({
+      type: "UPDATE_TRANSACTION",
+      hash: tx.hash,
+      key: "status",
+      value: "confirmed"
+    });
+    // this.txs[tx.hash].status = "confirmed";
+    store.dispatch({
+      type: "CLEAR_NOTIFICATION",
+      hash: tx.hash      
+    });
+    // clearTimeout(this.notifications[tx.hash]);
+    // delete this.notifications[tx.hash];
     if (!isFunction(callback)) return tx;
     return callback(null, tx);
   },
@@ -1299,16 +1412,32 @@ module.exports = {
   },
 
   checkBlockHash: function (tx, numConfirmations, callback) {
-    if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
-    if (this.txs[tx.hash].count === undefined) this.txs[tx.hash].count = 0;
-    ++this.txs[tx.hash].count;
+    var storedTransaction = clone(store.getState().transactions[tx.hash]);
+    if (!storedTransaction) storedTransaction = {};
+    // if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
+    store.dispatch({
+      type: "INCREMENT_TRANSACTION_COUNT",
+      hash: tx.hash
+    });
+    // if (storedTransaction.count === undefined) storedTransaction.count = 0;
+    // ++storedTransaction.count;
     if (this.debug.tx) console.log("checkBlockHash:", tx.blockHash);
     if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
       tx.txHash = tx.hash;
       if (!numConfirmations) {
-        this.txs[tx.hash].status = "mined";
-        clearTimeout(this.notifications[tx.hash]);
-        delete this.notifications[tx.hash];
+        store.dispatch({
+          type: "UPDATE_TRANSACTION",
+          hash: tx.hash,
+          key: "status",
+          value: "mined"
+        });
+        // storedTransaction.status = "mined";
+        store.dispatch({
+          type: "CLEAR_NOTIFICATION",
+          hash: tx.hash
+        });
+        // clearTimeout(this.notifications[tx.hash]);
+        // delete this.notifications[tx.hash];
         if (!isFunction(callback)) return tx;
         return callback(null, tx);
       }
@@ -1355,16 +1484,27 @@ module.exports = {
     if (!isFunction(callback)) {
       tx = this.getTransaction(txHash);
       if (tx) return tx;
-      --this.rawTxMaxNonce;
-      this.txs[txHash].status = "resubmitted";
+      store.dispatch({ type: "DECREMENT_HIGHEST_NONCE" })
+      // --this.rawTxMaxNonce;
+      store.dispatch({
+        type: "UPDATE_TRANSACTION_STATUS",
+        hash: txHash,
+        status: "resubmitted"
+      });
+      // this.txs[txHash].status = "resubmitted";
       return null;
     }
     this.getTransaction(txHash, function (tx) {
       if (tx) return callback(null, tx);
-      --self.rawTxMaxNonce;
-      self.txs[txHash].status = "failed";
+      // --self.rawTxMaxNonce;
+      store.dispatch({ type: "DECREMENT_HIGHEST_NONCE" })
       if (self.debug.broadcast) console.log(" *** Re-submitting transaction:", txHash);
-      self.txs[txHash].status = "resubmitted";
+      store.dispatch({
+        type: "UPDATE_TRANSACTION_STATUS",
+        hash: txHash,
+        status: "resubmitted"
+      });
+      // self.txs[txHash].status = "resubmitted";
       return callback(null, null);
     });
   },
