@@ -1,14 +1,13 @@
 "use strict";
 
-var helpers = require("./helpers.js");
-var Transporter = require("../src/transport/transporter.js");
-
 var assert = require("chai").assert;
 var async = require("async");
-var StubServer = require("ethereumjs-stub-rpc-server");
 var os = require("os");
+var StubServer = require("ethereumjs-stub-rpc-server");
+var helpers = require("../helpers");
+var Transporter = require("../../src/transport/transporter");
 
-describe("transporter", function () {
+describe("transport/transporter", function () {
   var ipcServer1;
   var wsServer1;
   var wsServer2;

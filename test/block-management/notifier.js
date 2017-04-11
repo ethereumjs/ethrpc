@@ -1,7 +1,7 @@
 var assert = require("chai").assert;
-var Notifier = require("../../src/block-management/notifier.js");
+var Notifier = require("../../src/block-management/notifier");
 
-describe("Notifier", function () {
+describe("block-management/notifier", function () {
   it("works with parameterless notifications", function (done) {
     var notifier = new Notifier();
     notifier.subscribe(function (a, b) {

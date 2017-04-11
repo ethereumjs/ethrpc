@@ -10,9 +10,15 @@ var pumpQueue = require("./helpers/pump-queue");
  * @param {function(?Error, !object):void} messageHandler
  */
 function AbstractTransport(address, timeout, messageHandler) {
-  if (typeof address !== "string") throw new Error("address must be a string");
-  if (typeof timeout !== "number") throw new Error("timeout must be a number");
-  if (typeof messageHandler !== "function") throw new Error("messageHandler must be a function");
+  if (typeof address !== "string") {
+    throw new Error("address must be a string");
+  }
+  if (typeof timeout !== "number") {
+    throw new Error("timeout must be a number");
+  }
+  if (typeof messageHandler !== "function") {
+    throw new Error("messageHandler must be a function");
+  }
 
   this.address = address;
   this.timeout = timeout;
@@ -32,13 +38,18 @@ function AbstractTransport(address, timeout, messageHandler) {
  * @param {!object} rpcObject - The JSON-RPC payload you want to send, in object form
  */
 AbstractTransport.prototype.submitWork = function (rpcObject) {
-  if (typeof rpcObject !== "object") throw new Error("rpcObject must be an object");
+  if (typeof rpcObject !== "object") {
+    throw new Error("rpcObject must be an object");
+  }
 
   this.workQueue.push(rpcObject);
+
   // if we aren't connected, the queue will be auto-pumped once we are
   if (!this.connected) return;
+
   // if we already have a pump queued up, then we can just get in with that batch
   if (this.awaitingPump) return;
+
   // force into an async context so behavior doesn't differ depending on whether or not this is first-in-queue
   this.awaitingPump = true;
   setTimeout(pumpQueue.bind(null, this));

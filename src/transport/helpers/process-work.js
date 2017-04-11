@@ -5,7 +5,7 @@ var reconnect = require("./reconnect");
 /**
  * Processes one request off the head of the queue.
  */
-function processWork(abstractTransport, rpcObject) {
+var processWork = function (abstractTransport, rpcObject) {
   abstractTransport.submitRpcRequest(rpcObject, function (error) {
     if (error === null) return;
     if (error.retryable) {
@@ -22,6 +22,6 @@ function processWork(abstractTransport, rpcObject) {
       abstractTransport.messageHandler(error);
     }
   });
-}
+};
 
 module.exports = processWork;

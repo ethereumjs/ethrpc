@@ -1,9 +1,8 @@
 "use strict";
 
-var rpc = require("../src/index.js");
-
 var assert = require("chai").assert;
 var os = require("os");
+var rpc = require("../../src");
 
 module.exports.getIpcAddress = function () {
   return process.env.ETHRPC_TEST_IPC_ADDRESS || ((os.type() === "Windows_NT") ? "\\\\.\\pipe\\TestRPC" : "testrpc.ipc");

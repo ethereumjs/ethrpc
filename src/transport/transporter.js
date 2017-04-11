@@ -63,8 +63,12 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
 
   if (syncOnly) {
     resultAggregator.metaMaskTransports = [];
-    if (configuration.wsAddresses.length !== 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
-    if (configuration.ipcAddresses.length !== 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
+    if (configuration.wsAddresses.length !== 0) {
+      throw new Error("Sync connect does not support any addresses other than HTTP.");
+    }
+    if (configuration.ipcAddresses.length !== 0) {
+      throw new Error("Sync connect does not support any addresses other than HTTP.");
+    }
     configuration.httpAddresses.forEach(function (httpAddress, index) {
       new SyncTransport(httpAddress, configuration.connectionTimeout, messageHandler, true, function (error, syncTransport) {
         resultAggregator.syncTransports[index] = (error !== null) ? null : syncTransport;

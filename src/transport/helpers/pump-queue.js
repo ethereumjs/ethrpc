@@ -5,7 +5,7 @@ var processWork = require("./process-work");
 /**
  * Pumps the current work queue.
  */
-function pumpQueue(abstractTransport) {
+var pumpQueue = function (abstractTransport) {
   var rpcObject;
   abstractTransport.awaitingPump = false;
   while ((rpcObject = abstractTransport.workQueue.shift())) {
@@ -16,6 +16,6 @@ function pumpQueue(abstractTransport) {
     }
     processWork(abstractTransport, rpcObject);
   }
-}
+};
 
 module.exports = pumpQueue;

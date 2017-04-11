@@ -5,7 +5,7 @@ var pumpQueue = require("./pump-queue");
 /**
  * Attempts to reconnect with exponential backoff.
  */
-function reconnect(abstractTransport) {
+var reconnect = function (abstractTransport) {
   abstractTransport.connect(function (error) {
     if (error !== null) {
       setTimeout(reconnect.bind(this, abstractTransport), abstractTransport.backoffMilliseconds *= 2);
@@ -22,6 +22,6 @@ function reconnect(abstractTransport) {
       pumpQueue(abstractTransport);
     }
   });
-}
+};
 
 module.exports = reconnect;
