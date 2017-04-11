@@ -3,59 +3,54 @@
 "use strict";
 
 var assert = require("chai").assert;
-var clone = require("clone");
-var abi = require("augur-abi");
-var rpc = require("../../src");
-var EthTx = require("ethereumjs-tx");
-var errors = require("../../src/errors/codes");
-var RPCError = require("../../src/errors/rpc-error");
+var mockStore = require("../mock-store");
+var verifyRawTransactionNonce = require("../../src/raw-transactions/verify-raw-transaction-nonce");
 
-describe("verifyRawTransactionNonce", function () {
+describe("raw-transactions/verify-raw-transaction-nonce", function () {
   var test = function (t) {
     it(t.description, function () {
-      rpc.resetState();
-      rpc.rawTxMaxNonce = t.state.rawTxMaxNonce;
-      var nonce = rpc.verifyRawTransactionNonce(t.params.nonce);
-      t.assertions(nonce, rpc.rawTxMaxNonce);
+      var store = mockStore(t.state);
+      var nonce = store.dispatch(verifyRawTransactionNonce(t.params.nonce));
+      t.assertions(nonce, store.getState());
     });
   };
   test({
-    description: "Nonce greater than rawTxMaxNonce",
+    description: "Nonce greater than highestNonce",
     params: {
       nonce: 7
     },
     state: {
-      rawTxMaxNonce: -1
+      highestNonce: -1
     },
-    assertions: function (nonce, rawTxMaxNonce) {
+    assertions: function (nonce, state) {
       assert.strictEqual(nonce, "0x7");
-      assert.strictEqual(rawTxMaxNonce, 7);
+      assert.strictEqual(state.highestNonce, 7);
     }
   });
   test({
-    description: "Nonce equal to rawTxMaxNonce",
+    description: "Nonce equal to highestNonce",
     params: {
       nonce: 7
     },
     state: {
-      rawTxMaxNonce: 7
+      highestNonce: 7
     },
-    assertions: function (nonce, rawTxMaxNonce) {
+    assertions: function (nonce, state) {
       assert.strictEqual(nonce, "0x8");
-      assert.strictEqual(rawTxMaxNonce, 8);
+      assert.strictEqual(state.highestNonce, 8);
     }
   });
   test({
-    description: "Nonce less than rawTxMaxNonce",
+    description: "Nonce less than highestNonce",
     params: {
       nonce: 7
     },
     state: {
-      rawTxMaxNonce: 8
+      highestNonce: 8
     },
-    assertions: function (nonce, rawTxMaxNonce) {
+    assertions: function (nonce, state) {
       assert.strictEqual(nonce, "0x9");
-      assert.strictEqual(rawTxMaxNonce, 9);
+      assert.strictEqual(state.highestNonce, 9);
     }
   });
 });

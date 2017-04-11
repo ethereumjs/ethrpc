@@ -10,9 +10,10 @@ var BigNumber = require("bignumber.js");
 var keccak_256 = require("js-sha3").keccak_256;
 var abi = require("augur-abi");
 
-var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
-var BlockNotifier = require("./block-management/block-notifier");
+var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
 var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
+var getBlockAndLogStreamer = require("./block-management/get-block-and-log-streamer");
+
 var Transporter = require("./transport/transporter");
 
 var packageAndSubmitRawTransaction = require("./raw-transactions/package-and-submit-raw-transaction");
@@ -20,9 +21,11 @@ var packageAndSignRawTransaction = require("./raw-transactions/package-and-sign-
 var packageRawTransaction = require("./raw-transactions/package-raw-transaction");
 var signRawTransaction = require("./raw-transactions/sign-raw-transaction");
 
+var submitRequestToBlockchain = require("./rpc/submit-request-to-blockchain");
+var blockchainMessageHandler = require("./rpc/blockchain-message-handler");
+
 var packageRequest = require("./encode-request/package-request");
 var makeRequestPayload = require("./encode-request/make-request-payload");
-var stripReturnsTypeAndInvocation = require("./encode-request/strip-returns-type-and-invocation");
 
 var handleRPCError = require("./decode-response/handle-rpc-error");
 var parseEthereumResponse = require("./decode-response/parse-ethereum-response");
@@ -30,6 +33,8 @@ var convertResponseToReturnsType = require("./decode-response/convert-response-t
 
 var validateAndDefaultBlockNumber = require("./validate/validate-and-default-block-number");
 var validateTransaction = require("./validate/validate-transaction");
+
+var resetState = require("./reset-state");
 
 var isFunction = require("./utils/is-function");
 var wait = require("./utils/wait");
@@ -50,33 +55,24 @@ BigNumber.config({
 
 module.exports = {
 
-  debug: {
-    connect: false,
-    tx: false,
-    broadcast: false,
-    nonce: false,
-    sync: false
-  },
-
+  store: store,
   errors: errors,
 
-  gasPrice: 20000000000,
-
   // Hook for transaction callbacks
-  txRelay: null,
+  // txRelay: null,
 
   // Do not call txRelay for these methods
-  excludedFromTxRelay: null,
+  // excludedFromTxRelay: null,
 
-  txs: null,
-  rawTxMaxNonce: null,
-  block: null,
-  networkID: null,
+  // txs: null,
+  // rawTxMaxNonce: null,
+  // block: null,
+  // networkID: null,
 
-  notifications: null,
+  // notifications: null,
 
-  configuration: null,
-  internalState: null,
+  // configuration: null,
+  // internalState: null,
 
   packageAndSubmitRawTransaction: packageAndSubmitRawTransaction,
   packageAndSignRawTransaction: packageAndSignRawTransaction,
@@ -102,42 +98,9 @@ module.exports = {
    * @returns {void}
    */
   connect: function (configuration, initialConnectCallback) {
-    var key, syncOnly;
-    this.resetState();
-
-    // overwrite configuration values with user config, throw away unused user config
-    for (key in this.configuration) {
-      if (this.configuration.hasOwnProperty(key)) {
-        if (configuration[key] !== undefined && configuration[key] !== null) {
-          this.configuration[key] = configuration[key];
-        }
-      }
-    }
-
-    // use default (console.error) error handler if not set
-    if (!isFunction(this.configuration.errorHandler)) {
-      this.configuration.errorHandler = function (err) { console.error(err); };
-    }
-
-    // validate configuration
-    if (!Array.isArray(this.configuration.httpAddresses)) {
-      return this.configuration.errorHandler(new Error("configuration.httpAddresses must be an array."));
-    }
-    if (this.configuration.httpAddresses.some(function (x) { return typeof x !== "string"; })) {
-      return this.configuration.errorHandler(new Error("configuration.httpAddresses must contain only strings."));
-    }
-    if (!Array.isArray(this.configuration.wsAddresses)) {
-      return this.configuration.errorHandler(new Error("configuration.wsAddresses must be an array."));
-    }
-    if (this.configuration.wsAddresses.some(function (x) { return typeof x !== "string"; })) {
-      return this.configuration.errorHandler(new Error("configuration.wsAddresses must contain only strings."));
-    }
-    if (!Array.isArray(this.configuration.ipcAddresses)) {
-      return this.configuration.errorHandler(new Error("configuration.ipcAddresses must be an array."));
-    }
-    if (this.configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) {
-      return this.configuration.errorHandler(new Error("configuration.ipcAddresses must contain only strings."));
-    }
+    var syncOnly, state;
+    dispatch(resetState());
+    dispatch({ type: "SET_CONFIGURATION", configuration: configuration });    
 
     syncOnly = !initialConnectCallback;
     if (syncOnly) {
@@ -151,252 +114,37 @@ module.exports = {
     }
 
     // initialize the transporter, this will be how we send to and receive from the blockchain
-    new Transporter(this.configuration, this.internalState.shimMessageHandler, syncOnly, this.debug.connect, function (error, transporter) {
+    state = getState();
+    new Transporter(state.configuration, state.shimMessageHandler, syncOnly, state.debug.connect, function (error, transporter) {
       if (error !== null) return initialConnectCallback(error);
-      this.internalState.transporter = transporter;
+      dispatch({ type: "SET_TRANSPORTER", transporter: transporter });
+      // this.internalState.transporter = transporter;
+
       // ensure we can do basic JSON-RPC over this connection
       this.version(function (errorOrResult) {
         if (errorOrResult instanceof Error || errorOrResult.error) {
           return initialConnectCallback(errorOrResult);
         }
-        this.createBlockAndLogStreamer({
-          pollingIntervalMilliseconds: this.configuration.pollingIntervalMilliseconds,
-          blockRetention: this.configuration.blockRetention
-        }, createTransportAdapter(this));
-        this.internalState.blockAndLogStreamer.subscribeToOnBlockAdded(this.onNewBlock.bind(this));
+        dispatch(createBlockAndLogStreamer({
+          pollingIntervalMilliseconds: state.configuration.pollingIntervalMilliseconds,
+          blockRetention: state.configuration.blockRetention
+        }, createTransportAdapter(this)));
+        state.blockAndLogStreamer.subscribeToOnBlockAdded(this.onNewBlock.bind(this));
         initialConnectCallback(null);
       }.bind(this));
     }.bind(this));
   },
 
-  /**
-   * Resets the global state of this module to default.
-   */
-  resetState: function () {
-    var oldMessageHandlerObject, newMessageHandlerObject;
-
-    // stop any pending timers
-    clearInterval((this.internalState || {}).newBlockIntervalTimeoutId);
-
-    // reset configuration to defaults
-    this.configuration = {
-      httpAddresses: [],
-      wsAddresses: [],
-      ipcAddresses: [],
-      connectionTimeout: 3000,
-      pollingIntervalMilliseconds: 30000,
-      blockRetention: 100,
-      errorHandler: null
-    };
-
-    // destroy the old BlockNotifier so it doesn't try to reconnect or continue polling
-    (((this.internalState || {}).blockNotifier || {}).destroy || function () {})();
-
-    // redirect any not-yet-received responses to /dev/null
-    oldMessageHandlerObject = (this.internalState || {}).shimMessageHandlerObject || {};
-    newMessageHandlerObject = { realMessageHandler: this.blockchainMessageHandler.bind(this) };
-    oldMessageHandlerObject.realMessageHandler = function () {};
-
-    // reset state to defaults
-    this.internalState = {
-      transporter: null,
-      blockNotifier: null,
-      blockAndLogStreamer: null,
-      outstandingRequests: {},
-      subscriptions: {},
-      newBlockIntervalTimeoutId: null,
-      shimMessageHandlerObject: newMessageHandlerObject,
-      // by binding this function to `shimMessageHandlerObject`, its `this`
-      // value will be a pointer to an object that we can mutate before
-      // replacing when reset
-      shimMessageHandler: function (error, jso) {
-        this.realMessageHandler(error, jso);
-      }.bind(newMessageHandlerObject)
-    };
-
-    // reset public state
-    this.block = null;
-    this.excludedFromTxRelay = {};
-    this.gasPrice = 20000000000;
-    this.notifications = {};
-    this.rawTxMaxNonce = -1;
-    this.txs = {};
-  },
-
-  /**
-   * Used internally.  Submits a remote procedure call to the blockchain.
-   *
-   * @param {!object} jso - The JSON-RPC call to make.
-   * @param {?string} transportRequirements - ANY, SYNC or DUPLEX.  Will choose best available transport that meets the requirements.
-   * @param {?function(?Error, ?object):void} callback - Called when a response to the request is received.  May only be null if preferredTransport is SYNC.
-   * @returns {void|?Error|?object} - Returns the error or result if the operation is synchronous.
-   */
-  submitRequestToBlockchain: function (jso, transportRequirements, callback) {
-    var syncErrorOrResult, expectedReturnTypes;
-    if (transportRequirements === "SYNC") {
-      callback = function (error, result) { return (syncErrorOrResult = (error || result)); };
-    }
-
-    if (isFunction(transportRequirements) && !callback) {
-      callback = transportRequirements;
-      transportRequirements = null;
-    }
-
-    if (!isFunction(callback)) throw new Error("callback must be a function");
-    if (typeof transportRequirements !== "string" && transportRequirements !== null) {
-      return callback(new Error("transportRequirements must be null or a string"));
-    }
-    if (typeof jso !== "object") return callback(new Error("jso must be an object"));
-    if (typeof jso.id !== "number") return callback(new Error("jso.id must be a number"));
-
-    // FIXME: return types shouldn't be embedded into the RPC JSO
-    expectedReturnTypes = stripReturnsTypeAndInvocation(jso);
-    this.internalState.outstandingRequests[jso.id] = {
-      jso: jso,
-      expectedReturnTypes: expectedReturnTypes,
-      callback: callback
-    };
-
-    this.internalState.transporter.blockchainRpc(jso, transportRequirements, this.debug.broadcast);
-
-    if (transportRequirements === "SYNC") {
-      if (typeof this.internalState.outstandingRequests[jso.id] !== "undefined") {
-        return new Error("SYNC request didn't receive messageHandler call before returning.");
-      }
-      return syncErrorOrResult;
-    }
-  },
-
-  /**
-   * Used internally.  Processes a response from the blockchain by looking up the associated callback and calling it.
-   */
-  blockchainMessageHandler: function (error, jso) {
-    var subscriptionHandler, responseHandler, errorHandler;
-
-    if (error !== null) {
-      return this.configuration.errorHandler(error);
-    }
-    if (typeof jso !== "object") {
-      return this.configuration.errorHandler(new ErrorWithData("Unexpectedly received a message from the transport that was not an object.", jso));
-    }
-
-    subscriptionHandler = function () {
-      var subscriptionCallback;
-      if (jso.method !== "eth_subscription") {
-        return this.configuration.errorHandler(new ErrorWithData("Received an RPC request that wasn't an `eth_subscription`.", jso));
-      }
-      if (typeof jso.params.subscription !== "string") {
-        return this.configuration.errorHandler(new ErrorWithData("Received an `eth_subscription` request without a subscription ID.", jso));
-      }
-      if (jso.params.result === null || jso.params.result === undefined) {
-        return this.configuration.errorHandler(new ErrorWithData("Received an `eth_subscription` request without a result.", jso));
-      }
-
-      subscriptionCallback = this.internalState.subscriptions[jso.params.subscription];
-      if (subscriptionCallback) subscriptionCallback(jso.params.result);
-    }.bind(this);
-
-    responseHandler = function () {
-      var outstandingRequest;
-      if (typeof jso.id !== "number") {
-        return this.configuration.errorHandler(new ErrorWithData("Received a message from the blockchain that didn't have a valid id.", jso));
-      }
-      outstandingRequest = this.internalState.outstandingRequests[jso.id];
-      delete this.internalState.outstandingRequests[jso.id];
-      if (typeof outstandingRequest !== "object") {
-        return this.configuration.errorHandler(new ErrorWithData("Unable to locate original request for blockchain response.", jso));
-      }
-
-      // FIXME: outstandingRequest.callback should be function(Error,object) not function(Error|object)
-      parseEthereumResponse(jso, outstandingRequest.expectedReturnTypes, outstandingRequest.callback);
-    }.bind(this);
-
-    errorHandler = function () {
-      // errors with IDs can go through the normal result process
-      if (jso.id !== null && jso.id !== undefined) {
-        return responseHandler.bind(this)(jso);
-      }
-      this.configuration.errorHandler(new ErrorWithCodeAndData(jso.error.message, jso.error.code, jso.error.data));
-    }.bind(this);
-
-    // depending on the type of message it is (request, response, error, invalid) we will handle it differently
-    if (jso.method !== undefined) {
-      subscriptionHandler();
-    } else if (jso.result !== undefined) {
-      responseHandler();
-    } else if (jso.error !== undefined) {
-      errorHandler();
-    } else {
-      this.configuration.errorHandler(new ErrorWithData("Received an invalid JSON-RPC message.", jso));
-    }
-  },
-
-  /**
-   * Used internally.  Instantiates a new BlockAndLogStreamer backed by ethrpc and BlockNotifier.
-   *
-   * @typedef Block
-   * @type object
-   * @property hash
-   * @property parentHash
-   *
-   * @typedef FilterOptions
-   * @type object
-   * @property {(string|undefined)} address
-   * @property {(string|string[]|null)[]} topics
-   * @property {(string|undefined)} fromBlock
-   * @property {(string|undefined)} toBlock
-   * @property {(string|undefined)} limit
-   *
-   * @typedef Configuration
-   * @type object
-   * @property {number} pollingIntervalMilliseconds
-   * @property {number} blockRetention
-   *
-   * @typedef Transport
-   * @type object
-   * @property {function(function(Error, Block):void):void} getLatestBlock
-   * @property {function(string, function(Error, Block):void):void} getBlockByHash
-   * @property {function(FilterOptions, function(Error, Log[]):void):void} getLogs
-   * @property {function(function():void, function(Error):void):string} subscribeToReconnects
-   * @property {function(string):void} unsubscribeFromReconnects
-   * @property {function(function(Block):void, function(Error):void):string} subscribeToNewHeads
-   * @property {function(string):void} unsubscribeFromNewHeads
-   *
-   * @param {Configuration} configuration
-   * @param {Transport} transport
-   */
-  createBlockAndLogStreamer: function (configuration, transport) {
-    var reconcileWithErrorLogging;
-    this.internalState.blockNotifier = new BlockNotifier(transport, configuration.pollingIntervalMilliseconds);
-    this.internalState.blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, { blockRetention: configuration.blockRetention });
-    reconcileWithErrorLogging = function (block) {
-      this.internalState.blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (error) {
-        if (error) console.error(error);
-      });
-    }.bind(this);
-    this.internalState.blockNotifier.subscribe(reconcileWithErrorLogging);
-  },
-
-  /**
-   * Provides access to the internally managed BlockAndLogStreamer instance.
-   */
   getBlockAndLogStreamer: function () {
-    return this.internalState.blockAndLogStreamer;
+    store.dispatch(getBlockAndLogStreamer());
   },
 
   onNewBlock: function (block) {
     var transactionHash, transactions;
     if (typeof block !== "object") throw new Error("block must be an object");
     transactions = store.getState().transactions;
-
-    // for legacy compatability, use getBlockAndLogStream().getLatestReconciledBlock()
     block.number = parseInt(block.number, 16);
-    store.dispatch({
-      type: "UPDATE_CURRENT_BLOCK",
-      block: block
-    });
-    // this.block = clone(block);
-    // this.block.number = parseInt(block.number, 16);
+    store.dispatch({ type: "UPDATE_CURRENT_BLOCK", block: block });
 
     // re-process all transactions
     for (transactionHash in transactions) {
@@ -1369,7 +1117,7 @@ module.exports = {
           if (storedTransaction.status === "pending" || storedTransaction.status === "mined") {
             callback(null, null);
           }
-        }, constants.TX_POLL_INTERVAL);
+        }, constants.TX_POLL_INTERVAL)
       });
       // this.notifications[tx.hash] = setTimeout(function () {
       //   if (storedTransaction.status === "pending" || storedTransaction.status === "mined") {

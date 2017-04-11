@@ -10,29 +10,25 @@ var isFunction = require("../utils/is-function");
  * @param {function=} callback Callback function (optional).
  * @return {Object|void} Packaged transaction with nonce set.
  */
-var setRawTransactionNonce = function (packaged, address, callback) {
-  var transactionCount;
-  if (!isFunction(callback)) {
-    transactionCount = this.pendingTxCount(address);
-    // if (this.debug.nonce) {
-    //   console.log("[ethrpc] transaction count:", parseInt(transactionCount, 16));
-    // }
-    if (transactionCount && !transactionCount.error && !(transactionCount instanceof Error)) {
-      packaged.nonce = parseInt(transactionCount, 16);
+function setRawTransactionNonce(packaged, address, callback) {
+  return function (dispatch) {
+    var transactionCount;
+    if (!isFunction(callback)) {
+      transactionCount = this.getPendingTransactionCount(address);
+      if (transactionCount && !transactionCount.error && !(transactionCount instanceof Error)) {
+        packaged.nonce = parseInt(transactionCount, 16);
+      }
+      packaged.nonce = dispatch(verifyRawTransactionNonce(packaged.nonce));
+      return packaged;
     }
-    packaged.nonce = verifyRawTransactionNonce(packaged.nonce);
-    return packaged;
-  }
-  this.pendingTxCount(address, function (transactionCount) {
-    // if (self.debug.nonce) {
-    //   console.log("[ethrpc] transaction count:", parseInt(transactionCount, 16));
-    // }
-    if (transactionCount && !transactionCount.error && !(transactionCount instanceof Error)) {
-      packaged.nonce = parseInt(transactionCount, 16);
-    }
-    packaged.nonce = verifyRawTransactionNonce(packaged.nonce);
-    callback(packaged);
-  });
-};
+    this.getPendingTransactionCount(address, function (transactionCount) {
+      if (transactionCount && !transactionCount.error && !(transactionCount instanceof Error)) {
+        packaged.nonce = parseInt(transactionCount, 16);
+      }
+      packaged.nonce = dispatch(verifyRawTransactionNonce(packaged.nonce));
+      callback(packaged);
+    });
+  };
+}
 
 module.exports = setRawTransactionNonce;

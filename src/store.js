@@ -1,19 +1,9 @@
 "use strict";
 
+var redux = require("redux");
+var thunk = require("redux-thunk").default;
 var reducer = require("./reducers");
 
-var state;
+var store = redux.createStore(reducer, redux.applyMiddleware(thunk));
 
-var getState = function () {
-  return state;
-};
-
-var dispatch = function (action) {
-  state = reducer(state, action);
-};
-
-var reset = function () {
-  state = reducer({});
-};
-
-module.exports = { getState: getState, dispatch: dispatch, reset: reset };
+module.exports = store;
