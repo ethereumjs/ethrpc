@@ -8,7 +8,7 @@ var RPCError = require("../errors/rpc-error");
 var parseEthereumResponse = function (origResponse, returns, callback) {
   var results, len, err, i, response;
   response = clone(origResponse);
-  // if ((this.debug.tx && (response && response.error)) || this.debug.broadcast) {
+  // if ((debug.tx && (response && response.error)) || debug.broadcast) {
   //   console.log("[ethrpc] response:", response);
   // }
   if (response && typeof response === "string") {
@@ -16,34 +16,29 @@ var parseEthereumResponse = function (origResponse, returns, callback) {
       response = JSON.parse(response);
     } catch (e) {
       err = e;
-      if (e && e.name === "SyntaxError") {
-        err = errors.INVALID_RESPONSE;
-      }
+      if (e && e.name === "SyntaxError") err = errors.INVALID_RESPONSE;
       if (isFunction(callback)) return callback(err);
       throw new RPCError(err);
     }
   }
   if (response !== undefined && typeof response === "object" && response !== null) {
     if (response.error) {
-      response = {
-        error: response.error.code,
-        message: response.error.message
-      };
+      response = { error: response.error.code, message: response.error.message };
       if (!isFunction(callback)) return response;
       return callback(response);
     } else if (response.result !== undefined) {
       if (!isFunction(callback)) return response.result;
       return callback(response.result);
-    } else if (response.constructor === Array && response.length) {
+    } else if (Array.isArray(response) && response.length) {
       len = response.length;
       results = new Array(len);
       for (i = 0; i < len; ++i) {
         results[i] = response[i].result;
         if (response.error || (response[i] && response[i].error)) {
-          if (this.debug.broadcast) {
-            if (isFunction(callback)) return callback(response.error);
-            throw new RPCError(response.error);
-          }
+          // if (debug.broadcast) {
+          if (isFunction(callback)) return callback(response.error);
+          throw new RPCError(response.error);
+          // }
         }
       }
       if (!isFunction(callback)) return results;

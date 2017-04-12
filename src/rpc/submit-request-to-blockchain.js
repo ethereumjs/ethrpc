@@ -1,6 +1,7 @@
 "use strict";
 
-var stripReturnsTypeAndInvocation = require("./encode-request/strip-returns-type-and-invocation");
+var stripReturnsTypeAndInvocation = require("../encode-request/strip-returns-type-and-invocation");
+var isFunction = require("../utils/is-function");
 
 /**
  * Used internally.  Submits a remote procedure call to the blockchain.
@@ -44,11 +45,6 @@ function submitRequestToBlockchain(jso, transportRequirements, callback) {
         callback: callback
       }
     });
-    // this.internalState.outstandingRequests[jso.id] = {
-    //   jso: jso,
-    //   expectedReturnTypes: expectedReturnTypes,
-    //   callback: callback
-    // };
 
     transporter.blockchainRpc(jso, transportRequirements, this.debug.broadcast);
 

@@ -1,6 +1,7 @@
 "use strict";
 
-var clone = require("clone");
+var validateConfiguration = require("./validate/validate-configuration");
+var isFunction = require("../utils/is-function");
 
 var initialState = {
   httpAddresses: [],
@@ -13,46 +14,24 @@ var initialState = {
 };
 
 module.exports = function (configuration, action) {
+  var updatedConfiguration;
   if (typeof configuration === "undefined") {
     return initialState;
   }
   switch (action.type) {
     case "SET_CONFIGURATION":
       // overwrite configuration values with user config, throw away unused user config
-      var configuration = action.configuration;
-      for (key in this.configuration) {
-        if (this.configuration.hasOwnProperty(key)) {
-          if (configuration[key] !== undefined && configuration[key] !== null) {
-            this.configuration[key] = configuration[key];
-          }
-        }
-      }
+      updatedConfiguration = Object.keys(configuration).reduce(function (p, key) {
+        p[key] = (action.configuration[key] != null) ? action.configuration[key] : configuration[key];
+        return p;
+      }, {});
 
-      // use default (console.error) error handler if not set
-      if (!isFunction(this.configuration.errorHandler)) {
-        this.configuration.errorHandler = function (err) { console.error(err); };
+      // use default error handler (console.error) if not set
+      if (!isFunction(updatedConfiguration.errorHandler)) {
+        updatedConfiguration.errorHandler = function (err) { console.error(err); };
       }
-
-      // validate configuration
-      if (!Array.isArray(this.configuration.httpAddresses)) {
-        return this.configuration.errorHandler(new Error("configuration.httpAddresses must be an array."));
-      }
-      if (this.configuration.httpAddresses.some(function (x) { return typeof x !== "string"; })) {
-        return this.configuration.errorHandler(new Error("configuration.httpAddresses must contain only strings."));
-      }
-      if (!Array.isArray(this.configuration.wsAddresses)) {
-        return this.configuration.errorHandler(new Error("configuration.wsAddresses must be an array."));
-      }
-      if (this.configuration.wsAddresses.some(function (x) { return typeof x !== "string"; })) {
-        return this.configuration.errorHandler(new Error("configuration.wsAddresses must contain only strings."));
-      }
-      if (!Array.isArray(this.configuration.ipcAddresses)) {
-        return this.configuration.errorHandler(new Error("configuration.ipcAddresses must be an array."));
-      }
-      if (this.configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) {
-        return this.configuration.errorHandler(new Error("configuration.ipcAddresses must contain only strings."));
-      }
-      // return clone(action.configuration);
+      validateConfiguration(updatedConfiguration);
+      return updatedConfiguration;
     case "RESET_CONFIGURATION":
       return initialState;
     default:

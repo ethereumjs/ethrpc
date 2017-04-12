@@ -13,24 +13,16 @@ var handleRPCError = function (method, returns, response) {
     } else if (response.name && response.message && response.stack) {
       response.error = response.name;
     } else if (!response.error) {
-      if (returns && returns.indexOf("[]") > -1) {
-        if (response.length >= 194) {
-          response = "0x" + response.slice(130, 194);
-        }
+      if (returns && returns.indexOf("[]") > -1 && response.length >= 194) {
+        response = "0x" + response.slice(130, 194);
       }
       if (errors[response]) {
-        response = {
-          error: response,
-          message: errors[response]
-        };
-      } else if (returns !== "null" && returns !== "string" || (response && response.constructor === String && response.slice(0, 2) === "0x")) {
+        response = { error: response, message: errors[response] };
+      } else if (returns !== "null" && returns !== "string" || (typeof response === "string" && response.slice(0, 2) === "0x")) {
         responseNumber = abi.bignum(response, "string", true);
         if (responseNumber) {
           if (errors[method] && errors[method][responseNumber]) {
-            response = {
-              error: responseNumber,
-              message: errors[method][responseNumber]
-            };
+            response = { error: responseNumber, message: errors[method][responseNumber] };
           }
         }
       }

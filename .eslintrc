@@ -127,7 +127,7 @@
     "no-shadow-restricted-names": 2,
     "no-undef": 2,
     "no-unused-vars": 1,
-    "no-use-before-define": 2,
+    "no-use-before-define": 1,
     "comma-spacing": [2, {
       "after": true
     }],

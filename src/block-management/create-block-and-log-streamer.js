@@ -38,21 +38,20 @@ var BlockNotifier = require("./block-management/block-notifier");
  * @param {Transport} transport
  */
 function createBlockAndLogStreamer(configuration, transport) {
-  return function (dispatch, getState) {
+  return function (dispatch) {
     var reconcileWithErrorLogging, blockNotifier, blockAndLogStreamer;
     blockNotifier = new BlockNotifier(transport, configuration.pollingIntervalMilliseconds);
     dispatch({ type: "SET_BLOCK_NOTIFIER", blockNotifier: blockNotifier });
-    blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, { blockRetention: configuration.blockRetention })
+    blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, {
+      blockRetention: configuration.blockRetention
+    });
     dispatch({ type: "SET_BLOCK_AND_LOG_STREAMER", blockAndLogStreamer: blockAndLogStreamer });
     reconcileWithErrorLogging = function (block) {
       blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (error) {
         if (error) console.error(error);
       });
     };
-    dispatch({
-      type: "ADD_BLOCK_NOTIFIER_SUBSCRIPTION",
-      subscription: reconcileWithErrorLogging
-    });
+    dispatch({ type: "ADD_BLOCK_NOTIFIER_SUBSCRIPTION", subscription: reconcileWithErrorLogging });
     // blockNotifier.subscribe(reconcileWithErrorLogging);
   };
 }

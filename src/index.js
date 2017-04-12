@@ -7,41 +7,49 @@
 
 var clone = require("clone");
 var BigNumber = require("bignumber.js");
-var keccak_256 = require("js-sha3").keccak_256;
 var abi = require("augur-abi");
 
-var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
-var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var getBlockAndLogStreamer = require("./block-management/get-block-and-log-streamer");
-
-var Transporter = require("./transport/transporter");
 
 var packageAndSubmitRawTransaction = require("./raw-transactions/package-and-submit-raw-transaction");
 var packageAndSignRawTransaction = require("./raw-transactions/package-and-sign-raw-transaction");
 var packageRawTransaction = require("./raw-transactions/package-raw-transaction");
 var signRawTransaction = require("./raw-transactions/sign-raw-transaction");
 
-var submitRequestToBlockchain = require("./rpc/submit-request-to-blockchain");
-var blockchainMessageHandler = require("./rpc/blockchain-message-handler");
-
 var packageRequest = require("./encode-request/package-request");
-var makeRequestPayload = require("./encode-request/make-request-payload");
 
 var handleRPCError = require("./decode-response/handle-rpc-error");
-var parseEthereumResponse = require("./decode-response/parse-ethereum-response");
 var convertResponseToReturnsType = require("./decode-response/convert-response-to-returns-type");
 
 var validateAndDefaultBlockNumber = require("./validate/validate-and-default-block-number");
 var validateTransaction = require("./validate/validate-transaction");
 
+var registerTransactionRelay = require("./transaction-relay/register-transaction-relay");
+var unregisterTransactionRelay = require("./transaction-relay/unregister-transaction-relay");
+var excludeFromTransactionRelay = require("./transaction-relay/exclude-from-transaction-relay");
+var includeInTransactionRelay = require("./transaction-relay/include-in-transaction-relay");
+
+var connect = require("./connect");
 var resetState = require("./reset-state");
+
+var raw = require("./wrappers/raw");
+var eth_ = require("./wrappers/eth");
+var net_ = require("./wrappers/net");
+
+var web3_ = require("./wrappers/web3");
+var clientVersion = require("./wrappers/web3/client-version");
+
+var txpool_ = require("./wrappers/txpool");
+var shh_ = require("./wrappers/shh");
+var admin_ = require("./wrappers/admin");
+var personal_ = require("./wrappers/personal");
 
 var isFunction = require("./utils/is-function");
 var wait = require("./utils/wait");
 var noop = require("./utils/noop");
+var sha3 = require("./utils/sha3");
 
 var ErrorWithData = require("./errors").ErrorWithData;
-var ErrorWithCodeAndData = require("./errors").ErrorWithCodeAndData;
 var RPCError = require("./errors/rpc-error");
 var errors = require("./errors/codes");
 
@@ -80,147 +88,25 @@ module.exports = {
   packageRawTransaction: packageRawTransaction,
   packageRequest: packageRequest,
 
-  /**
-   * Initiates a connection to Ethereum.  This must be called before any other methods are called.
-   *
-   * @typedef configuration
-   * @type {object}
-   * @property {?string[]} httpAddresses
-   * @property {?string[]} wsAddresses
-   * @property {?string[]} ipcAddresses
-   * @property {?number} connectionTimeout
-   * @property {?number} pollingIntervalMilliseconds
-   * @property {?number} blockRetention
-   * @property {!function(Error):void} errorHandler - called when an otherwise unhandled asynchronous error occurs during the course of operation.
-   *
-   * @param {!configuration} configuration
-   * @param {!function(?Error):void} initialConnectCallback - if the error parameter is null then the connection was successful
-   * @returns {void}
-   */
   connect: function (configuration, initialConnectCallback) {
-    var syncOnly, state;
-    dispatch(resetState());
-    dispatch({ type: "SET_CONFIGURATION", configuration: configuration });    
-
-    syncOnly = !initialConnectCallback;
-    if (syncOnly) {
-      initialConnectCallback = function (error) {
-        if (error instanceof Error) {
-          throw error;
-        } else if (error) {
-          throw new ErrorWithData(error);
-        }
-      };
-    }
-
-    // initialize the transporter, this will be how we send to and receive from the blockchain
-    state = getState();
-    new Transporter(state.configuration, state.shimMessageHandler, syncOnly, state.debug.connect, function (error, transporter) {
-      if (error !== null) return initialConnectCallback(error);
-      dispatch({ type: "SET_TRANSPORTER", transporter: transporter });
-      // this.internalState.transporter = transporter;
-
-      // ensure we can do basic JSON-RPC over this connection
-      this.version(function (errorOrResult) {
-        if (errorOrResult instanceof Error || errorOrResult.error) {
-          return initialConnectCallback(errorOrResult);
-        }
-        dispatch(createBlockAndLogStreamer({
-          pollingIntervalMilliseconds: state.configuration.pollingIntervalMilliseconds,
-          blockRetention: state.configuration.blockRetention
-        }, createTransportAdapter(this)));
-        state.blockAndLogStreamer.subscribeToOnBlockAdded(this.onNewBlock.bind(this));
-        initialConnectCallback(null);
-      }.bind(this));
-    }.bind(this));
+    return store.dispatch(connect(configuration, initialConnectCallback));
   },
 
   getBlockAndLogStreamer: function () {
-    store.dispatch(getBlockAndLogStreamer());
+    return store.dispatch(getBlockAndLogStreamer());
   },
 
-  onNewBlock: function (block) {
-    var transactionHash, transactions;
-    if (typeof block !== "object") throw new Error("block must be an object");
-    transactions = store.getState().transactions;
-    block.number = parseInt(block.number, 16);
-    store.dispatch({ type: "UPDATE_CURRENT_BLOCK", block: block });
-
-    // re-process all transactions
-    for (transactionHash in transactions) {
-      if (transactions.hasOwnProperty(transactionHash)) {
-        this.updateTx(transactions[transactionHash]);
-      }
-    }
+  registerTransactionRelay: function () {
+    return store.dispatch(registerTransactionRelay());
   },
-
-  /**
-   * Transaction relay setup
-   */
-
-  registerTxRelay: function (txRelay) {
-    this.txRelay = txRelay;
+  unregisterTransactionRelay: function () {
+    return store.dispatch(unregisterTransactionRelay());
   },
-
-  unregisterTxRelay: function () {
-    this.txRelay = null;
+  excludeFromTransactionRelay: function (method) {
+    return store.dispatch(excludeFromTransactionRelay(method));
   },
-
-  wrapTxRelayCallback: function (status, payload, callback) {
-    var self = this;
-    return function (response) {
-      if (isFunction(callback)) callback(response);
-      if (payload.method && !store.getState().noRelay[payload.method]) {
-        self.txRelay({
-          type: payload.label || payload.method,
-          status: status,
-          data: payload,
-          response: response
-        });
-      }
-    };
-  },
-
-  excludeFromTxRelay: function (method) {
-    var i, numMethods;
-    if (method) {
-      if (method.constructor === Array && method.length) {
-        for (i = 0, numMethods = method.length; i < numMethods; ++i) {
-          store.dispatch({
-            type: "EXCLUDE_METHOD_FROM_TRANSACTION_RELAY",
-            method: method[i]
-          });
-          // this.excludedFromTxRelay[method[i]] = true;
-        }
-      } else {
-        store.dispatch({
-          type: "EXCLUDE_METHOD_FROM_TRANSACTION_RELAY",
-          method: method
-        });
-        // this.excludedFromTxRelay[method] = true;
-      }
-    }
-  },
-
-  includeInTxRelay: function (method) {
-    var i, numMethods;
-    if (method) {
-      if (method.constructor === Array && method.length) {
-        for (i = 0, numMethods = method.length; i < numMethods; ++i) {
-          store.dispatch({
-            type: "INCLUDE_METHOD_IN_TRANSACTION_RELAY",
-            method: method[i]
-          });
-          // this.excludedFromTxRelay[method[i]] = false;
-        }
-      } else {
-        store.dispatch({
-          type: "INCLUDE_METHOD_IN_TRANSACTION_RELAY",
-          method: method
-        });
-        // this.excludedFromTxRelay[method] = false;
-      }
-    }
+  includeInTransactionRelay: function (method) {
+    return store.dispatch(includeInTransactionRelay(method));
   },
 
   // delete cached network, notification, and transaction data
@@ -228,301 +114,159 @@ module.exports = {
     store.dispatch({ type: "CLEAR_ALL_NOTIFICATIONS" });
     store.dispatch({ type: "REMOVE_ALL_TRANSACTIONS" });
     store.dispatch({ type: "RESET_HIGHEST_NONCE" });
-    // var n;
-    // for (n in this.notifications) {
-    //   if (this.notifications.hasOwnProperty(n)) {
-    //     if (this.notifications[n]) {
-    //       clearTimeout(this.notifications[n]);
-    //     }
-    //   }
-    // }
-    // this.notifications = {};
-    // this.txs = {};
-    // this.rawTxMaxNonce = -1;
   },
 
   /******************************
    * Ethereum JSON-RPC bindings *
    ******************************/
 
-  raw: function (command, params, callback) {
-    var transportRequirements = "ANY";
-    if (!callback) transportRequirements = "SYNC";
-    return this.submitRequestToBlockchain(makeRequestPayload(command, params, null), transportRequirements, callback);
-  },
+  raw: function (cmd, params, callback) { return store.dispatch(raw(cmd, params, callback)); },
+  eth: function (cmd, params, callback) { return store.dispatch(raw("eth_" + cmd, params, callback)); },
+  net: function (cmd, params, callback) { return store.dispatch(raw("net_" + cmd, params, callback)); },
+  web3: function (cmd, params, callback) { return store.dispatch(raw("web3_" + cmd, params, callback)); },
+  txpool: function (cmd, params, callback) { return store.dispatch(raw("txpool_" + cmd, params, callback)); },
+  shh: function (cmd, params, callback) { return store.dispatch(raw("shh_" + cmd, params, callback)); },
+  miner: function (cmd, params, callback) { return store.dispatch(raw("miner_" + cmd, params, callback)); },
+  admin: function (cmd, params, callback) { return store.dispatch(raw("admin_" + cmd, params, callback)); },
+  personal: function (cmd, params, callback) { return store.dispatch(raw("personal_" + cmd, params, callback)); },
 
-  eth: function (command, params, callback) {
-    return this.raw("eth_" + command, params, callback);
-  },
+  // web3_
+  sha3: sha3,
+  clientVersion: function (callback) { return store.dispatch(wrappers.web3.clientVersion(null, callback)); },
 
-  net: function (command, params, callback) {
-    return this.raw("net_" + command, params, callback);
-  },
+  // net_
+  listening: function (callback) { return store.dispatch(wrappers.net.listening(null, callback)); },
+  peerCount: function (callback) { return store.dispatch(wrappers.net.peerCount(null, callback)); },
+  version: function (callback) { return store.dispatch(wrappers.net.version(null, callback)); },
+  netVersion: function (callback) { return this.version(callback); },
 
-  web3: function (command, params, callback) {
-    return this.raw("web3_" + command, params, callback);
-  },
-
-  shh: function (command, params, callback) {
-    return this.raw("shh_" + command, params, callback);
-  },
-
-  miner: function (command, params, callback) {
-    return this.raw("miner_" + command, params, callback);
-  },
-
-  admin: function (command, params, callback) {
-    return this.raw("admin_" + command, params, callback);
-  },
-
-  personal: function (command, params, callback) {
-    return this.raw("personal_" + command, params, callback);
-  },
-
-  txpool: function (command, params, callback) {
-    return this.raw("txpool_" + command, params, callback);
-  },
-
-  // ****
-  // web3_*
-  // ****
-
-  clientVersion: function (callback) {
-    return this.web3("clientVersion", null, callback);
-  },
-
-  // TODO: make this take a callback like everything else
-  sha3: function (data, isHex) {
-    if (isHex) data = abi.decode_hex(data);
-    return abi.prefix_hex(keccak_256(data));
-  },
-
-  // ****
-  // net_*
-  // ****
-
-  listening: function (callback) {
-    return this.net("listening", null, callback);
-  },
-
-  peerCount: function (callback) {
-    return this.net("peerCount", null, callback);
-  },
-
-  version: function (callback) {
-    return this.net("version", null, callback);
-  },
-
-  netVersion: function (callback) {
-    return this.version(callback);
-  },
-
-  // ****
-  // eth_*
-  // ****
-
-  accounts: function (callback) {
-    return this.eth("accounts", null, callback);
-  },
-
-  blockNumber: function (callback) {
-    return this.eth("blockNumber", null, callback);
-  },
-
+  // eth_
+  accounts: function (callback) { return store.dispatch(wrappers.eth.accounts(null, callback)); },
+  blockNumber: function (callback) { return store.dispatch(wrappers.eth.blockNumber(null, callback)); },
   call: function (transaction, blockNumber, callback) {
-    // support incorrect usage rather than failing fast
     if (isFunction(blockNumber)) {
       callback = blockNumber;
       blockNumber = null;
     }
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("call", [transaction, blockNumber], callback);
+    return store.dispatch(wrappers.eth.call([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
-
-  coinbase: function (callback) {
-    return this.eth("coinbase", null, callback);
-  },
-
-  // compileLLL intentionally left out, does not make sense as an RPC call
-
-  // compileSerpent intentionally left out, does not make sense as an RPC call
-
-  // compileSolidity intentionally left out, does not make sense as an RPC call
-
+  coinbase: function (callback) { return store.dispatch(wrappers.eth.coinbase(null, callback)); },
+  // compileLLL, compileSerpent, and compileSolidity intentionally left out
   estimateGas: function (transaction, blockNumber, callback) {
-    // support incorrect usage rather than failing fast
     if (isFunction(blockNumber)) {
       callback = blockNumber;
       blockNumber = null;
     }
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("estimateGas", [transaction, blockNumber], callback);
+    return store.dispatch(wrappers.eth.estimateGas([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
-
-  getGasPrice: function (callback) {
-    return this.eth("gasPrice", null, callback);
-  },
-
+  gasPrice: function (callback) { return store.dispatch(wrappers.eth.gasPrice(null, callback)); },
+  getGasPrice: function (callback) { return this.gasPrice(null, callback); },
   getBalance: function (address, blockNumber, callback) {
-    // support incorrect usage rather than failing fast
     if (isFunction(blockNumber)) {
       callback = blockNumber;
       blockNumber = null;
     }
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("getBalance", [address, blockNumber], callback);
+    return store.dispatch(wrappers.eth.getBalance([address, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
-
   balance: function (address, blockNumber, callback) {
     return this.getBalance(address, blockNumber, callback);
   },
-
   getBlockByHash: function (hash, shouldReturnFullTransactions, callback) {
     if (shouldReturnFullTransactions === undefined) shouldReturnFullTransactions = true;
-    return this.eth("getBlockByHash", [hash, Boolean(shouldReturnFullTransactions)], callback);
+    return store.dispatch(wrappers.eth.getBlockByHash([hash, Boolean(shouldReturnFullTransactions)], callback));
   },
-
   getBlockByNumber: function (number, shouldReturnFullTransactions, callback) {
     var block;
     if (shouldReturnFullTransactions !== true) shouldReturnFullTransactions = false;
     block = validateAndDefaultBlockNumber(number);
-    return this.eth("getBlockByNumber", [block, Boolean(shouldReturnFullTransactions)], callback);
+    return store.dispatch(wrappers.eth.getBlockByNumber([block, Boolean(shouldReturnFullTransactions)], callback));
   },
-
   getBlock: function (number, shouldReturnFullTransactions, callback) {
     return this.getBlockByNumber(number, shouldReturnFullTransactions, callback);
   },
-
-  // TODO: getBlockTransactionCountByHash
-
-  // TODO: getBlockTransactionCountByNumber
-
   getCode: function (address, blockNumber, callback) {
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("getCode", [address, blockNumber], callback);
+    return store.dispatch(wrappers.eth.getCode([address, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
-
   read: function (address, blockNumber, callback) {
     return this.getCode(address, blockNumber, callback);
   },
-
-  // TODO: getCompilers
-
   getFilterChanges: function (filter, callback) {
-    return this.eth("getFilterChanges", [filter], callback);
+    return store.dispatch(wrappers.eth.getFilterChanges([filter], callback));
   },
-
   getFilterLogs: function (filter, callback) {
-    return this.eth("getFilterLogs", filter, callback);
+    return store.dispatch(wrappers.eth.getFilterLogs(filter, callback));
   },
-
   getLogs: function (filter, callback) {
-    return this.eth("getLogs", filter, callback);
+    return store.dispatch(wrappers.eth.getLogs(filter, callback));
   },
-
-  // TODO: add map lookup support (at the moment, this function doesn't support map lookups due to rounding errors after 51-bits for JS numbers)
+  // TODO: add map lookup support (at the moment, this function doesn't support
+  // map lookups due to rounding errors after 51-bits for JS numbers)
   getStorageAt: function (address, position, blockNumber, callback) {
-    blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("getStorageAt", [address, position, blockNumber], callback);
+    return store.dispatch(wrappers.eth.getStorageAt([address, position, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
-
-  // TODO: getTransactionByBlockHashAndIndex
-
-  // TODO: getTransactionByBlockNumberAndIndex
-
   getTransactionByHash: function (transactionHash, callback) {
-    return this.eth("getTransactionByHash", [transactionHash], callback);
+    return store.dispatch(wrappers.eth.getTransactionByHash([transactionHash], callback));
   },
-
   getTransaction: function (transactionHash, callback) {
     return this.getTransactionByHash(transactionHash, callback);
   },
-
   getTx: function (transactionHash, callback) {
     return this.getTransactionByHash(transactionHash, callback);
   },
-
   getTransactionCount: function (address, callback) {
-    return this.eth("getTransactionCount", [address, "latest"], callback);
+    return store.dispatch(wrappers.eth.getTransactionCount([address, "latest"], callback));
   },
-
+  // TODO remove
   txCount: function (address, callback) {
     return this.getTransactionCount(address, callback);
   },
-
   getPendingTransactionCount: function (address, callback) {
-    return this.eth("getTransactionCount", [address, "pending"], callback);
+    return store.dispatch(wrappers.eth.getTransactionCount([address, "pending"], callback));
   },
-
+  // TODO remove
   pendingTxCount: function (address, callback) {
     return this.getPendingTransactionCount(address, callback);
   },
-
   getTransactionReceipt: function (transactionHash, callback) {
-    return this.eth("getTransactionReceipt", transactionHash, callback);
+    return store.dispatch(wrappers.eth.getTransactionReceipt(transactionHash, callback));
   },
-
+  // TODO remove
   receipt: function (transactionHash, callback) {
     return this.getTransactionReceipt(transactionHash, callback);
   },
-
   getUncleByBlockHashAndIndex: function (blockHash, index, callback) {
-    return this.eth("getUncleByBlockHashAndIndex", [blockHash, index], callback);
+    return store.dispatch(wrappers.eth.getUncleByBlockHashAndIndex([blockHash, index], callback));
   },
-
   getUncleByBlockNumberAndIndex: function (blockNumber, index, callback) {
     blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("getUncleByBlockNumberAndIndex", [blockNumber, index], callback);
+    return store.dispatch(wrappers.eth.getUncleByBlockNumberAndIndex([blockNumber, index], callback));
   },
-
   getUncle: function (blockNumber, index, callback) {
     return this.getUncleByBlockNumberAndIndex(blockNumber, index, callback);
   },
-
   getUncleCountByBlockHash: function (blockHash, callback) {
-    return this.eth("getUncleCountByBlockHash", [blockHash], callback);
+    return store.dispatch(wrappers.eth.getUncleCountByBlockHash([blockHash], callback));
   },
-
   getUncleCountByBlockNumber: function (blockNumber, callback) {
     blockNumber = validateAndDefaultBlockNumber(blockNumber);
-    return this.eth("getUncleCountByBlockNumber", [blockNumber], callback);
+    return store.dispatch(wrappers.eth.getUncleCountByBlockNumber([blockNumber], callback));
   },
-
   getUncleCount: function (blockNumber, callback) {
     return this.getUncleCountByBlockNumber(blockNumber, callback);
   },
-
-  // TODO: getWork
-
-  hashrate: function (callback) {
-    return this.eth("hashrate", null, callback);
-  },
-
-  mining: function (callback) {
-    return this.eth("mining", null, callback);
-  },
-
-  newBlockFilter: function (callback) {
-    return this.eth("newBlockFilter", null, callback);
-  },
-
+  hashrate: function (callback) { return store.dispatch(wrappers.eth.hashrate(null, callback)); },
+  mining: function (callback) { return store.dispatch(wrappers.eth.mining(null, callback)); },
+  newBlockFilter: function (callback) { return store.dispatch(wrappers.eth.newBlockFilter(null, callback)); },
   /**
    * @param {{fromBlock:number|string, toBlock:number|string, address:string, topics:string[], limit:number}} filterOptions
    */
   newFilter: function (filterOptions, callback) {
     filterOptions.fromBlock = validateAndDefaultBlockNumber(filterOptions.fromBlock);
     filterOptions.toBlock = validateAndDefaultBlockNumber(filterOptions.toBlock);
-    return this.eth("newFilter", filterOptions, callback);
+    return store.dispatch(wrappers.eth.newFilter(filterOptions, callback));
   },
-
-  newPendingTransactionFilter: function (callback) {
-    return this.eth("newPendingTransactionFilter", null, callback);
-  },
-
-  protocolVersion: function (callback) {
-    return this.eth("protocolVersion", null, callback);
-  },
-
+  newPendingTransactionFilter: function (callback) { return store.dispatch(wrappers.eth.newPendingTransactionFilter(null, callback)); },
+  protocolVersion: function (callback) { return store.dispatch(wrappers.eth.protocolVersion(null, callback)); },
   /**
    * @param {string} signedTransaction - RLP encoded transaction signed with private key
    */
@@ -534,112 +278,54 @@ module.exports = {
     if (!/^0x[0-9a-fA-F]*$/.test(signedTransaction)) {
       throw new Error("signedTransaction must be RLP encoded hex byte array encoded into a string");
     }
-    return this.eth("sendRawTransaction", [signedTransaction], callback);
+    return store.dispatch(wrappers.eth.sendRawTransaction([signedTransaction], callback));
   },
-
   /**
    * @param {{from:string, to:string, gas:number, gasPrice:number, value:number, data:string, nonce:number}} transaction
    */
   sendTransaction: function (transaction, callback) {
     validateTransaction(transaction);
-    return this.eth("sendTransaction", [transaction], callback);
+    return store.dispatch(wrappers.eth.sendTransaction([transaction], callback));
   },
-
-  sendTx: function (transaction, callback) {
-    return this.sendTransaction(transaction, callback);
-  },
-
   sign: function (address, data, callback) {
-    return this.eth("sign", [address, data], callback);
+    return store.dispatch(wrappers.eth.sendTransaction([address, data], callback));
   },
-
   signTransaction: function (transaction, callback) {
     validateTransaction(transaction);
-    return this.eth("signTransaction", [transaction], callback);
+    return store.dispatch(wrappers.eth.signTransaction([transaction], callback));
   },
-
-  // TODO: submitHashrate
-
-  // TODO: submitWork
-
   subscribe: function (label, options, callback) {
     if (options === undefined) options = {};
     if (options === null) options = {};
     if (typeof options !== "object") throw new Error("options must be an object");
-    return this.eth("subscribe", [label, options], callback);
+    return store.dispatch(wrappers.eth.subscribe([label, options], callback));
   },
-
   subscribeLogs: function (options, callback) {
     return this.subscribe("logs", options, callback);
   },
-
   subscribeNewHeads: function (callback) {
     return this.subscribe("newHeads", null, callback);
   },
-
   subscribeNewPendingTransactions: function (callback) {
     return this.subscribe("newPendingTransactions", null, callback);
   },
-
-  syncing: function (callback) {
-    return this.eth("syncing", null, callback);
-  },
-
+  syncing: function (callback) { return store.dispatch(wrappers.eth.sendTransaction(null, callback)); },
   uninstallFilter: function (filter, callback) {
-    return this.eth("uninstallFilter", [filter], callback);
+    return store.dispatch(wrappers.eth.uninstallFilter([filter], callback));
   },
-
   unsubscribe: function (label, callback) {
-    return this.eth("unsubscribe", [label], callback);
+    return store.dispatch(wrappers.eth.unsubscribe([label], callback));
   },
-
-  // ****
-  // personal_* (?parity only?)
-  // ****
-
-  // ****
-  // signer_* (?parity only?)
-  // ****
-
-  // ****
-  // shh_* (?geth only?)
-  // ****
-
-  // ****
-  // trace_* (?parity only?)
-  // ****
 
   /************************
    * Convenience wrappers *
    ************************/
 
   sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
-    if (to && to.constructor === Object) {
-      value = to.value;
-      from = to.from;
-      if (to.onSent) onSent = to.onSent;
-      if (to.onSuccess) onSuccess = to.onSuccess;
-      if (to.onFailed) onFailed = to.onFailed;
-      to = to.to;
-    }
-    return this.transact({
-      from: from,
-      to: to,
-      value: abi.fix(value, "hex"),
-      returns: "null",
-      gas: "0xcf08"
-    }, onSent, onSuccess, onFailed);
+    return store.dispatch(sendEther(to, value, from, onSent, onSuccess, onFailed));
   },
-
-  // publish a new contract to the blockchain (from the coinbase account)
-  publish: function (compiled, f) {
-    var self = this;
-    if (!isFunction(f)) {
-      return this.sendTx({ from: this.coinbase(), data: compiled });
-    }
-    this.coinbase(function (coinbase) {
-      self.sendTx({ from: coinbase, data: compiled }, f);
-    });
+  publish: function (compiled, callback) {
+    return store.dispatch(publish(compiled, callback));
   },
 
   // ****
@@ -718,7 +404,7 @@ module.exports = {
     }
     packaged = packageRequest(payload);
     if (this.debug.broadcast) packaged.debug = clone(payload);
-    invocation = (payload.send) ? this.sendTx : this.call;
+    invocation = (payload.send) ? this.sendTransaction : this.call;
     return invocation.call(this, packaged, f);
   },
 
@@ -1095,8 +781,7 @@ module.exports = {
   },
 
   waitForNextPoll: function (tx, callback) {
-    var storedTransaction, self = this;
-    storedTransaction = store.getState().transactions[tx.hash];
+    var storedTransaction = store.getState().transactions[tx.hash];
     if (storedTransaction.count >= constants.TX_POLL_MAX) {
       storedTransaction.status = "unconfirmed";
       if (!isFunction(callback)) {
@@ -1135,10 +820,7 @@ module.exports = {
       value: "confirmed"
     });
     // this.txs[tx.hash].status = "confirmed";
-    store.dispatch({
-      type: "CLEAR_NOTIFICATION",
-      hash: tx.hash      
-    });
+    store.dispatch({ type: "CLEAR_NOTIFICATION", hash: tx.hash });
     // clearTimeout(this.notifications[tx.hash]);
     // delete this.notifications[tx.hash];
     if (!isFunction(callback)) return tx;
@@ -1225,129 +907,6 @@ module.exports = {
         gasUsed: new BigNumber(receipt.gasUsed, 16)
       });
     });
-  },
-
-  txNotify: function (txHash, callback) {
-    var tx, self = this;
-    if (!isFunction(callback)) {
-      tx = this.getTransaction(txHash);
-      if (tx) return tx;
-      store.dispatch({ type: "DECREMENT_HIGHEST_NONCE" })
-      // --this.rawTxMaxNonce;
-      store.dispatch({
-        type: "UPDATE_TRANSACTION_STATUS",
-        hash: txHash,
-        status: "resubmitted"
-      });
-      // this.txs[txHash].status = "resubmitted";
-      return null;
-    }
-    this.getTransaction(txHash, function (tx) {
-      if (tx) return callback(null, tx);
-      // --self.rawTxMaxNonce;
-      store.dispatch({ type: "DECREMENT_HIGHEST_NONCE" })
-      if (self.debug.broadcast) console.log(" *** Re-submitting transaction:", txHash);
-      store.dispatch({
-        type: "UPDATE_TRANSACTION_STATUS",
-        hash: txHash,
-        status: "resubmitted"
-      });
-      // self.txs[txHash].status = "resubmitted";
-      return callback(null, null);
-    });
-  },
-
-  // poll the network until the transaction is included in a block
-  // (i.e., has a non-null blockHash field)
-  pollForTxConfirmation: function (txHash, numConfirmations, callback) {
-    var tx, minedTx, self = this;
-    if (!isFunction(callback)) {
-      tx = this.txNotify(txHash);
-      if (tx === null) return null;
-      minedTx = this.checkBlockHash(tx, numConfirmations);
-      if (minedTx !== null) return minedTx;
-      return this.pollForTxConfirmation(txHash, numConfirmations);
-    }
-    this.txNotify(txHash, function (err, tx) {
-      if (err) return callback(err);
-      if (tx === null) return callback(null, null);
-      self.checkBlockHash(tx, numConfirmations, function (err, minedTx) {
-        if (err) return callback(err);
-        if (minedTx !== null) return callback(null, minedTx);
-        self.pollForTxConfirmation(txHash, numConfirmations, callback);
-      });
-    });
-  },
-
-  /**
-   * synchronous transact: block until the transaction is confirmed or fails
-   * (don't use this in the browser or you will be a sad panda)
-   */
-  transactSync: function (payload) {
-    var callReturn, returns, txHash, tx, receipt, log, e;
-    if (payload.mutable || payload.returns === "null") {
-      callReturn = null;
-    } else {
-      callReturn = this.fire(payload);
-      if (this.debug.tx) console.log("callReturn:", callReturn);
-      if (callReturn === undefined || callReturn === null) {
-        throw new RPCError(errors.NULL_CALL_RETURN);
-      } else if (callReturn.error === "0x") {
-        callReturn = null;
-      } else if (callReturn.error) {
-        throw new RPCError(callReturn);
-      }
-    }
-    payload.send = true;
-    returns = payload.returns;
-    delete payload.returns;
-    txHash = (payload.invoke || this.invoke).call(this, payload);
-    if (this.debug.tx) console.log("txHash:", txHash);
-    if (!txHash && !payload.mutable && payload.returns !== "null") {
-      throw new RPCError(errors.NULL_RESPONSE);
-    } else if (txHash && txHash.error) {
-      throw new RPCError(txHash);
-    }
-    payload.returns = returns;
-    txHash = abi.format_int256(txHash);
-    this.verifyTxSubmitted(payload, txHash, callReturn);
-    tx = this.pollForTxConfirmation(txHash, null);
-    if (tx === null) {
-      payload.tries = (payload.tries) ? payload.tries + 1 : 1;
-      if (payload.tries > constants.TX_RETRY_MAX) {
-        throw new RPCError(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
-      }
-      return this.transact(payload);
-    }
-    tx.timestamp = parseInt(this.getBlock(tx.blockNumber, false).timestamp, 16);
-    if (!payload.mutable) {
-      tx.callReturn = callReturn;
-      receipt = this.getTransactionReceipt(txHash);
-      if (this.debug.tx) console.log("got receipt:", receipt);
-      if (receipt && receipt.gasUsed) {
-        tx.gasFees = new BigNumber(receipt.gasUsed, 16)
-          .times(new BigNumber(tx.gasPrice, 16))
-          .dividedBy(this.ETHER)
-          .toFixed();
-      }
-      return tx;
-    }
-
-    // if mutable return value, then lookup logged return
-    // value in transaction receipt (after confirmation)
-    log = this.getLoggedReturnValue(txHash);
-    e = handleRPCError(payload.method, payload.returns, log.returnValue);
-    if (e && e.error) {
-      e.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
-      if (e.error !== errors.NULL_CALL_RETURN.error) {
-        throw new RPCError(e);
-      }
-      callReturn = this.fire(payload);
-      throw new RPCError(handleRPCError(payload.method, payload.returns, callReturn));
-    }
-    tx.callReturn = convertResponseToReturnsType(payload.returns, log.returnValue);
-    tx.gasFees = log.gasUsed.times(new BigNumber(tx.gasPrice, 16)).dividedBy(this.ETHER).toFixed();
-    return tx;
   },
 
   transact: function (payload, onSent, onSuccess, onFailed) {

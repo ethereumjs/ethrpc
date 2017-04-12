@@ -1,5 +1,9 @@
 "use strict";
 
+var ErrorWithData = require("./errors").ErrorWithData;
+var ErrorWithCodeAndData = require("./errors").ErrorWithCodeAndData;
+var parseEthereumResponse = require("../decode-response/parse-ethereum-response");
+
 /**
  * Used internally.  Processes a response from the blockchain by looking up the
  * associated callback and calling it.
