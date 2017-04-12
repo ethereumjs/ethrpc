@@ -1,8 +1,10 @@
 "use strict";
 
+var net = require("./wrappers/net");
 var Transporter = require("./transport/transporter");
 var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
+var onNewBlock = require("./block-management/on-new-block");
 var resetState = require("./reset-state");
 var ErrorWithData = require("./errors").ErrorWithData;
 
@@ -25,7 +27,7 @@ var ErrorWithData = require("./errors").ErrorWithData;
  */
 function connect(configuration, initialConnectCallback) {
   return function (dispatch, getState) {
-    var syncOnly, state;
+    var syncOnly, state, debug, storedConfiguration, blockAndLogStreamer, shimMessageHandler;
     dispatch(resetState());
     dispatch({ type: "SET_CONFIGURATION", configuration: configuration });
 
@@ -42,24 +44,28 @@ function connect(configuration, initialConnectCallback) {
 
     // initialize the transporter, this will be how we send to and receive from the blockchain
     state = getState();
-    new Transporter(state.configuration, state.shimMessageHandler, syncOnly, state.debug.connect, function (error, transporter) {
+    debug = state.debug;
+    storedConfiguration = state.configuration;
+    shimMessageHandler = state.shimMessageHandler;
+    blockAndLogStreamer = state.blockAndLogStreamer;
+    new Transporter(storedConfiguration, shimMessageHandler, syncOnly, debug.connect, function (error, transporter) {
       if (error !== null) return initialConnectCallback(error);
       dispatch({ type: "SET_TRANSPORTER", transporter: transporter });
       // this.internalState.transporter = transporter;
 
       // ensure we can do basic JSON-RPC over this connection
-      this.version(function (errorOrResult) {
+      dispatch(net.version(function (errorOrResult) {
         if (errorOrResult instanceof Error || errorOrResult.error) {
           return initialConnectCallback(errorOrResult);
         }
         dispatch(createBlockAndLogStreamer({
-          pollingIntervalMilliseconds: state.configuration.pollingIntervalMilliseconds,
-          blockRetention: state.configuration.blockRetention
-        }, createTransportAdapter(this)));
-        state.blockAndLogStreamer.subscribeToOnBlockAdded(this.onNewBlock.bind(this));
+          pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
+          blockRetention: storedConfiguration.blockRetention
+        }, dispatch(createTransportAdapter())));
+        blockAndLogStreamer.subscribeToOnBlockAdded(function (block) { dispatch(onNewBlock(block)); });
         initialConnectCallback(null);
-      }.bind(this));
-    }.bind(this));
+      }));
+    });
   };
 }
 

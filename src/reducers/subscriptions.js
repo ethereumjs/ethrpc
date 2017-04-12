@@ -12,7 +12,7 @@ module.exports = function (subscriptions, action) {
   switch (action.type) {
     case "ADD_SUBSCRIPTION":
       subscription = {};
-      subscription[action.id] = action.subscription;
+      subscription[action.id] = action.callback;
       return assign({}, subscriptions, subscription);
     case "REMOVE_SUBSCRIPTION":
       return Object.keys(subscriptions).reduce(function (p, id) {
