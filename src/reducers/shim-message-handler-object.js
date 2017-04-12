@@ -10,7 +10,7 @@ module.exports = function (shimMessageHandlerObject, action) {
     return initialState;
   }
   switch (action.type) {
-    case "REDIRECT_SHIM_MESSAGE_HANDLER":
+    case "IGNORE_SHIM_MESSAGE_HANDLER":
       return { realMessageHandler: noop };
     case "SET_SHIM_MESSAGE_HANDLER_OBJECT":
       return action.shimMessageHandlerObject;

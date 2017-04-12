@@ -38,7 +38,7 @@ function transactSync(payload) {
     payload.send = true;
     returns = payload.returns;
     delete payload.returns;
-    txHash = (payload.invoke || invoke)(payload);
+    txHash = dispatch((payload.invoke || invoke)(payload));
     if (debug.tx) console.log("txHash:", txHash);
     if (!txHash && !payload.mutable && payload.returns !== "null") {
       throw new RPCError(errors.NULL_RESPONSE);

@@ -1,5 +1,6 @@
 "use strict";
 
+var eth = require("../wrappers/eth");
 var packageAndSignRawTransaction = require("./package-and-sign-raw-transaction");
 var handleRawTransactionError = require("./handle-raw-transaction-error");
 var RPCError = require("../errors/rpc-error");
@@ -14,34 +15,37 @@ var errors = require("../errors/codes");
  * @param {function=} callback Callback function (optional).
  * @return {string|void} Transaction hash (if successful).
  */
-var packageAndSubmitRawTransaction = function (payload, address, privateKey, callback) {
-  var response, err, self = this;
-  if (!isFunction(callback)) {
-    response = this.sendRawTransaction(packageAndSignRawTransaction(payload, address, privateKey));
-    // if (this.debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
-    if (!response) throw new RPCError(errors.RAW_TRANSACTION_ERROR);
-    if (response.error) {
-      err = handleRawTransactionError(response);
-      if (err !== null) throw new RPCError(err);
-      return packageAndSubmitRawTransaction(payload, address, privateKey);
-    }
-    return response;
-  }
-  packageAndSignRawTransaction(payload, address, privateKey, function (signedRawTransaction) {
-    if (signedRawTransaction.error) return callback(signedRawTransaction);
-    self.sendRawTransaction(signedRawTransaction, function (response) {
-      var err;
-      // if (self.debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
-      if (!response) return callback(errors.RAW_TRANSACTION_ERROR);
+function packageAndSubmitRawTransaction(payload, address, privateKey, callback) {
+  return function (dispatch, getState) {
+    var response, err, state;
+    state = getState();
+    if (!isFunction(callback)) {
+      response = dispatch(eth.sendRawTransaction(dispatch(packageAndSignRawTransaction(payload, address, privateKey))));
+      if (state.debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
+      if (!response) throw new RPCError(errors.RAW_TRANSACTION_ERROR);
       if (response.error) {
-        err = handleRawTransactionError(response);
-        if (err !== null) return callback(err);
-        packageAndSubmitRawTransaction(payload, address, privateKey, callback);
-      } else {
-        callback(response);
+        err = dispatch(handleRawTransactionError(response));
+        if (err !== null) throw new RPCError(err);
+        return dispatch(packageAndSubmitRawTransaction(payload, address, privateKey));
       }
-    });
-  });
-};
+      return response;
+    }
+    dispatch(packageAndSignRawTransaction(payload, address, privateKey, function (signedRawTransaction) {
+      if (signedRawTransaction.error) return callback(signedRawTransaction);
+      dispatch(eth.sendRawTransaction(signedRawTransaction, function (response) {
+        var err;
+        if (state.debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
+        if (!response) return callback(errors.RAW_TRANSACTION_ERROR);
+        if (response.error) {
+          err = dispatch(handleRawTransactionError(response));
+          if (err !== null) return callback(err);
+          dispatch(packageAndSubmitRawTransaction(payload, address, privateKey, callback));
+        } else {
+          callback(response);
+        }
+      }));
+    }));
+  };
+}
 
 module.exports = packageAndSubmitRawTransaction;

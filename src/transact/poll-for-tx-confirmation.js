@@ -7,24 +7,24 @@ var isFunction = require("../utils/is-function");
 // poll the network until the transaction is included in a block
 // (i.e., has a non-null blockHash field)
 function pollForTxConfirmation(txHash, numConfirmations, callback) {
-  return function (dispatch, getState) {
+  return function (dispatch) {
     var tx, minedTx;
     if (!isFunction(callback)) {
-      tx = txNotify(txHash);
+      tx = dispatch(txNotify(txHash));
       if (tx === null) return null;
-      minedTx = checkBlockHash(tx, numConfirmations);
+      minedTx = dispatch(checkBlockHash(tx, numConfirmations));
       if (minedTx !== null) return minedTx;
-      return pollForTxConfirmation(txHash, numConfirmations);
+      return dispatch(pollForTxConfirmation(txHash, numConfirmations));
     }
-    txNotify(txHash, function (err, tx) {
+    dispatch(txNotify(txHash, function (err, tx) {
       if (err) return callback(err);
       if (tx === null) return callback(null, null);
-      checkBlockHash(tx, numConfirmations, function (err, minedTx) {
+      dispatch(checkBlockHash(tx, numConfirmations, function (err, minedTx) {
         if (err) return callback(err);
         if (minedTx !== null) return callback(null, minedTx);
-        pollForTxConfirmation(txHash, numConfirmations, callback);
-      });
-    });
+        dispatch(pollForTxConfirmation(txHash, numConfirmations, callback));
+      }));
+    }));
   };
 }
 

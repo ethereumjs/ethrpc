@@ -4,6 +4,7 @@ var Transporter = require("./transport/transporter");
 var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
 var resetState = require("./reset-state");
+var ErrorWithData = require("./errors").ErrorWithData;
 
 /**
  * Initiates a connection to Ethereum.  This must be called before any other methods are called.

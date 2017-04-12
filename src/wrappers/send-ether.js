@@ -8,9 +8,9 @@ function sendEther(to, value, from, onSent, onSuccess, onFailed) {
     if (to && to.constructor === Object) {
       value = to.value;
       from = to.from;
-      if (to.onSent) onSent = to.onSent;
-      if (to.onSuccess) onSuccess = to.onSuccess;
-      if (to.onFailed) onFailed = to.onFailed;
+      onSent = to.onSent;
+      onSuccess = to.onSuccess;
+      onFailed = to.onFailed;
       to = to.to;
     }
     return dispatch(transact({

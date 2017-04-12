@@ -7,6 +7,7 @@ var currentBlockReducer = require("./current-block");
 var highestNonceReducer = require("./highest-nonce");
 var gasPriceReducer = require("./gas-price");
 var noRelayReducer = require("./no-relay");
+var networkIDReducer = require("./network-id");
 var notificationsReducer = require("./notifications");
 var transactionRelayReducer = require("./transaction-relay");
 var transactionsReducer = require("./transactions");
@@ -16,7 +17,7 @@ var blockNotifierReducer = require("./block-notifier");
 var blockAndLogStreamerReducer = require("./block-and-log-streamer");
 var outstandingRequestsReducer = require("./outstanding-requests");
 var subscriptionsReducer = require("./subscriptions");
-var newBlockIntervalTimeoutIdReducer = require("./new-block-interval-timeout-id");
+var newBlockIntervalTimeoutIDReducer = require("./new-block-interval-timeout-id");
 var shimMessageHandlerObjectReducer = require("./shim-message-handler-object");
 var shimMessageHandlerReducer = require("./shim-message-handler");
 
@@ -29,6 +30,7 @@ function reducer(state, action) {
     highestNonce: highestNonceReducer(state.highestNonce, action),
     gasPrice: gasPriceReducer(state.gasPrice, action),
     noRelay: noRelayReducer(state.noRelay, action),
+    networkID: networkIDReducer(state.networkID, action),
     notifications: notificationsReducer(state.notifications, action),
     transactionRelay: transactionRelayReducer(state.transactionRelay, action),
     transactions: transactionsReducer(state.transactions, action),
@@ -38,7 +40,7 @@ function reducer(state, action) {
     blockAndLogStreamer: blockAndLogStreamerReducer(state.blockAndLogStreamer, action),
     outstandingRequests: outstandingRequestsReducer(state.outstandingRequests, action),
     subscriptions: subscriptionsReducer(state.subscriptions, action),
-    newBlockIntervalTimeoutId: newBlockIntervalTimeoutIdReducer(state.newBlockIntervalTimeoutId, action),
+    newBlockIntervalTimeoutID: newBlockIntervalTimeoutIDReducer(state.newBlockIntervalTimeoutID, action),
     shimMessageHandlerObject: shimMessageHandlerObjectReducer(state.shimMessageHandlerObject, action),
     shimMessageHandler: shimMessageHandlerReducer(state.shimMessageHandler, action)
   };

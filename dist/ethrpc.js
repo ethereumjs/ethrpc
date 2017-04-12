@@ -36387,7 +36387,7 @@ module.exports = {
     var oldMessageHandlerObject, newMessageHandlerObject;
 
     // stop any pending timers
-    clearInterval((this.internalState || {}).newBlockIntervalTimeoutId);
+    clearInterval((this.internalState || {}).newBlockIntervalTimeoutID);
 
     // reset configuration to defaults
     this.configuration = {
@@ -36415,7 +36415,7 @@ module.exports = {
       blockAndLogStreamer: null,
       outstandingRequests: {},
       subscriptions: {},
-      newBlockIntervalTimeoutId: null,
+      newBlockIntervalTimeoutID: null,
       shimMessageHandlerObject: newMessageHandlerObject,
       // by binding this function to `shimMessageHandlerObject`, its `this`
       // value will be a pointer to an object that we can mutate before

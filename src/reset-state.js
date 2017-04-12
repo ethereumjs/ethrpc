@@ -9,7 +9,7 @@ function resetState() {
 
     // stop any pending timers
     dispatch({ type: "CLEAR_NEW_BLOCK_INTERVAL_TIMEOUT_ID" });
-    // clearInterval(newBlockIntervalTimeoutId);
+    // clearInterval(newBlockIntervalTimeoutID);
 
     // reset configuration to defaults
     dispatch({ type: "RESET_CONFIGURATION" });
@@ -41,7 +41,7 @@ function resetState() {
     //   blockAndLogStreamer: null,
     //   outstandingRequests: {},
     //   subscriptions: {},
-    //   newBlockIntervalTimeoutId: null,
+    //   newBlockIntervalTimeoutID: null,
     //   shimMessageHandlerObject: newMessageHandlerObject,
     //   // by binding this function to `shimMessageHandlerObject`, its `this`
     //   // value will be a pointer to an object that we can mutate before

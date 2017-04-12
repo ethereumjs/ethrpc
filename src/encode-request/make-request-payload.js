@@ -19,10 +19,6 @@ var makeRequestPayload = function (command, params, prefix) {
     method: action
   };
   if (params === undefined || params === null) params = [];
-  // if (this.debug.broadcast && params.debug) {
-  //   payload.debug = clone(params.debug);
-  //   delete params.debug;
-  // }
   payload.params = (params instanceof Array) ? encodeArray(params) : [encodePrimitive(params)];
   return payload;
 };

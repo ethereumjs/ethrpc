@@ -16,39 +16,42 @@ var errors = require("../errors/codes");
  * @param {function=} callback Callback function (optional).
  * @return {string|void} Signed transaction.
  */
-var packageAndSignRawTransaction = function (payload, address, privateKey, callback) {
-  var packaged;
-  if (!payload || payload.constructor !== Object) {
-    if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_FAILED);
-    return callback(errors.TRANSACTION_FAILED);
-  }
-  if (!address || !privateKey) {
-    if (!isFunction(callback)) throw new RPCError(errors.NOT_LOGGED_IN);
-    return callback(errors.NOT_LOGGED_IN);
-  }
-  packaged = packageRawTransaction(payload, address, this.block, this.networkID);
-  if (payload.gasPrice) packaged.gasPrice = payload.gasPrice;
-  // if (this.debug.broadcast) {
-  //   console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
-  // }
-  if (!isFunction(callback)) {
-    return signRawTransaction(
-      setRawTransactionNonce(setRawTransactionGasPrice(packaged), address),
-      privateKey
-    );
-  }
-  setRawTransactionGasPrice(packaged, function (packaged) {
-    if (packaged.error) return callback(packaged);
-    setRawTransactionNonce(packaged, address, function (packaged) {
-      var signedRawTransaction;
-      try {
-        signedRawTransaction = signRawTransaction(packaged, privateKey);
-      } catch (exc) {
-        signedRawTransaction = exc;
-      }
-      callback(signedRawTransaction);
-    });
-  });
-};
+function packageAndSignRawTransaction(payload, address, privateKey, callback) {
+  return function (dispatch, getState) {
+    var packaged, state;
+    state = getState();
+    if (!payload || payload.constructor !== Object) {
+      if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_FAILED);
+      return callback(errors.TRANSACTION_FAILED);
+    }
+    if (!address || !privateKey) {
+      if (!isFunction(callback)) throw new RPCError(errors.NOT_LOGGED_IN);
+      return callback(errors.NOT_LOGGED_IN);
+    }
+    packaged = packageRawTransaction(payload, address, state.currentBlock, state.networkID);
+    if (payload.gasPrice) packaged.gasPrice = payload.gasPrice;
+    if (state.debug.broadcast) {
+      console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
+    }
+    if (!isFunction(callback)) {
+      return signRawTransaction(
+        dispatch(setRawTransactionNonce(dispatch(setRawTransactionGasPrice(packaged)), address)),
+        privateKey
+      );
+    }
+    dispatch(setRawTransactionGasPrice(packaged, function (packaged) {
+      if (packaged.error) return callback(packaged);
+      dispatch(setRawTransactionNonce(packaged, address, function (packaged) {
+        var signedRawTransaction;
+        try {
+          signedRawTransaction = signRawTransaction(packaged, privateKey);
+        } catch (exc) {
+          signedRawTransaction = exc;
+        }
+        callback(signedRawTransaction);
+      }));
+    }));
+  };
+}
 
 module.exports = packageAndSignRawTransaction;

@@ -10,7 +10,7 @@ var constants = require("../constants");
  * @param {string} address The sender's Ethereum address.
  * @return {Object} Packaged transaction.
  */
-var packageRawTransaction = function (payload, address, networkID, currentBlock) {
+function packageRawTransaction(payload, address, networkID, currentBlock) {
   var packaged = packageRequest(payload);
   packaged.from = address;
   packaged.nonce = payload.nonce || 0;
@@ -25,11 +25,10 @@ var packageRawTransaction = function (payload, address, networkID, currentBlock)
   if (networkID && parseInt(networkID, 10) < 109) {
     packaged.chainId = parseInt(networkID, 10);
   }
-  // if (this.debug.broadcast) console.log("[ethrpc] payload:", payload);
   if (payload.gasPrice && abi.number(payload.gasPrice) > 0) {
     packaged.gasPrice = abi.hex(payload.gasPrice);
   }
   return packaged;
-};
+}
 
 module.exports = packageRawTransaction;
