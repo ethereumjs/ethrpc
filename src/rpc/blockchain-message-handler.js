@@ -45,8 +45,6 @@ function blockchainMessageHandler(error, jso) {
       }
       outstandingRequest = getState().outstandingRequests[jso.id];
       dispatch({ type: "REMOVE_OUTSTANDING_REQUEST", id: jso.id });
-      // outstandingRequest = this.internalState.outstandingRequests[jso.id];
-      // delete this.internalState.outstandingRequests[jso.id];
       if (typeof outstandingRequest !== "object") {
         return configuration.errorHandler(new ErrorWithData("Unable to locate original request for blockchain response.", jso));
       }

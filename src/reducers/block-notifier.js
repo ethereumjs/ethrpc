@@ -12,7 +12,7 @@ module.exports = function (blockNotifier, action) {
     case "SET_BLOCK_NOTIFIER":
       return action.blockNotifier;
     case "ADD_BLOCK_NOTIFIER_SUBSCRIPTION":
-      blockNotifier.subscribe(action.reconcileWithErrorLogging); // FIXME mutates blockNotifier
+      blockNotifier.subscribe(action.subscription); // FIXME mutates blockNotifier
       return blockNotifier;
     default:
       return blockNotifier;
