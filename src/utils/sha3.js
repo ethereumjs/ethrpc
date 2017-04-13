@@ -2,7 +2,7 @@
 
 var abi = require("augur-abi");
 var keccak_256 = require("js-sha3").keccak_256;
-var isFunction = require("../../utils/is-function");
+var isFunction = require("../utils/is-function");
 
 module.exports = function (data, isHex, callback) {
   var hash;

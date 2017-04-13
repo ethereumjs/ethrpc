@@ -1,6 +1,6 @@
 "use strict";
 
-var validateConfiguration = require("./validate/validate-configuration");
+var validateConfiguration = require("../validate/validate-configuration");
 var isFunction = require("../utils/is-function");
 
 var initialState = {

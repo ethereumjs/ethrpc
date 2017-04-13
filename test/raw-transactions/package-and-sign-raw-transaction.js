@@ -5,31 +5,37 @@
 var assert = require("chai").assert;
 var clone = require("clone");
 var abi = require("augur-abi");
-var rpc = require("../../src");
-var EthTx = require("ethereumjs-tx");
 var errors = require("../../src/errors/codes");
 var RPCError = require("../../src/errors/rpc-error");
+var isFunction = require("../../src/utils/is-function");
+var proxyquire = require("proxyquire").noPreserveCache();
+var mockStore = require("../mock-store");
 
-describe("packageAndSignRawTransaction", function () {
+describe("raw-transactions/package-and-sign-raw-transaction", function () {
   var test = function (t) {
     it(t.description, function () {
-      var setRawTransactionGasPrice = rpc.setRawTransactionGasPrice;
-      var setRawTransactionNonce = rpc.setRawTransactionNonce;
-      rpc.resetState();
-      rpc.setRawTransactionGasPrice = function (packaged, callback) {
-        packaged.gasPrice = t.blockchain.gasPrice;
-        if (!callback) return packaged;
-        callback(packaged);
-      };
-      rpc.setRawTransactionNonce = function (packaged, address, callback) {
-        packaged.nonce = parseInt(t.blockchain.transactionCount, 16);
-        if (!callback) return packaged;
-        callback(packaged);
-      };
-      var output = rpc.packageAndSignRawTransaction(t.params.payload, t.params.address, t.params.privateKey, t.params.callback);
-      if (!t.params.callback) t.assertions(output);
-      rpc.setRawTransactionGasPrice = setRawTransactionGasPrice;
-      rpc.setRawTransactionNonce = setRawTransactionNonce;
+      var store = mockStore(t.state || {});
+      var packageAndSignRawTransaction = proxyquire("../../src/raw-transactions/package-and-sign-raw-transaction.js", {
+        "./set-raw-transaction-gas-price": function (packaged, callback) {
+          return function (dispatch, getState) {
+            packaged.gasPrice = t.blockchain.gasPrice;
+            if (!isFunction(callback)) return packaged;
+            callback(packaged);
+          };
+        },
+        "./set-raw-transaction-nonce": function (packaged, address, callback) {
+          return function (dispatch, getState) {
+            packaged.nonce = parseInt(t.blockchain.transactionCount, 16);
+            if (!isFunction(callback)) return packaged;
+            callback(packaged);
+          }
+        },
+        "./sign-raw-transaction": function (packaged, privateKey) {
+          return packaged;
+        }
+      });
+      var output = store.dispatch(packageAndSignRawTransaction(t.params.payload, t.params.address, t.params.privateKey, t.params.callback));
+      if (!isFunction(t.params.callback)) t.assertions(output);
     });
   };
   test({
@@ -50,8 +56,18 @@ describe("packageAndSignRawTransaction", function () {
       gasPrice: "0x64",
       transactionCount: "0xa"
     },
-    assertions: function (signedRawTransaction) {
-      assert.strictEqual(signedRawTransaction, "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1");
+    assertions: function (output) {
+      assert.deepEqual(output, {
+        from: "0x0000000000000000000000000000000000000b0b",
+        to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
+        data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
+        gas: "0x2fd618",
+        returns: "int256",
+        nonce: 10,
+        value: "0x0",
+        gasLimit: "0x2fd618",
+        gasPrice: "0x64"
+      });
     }
   });
   test({
@@ -67,8 +83,18 @@ describe("packageAndSignRawTransaction", function () {
       },
       address: "0x0000000000000000000000000000000000000b0b",
       privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex"),
-      callback: function (signedRawTransaction) {
-        assert.deepEqual(signedRawTransaction, "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1");
+      callback: function (output) {
+        assert.deepEqual(output, {
+          from: "0x0000000000000000000000000000000000000b0b",
+          to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
+          data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
+          gas: "0x2fd618",
+          returns: "int256",
+          nonce: 10,
+          value: "0x0",
+          gasLimit: "0x2fd618",
+          gasPrice: "0x64"
+        });
       }
     },
     blockchain: {

@@ -1,6 +1,6 @@
 "use strict";
 
-var eth = require("../wrappers/eth");
+var eth_sendRawTransaction = require("../wrappers/eth").sendRawTransaction;
 var packageAndSignRawTransaction = require("./package-and-sign-raw-transaction");
 var handleRawTransactionError = require("./handle-raw-transaction-error");
 var RPCError = require("../errors/rpc-error");
@@ -17,11 +17,11 @@ var errors = require("../errors/codes");
  */
 function packageAndSubmitRawTransaction(payload, address, privateKey, callback) {
   return function (dispatch, getState) {
-    var response, err, state;
-    state = getState();
+    var debug, response, err;
+    debug = getState().debug;
     if (!isFunction(callback)) {
-      response = dispatch(eth.sendRawTransaction(dispatch(packageAndSignRawTransaction(payload, address, privateKey))));
-      if (state.debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
+      response = dispatch(eth_sendRawTransaction(dispatch(packageAndSignRawTransaction(payload, address, privateKey))));
+      if (debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
       if (!response) throw new RPCError(errors.RAW_TRANSACTION_ERROR);
       if (response.error) {
         err = dispatch(handleRawTransactionError(response));
@@ -32,9 +32,9 @@ function packageAndSubmitRawTransaction(payload, address, privateKey, callback) 
     }
     dispatch(packageAndSignRawTransaction(payload, address, privateKey, function (signedRawTransaction) {
       if (signedRawTransaction.error) return callback(signedRawTransaction);
-      dispatch(eth.sendRawTransaction(signedRawTransaction, function (response) {
+      dispatch(eth_sendRawTransaction(signedRawTransaction, function (response) {
         var err;
-        if (state.debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
+        if (debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
         if (!response) return callback(errors.RAW_TRANSACTION_ERROR);
         if (response.error) {
           err = dispatch(handleRawTransactionError(response));

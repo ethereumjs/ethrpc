@@ -2,7 +2,7 @@
 
 var clone = require("clone");
 var callOrSendTransaction = require("../transact/call-or-send-transaction");
-var convertResponseToReturnsType = require("../transact/convert-response-to-returns-type");
+var convertResponseToReturnsType = require("../decode-response/convert-response-to-returns-type");
 var handleRPCError = require("../decode-response/handle-rpc-error");
 var isFunction = require("../utils/is-function");
 var RPCError = require("../errors/rpc-error");

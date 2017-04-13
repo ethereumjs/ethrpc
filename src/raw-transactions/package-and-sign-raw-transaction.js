@@ -34,10 +34,9 @@ function packageAndSignRawTransaction(payload, address, privateKey, callback) {
       console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
     }
     if (!isFunction(callback)) {
-      return signRawTransaction(
-        dispatch(setRawTransactionNonce(dispatch(setRawTransactionGasPrice(packaged)), address)),
-        privateKey
-      );
+      packaged = dispatch(setRawTransactionGasPrice(packaged));
+      packaged = dispatch(setRawTransactionNonce(packaged, address));
+      return signRawTransaction(packaged, privateKey);
     }
     dispatch(setRawTransactionGasPrice(packaged, function (packaged) {
       if (packaged.error) return callback(packaged);

@@ -1,6 +1,6 @@
 "use strict";
 
-var eth = require("../wrappers/eth");
+var eth_gasPrice = require("../wrappers/eth").gasPrice;
 var isFunction = require("../utils/is-function");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
@@ -16,13 +16,13 @@ var setRawTransactionGasPrice = function (packaged, callback) {
     var gasPrice;
     if (!isFunction(callback)) {
       if (packaged.gasPrice) return packaged;
-      gasPrice = dispatch(eth.getGasPrice(null));
+      gasPrice = dispatch(eth_gasPrice(null));
       if (!gasPrice || gasPrice.error) throw new RPCError(errors.TRANSACTION_FAILED);
       packaged.gasPrice = gasPrice;
       return packaged;
     }
     if (packaged.gasPrice) return callback(packaged);
-    dispatch(eth.getGasPrice(null, function (gasPrice) {
+    dispatch(eth_gasPrice(null, function (gasPrice) {
       if (!gasPrice || gasPrice.error) return callback(errors.TRANSACTION_FAILED);
       packaged.gasPrice = gasPrice;
       callback(packaged);

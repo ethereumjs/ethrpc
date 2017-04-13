@@ -1,7 +1,7 @@
 "use strict";
 
 var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
-var BlockNotifier = require("./block-management/block-notifier");
+var BlockNotifier = require("../block-management/block-notifier");
 
 /**
  * Used internally.  Instantiates a new BlockAndLogStreamer backed by ethrpc and BlockNotifier.

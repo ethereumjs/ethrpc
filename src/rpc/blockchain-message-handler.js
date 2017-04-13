@@ -1,7 +1,7 @@
 "use strict";
 
-var ErrorWithData = require("./errors").ErrorWithData;
-var ErrorWithCodeAndData = require("./errors").ErrorWithCodeAndData;
+var ErrorWithData = require("../errors").ErrorWithData;
+var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
 var parseEthereumResponse = require("../decode-response/parse-ethereum-response");
 
 /**

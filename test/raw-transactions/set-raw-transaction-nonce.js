@@ -5,28 +5,33 @@
 var assert = require("chai").assert;
 var clone = require("clone");
 var abi = require("augur-abi");
-var rpc = require("../../src");
-var EthTx = require("ethereumjs-tx");
 var errors = require("../../src/errors/codes");
 var RPCError = require("../../src/errors/rpc-error");
+var isFunction = require("../../src/utils/is-function");
+var proxyquire = require("proxyquire").noPreserveCache();
+var mockStore = require("../mock-store");
 
-describe("setRawTransactionNonce", function () {
+describe("raw-transactions/set-raw-transaction-nonce", function () {
   var test = function (t) {
     it(t.description, function () {
-      var verifyRawTransactionNonce = rpc.verifyRawTransactionNonce;
-      var pendingTxCount = rpc.pendingTxCount;
-      rpc.resetState();
-      rpc.verifyRawTransactionNonce = function (nonce) {
-        return nonce;
-      };
-      rpc.pendingTxCount = function (address, callback) {
-        if (!callback) return t.blockchain.transactionCount;
-        callback(t.blockchain.transactionCount);
-      };
-      var packaged = rpc.setRawTransactionNonce(t.params.packaged, t.params.address, t.params.callback);
-      if (!t.params.callback) t.assertions(packaged);
-      rpc.verifyRawTransactionNonce = verifyRawTransactionNonce;
-      rpc.pendingTxCount = pendingTxCount;
+      var store = mockStore(t.state || {});
+      var setRawTransactionNonce = proxyquire("../../src/raw-transactions/set-raw-transaction-nonce.js", {
+        "./verify-raw-transaction-nonce": function (nonce) {
+          return function (dispatch) {
+            return nonce;
+          };
+        },
+        "../wrappers/eth": {
+          getTransactionCount: function (params, callback) {
+            return function (dispatch) {
+              if (!isFunction(callback)) return t.blockchain.transactionCount;
+              callback(t.blockchain.transactionCount);
+            };
+          }
+        }
+      });
+      var output = store.dispatch(setRawTransactionNonce(t.params.packaged, t.params.address, t.params.callback));
+      if (!isFunction(t.params.callback)) t.assertions(output);
     });
   };
   test({

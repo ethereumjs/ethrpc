@@ -11,7 +11,7 @@ var handleRawTransactionError = require("../../src/raw-transactions/handle-raw-t
 describe("raw-transactions/handle-raw-transaction-error", function () {
   var test = function (t) {
     it(t.description, function () {
-      var store = mockStore(t.state);
+      var store = mockStore(t.state || {});
       var output = store.dispatch(handleRawTransactionError(t.params.rawTransactionResponse));
       t.assertions(output, store.getState());
     });
