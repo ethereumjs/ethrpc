@@ -45,6 +45,7 @@ var sha3 = require("./utils/sha3");
 var errors = require("./errors/codes");
 
 var clearTransactions = require("./clear-transactions");
+var resetState = require("./reset-state");
 var connect = require("./connect");
 var store = require("./store");
 
@@ -69,6 +70,7 @@ module.exports = {
   },
   getBlockAndLogStreamer: function () { return store.dispatch(getBlockAndLogStreamer()); },
   clear: function () { return store.dispatch(clearTransactions()); },
+  resetState: function () { return store.dispatch(resetState()); },
 
   registerTransactionRelay: function () { return store.dispatch(registerTransactionRelay()); },
   unregisterTransactionRelay: function () { return store.dispatch(unregisterTransactionRelay()); },

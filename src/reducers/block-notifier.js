@@ -14,9 +14,6 @@ module.exports = function (blockNotifier, action) {
     case "ADD_BLOCK_NOTIFIER_SUBSCRIPTION":
       blockNotifier.subscribe(action.reconcileWithErrorLogging); // FIXME mutates blockNotifier
       return blockNotifier;
-    case "CLEAR_BLOCK_NOTIFIER":
-      if (blockNotifier && isFunction(blockNotifier.destroy)) blockNotifier.destroy();
-      return initialState;
     default:
       return blockNotifier;
   }

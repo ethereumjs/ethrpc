@@ -16,10 +16,9 @@ describe("tests that work against any node (test or live)", function () {
       afterEach(function (done) {
         server.destroy(done);
       });
-
       describe("version", function () {
         it("returns a version string", function (done) {
-          rpc.version(function (version, error) {
+          rpc.version(function (version) {
             assert.strictEqual(typeof version, "string");
             done();
           });

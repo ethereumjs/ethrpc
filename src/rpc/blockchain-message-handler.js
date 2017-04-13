@@ -10,9 +10,10 @@ var parseEthereumResponse = require("../decode-response/parse-ethereum-response"
  */
 function blockchainMessageHandler(error, jso) {
   return function (dispatch, getState) {
-    var subscriptionHandler, responseHandler, errorHandler, configuration, subscriptions;
-    configuration = getState().configuration;
-    subscriptions = getState().subscriptions;
+    var subscriptionHandler, responseHandler, errorHandler, state, configuration, subscriptions;
+    state = getState();
+    configuration = state.configuration;
+    subscriptions = state.subscriptions;
 
     if (error !== null) {
       return configuration.errorHandler(error);

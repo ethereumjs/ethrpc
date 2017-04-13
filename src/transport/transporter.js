@@ -30,14 +30,23 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
   var resultAggregator, metaMaskTransport;
 
   // validate configuration
-  if (typeof configuration !== "object") return callback(new Error("configuration must be an object."));
-  if (!Array.isArray(configuration.httpAddresses)) return callback(new Error("configuration.httpAddresses must be an array."));
-  if (configuration.httpAddresses.some(function (x) { return typeof x !== "string"; })) return callback(new Error("configuration.httpAddresses must contain only strings."));
-  if (!Array.isArray(configuration.wsAddresses)) return callback(new Error("configuration.wsAddresses must be an array."));
-  if (configuration.wsAddresses.some(function (x) { return typeof x !== "string"; })) return callback(new Error("configuration.wsAddresses must contain only strings."));
-  if (!Array.isArray(configuration.ipcAddresses)) return callback(new Error("configuration.ipcAddresses must be an array."));
-  if (configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) return callback(new Error("configuration.ipcAddresses must contain only strings."));
-  if (typeof configuration.connectionTimeout !== "number") return callback(new Error("configuration.connectionTimeout must be a number."));
+  if (typeof configuration !== "object") {
+    return callback(new Error("configuration must be an object."));
+  } else if (!Array.isArray(configuration.httpAddresses)) {
+    return callback(new Error("configuration.httpAddresses must be an array."));
+  } else if (configuration.httpAddresses.some(function (x) { return typeof x !== "string"; })) {
+    return callback(new Error("configuration.httpAddresses must contain only strings."));
+  } else if (!Array.isArray(configuration.wsAddresses)) {
+    return callback(new Error("configuration.wsAddresses must be an array."));
+  } else if (configuration.wsAddresses.some(function (x) { return typeof x !== "string"; })) {
+    return callback(new Error("configuration.wsAddresses must contain only strings."));
+  } else if (!Array.isArray(configuration.ipcAddresses)) {
+    return callback(new Error("configuration.ipcAddresses must be an array."));
+  } else if (configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) {
+    return callback(new Error("configuration.ipcAddresses must contain only strings."));
+  } else if (typeof configuration.connectionTimeout !== "number") {
+    return callback(new Error("configuration.connectionTimeout must be a number."));
+  }
 
   // default to all transports undefined, we will look for all of them becoming !== undefined to determine when we are done attempting all connects
   resultAggregator = {
@@ -55,7 +64,6 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
     wsTransport: null,
     ipcTransport: null,
     syncTransport: null,
-    outstandingRequests: {},
     debugLogging: Boolean(debugLogging),
     nextReconnectListenerToken: 1,
     reconnectListeners: {}
@@ -130,7 +138,9 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
  */
 Transporter.prototype.blockchainRpc = function (jso, requirements, debugLogging) {
   var chosenTransport = chooseTransport(this.internalState, requirements);
-  if (debugLogging) console.log("Blockchain RPC to " + chosenTransport.address + " via " + chosenTransport.constructor.name + " with payload: " + JSON.stringify(jso));
+  if (debugLogging) {
+    console.log("Blockchain RPC to " + chosenTransport.address + " via " + chosenTransport.constructor.name + " with payload: " + JSON.stringify(jso));
+  }
   chosenTransport.submitWork(jso);
 };
 

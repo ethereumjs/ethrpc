@@ -7,7 +7,7 @@ var noop = require("../utils/noop");
 var nextToken = 1;
 var subscriptionMapping = {};
 
-var ethrpcTransportAdapter = function () {
+var createTransportAdapter = function () {
   return function (dispatch, getState) {
     var transporter = getState().transporter;
     return {
@@ -62,3 +62,5 @@ var ethrpcTransportAdapter = function () {
     };
   };
 };
+
+module.exports = createTransportAdapter;

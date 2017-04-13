@@ -3,19 +3,20 @@
 var blockchainMessageHandler = require("../rpc/blockchain-message-handler");
 var noop = require("../utils/noop");
 
-var initialState = { realMessageHandler: blockchainMessageHandler };
-
 module.exports = function (shimMessageHandlerObject, action) {
   if (typeof shimMessageHandlerObject === "undefined") {
-    return initialState;
+    return { realMessageHandler: blockchainMessageHandler };
+    // return {
+    //   shimMessageHandlerObject: shimMessageHandlerObject,
+    //   shimMessageHandler: function (error, jso) {
+    //     this.realMessageHandler(error, jso);
+    //   }.bind(shimMessageHandlerObject)
+    // };
   }
   switch (action.type) {
     case "IGNORE_SHIM_MESSAGE_HANDLER":
-      return { realMessageHandler: noop };
-    case "SET_SHIM_MESSAGE_HANDLER_OBJECT":
-      return action.shimMessageHandlerObject;
-    case "CLEAR_SHIM_MESSAGE_HANDLER_OBJECT":
-      return initialState;
+      shimMessageHandlerObject.realMessageHandler = noop; // mutation!
+      return shimMessageHandlerObject;
     default:
       return shimMessageHandlerObject;
   }

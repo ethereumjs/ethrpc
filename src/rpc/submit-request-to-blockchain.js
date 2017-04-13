@@ -13,8 +13,10 @@ var isFunction = require("../utils/is-function");
  */
 function submitRequestToBlockchain(jso, transportRequirements, callback) {
   return function (dispatch, getState) {
-    var syncErrorOrResult, expectedReturnTypes, transporter;
-    transporter = getState().transporter;
+    var state, debug, transporter, syncErrorOrResult, expectedReturnTypes;
+    state = getState();
+    debug = state.debug;
+    transporter = state.transporter;
 
     if (transportRequirements === "SYNC") {
       callback = function (error, result) {
@@ -46,7 +48,7 @@ function submitRequestToBlockchain(jso, transportRequirements, callback) {
       }
     });
 
-    transporter.blockchainRpc(jso, transportRequirements, this.debug.broadcast);
+    transporter.blockchainRpc(jso, transportRequirements, debug.broadcast);
 
     if (transportRequirements === "SYNC") {
       if (typeof getState().outstandingRequests[jso.id] !== "undefined") {

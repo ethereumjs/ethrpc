@@ -1,6 +1,7 @@
 "use strict";
 
-var net = require("./wrappers/net");
+var net_version = require("./wrappers/net").version;
+var blockchainMessageHandler = require("./rpc/blockchain-message-handler");
 var Transporter = require("./transport/transporter");
 var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
@@ -31,6 +32,11 @@ function connect(configuration, initialConnectCallback) {
     dispatch(resetState());
     dispatch({ type: "SET_CONFIGURATION", configuration: configuration });
 
+    state = getState();
+    debug = state.debug;
+    storedConfiguration = state.configuration;
+    shimMessageHandler = state.shimMessageHandler;
+
     syncOnly = !initialConnectCallback;
     if (syncOnly) {
       initialConnectCallback = function (error) {
@@ -43,18 +49,12 @@ function connect(configuration, initialConnectCallback) {
     }
 
     // initialize the transporter, this will be how we send to and receive from the blockchain
-    state = getState();
-    debug = state.debug;
-    storedConfiguration = state.configuration;
-    shimMessageHandler = state.shimMessageHandler;
-    blockAndLogStreamer = state.blockAndLogStreamer;
     new Transporter(storedConfiguration, shimMessageHandler, syncOnly, debug.connect, function (error, transporter) {
       if (error !== null) return initialConnectCallback(error);
       dispatch({ type: "SET_TRANSPORTER", transporter: transporter });
-      // this.internalState.transporter = transporter;
 
       // ensure we can do basic JSON-RPC over this connection
-      dispatch(net.version(function (errorOrResult) {
+      dispatch(net_version(null, function (errorOrResult) {
         if (errorOrResult instanceof Error || errorOrResult.error) {
           return initialConnectCallback(errorOrResult);
         }
@@ -62,7 +62,7 @@ function connect(configuration, initialConnectCallback) {
           pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
           blockRetention: storedConfiguration.blockRetention
         }, dispatch(createTransportAdapter())));
-        blockAndLogStreamer.subscribeToOnBlockAdded(function (block) { dispatch(onNewBlock(block)); });
+        getState().blockAndLogStreamer.subscribeToOnBlockAdded(function (block) { dispatch(onNewBlock(block)); });
         initialConnectCallback(null);
       }));
     });

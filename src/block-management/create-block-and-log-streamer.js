@@ -52,7 +52,6 @@ function createBlockAndLogStreamer(configuration, transport) {
       });
     };
     dispatch({ type: "ADD_BLOCK_NOTIFIER_SUBSCRIPTION", subscription: reconcileWithErrorLogging });
-    // blockNotifier.subscribe(reconcileWithErrorLogging);
   };
 }
 

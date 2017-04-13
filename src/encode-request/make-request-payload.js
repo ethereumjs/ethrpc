@@ -19,7 +19,7 @@ var makeRequestPayload = function (command, params, prefix) {
     method: action
   };
   if (params === undefined || params === null) params = [];
-  payload.params = (params instanceof Array) ? encodeArray(params) : [encodePrimitive(params)];
+  payload.params = (Array.isArray(params)) ? encodeArray(params) : [encodePrimitive(params)];
   return payload;
 };
 
