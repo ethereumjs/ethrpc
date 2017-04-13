@@ -111,958 +111,958 @@ describe("tests that only work against stub server", function () {
         });
       });
 
-      // describe("web3", function () {
-      //   var server;
-      //   beforeEach(function (done) {
-      //     server = StubServer.createStubServer(transportType, transportAddress);
-      //     helpers.rpcConnect(transportType, transportAddress, done);
-      //   });
-      //   afterEach(function (done) {
-      //     rpc.resetState();
-      //     server.destroy(done);
-      //   });
+      describe("web3", function () {
+        var server;
+        beforeEach(function (done) {
+          server = StubServer.createStubServer(transportType, transportAddress);
+          helpers.rpcConnect(transportType, transportAddress, done);
+        });
+        afterEach(function (done) {
+          rpc.resetState();
+          server.destroy(done);
+        });
 
-      //   it("clientVersion", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "web3_clientVersion"; });
-      //     server.addResponder(function (jso) { if (jso.method === "web3_clientVersion") return "apple"; });
-      //     rpc.clientVersion(function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "apple");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("clientVersion", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "web3_clientVersion"; });
+          server.addResponder(function (jso) { if (jso.method === "web3_clientVersion") return "apple"; });
+          rpc.clientVersion(function (resultOrError) {
+            assert.strictEqual(resultOrError, "apple");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("sha3", function (done) {
-      //     // sha3 is optimized to do the hash locally rather than on the ethereum node, so we don't need any setup
-      //     assert.strictEqual(rpc.sha3("0x68656c6c6f20776f726c64", true), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
-      //     assert.strictEqual(rpc.sha3("hello world", false), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
-      //     done();
-      //   });
-      // });
+        it("sha3", function (done) {
+          // sha3 is optimized to do the hash locally rather than on the ethereum node, so we don't need any setup
+          assert.strictEqual(rpc.sha3("0x68656c6c6f20776f726c64", true), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
+          assert.strictEqual(rpc.sha3("hello world", false), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
+          done();
+        });
+      });
 
-      // describe("net", function () {
-      //   var server;
-      //   beforeEach(function (done) {
-      //     server = StubServer.createStubServer(transportType, transportAddress);
-      //     helpers.rpcConnect(transportType, transportAddress, done);
-      //   });
-      //   afterEach(function (done) {
-      //     rpc.resetState();
-      //     server.destroy(done);
-      //   });
+      describe("net", function () {
+        var server;
+        beforeEach(function (done) {
+          server = StubServer.createStubServer(transportType, transportAddress);
+          helpers.rpcConnect(transportType, transportAddress, done);
+        });
+        afterEach(function (done) {
+          rpc.resetState();
+          server.destroy(done);
+        });
 
-      //   it("listening", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "net_listening"; });
-      //     server.addResponder(function (jso) { if (jso.method === "net_listening") return true; });
-      //     rpc.listening(function (resultOrError) {
-      //       assert.isTrue(resultOrError);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("listening", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "net_listening"; });
+          server.addResponder(function (jso) { if (jso.method === "net_listening") return true; });
+          rpc.listening(function (resultOrError) {
+            assert.isTrue(resultOrError);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("peerCount", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "net_peerCount"; });
-      //     server.addResponder(function (jso) { if (jso.method === "net_peerCount") return "0x2"; });
-      //     rpc.peerCount(function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "0x2");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("peerCount", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "net_peerCount"; });
+          server.addResponder(function (jso) { if (jso.method === "net_peerCount") return "0x2"; });
+          rpc.peerCount(function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x2");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("version", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "net_version"; });
-      //     server.addResponder(function (jso) { if (jso.method === "net_version") return "apple"; });
-      //     rpc.version(function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "apple");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("version", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "net_version"; });
+          server.addResponder(function (jso) { if (jso.method === "net_version") return "apple"; });
+          rpc.version(function (resultOrError) {
+            assert.strictEqual(resultOrError, "apple");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("netVersion", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "net_version"; });
-      //     server.addResponder(function (jso) { if (jso.method === "net_version") return "apple"; });
-      //     rpc.netVersion(function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "apple");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
-      // });
+        it("netVersion", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "net_version"; });
+          server.addResponder(function (jso) { if (jso.method === "net_version") return "apple"; });
+          rpc.netVersion(function (resultOrError) {
+            assert.strictEqual(resultOrError, "apple");
+            server.assertExpectations();
+            done();
+          });
+        });
+      });
 
-      // describe("eth", function () {
-      //   var server;
-      //   beforeEach(function (done) {
-      //     server = StubServer.createStubServer(transportType, transportAddress);
-      //     helpers.rpcConnect(transportType, transportAddress, done);
-      //   });
-      //   afterEach(function (done) {
-      //     rpc.resetState();
-      //     server.destroy(done);
-      //   });
+      describe("eth", function () {
+        var server;
+        beforeEach(function (done) {
+          server = StubServer.createStubServer(transportType, transportAddress);
+          helpers.rpcConnect(transportType, transportAddress, done);
+        });
+        afterEach(function (done) {
+          rpc.resetState();
+          server.destroy(done);
+        });
 
-      //   it("accounts", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "eth_accounts"; });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_accounts") return "0x407d73d8a49eeb85d32cf465507dd71d507100c1"; });
-      //     rpc.accounts(function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "0x407d73d8a49eeb85d32cf465507dd71d507100c1");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("accounts", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_accounts"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_accounts") return "0x407d73d8a49eeb85d32cf465507dd71d507100c1"; });
+          rpc.accounts(function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x407d73d8a49eeb85d32cf465507dd71d507100c1");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("blockNumber", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "eth_blockNumber"; });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_blockNumber") return "0x4b7"; });
-      //     rpc.blockNumber(function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "0x4b7");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("blockNumber", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_blockNumber"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_blockNumber") return "0x4b7"; });
+          rpc.blockNumber(function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x4b7");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("call", function (done) {
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_call"
-      //         && jso.params[0].from === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
-      //         && jso.params[0].to === "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"
-      //         && jso.params[0].value === "0x186a0"
-      //         && jso.params[1] === "latest";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x"; });
-      //     rpc.call({ from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1", to: "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b", value: 100000 }, function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "0x");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("call", function (done) {
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_call"
+              && jso.params[0].from === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
+              && jso.params[0].to === "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"
+              && jso.params[0].value === "0x186a0"
+              && jso.params[1] === "latest";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x"; });
+          rpc.call({ from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1", to: "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b", value: 100000 }, function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("coinbase", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "eth_coinbase"; });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_coinbase") return "0x407d73d8a49eeb85d32cf465507dd71d507100c1"; });
-      //     rpc.coinbase(function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "0x407d73d8a49eeb85d32cf465507dd71d507100c1");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("coinbase", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_coinbase"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_coinbase") return "0x407d73d8a49eeb85d32cf465507dd71d507100c1"; });
+          rpc.coinbase(function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x407d73d8a49eeb85d32cf465507dd71d507100c1");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("estimateGas", function (done) {
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_estimateGas"
-      //         && jso.params[0].from === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
-      //         && jso.params[0].to === "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"
-      //         && jso.params[0].value === "0x186a0"
-      //         && jso.params[1] === "latest";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_estimateGas") return "0x5208"; });
-      //     rpc.estimateGas({ from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1", to: "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b", value: "0x186a0" }, function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "0x5208");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("estimateGas", function (done) {
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_estimateGas"
+              && jso.params[0].from === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
+              && jso.params[0].to === "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"
+              && jso.params[0].value === "0x186a0"
+              && jso.params[1] === "latest";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_estimateGas") return "0x5208"; });
+          rpc.estimateGas({ from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1", to: "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b", value: "0x186a0" }, function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x5208");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("gasPrice", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "eth_gasPrice"; });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_gasPrice") return "0x9184e72a000"; });
-      //     rpc.gasPrice(function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "0x9184e72a000");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("gasPrice", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_gasPrice"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_gasPrice") return "0x9184e72a000"; });
+          rpc.gasPrice(function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x9184e72a000");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getGasPrice", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "eth_gasPrice"; });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_gasPrice") return "0x9184e72a000"; });
-      //     rpc.getGasPrice(function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "0x9184e72a000");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getGasPrice", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_gasPrice"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_gasPrice") return "0x9184e72a000"; });
+          rpc.getGasPrice(function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x9184e72a000");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getBalance", function (done) {
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getBalance"
-      //         && jso.params.length === 2
-      //         && jso.params[0] === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
-      //         && jso.params[1] === "latest";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getBalance") return "0x0234c8a3397aab58"; });
-      //     rpc.getBalance("0x407d73d8a49eeb85d32cf465507dd71d507100c1", null, function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "0x0234c8a3397aab58");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getBalance", function (done) {
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getBalance"
+              && jso.params.length === 2
+              && jso.params[0] === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
+              && jso.params[1] === "latest";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getBalance") return "0x0234c8a3397aab58"; });
+          rpc.getBalance("0x407d73d8a49eeb85d32cf465507dd71d507100c1", null, function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x0234c8a3397aab58");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getBlockByHash", function (done) {
-      //     var expectedBlock = {
-      //       difficulty: '0xd60a0c8',
-      //       extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
-      //       gasLimit: '0x47e7c4',
-      //       gasUsed: '0x5208',
-      //       hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-      //       logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-      //       miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
-      //       mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
-      //       nonce: '0x4ea9835c2ac5857e',
-      //       number: '0x186a0',
-      //       parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
-      //       receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
-      //       sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
-      //       size: '0x4a7',
-      //       stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
-      //       timestamp: '0x5845709c',
-      //       totalDifficulty: '0xac18c72ebbc',
-      //       transactions:
-      //       [{
-      //         blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-      //         blockNumber: '0x186a0',
-      //         from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
-      //         gas: '0x4cb26',
-      //         gasPrice: '0x4a817c800',
-      //         hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
-      //         input: '0x',
-      //         nonce: '0x39c6',
-      //         to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
-      //         transactionIndex: '0x0',
-      //         value: '0xde0b6b3a7640000',
-      //         v: '0x1c',
-      //         r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
-      //         s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
-      //       }],
-      //       transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
-      //       uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
-      //     }
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getBlockByHash"
-      //         && jso.params.length === 2
-      //         && jso.params[0] === "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918"
-      //         && jso.params[1] === true;
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getBlockByHash") return expectedBlock; });
-      //     rpc.getBlockByHash("0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918", undefined, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedBlock);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getBlockByHash", function (done) {
+          var expectedBlock = {
+            difficulty: '0xd60a0c8',
+            extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
+            gasLimit: '0x47e7c4',
+            gasUsed: '0x5208',
+            hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
+            logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+            miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
+            mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
+            nonce: '0x4ea9835c2ac5857e',
+            number: '0x186a0',
+            parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
+            receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
+            sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
+            size: '0x4a7',
+            stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
+            timestamp: '0x5845709c',
+            totalDifficulty: '0xac18c72ebbc',
+            transactions:
+            [{
+              blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
+              blockNumber: '0x186a0',
+              from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
+              gas: '0x4cb26',
+              gasPrice: '0x4a817c800',
+              hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
+              input: '0x',
+              nonce: '0x39c6',
+              to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
+              transactionIndex: '0x0',
+              value: '0xde0b6b3a7640000',
+              v: '0x1c',
+              r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
+              s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
+            }],
+            transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
+            uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
+          }
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getBlockByHash"
+              && jso.params.length === 2
+              && jso.params[0] === "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918"
+              && jso.params[1] === true;
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getBlockByHash") return expectedBlock; });
+          rpc.getBlockByHash("0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918", undefined, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedBlock);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getBlockByNumber", function (done) {
-      //     var expectedBlock = {
-      //       difficulty: '0xd60a0c8',
-      //       extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
-      //       gasLimit: '0x47e7c4',
-      //       gasUsed: '0x5208',
-      //       hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-      //       logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-      //       miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
-      //       mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
-      //       nonce: '0x4ea9835c2ac5857e',
-      //       number: '0x186a0',
-      //       parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
-      //       receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
-      //       sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
-      //       size: '0x4a7',
-      //       stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
-      //       timestamp: '0x5845709c',
-      //       totalDifficulty: '0xac18c72ebbc',
-      //       transactions: ['0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a'],
-      //       transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
-      //       uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
-      //     }
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getBlockByNumber"
-      //         && jso.params.length === 2
-      //         && jso.params[0] === "0x186a0"
-      //         && jso.params[1] === false;
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getBlockByNumber") return expectedBlock; });
-      //     rpc.getBlockByNumber(100000, false, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedBlock);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getBlockByNumber", function (done) {
+          var expectedBlock = {
+            difficulty: '0xd60a0c8',
+            extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
+            gasLimit: '0x47e7c4',
+            gasUsed: '0x5208',
+            hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
+            logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+            miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
+            mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
+            nonce: '0x4ea9835c2ac5857e',
+            number: '0x186a0',
+            parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
+            receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
+            sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
+            size: '0x4a7',
+            stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
+            timestamp: '0x5845709c',
+            totalDifficulty: '0xac18c72ebbc',
+            transactions: ['0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a'],
+            transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
+            uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
+          }
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getBlockByNumber"
+              && jso.params.length === 2
+              && jso.params[0] === "0x186a0"
+              && jso.params[1] === false;
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getBlockByNumber") return expectedBlock; });
+          rpc.getBlockByNumber(100000, false, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedBlock);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   // TODO: getBlockTransactionCountByHash
+        // TODO: getBlockTransactionCountByHash
 
-      //   // TODO: getBlockTransactionCountByNumber
+        // TODO: getBlockTransactionCountByNumber
 
-      //   it("getTransactionByHash", function (done) {
-      //     var expectedResult = {
-      //       blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-      //       blockNumber: '0x186a0',
-      //       from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
-      //       gas: '0x4cb26',
-      //       gasPrice: '0x4a817c800',
-      //       hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
-      //       input: '0x',
-      //       nonce: '0x39c6',
-      //       to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
-      //       transactionIndex: '0x0',
-      //       value: '0xde0b6b3a7640000',
-      //       v: '0x1c',
-      //       r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
-      //       s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
-      //     };
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getTransactionByHash"
-      //         && jso.params.length === 1
-      //         && jso.params[0] === "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getTransactionByHash") return expectedResult; });
-      //     rpc.getTransactionByHash("0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a", function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getTransactionByHash", function (done) {
+          var expectedResult = {
+            blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
+            blockNumber: '0x186a0',
+            from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
+            gas: '0x4cb26',
+            gasPrice: '0x4a817c800',
+            hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
+            input: '0x',
+            nonce: '0x39c6',
+            to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
+            transactionIndex: '0x0',
+            value: '0xde0b6b3a7640000',
+            v: '0x1c',
+            r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
+            s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
+          };
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getTransactionByHash"
+              && jso.params.length === 1
+              && jso.params[0] === "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getTransactionByHash") return expectedResult; });
+          rpc.getTransactionByHash("0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a", function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   // TODO: getCompilers
+        // TODO: getCompilers
 
-      //   it("getFilterChanges", function (done) {
-      //     var expectedResult = {
-      //       id: 1,
-      //       jsonrpc: "2.0",
-      //       result: [
-      //         {
-      //           logIndex: "0x1",
-      //           blockNumber: "0x1b4",
-      //           blockHash: "0x8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcfdf829c5a142f1fccd7d",
-      //           transactionHash: "0xdf829c5a142f1fccd7d8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcf",
-      //           transactionIndex: "0x0",
-      //           address: "0x16c5785ac562ff41e2dcfdf829c5a142f1fccd7d",
-      //           data: "0x0000000000000000000000000000000000000000000000000000000000000000",
-      //           topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"]
-      //         }
-      //       ]
-      //     };
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getFilterChanges"
-      //         && jso.params.length === 1
-      //         && jso.params[0] === "0x16";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getFilterChanges") return expectedResult; });
-      //     rpc.getFilterChanges(22, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getFilterChanges", function (done) {
+          var expectedResult = {
+            id: 1,
+            jsonrpc: "2.0",
+            result: [
+              {
+                logIndex: "0x1",
+                blockNumber: "0x1b4",
+                blockHash: "0x8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcfdf829c5a142f1fccd7d",
+                transactionHash: "0xdf829c5a142f1fccd7d8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcf",
+                transactionIndex: "0x0",
+                address: "0x16c5785ac562ff41e2dcfdf829c5a142f1fccd7d",
+                data: "0x0000000000000000000000000000000000000000000000000000000000000000",
+                topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"]
+              }
+            ]
+          };
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getFilterChanges"
+              && jso.params.length === 1
+              && jso.params[0] === "0x16";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getFilterChanges") return expectedResult; });
+          rpc.getFilterChanges(22, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getFilterLogs", function (done) {
-      //     var expectedResult = {
-      //       id: 1,
-      //       jsonrpc: "2.0",
-      //       result: [
-      //         {
-      //           logIndex: "0x1",
-      //           blockNumber: "0x1b4",
-      //           blockHash: "0x8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcfdf829c5a142f1fccd7d",
-      //           transactionHash: "0xdf829c5a142f1fccd7d8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcf",
-      //           transactionIndex: "0x0",
-      //           address: "0x16c5785ac562ff41e2dcfdf829c5a142f1fccd7d",
-      //           data: "0x0000000000000000000000000000000000000000000000000000000000000000",
-      //           topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"]
-      //         }
-      //       ]
-      //     };
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getFilterLogs"
-      //         && jso.params.length === 1
-      //         && jso.params[0] === "0x16";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getFilterLogs") return expectedResult; });
-      //     rpc.getFilterLogs(22, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getFilterLogs", function (done) {
+          var expectedResult = {
+            id: 1,
+            jsonrpc: "2.0",
+            result: [
+              {
+                logIndex: "0x1",
+                blockNumber: "0x1b4",
+                blockHash: "0x8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcfdf829c5a142f1fccd7d",
+                transactionHash: "0xdf829c5a142f1fccd7d8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcf",
+                transactionIndex: "0x0",
+                address: "0x16c5785ac562ff41e2dcfdf829c5a142f1fccd7d",
+                data: "0x0000000000000000000000000000000000000000000000000000000000000000",
+                topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"]
+              }
+            ]
+          };
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getFilterLogs"
+              && jso.params.length === 1
+              && jso.params[0] === "0x16";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getFilterLogs") return expectedResult; });
+          rpc.getFilterLogs(22, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getLogs", function (done) {
-      //     var expectedResult = {
-      //       id: 1,
-      //       jsonrpc: "2.0",
-      //       result: [
-      //         {
-      //           logIndex: "0x1",
-      //           blockNumber: "0x1b4",
-      //           blockHash: "0x8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcfdf829c5a142f1fccd7d",
-      //           transactionHash: "0xdf829c5a142f1fccd7d8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcf",
-      //           transactionIndex: "0x0",
-      //           address: "0x16c5785ac562ff41e2dcfdf829c5a142f1fccd7d",
-      //           data: "0x0000000000000000000000000000000000000000000000000000000000000000",
-      //           topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"]
-      //         }
-      //       ]
-      //     };
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getLogs"
-      //         && jso.params.length === 1
-      //         && jso.params[0] === "0x16";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return expectedResult; });
-      //     rpc.getLogs(22, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getLogs", function (done) {
+          var expectedResult = {
+            id: 1,
+            jsonrpc: "2.0",
+            result: [
+              {
+                logIndex: "0x1",
+                blockNumber: "0x1b4",
+                blockHash: "0x8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcfdf829c5a142f1fccd7d",
+                transactionHash: "0xdf829c5a142f1fccd7d8216c5785ac562ff41e2dcfdf5785ac562ff41e2dcf",
+                transactionIndex: "0x0",
+                address: "0x16c5785ac562ff41e2dcfdf829c5a142f1fccd7d",
+                data: "0x0000000000000000000000000000000000000000000000000000000000000000",
+                topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"]
+              }
+            ]
+          };
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getLogs"
+              && jso.params.length === 1
+              && jso.params[0] === "0x16";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return expectedResult; });
+          rpc.getLogs(22, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getStorageAt", function (done) {
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getStorageAt"
-      //         && jso.params.length === 3
-      //         && jso.params[0] === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
-      //         && jso.params[1] === "0x2"
-      //         && jso.params[2] === "latest";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getStorageAt") return "0x0000000000000000000000000000000000000000000000000000000000000003"; });
-      //     rpc.getStorageAt("0x407d73d8a49eeb85d32cf465507dd71d507100c1", 2, null, function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "0x0000000000000000000000000000000000000000000000000000000000000003");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getStorageAt", function (done) {
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getStorageAt"
+              && jso.params.length === 3
+              && jso.params[0] === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
+              && jso.params[1] === "0x2"
+              && jso.params[2] === "latest";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getStorageAt") return "0x0000000000000000000000000000000000000000000000000000000000000003"; });
+          rpc.getStorageAt("0x407d73d8a49eeb85d32cf465507dd71d507100c1", 2, null, function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x0000000000000000000000000000000000000000000000000000000000000003");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   // TODO: getTransactionByBlockHashAndIndex
+        // TODO: getTransactionByBlockHashAndIndex
 
-      //   // TODO: getTransactionByBlockNumberAndIndex
+        // TODO: getTransactionByBlockNumberAndIndex
 
-      //   it("getTransactionByHash", function (done) {
-      //     var expectedTransaction = {
-      //       hash: '0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b',
-      //       nonce: '0x0',
-      //       blockHash: '0xbeab0aa2411b7ab17f30a99d3cb9c6ef2fc5426d6ad6fd9e2a26a6aed1d1055b',
-      //       blockNumber: '0x15df',
-      //       transactionIndex: '0x1',
-      //       from: '0x407d73d8a49eeb85d32cf465507dd71d507100c1',
-      //       to: '0x85h43d8a49eeb85d32cf465507dd71d507100c1',
-      //       value: '0x7f110',
-      //       gas: '0x7f110',
-      //       gasPrice: '0x09184e72a000',
-      //       input: '0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360'
-      //     };
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getTransactionByHash"
-      //         && jso.params.length === 1
-      //         && jso.params[0] === "0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getTransactionByHash") return expectedTransaction; });
-      //     rpc.getTransactionByHash("0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238", function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedTransaction);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getTransactionByHash", function (done) {
+          var expectedTransaction = {
+            hash: '0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b',
+            nonce: '0x0',
+            blockHash: '0xbeab0aa2411b7ab17f30a99d3cb9c6ef2fc5426d6ad6fd9e2a26a6aed1d1055b',
+            blockNumber: '0x15df',
+            transactionIndex: '0x1',
+            from: '0x407d73d8a49eeb85d32cf465507dd71d507100c1',
+            to: '0x85h43d8a49eeb85d32cf465507dd71d507100c1',
+            value: '0x7f110',
+            gas: '0x7f110',
+            gasPrice: '0x09184e72a000',
+            input: '0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360'
+          };
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getTransactionByHash"
+              && jso.params.length === 1
+              && jso.params[0] === "0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getTransactionByHash") return expectedTransaction; });
+          rpc.getTransactionByHash("0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238", function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedTransaction);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getTransactionCount (latest)", function (done) {
-      //     var expectedResult = "0x1";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getTransactionCount"
-      //         && jso.params.length === 2
-      //         && jso.params[0] === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
-      //         && jso.params[1] === "latest";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getTransactionCount") return expectedResult; });
-      //     rpc.getTransactionCount("0x407d73d8a49eeb85d32cf465507dd71d507100c1", function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getTransactionCount (latest)", function (done) {
+          var expectedResult = "0x1";
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getTransactionCount"
+              && jso.params.length === 2
+              && jso.params[0] === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
+              && jso.params[1] === "latest";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getTransactionCount") return expectedResult; });
+          rpc.getTransactionCount("0x407d73d8a49eeb85d32cf465507dd71d507100c1", function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getTransactionCount (pending)", function (done) {
-      //     var expectedResult = "0x2";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getTransactionCount"
-      //         && jso.params.length === 2
-      //         && jso.params[0] === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
-      //         && jso.params[1] === "pending";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getTransactionCount") return expectedResult; });
-      //     rpc.getPendingTransactionCount("0x407d73d8a49eeb85d32cf465507dd71d507100c1", function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getTransactionCount (pending)", function (done) {
+          var expectedResult = "0x2";
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getTransactionCount"
+              && jso.params.length === 2
+              && jso.params[0] === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
+              && jso.params[1] === "pending";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getTransactionCount") return expectedResult; });
+          rpc.getPendingTransactionCount("0x407d73d8a49eeb85d32cf465507dd71d507100c1", function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getTransactionReceipt", function (done) {
-      //     var expectedResult = {
-      //       blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-      //       blockNumber: '0x186a0',
-      //       contractAddress: null,
-      //       cumulativeGasUsed: '0x5208',
-      //       from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
-      //       gasUsed: '0x5208',
-      //       logs: [],
-      //       logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-      //       root: '0xc569ec33d9119c828b96d7bcdcebbd6d810722e6675e8f399339b263978a09de',
-      //       to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
-      //       transactionHash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
-      //       transactionIndex: '0x0'
-      //     };
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getTransactionReceipt"
-      //         && jso.params.length === 1
-      //         && jso.params[0] === "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getTransactionReceipt") return expectedResult; });
-      //     rpc.getTransactionReceipt("0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a", function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getTransactionReceipt", function (done) {
+          var expectedResult = {
+            blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
+            blockNumber: '0x186a0',
+            contractAddress: null,
+            cumulativeGasUsed: '0x5208',
+            from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
+            gasUsed: '0x5208',
+            logs: [],
+            logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+            root: '0xc569ec33d9119c828b96d7bcdcebbd6d810722e6675e8f399339b263978a09de',
+            to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
+            transactionHash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
+            transactionIndex: '0x0'
+          };
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getTransactionReceipt"
+              && jso.params.length === 1
+              && jso.params[0] === "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getTransactionReceipt") return expectedResult; });
+          rpc.getTransactionReceipt("0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a", function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getUncleByBlockHashAndIndex", function (done) {
-      //     var expectedResult = {
-      //       difficulty: '0xd60a0c8',
-      //       extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
-      //       gasLimit: '0x47e7c4',
-      //       gasUsed: '0x5208',
-      //       hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-      //       logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-      //       miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
-      //       mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
-      //       nonce: '0x4ea9835c2ac5857e',
-      //       number: '0x186a0',
-      //       parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
-      //       receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
-      //       sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
-      //       size: '0x4a7',
-      //       stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
-      //       timestamp: '0x5845709c',
-      //       totalDifficulty: '0xac18c72ebbc',
-      //       transactions:
-      //       [{
-      //         blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-      //         blockNumber: '0x186a0',
-      //         from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
-      //         gas: '0x4cb26',
-      //         gasPrice: '0x4a817c800',
-      //         hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
-      //         input: '0x',
-      //         nonce: '0x39c6',
-      //         to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
-      //         transactionIndex: '0x0',
-      //         value: '0xde0b6b3a7640000',
-      //         v: '0x1c',
-      //         r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
-      //         s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
-      //       }],
-      //       transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
-      //       uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
-      //     };
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getUncleByBlockHashAndIndex"
-      //         && jso.params.length === 2
-      //         && jso.params[0] === "0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b"
-      //         && jso.params[1] === "0x0";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getUncleByBlockHashAndIndex") return expectedResult; });
-      //     rpc.getUncleByBlockHashAndIndex("0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b", 0, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getUncleByBlockHashAndIndex", function (done) {
+          var expectedResult = {
+            difficulty: '0xd60a0c8',
+            extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
+            gasLimit: '0x47e7c4',
+            gasUsed: '0x5208',
+            hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
+            logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+            miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
+            mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
+            nonce: '0x4ea9835c2ac5857e',
+            number: '0x186a0',
+            parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
+            receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
+            sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
+            size: '0x4a7',
+            stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
+            timestamp: '0x5845709c',
+            totalDifficulty: '0xac18c72ebbc',
+            transactions:
+            [{
+              blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
+              blockNumber: '0x186a0',
+              from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
+              gas: '0x4cb26',
+              gasPrice: '0x4a817c800',
+              hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
+              input: '0x',
+              nonce: '0x39c6',
+              to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
+              transactionIndex: '0x0',
+              value: '0xde0b6b3a7640000',
+              v: '0x1c',
+              r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
+              s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
+            }],
+            transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
+            uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
+          };
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getUncleByBlockHashAndIndex"
+              && jso.params.length === 2
+              && jso.params[0] === "0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b"
+              && jso.params[1] === "0x0";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getUncleByBlockHashAndIndex") return expectedResult; });
+          rpc.getUncleByBlockHashAndIndex("0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b", 0, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getUncleByBlockNumberAndIndex", function (done) {
-      //     var expectedResult = {
-      //       difficulty: '0xd60a0c8',
-      //       extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
-      //       gasLimit: '0x47e7c4',
-      //       gasUsed: '0x5208',
-      //       hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-      //       logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-      //       miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
-      //       mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
-      //       nonce: '0x4ea9835c2ac5857e',
-      //       number: '0x186a0',
-      //       parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
-      //       receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
-      //       sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
-      //       size: '0x4a7',
-      //       stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
-      //       timestamp: '0x5845709c',
-      //       totalDifficulty: '0xac18c72ebbc',
-      //       transactions:
-      //       [{
-      //         blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-      //         blockNumber: '0x186a0',
-      //         from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
-      //         gas: '0x4cb26',
-      //         gasPrice: '0x4a817c800',
-      //         hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
-      //         input: '0x',
-      //         nonce: '0x39c6',
-      //         to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
-      //         transactionIndex: '0x0',
-      //         value: '0xde0b6b3a7640000',
-      //         v: '0x1c',
-      //         r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
-      //         s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
-      //       }],
-      //       transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
-      //       uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
-      //     };
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getUncleByBlockNumberAndIndex"
-      //         && jso.params.length === 2
-      //         && jso.params[0] === "0x29c"
-      //         && jso.params[1] === "0x0";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getUncleByBlockNumberAndIndex") return expectedResult; });
-      //     rpc.getUncleByBlockNumberAndIndex(668, 0, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getUncleByBlockNumberAndIndex", function (done) {
+          var expectedResult = {
+            difficulty: '0xd60a0c8',
+            extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
+            gasLimit: '0x47e7c4',
+            gasUsed: '0x5208',
+            hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
+            logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+            miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
+            mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
+            nonce: '0x4ea9835c2ac5857e',
+            number: '0x186a0',
+            parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
+            receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
+            sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
+            size: '0x4a7',
+            stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
+            timestamp: '0x5845709c',
+            totalDifficulty: '0xac18c72ebbc',
+            transactions:
+            [{
+              blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
+              blockNumber: '0x186a0',
+              from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
+              gas: '0x4cb26',
+              gasPrice: '0x4a817c800',
+              hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
+              input: '0x',
+              nonce: '0x39c6',
+              to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
+              transactionIndex: '0x0',
+              value: '0xde0b6b3a7640000',
+              v: '0x1c',
+              r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
+              s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
+            }],
+            transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
+            uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
+          };
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getUncleByBlockNumberAndIndex"
+              && jso.params.length === 2
+              && jso.params[0] === "0x29c"
+              && jso.params[1] === "0x0";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getUncleByBlockNumberAndIndex") return expectedResult; });
+          rpc.getUncleByBlockNumberAndIndex(668, 0, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getUncleCountByBlockHash", function (done) {
-      //     var expectedResult = "0x0";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getUncleCountByBlockHash"
-      //         && jso.params.length === 1
-      //         && jso.params[0] === "0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getUncleCountByBlockHash") return expectedResult; });
-      //     rpc.getUncleCountByBlockHash("0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238", function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getUncleCountByBlockHash", function (done) {
+          var expectedResult = "0x0";
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getUncleCountByBlockHash"
+              && jso.params.length === 1
+              && jso.params[0] === "0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getUncleCountByBlockHash") return expectedResult; });
+          rpc.getUncleCountByBlockHash("0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238", function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("getUncleCountByBlockNumber", function (done) {
-      //     var expectedResult = "0x1";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_getUncleCountByBlockNumber"
-      //         && jso.params.length === 1
-      //         && jso.params[0] === "0xe8";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_getUncleCountByBlockNumber") return expectedResult; });
-      //     rpc.getUncleCountByBlockNumber(232, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("getUncleCountByBlockNumber", function (done) {
+          var expectedResult = "0x1";
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getUncleCountByBlockNumber"
+              && jso.params.length === 1
+              && jso.params[0] === "0xe8";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_getUncleCountByBlockNumber") return expectedResult; });
+          rpc.getUncleCountByBlockNumber(232, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   // TODO: getWork
+        // TODO: getWork
 
-      //   it("hashrate", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "eth_hashrate"; });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_hashrate") return "0x38a"; });
-      //     rpc.hashrate(function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "0x38a");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("hashrate", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_hashrate"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_hashrate") return "0x38a"; });
+          rpc.hashrate(function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x38a");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("mining", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "eth_mining"; });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_mining") return true; });
-      //     rpc.mining(function (resultOrError) {
-      //       assert.isTrue(resultOrError);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("mining", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_mining"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_mining") return true; });
+          rpc.mining(function (resultOrError) {
+            assert.isTrue(resultOrError);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("newBlockFilter", function (done) {
-      //     var expectedResult = "0x1";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_newBlockFilter"
-      //         && jso.params.length === 0;
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_newBlockFilter") return expectedResult; });
-      //     rpc.newBlockFilter(function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("newBlockFilter", function (done) {
+          var expectedResult = "0x1";
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_newBlockFilter"
+              && jso.params.length === 0;
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_newBlockFilter") return expectedResult; });
+          rpc.newBlockFilter(function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("newFilter", function (done) {
-      //     var expectedResult = "0x1";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_newFilter"
-      //         && jso.params.length === 1
-      //         && jso.params[0].fromBlock === "0x1"
-      //         && jso.params[0].toBlock === "latest"
-      //         && jso.params[0].address === "0x8888f1f195afa192cfee860698584c030f4c9db1"
-      //         && jso.params[0].topics[0] === "0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b"
-      //         && jso.params[0].topics[1] === null
-      //         && jso.params[0].limit === "0x5";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_newFilter") return expectedResult; });
-      //     rpc.newFilter({ fromBlock: 1, toBlock: null, address: "0x8888f1f195afa192cfee860698584c030f4c9db1", topics: ["0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b", null], limit: 5 }, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("newFilter", function (done) {
+          var expectedResult = "0x1";
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_newFilter"
+              && jso.params.length === 1
+              && jso.params[0].fromBlock === "0x1"
+              && jso.params[0].toBlock === "latest"
+              && jso.params[0].address === "0x8888f1f195afa192cfee860698584c030f4c9db1"
+              && jso.params[0].topics[0] === "0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b"
+              && jso.params[0].topics[1] === null
+              && jso.params[0].limit === "0x5";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_newFilter") return expectedResult; });
+          rpc.newFilter({ fromBlock: 1, toBlock: null, address: "0x8888f1f195afa192cfee860698584c030f4c9db1", topics: ["0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b", null], limit: 5 }, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("newPendingTransactionFilter", function (done) {
-      //     var expectedResult = "0x1";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_newPendingTransactionFilter"
-      //         && jso.params.length === 0;
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_newPendingTransactionFilter") return expectedResult; });
-      //     rpc.newPendingTransactionFilter(function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("newPendingTransactionFilter", function (done) {
+          var expectedResult = "0x1";
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_newPendingTransactionFilter"
+              && jso.params.length === 0;
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_newPendingTransactionFilter") return expectedResult; });
+          rpc.newPendingTransactionFilter(function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("protocolVersion", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "eth_protocolVersion"; });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_protocolVersion") return "apple"; });
-      //     rpc.protocolVersion(function (resultOrError) {
-      //       assert.strictEqual(resultOrError, "apple");
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("protocolVersion", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_protocolVersion"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_protocolVersion") return "apple"; });
+          rpc.protocolVersion(function (resultOrError) {
+            assert.strictEqual(resultOrError, "apple");
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("sendRawTransaction", function (done) {
-      //     var expectedResult = "0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_sendRawTransaction"
-      //         && jso.params.length === 1
-      //         && jso.params[0] === "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_sendRawTransaction") return expectedResult; });
-      //     rpc.sendRawTransaction("d46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675", function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("sendRawTransaction", function (done) {
+          var expectedResult = "0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331";
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_sendRawTransaction"
+              && jso.params.length === 1
+              && jso.params[0] === "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_sendRawTransaction") return expectedResult; });
+          rpc.sendRawTransaction("d46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675", function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("sendTransaction", function (done) {
-      //     var expectedResult = "0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_sendTransaction"
-      //         && jso.params.length === 1
-      //         && jso.params[0].from === "0xb60e8dd61c5d32be8058bb8eb970870f07233155"
-      //         && jso.params[0].to === "0xd46e8dd67c5d32be8058bb8eb970870f07244567"
-      //         && jso.params[0].gas === "0x76c0"
-      //         && jso.params[0].gasPrice === "0x9184e72a000"
-      //         && jso.params[0].value === "0x9184e72a"
-      //         && jso.params[0].data === "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
-      //         && jso.params[0].nonce === "0x23";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_sendTransaction") return expectedResult; });
-      //     rpc.sendTransaction({
-      //       from: "0xb60e8dd61c5d32be8058bb8eb970870f07233155",
-      //       to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
-      //       gas: 30400,
-      //       gasPrice: 10000000000000,
-      //       value: 2441406250,
-      //       data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
-      //       nonce: 35
-      //     }, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("sendTransaction", function (done) {
+          var expectedResult = "0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331";
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_sendTransaction"
+              && jso.params.length === 1
+              && jso.params[0].from === "0xb60e8dd61c5d32be8058bb8eb970870f07233155"
+              && jso.params[0].to === "0xd46e8dd67c5d32be8058bb8eb970870f07244567"
+              && jso.params[0].gas === "0x76c0"
+              && jso.params[0].gasPrice === "0x9184e72a000"
+              && jso.params[0].value === "0x9184e72a"
+              && jso.params[0].data === "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
+              && jso.params[0].nonce === "0x23";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_sendTransaction") return expectedResult; });
+          rpc.sendTransaction({
+            from: "0xb60e8dd61c5d32be8058bb8eb970870f07233155",
+            to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
+            gas: 30400,
+            gasPrice: 10000000000000,
+            value: 2441406250,
+            data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
+            nonce: 35
+          }, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("sign", function (done) {
-      //     var expectedResult = "0x2ac19db245478a06032e69cdbd2b54e648b78431d0a47bd1fbab18f79f820ba407466e37adbe9e84541cab97ab7d290f4a64a5825c876d22109f3bf813254e8628";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_sign"
-      //         && jso.params.length === 2
-      //         && jso.params[0] === "0xd1ade25ccd3d550a7eb532ac759cac7be09c2719"
-      //         && jso.params[1] === "0x5363686f6f6c627573";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_sign") return expectedResult; });
-      //     rpc.sign("0xd1ade25ccd3d550a7eb532ac759cac7be09c2719", "0x5363686f6f6c627573", function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("sign", function (done) {
+          var expectedResult = "0x2ac19db245478a06032e69cdbd2b54e648b78431d0a47bd1fbab18f79f820ba407466e37adbe9e84541cab97ab7d290f4a64a5825c876d22109f3bf813254e8628";
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_sign"
+              && jso.params.length === 2
+              && jso.params[0] === "0xd1ade25ccd3d550a7eb532ac759cac7be09c2719"
+              && jso.params[1] === "0x5363686f6f6c627573";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_sign") return expectedResult; });
+          rpc.sign("0xd1ade25ccd3d550a7eb532ac759cac7be09c2719", "0x5363686f6f6c627573", function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("signTransaction", function (done) {
-      //     var expectedResult = {
-      //       raw: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
-      //       tx: {
-      //         hash: "0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b",
-      //         nonce: "0x0",
-      //         blockHash: "0xbeab0aa2411b7ab17f30a99d3cb9c6ef2fc5426d6ad6fd9e2a26a6aed1d1055b",
-      //         blockNumber: "0x7F110",
-      //         transactionIndex: "0x1",
-      //         from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1",
-      //         to: "0x85h43d8a49eeb85d32cf465507dd71d507100c1",
-      //         value: "0x7f110",
-      //         gas: "0x7f110",
-      //         gasPrice: "0x09184e72a000",
-      //         input: "0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360",
-      //       }
-      //     };
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_signTransaction"
-      //         && jso.params.length === 1
-      //         && jso.params[0].from === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
-      //         && jso.params[0].to === "0x853f43d8a49eeb85d32cf465507dd71d507100c1"
-      //         && jso.params[0].gas === "0x7f110"
-      //         && jso.params[0].gasPrice === "0x9184e72a000"
-      //         && jso.params[0].value === "0x7f110"
-      //         && jso.params[0].data === "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
-      //         && jso.params[0].nonce === "0x23";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_signTransaction") return expectedResult; });
-      //     rpc.signTransaction({
-      //       from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1",
-      //       to: "0x853f43d8a49eeb85d32cf465507dd71d507100c1",
-      //       gas: 520464,
-      //       gasPrice: 10000000000000,
-      //       value: 520464,
-      //       data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
-      //       nonce: 35,
-      //     }, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("signTransaction", function (done) {
+          var expectedResult = {
+            raw: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
+            tx: {
+              hash: "0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b",
+              nonce: "0x0",
+              blockHash: "0xbeab0aa2411b7ab17f30a99d3cb9c6ef2fc5426d6ad6fd9e2a26a6aed1d1055b",
+              blockNumber: "0x7F110",
+              transactionIndex: "0x1",
+              from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1",
+              to: "0x85h43d8a49eeb85d32cf465507dd71d507100c1",
+              value: "0x7f110",
+              gas: "0x7f110",
+              gasPrice: "0x09184e72a000",
+              input: "0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360",
+            }
+          };
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_signTransaction"
+              && jso.params.length === 1
+              && jso.params[0].from === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
+              && jso.params[0].to === "0x853f43d8a49eeb85d32cf465507dd71d507100c1"
+              && jso.params[0].gas === "0x7f110"
+              && jso.params[0].gasPrice === "0x9184e72a000"
+              && jso.params[0].value === "0x7f110"
+              && jso.params[0].data === "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
+              && jso.params[0].nonce === "0x23";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_signTransaction") return expectedResult; });
+          rpc.signTransaction({
+            from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1",
+            to: "0x853f43d8a49eeb85d32cf465507dd71d507100c1",
+            gas: 520464,
+            gasPrice: 10000000000000,
+            value: 520464,
+            data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
+            nonce: 35,
+          }, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   // TODO: submitHashrate
+        // TODO: submitHashrate
 
-      //   // TODO: submitWork
+        // TODO: submitWork
 
-      //   it("subscribe", function (done) {
-      //     var expectedResult = "0xcd0c3e8af590364c09d0fa6a1210faf5";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_subscribe"
-      //         && jso.params.length === 2
-      //         && jso.params[0] === "newHeads"
-      //         && typeof jso.params[1] === "object" && Object.keys(jso.params[1]).length === 0;
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_subscribe") return expectedResult; });
-      //     rpc.subscribe("newHeads", null, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("subscribe", function (done) {
+          var expectedResult = "0xcd0c3e8af590364c09d0fa6a1210faf5";
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_subscribe"
+              && jso.params.length === 2
+              && jso.params[0] === "newHeads"
+              && typeof jso.params[1] === "object" && Object.keys(jso.params[1]).length === 0;
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_subscribe") return expectedResult; });
+          rpc.subscribe("newHeads", null, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("syncing (true)", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "eth_syncing"; });
-      //     server.addResponder(function (jso) {
-      //       if (jso.method === "eth_syncing") {
-      //         return { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" };
-      //       }
-      //     });
-      //     rpc.syncing(function (resultOrError) {
-      //       assert.deepEqual(resultOrError, { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" });
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("syncing (true)", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_syncing"; });
+          server.addResponder(function (jso) {
+            if (jso.method === "eth_syncing") {
+              return { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" };
+            }
+          });
+          rpc.syncing(function (resultOrError) {
+            assert.deepEqual(resultOrError, { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" });
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("syncing (false)", function (done) {
-      //     server.addExpectation(function (jso) { return jso.method === "eth_syncing"; });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_syncing") return false; });
-      //     rpc.syncing(function (resultOrError) {
-      //       assert.deepEqual(resultOrError, false);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("syncing (false)", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_syncing"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_syncing") return false; });
+          rpc.syncing(function (resultOrError) {
+            assert.deepEqual(resultOrError, false);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("uninstallFilter", function (done) {
-      //     var expectedResult = true;
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_uninstallFilter"
-      //         && jso.params.length === 1
-      //         && jso.params[0] === "0xb";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_uninstallFilter") return expectedResult; });
-      //     rpc.uninstallFilter(11, function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
+        it("uninstallFilter", function (done) {
+          var expectedResult = true;
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_uninstallFilter"
+              && jso.params.length === 1
+              && jso.params[0] === "0xb";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_uninstallFilter") return expectedResult; });
+          rpc.uninstallFilter(11, function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
 
-      //   it("unsubscribe", function (done) {
-      //     var expectedResult = true;
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "eth_unsubscribe"
-      //         && jso.params.length === 1
-      //         && jso.params[0] === "0xcd0c3e8af590364c09d0fa6a1210faf5";
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "eth_unsubscribe") return expectedResult; });
-      //     rpc.unsubscribe("0xcd0c3e8af590364c09d0fa6a1210faf5", function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
-      // });
+        it("unsubscribe", function (done) {
+          var expectedResult = true;
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_unsubscribe"
+              && jso.params.length === 1
+              && jso.params[0] === "0xcd0c3e8af590364c09d0fa6a1210faf5";
+          });
+          server.addResponder(function (jso) { if (jso.method === "eth_unsubscribe") return expectedResult; });
+          rpc.unsubscribe("0xcd0c3e8af590364c09d0fa6a1210faf5", function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
+      });
 
-      // describe("shh", function () {
-      //   var server;
-      //   beforeEach(function (done) {
-      //     server = StubServer.createStubServer(transportType, transportAddress);
-      //     helpers.rpcConnect(transportType, transportAddress, done);
-      //   });
-      //   afterEach(function (done) {
-      //     rpc.resetState();
-      //     server.destroy(done);
-      //   });
+      describe("shh", function () {
+        var server;
+        beforeEach(function (done) {
+          server = StubServer.createStubServer(transportType, transportAddress);
+          helpers.rpcConnect(transportType, transportAddress, done);
+        });
+        afterEach(function (done) {
+          rpc.resetState();
+          server.destroy(done);
+        });
 
-      //   it("newIdentity", function (done) {
-      //     var expectedResult = "0xc931d93e97ab07fe42d923478ba2465f283f440fd6cabea4dd7a2c807108f651b7135d1d6ca9007d5b68aa497e4619ac10aa3b27726e1863c1fd9b570d99bbaf";
-      //     server.addExpectation(function (jso) {
-      //       return jso.method === "shh_newIdentity"
-      //         && jso.params.length === 0;
-      //     });
-      //     server.addResponder(function (jso) { if (jso.method === "shh_newIdentity") return expectedResult; });
-      //     rpc.shh("newIdentity", [], function (resultOrError) {
-      //       assert.deepEqual(resultOrError, expectedResult);
-      //       server.assertExpectations();
-      //       done();
-      //     });
-      //   });
-      // });
+        it("newIdentity", function (done) {
+          var expectedResult = "0xc931d93e97ab07fe42d923478ba2465f283f440fd6cabea4dd7a2c807108f651b7135d1d6ca9007d5b68aa497e4619ac10aa3b27726e1863c1fd9b570d99bbaf";
+          server.addExpectation(function (jso) {
+            return jso.method === "shh_newIdentity"
+              && jso.params.length === 0;
+          });
+          server.addResponder(function (jso) { if (jso.method === "shh_newIdentity") return expectedResult; });
+          rpc.shh("newIdentity", [], function (resultOrError) {
+            assert.deepEqual(resultOrError, expectedResult);
+            server.assertExpectations();
+            done();
+          });
+        });
+      });
 
-      // describe("errors", function () {
-      //   var server;
-      //   beforeEach(function (done) {
-      //     server = StubServer.createStubServer(transportType, transportAddress);
-      //     helpers.rpcConnect(transportType, transportAddress, done);
-      //   });
-      //   afterEach(function (done) {
-      //     rpc.resetState();
-      //     server.destroy(done);
-      //   });
+      describe("errors", function () {
+        var server;
+        beforeEach(function (done) {
+          server = StubServer.createStubServer(transportType, transportAddress);
+          helpers.rpcConnect(transportType, transportAddress, done);
+        });
+        afterEach(function (done) {
+          rpc.resetState();
+          server.destroy(done);
+        });
 
-      //   it("calls callback with error on response with id", function (done) {
-      //     server.addResponder(function (jso) { if (jso.method === "net_version") return new Error("error response"); });
-      //     rpc.version(function (errorOrResponse) {
-      //       assert.strictEqual(errorOrResponse.message, "error response");
-      //       done();
-      //     });
-      //   });
-      // });
+        it("calls callback with error on response with id", function (done) {
+          server.addResponder(function (jso) { if (jso.method === "net_version") return new Error("error response"); });
+          rpc.version(function (errorOrResponse) {
+            assert.strictEqual(errorOrResponse.message, "error response");
+            done();
+          });
+        });
+      });
 
       describe("high level", function () {
         var server;
@@ -1207,60 +1207,60 @@ describe("tests that only work against stub server", function () {
           });
         });
 
-        // it("can subscribe to new blocks", function (done) {
-        //   var called = false;
-        //   rpc.getBlockAndLogStreamer().subscribeToOnBlockAdded(function (block) { done(); });
-        // });
+        it("can subscribe to new blocks", function (done) {
+          var called = false;
+          rpc.getBlockAndLogStreamer().subscribeToOnBlockAdded(function (block) { done(); });
+        });
 
-        // it("can subscribe to new logs", function (done) {
-        //   server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
-        //   var called = false;
-        //   rpc.getBlockAndLogStreamer().addLogFilter({});
-        //   rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { done(); });
-        // });
+        it("can subscribe to new logs", function (done) {
+          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
+          var called = false;
+          rpc.getBlockAndLogStreamer().addLogFilter({});
+          rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { done(); });
+        });
 
-        // it("can supply a log filter", function (done) {
-        //   server.addResponder(function (jso) { if (jso.method == "eth_getLogs") return [{}]; });
-        //   server.addExpectation(function (jso) {
-        //     return jso.method === "eth_getLogs"
-        //       && jso.params.length === 1
-        //       && typeof jso.params[0] === "object"
-        //       && jso.params[0].address === "0xbadf00d"
-        //       && jso.params[0].topics instanceof Array
-        //       && jso.params[0].topics.length === 1
-        //       && jso.params[0].topics[0] === "0xdeadbeef";
-        //   });
-        //   rpc.getBlockAndLogStreamer().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
-        //   rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) {
-        //     server.assertExpectations();
-        //     done();
-        //   });
-        // });
+        it("can supply a log filter", function (done) {
+          server.addResponder(function (jso) { if (jso.method == "eth_getLogs") return [{}]; });
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_getLogs"
+              && jso.params.length === 1
+              && typeof jso.params[0] === "object"
+              && jso.params[0].address === "0xbadf00d"
+              && jso.params[0].topics instanceof Array
+              && jso.params[0].topics.length === 1
+              && jso.params[0].topics[0] === "0xdeadbeef";
+          });
+          rpc.getBlockAndLogStreamer().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
+          rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) {
+            server.assertExpectations();
+            done();
+          });
+        });
 
-        // it("can unsubscribe from log filter", function (done) {
-        //   server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
-        //   var called = false;
-        //   var token = rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { called = true; });
-        //   rpc.getBlockAndLogStreamer().unsubscribeFromOnLogAdded(token);
-        //   rpc.getBlockAndLogStreamer().subscribeToOnBlockAdded(function (block) { done(called ? new Error("log handler was called") : undefined); })
-        // });
+        it("can unsubscribe from log filter", function (done) {
+          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
+          var called = false;
+          var token = rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { called = true; });
+          rpc.getBlockAndLogStreamer().unsubscribeFromOnLogAdded(token);
+          rpc.getBlockAndLogStreamer().subscribeToOnBlockAdded(function (block) { done(called ? new Error("log handler was called") : undefined); })
+        });
 
-        // it("can remove log filter", function (done) {
-        //   server.addResponder(function (jso) { if (jso.method == "eth_getLogs") done(new Error("should not be called")); });
-        //   var token = rpc.getBlockAndLogStreamer().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
-        //   rpc.getBlockAndLogStreamer().removeLogFilter(token);
-        //   rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) {
-        //     done(new Error("should not be called"));
-        //   });
-        //   setTimeout(done, 10);
-        // });
+        it("can remove log filter", function (done) {
+          server.addResponder(function (jso) { if (jso.method == "eth_getLogs") done(new Error("should not be called")); });
+          var token = rpc.getBlockAndLogStreamer().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
+          rpc.getBlockAndLogStreamer().removeLogFilter(token);
+          rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) {
+            done(new Error("should not be called"));
+          });
+          setTimeout(done, 10);
+        });
       });
     });
   }
 
-  // tests("IPC", (os.type() === "Windows_NT") ? "\\\\.\\pipe\\TestRPC" : "testrpc.ipc");
+  tests("IPC", (os.type() === "Windows_NT") ? "\\\\.\\pipe\\TestRPC" : "testrpc.ipc");
   tests("WS", "ws://localhost:1337");
-  // tests("HTTP", "http://localhost:1337");
+  tests("HTTP", "http://localhost:1337");
 });
 
 function createReasonableTransactPayload() {

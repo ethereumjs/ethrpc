@@ -12,7 +12,7 @@ function isUnlocked(account, callback) {
     try {
       if (isFunction(callback)) {
         dispatch(eth_sign([account, "0x00000000000000000000000000000000000000000000000000000000000f69b5"], function (res) {
-          if (res || res.error) return callback(false);
+          if (!res || res.error) return callback(false);
           callback(true);
         }));
       } else {
