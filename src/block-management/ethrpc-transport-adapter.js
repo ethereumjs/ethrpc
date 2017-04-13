@@ -29,7 +29,7 @@ var createTransportAdapter = function () {
       subscribeToNewHeads: function (onNewHead, onSubscriptionError) {
         var token = (nextToken++).toString();
         subscriptionMapping[token] = null;
-        dispatch(eth.subscribe(["newHeads", null], function (subscriptionID) {
+        dispatch(eth.subscribe(["newHeads", {}], function (subscriptionID) {
           if (subscriptionID instanceof Error || subscriptionID.error) {
             return onSubscriptionError(subscriptionID);
           }
@@ -40,7 +40,6 @@ var createTransportAdapter = function () {
           } else {
             subscriptionMapping[token] = subscriptionID;
             dispatch({ type: "ADD_SUBSCRIPTION", id: subscriptionID, callback: onNewHead });
-            // ethrpc.internalState.subscriptions[subscriptionID] = onNewHead;
           }
         }));
         return token;
@@ -50,7 +49,6 @@ var createTransportAdapter = function () {
         if (token) {
           subscriptionID = subscriptionMapping[token];
           delete subscriptionMapping[token];
-          // delete ethrpc.internalState.subscriptions[subscriptionID];
           dispatch({ type: "REMOVE_SUBSCRIPTION", id: subscriptionID });
           if (subscriptionID) {
             // we don't care about the result, this unsubscribe is just to be

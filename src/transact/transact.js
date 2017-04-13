@@ -14,16 +14,17 @@ var errors = require("../errors/codes");
 
 function transact(payload, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
-    var cb, state;
-    state = getState();
-    if (state.debug.tx) console.log("payload transact:", payload);
+    var cb, debug, transactionRelay, state = getState();
+    debug = state.debug;
+    transactionRelay = state.transactionRelay;
+    if (debug.tx) console.log("payload transact:", payload);
     payload.send = false;
 
     // synchronous / blocking transact sequence
     if (!isFunction(onSent)) return dispatch(transactSync(payload));
 
     // asynchronous / non-blocking transact sequence
-    cb = (isFunction(state.transactionRelay)) ? {
+    cb = (isFunction(transactionRelay)) ? {
       sent: dispatch(wrapTransactionRelayCallback("sent", payload, onSent)),
       success: dispatch(wrapTransactionRelayCallback("success", payload, onSuccess)),
       failed: dispatch(wrapTransactionRelayCallback("failed", payload, onFailed))
@@ -36,7 +37,7 @@ function transact(payload, onSent, onSuccess, onFailed) {
       return dispatch(transactAsync(payload, null, cb.sent, cb.success, cb.failed));
     }
     dispatch(callContractFunction(payload, function (callReturn) {
-      if (state.debug.tx) console.log("callReturn:", callReturn);
+      if (debug.tx) console.log("callReturn:", callReturn);
       if (callReturn === undefined || callReturn === null) {
         return cb.failed(errors.NULL_CALL_RETURN);
       } else if (callReturn.error) {

@@ -19,7 +19,10 @@ function resetState() {
     if (blockNotifier && isFunction(blockNotifier.destroy)) blockNotifier.destroy();
 
     // redirect any not-yet-received responses to /dev/null
-    dispatch({ type: "IGNORE_SHIM_MESSAGE_HANDLER" });
+    dispatch({
+      type: "REDIRECT_SHIM_MESSAGE_HANDLER",
+      redirect: function () { return function (dispatch) {}; }
+    });
 
     // reset state to defaults
     dispatch({ type: "RESET_STATE" });

@@ -23,7 +23,7 @@ IpcTransport.prototype.connect = function (callback) {
     // FIXME: UTF surrogates that cross buffer boundaries will break oboe (https://github.com/jimhigson/oboe.js/issues/133)
     oboe(this.ipcClient).done(function (jso) {
       // FIXME: oboe sometimes gives an empty object for no apparent reason, ignore it
-      if (Object.keys(jso).length === 0 && typeof jso === "object")        {return;}
+      if (Object.keys(jso).length === 0 && typeof jso === "object") { return; }
       this.messageHandler(null, jso);
     }.bind(this));
   }.bind(this));

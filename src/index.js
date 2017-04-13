@@ -121,7 +121,7 @@ module.exports = {
     return store.dispatch(wrappers.eth.estimateGas([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
   gasPrice: function (callback) { return store.dispatch(wrappers.eth.gasPrice(null, callback)); },
-  getGasPrice: function (callback) { return this.gasPrice(null, callback); },
+  getGasPrice: function (callback) { return this.gasPrice(callback); },
   getBalance: function (address, blockNumber, callback) {
     if (isFunction(blockNumber)) {
       callback = blockNumber;
@@ -246,7 +246,7 @@ module.exports = {
     return store.dispatch(wrappers.eth.sendTransaction([transaction], callback));
   },
   sign: function (address, data, callback) {
-    return store.dispatch(wrappers.eth.sendTransaction([address, data], callback));
+    return store.dispatch(wrappers.eth.sign([address, data], callback));
   },
   signTransaction: function (transaction, callback) {
     validateTransaction(transaction);
@@ -267,7 +267,7 @@ module.exports = {
   subscribeNewPendingTransactions: function (callback) {
     return this.subscribe("newPendingTransactions", null, callback);
   },
-  syncing: function (callback) { return store.dispatch(wrappers.eth.sendTransaction(null, callback)); },
+  syncing: function (callback) { return store.dispatch(wrappers.eth.syncing(null, callback)); },
   uninstallFilter: function (filter, callback) {
     return store.dispatch(wrappers.eth.uninstallFilter([filter], callback));
   },

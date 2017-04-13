@@ -19,13 +19,14 @@ var errors = require("../errors/codes");
  */
 function callOrSendTransaction(payload, callback) {
   return function (dispatch) {
-    var invocation;
     if (!payload || payload.constructor !== Object) {
       if (!isFunction(callback)) return errors.TRANSACTION_FAILED;
       return callback(errors.TRANSACTION_FAILED);
     }
-    invocation = (payload.send) ? eth.sendTransaction : eth.call;
-    return dispatch(invocation(packageRequest(payload), callback));
+    if (payload.send) {
+      return dispatch(eth.sendTransaction(packageRequest(payload), callback));
+    }
+    return dispatch(eth.call([packageRequest(payload), "latest"], callback));
   };
 }
 

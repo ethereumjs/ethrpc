@@ -268,6 +268,16 @@ describe("tests that only work against stub server", function () {
         it("gasPrice", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_gasPrice"; });
           server.addResponder(function (jso) { if (jso.method === "eth_gasPrice") return "0x9184e72a000"; });
+          rpc.gasPrice(function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x9184e72a000");
+            server.assertExpectations();
+            done();
+          });
+        });
+
+        it("getGasPrice", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_gasPrice"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_gasPrice") return "0x9184e72a000"; });
           rpc.getGasPrice(function (resultOrError) {
             assert.strictEqual(resultOrError, "0x9184e72a000");
             server.assertExpectations();
@@ -955,7 +965,11 @@ describe("tests that only work against stub server", function () {
 
         it("syncing (true)", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_syncing"; });
-          server.addResponder(function (jso) { if (jso.method === "eth_syncing") return { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" }; });
+          server.addResponder(function (jso) {
+            if (jso.method === "eth_syncing") {
+              return { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" };
+            }
+          });
           rpc.syncing(function (resultOrError) {
             assert.deepEqual(resultOrError, { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" });
             server.assertExpectations();
@@ -1097,7 +1111,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === "latest";
           });
           server.addResponder(function (jso) {
-            if (jso.method === "eth_call") return "0x" + ethereumjsAbi.rawEncode(['uint256[]'], [[1, 100, 100000]]).toString('hex');
+            if (jso.method === "eth_call") {
+              return "0x" + ethereumjsAbi.rawEncode(['uint256[]'], [[1, 100, 100000]]).toString('hex');
+            }
           });
           rpc.fire(payload, callback, wrapper, expectedObject);
         });
