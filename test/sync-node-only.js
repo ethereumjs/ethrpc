@@ -25,9 +25,9 @@ describe("sync", function () {
   });
 
   it("ensureLatestBlock", function (done) {
-    assert.isNull(rpc.block);
+    assert.isNull(rpc.store.getState().currentBlock);
     rpc.ensureLatestBlock();
-    assert.isNotNull(rpc.block);
+    assert.isNotNull(rpc.store.getState().currentBlock);
     require('../').resetState();
     done();
   });

@@ -1,7 +1,7 @@
 "use strict";
 
 var onNewBlock = require("../block-management/on-new-block");
-var eth = require("../wrappers/eth");
+var eth_getBlockByNumber = require("../wrappers/eth").getBlockByNumber;
 var isFunction = require("../utils/is-function");
 
 /**
@@ -11,13 +11,13 @@ function ensureLatestBlock(callback) {
   return function (dispatch) {
     var block;
     if (!isFunction(callback)) {
-      block = dispatch(eth.getBlockByNumber(["latest", false]));
+      block = dispatch(eth_getBlockByNumber(["latest", false]));
       if (block && !block.error && !(block instanceof Error)) {
         dispatch(onNewBlock(block));
         return block;
       }
     } else {
-      dispatch(eth.getBlockByNumber(["latest", false], function (block) {
+      dispatch(eth_getBlockByNumber(["latest", false], function (block) {
         if (block && !block.error) {
           dispatch(onNewBlock(block));
           callback(block);

@@ -25,7 +25,7 @@ function transactSync(payload) {
     if (payload.mutable || payload.returns === "null") {
       callReturn = null;
     } else {
-      callReturn = dispatch(fire(payload));
+      callReturn = dispatch(callContractFunction(payload));
       if (debug.tx) console.log("callReturn:", callReturn);
       if (callReturn === undefined || callReturn === null) {
         throw new RPCError(errors.NULL_CALL_RETURN);
@@ -38,7 +38,7 @@ function transactSync(payload) {
     payload.send = true;
     returns = payload.returns;
     delete payload.returns;
-    txHash = dispatch((payload.invoke || invoke)(payload));
+    txHash = dispatch((payload.invoke || callOrSendTransaction)(payload));
     if (debug.tx) console.log("txHash:", txHash);
     if (!txHash && !payload.mutable && payload.returns !== "null") {
       throw new RPCError(errors.NULL_RESPONSE);
@@ -76,7 +76,7 @@ function transactSync(payload) {
       if (e.error !== errors.NULL_CALL_RETURN.error) {
         throw new RPCError(e);
       }
-      callReturn = dispatch(fire(payload));
+      callReturn = dispatch(callContractFunction(payload));
       throw new RPCError(handleRPCError(payload.method, payload.returns, callReturn));
     }
     tx.callReturn = convertResponseToReturnsType(payload.returns, log.returnValue);

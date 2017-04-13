@@ -29,7 +29,10 @@ SyncTransport.prototype.connect = function (callback) {
   var result;
   if (this.syncConnect) {
     try {
-      result = syncRequest("POST", this.address, { json: { jsonrpc: "2.0", id: 0, method: "net_version" }, timeout: this.timeout });
+      result = syncRequest("POST", this.address, {
+        json: { jsonrpc: "2.0", id: 0, method: "net_version" },
+        timeout: this.timeout
+      });
       JSON.parse(result.getBody().toString());
       callback(null);
     } catch (error) {
