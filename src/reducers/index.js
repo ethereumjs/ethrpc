@@ -26,7 +26,7 @@ function reducer(state, action) {
     debug: debugReducer(state.debug, action),
 
     configuration: configurationReducer(state.configuration, action),
-    currentBlock: currentBlockReducer(state.block, action),
+    currentBlock: currentBlockReducer(state.currentBlock, action),
     highestNonce: highestNonceReducer(state.highestNonce, action),
     gasPrice: gasPriceReducer(state.gasPrice, action),
     noRelay: noRelayReducer(state.noRelay, action),

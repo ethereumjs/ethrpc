@@ -10,66 +10,83 @@ var constants = require("../constants");
 
 function updatePendingTx(tx) {
   return function (dispatch, getState) {
-    dispatch(eth.getTransactionByHash(tx.hash, function (onChainTx) {
-      var e;
+    var txHash, currentBlock;
+    txHash = tx.hash;
+    dispatch(eth.getTransactionByHash(txHash, function (onChainTx) {
+      var e, storedTransaction;
       dispatch({
         type: "UPDATE_TRANSACTION",
-        hash: tx.hash,
-        key: "tx",
-        value: onChainTx
+        hash: txHash,
+        data: { tx: onChainTx || {} }
       });
       // tx.tx = abi.copy(onChainTx);
 
       // if transaction is null, then it was dropped from the txpool
       if (onChainTx === null) {
-        dispatch({ type: "INCREMENT_TRANSACTION_PAYLOAD_TRIES", hash: tx.hash });
+        dispatch({ type: "INCREMENT_TRANSACTION_PAYLOAD_TRIES", hash: txHash });
         // tx.payload.tries = (tx.payload.tries) ? tx.payload.tries + 1 : 1;
 
         // if we have retries left, then resubmit the transaction
-        if (tx.payload.tries > constants.TX_RETRY_MAX) {
-          dispatch({ type: "TRANSACTION_FAILED", hash: tx.hash });
+        if (getState().transactions[txHash].payload.tries > constants.TX_RETRY_MAX) {
+          dispatch({ type: "TRANSACTION_FAILED", hash: txHash });
           // tx.status = "failed";
-          dispatch({ type: "UNLOCK_TRANSACTION", hash: tx.hash });
+          dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
           // tx.locked = false;
-          if (isFunction(tx.onFailed)) {
+          storedTransaction = getState().transactions[txHash];
+          if (isFunction(storedTransaction.onFailed)) {
             e = clone(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
-            e.hash = tx.hash;
-            tx.onFailed(e);
+            e.hash = txHash;
+            storedTransaction.onFailed(e);
           }
         } else {
           dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
           // --self.rawTxMaxNonce;
-          dispatch({ type: "TRANSACTION_RESUBMITTED", hash: tx.hash });
+          dispatch({ type: "TRANSACTION_RESUBMITTED", hash: txHash });
           // tx.status = "resubmitted";
-          dispatch({ type: "UNLOCK_TRANSACTION", hash: tx.hash });
+          dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
           // tx.locked = false;
-          if (getState().debug.tx) console.log("resubmitting tx:", tx.hash);
-          dispatch(transact(tx.payload, tx.onSent, tx.onSuccess, tx.onFailed));
+          storedTransaction = getState().transactions[txHash];
+          if (getState().debug.tx) console.log("resubmitting tx:", storedTransaction.hash);
+          dispatch(transact(storedTransaction.payload, storedTransaction.onSent, storedTransaction.onSuccess, storedTransaction.onFailed));
         }
 
-        // non-null transaction: transaction still alive and kicking!
-        // check if it has been mined yet (block number is non-null)
+      // non-null transaction: transaction still alive and kicking!
+      // check if it has been mined yet (block number is non-null)
       } else {
         if (onChainTx.blockNumber) {
           dispatch({
             type: "UPDATE_TRANSACTION_BLOCK",
-            hash: tx.hash,
+            hash: txHash,
             blockNumber: parseInt(onChainTx.blockNumber, 16),
             blockHash: onChainTx.blockHash
           });
           // tx.tx.blockNumber = parseInt(onChainTx.blockNumber, 16);
           // tx.tx.blockHash = onChainTx.blockHash;
-          dispatch({ type: "TRANSACTION_MINED", hash: tx.hash });
+          dispatch({ type: "TRANSACTION_MINED", hash: txHash });
           // tx.status = "mined";
-          dispatch({
-            type: "SET_TRANSACTION_CONFIRMATIONS",
-            hash: tx.hash,
-            currentBlockNumber: getState().currentBlock.number
-          });
-          // tx.confirmations = self.block.number - tx.tx.blockNumber;
-          dispatch(updateMinedTx(tx));
+          currentBlock = getState().currentBlock;
+          if (currentBlock && currentBlock.number != null) {
+            dispatch({
+              type: "SET_TRANSACTION_CONFIRMATIONS",
+              hash: txHash,
+              currentBlockNumber: getState().currentBlock.number
+            });
+            // tx.confirmations = self.block.number - tx.tx.blockNumber;
+            dispatch(updateMinedTx(getState().transactions[txHash]));
+          } else {
+            dispatch(eth.blockNumber(null, function (blockNumber) {
+              dispatch({ type: "SET_CURRENT_BLOCK", block: { number: parseInt(blockNumber, 16) } });
+              dispatch({
+                type: "SET_TRANSACTION_CONFIRMATIONS",
+                hash: txHash,
+                currentBlockNumber: parseInt(blockNumber, 16)
+              });
+              // tx.confirmations = self.block.number - tx.tx.blockNumber;
+              dispatch(updateMinedTx(getState().transactions[txHash]));
+            }));
+          }
         } else {
-          dispatch({ type: "UNLOCK_TRANSACTION", hash: tx.hash });
+          dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
           // tx.locked = false;
         }
       }

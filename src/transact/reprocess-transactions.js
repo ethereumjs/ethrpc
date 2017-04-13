@@ -8,7 +8,7 @@ function reprocessTransactions() {
     transactions = getState().transactions;
     for (transactionHash in transactions) {
       if (transactions.hasOwnProperty(transactionHash)) {
-        dispatch(updateTx(transactions[transactionHash]));
+        dispatch(updateTx.default(transactions[transactionHash]));
       }
     }
   };

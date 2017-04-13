@@ -19,12 +19,7 @@ function checkBlockHash(tx, numConfirmations, callback) {
     if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
       tx.txHash = tx.hash;
       if (!numConfirmations) {
-        dispatch({
-          type: "UPDATE_TRANSACTION",
-          hash: tx.hash,
-          key: "status",
-          value: "mined"
-        });
+        dispatch({ type: "TRANSACTION_MINED", hash: tx.hash });
         // storedTransaction.status = "mined";
         dispatch({ type: "CLEAR_NOTIFICATION", hash: tx.hash });
         // clearTimeout(this.notifications[tx.hash]);

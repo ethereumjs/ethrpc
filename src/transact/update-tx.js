@@ -8,18 +8,15 @@ function updateTx(tx) {
     if (!tx.locked) {
       if (tx.tx === undefined) {
         dispatch({ type: "LOCK_TRANSACTION", hash: tx.hash });
-        // tx.locked = true;
         return dispatch(updatePendingTx(tx));
       }
       switch (tx.status) {
         case "pending":
           dispatch({ type: "LOCK_TRANSACTION", hash: tx.hash });
-          // tx.locked = true;
           dispatch(updatePendingTx(tx));
           break;
         case "mined":
           dispatch({ type: "LOCK_TRANSACTION", hash: tx.hash });
-          // tx.locked = true;
           dispatch(updateMinedTx(tx));
           break;
         default:
@@ -29,4 +26,4 @@ function updateTx(tx) {
   };
 }
 
-module.exports = updateTx;
+module.exports.default = updateTx;

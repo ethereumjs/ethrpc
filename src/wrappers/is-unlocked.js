@@ -1,6 +1,6 @@
 "use strict";
 
-var eth = require("../wrappers/eth");
+var eth_sign = require("../wrappers/eth").sign;
 var isFunction = require("../utils/is-function");
 
 /**
@@ -11,12 +11,12 @@ function isUnlocked(account, callback) {
     var res;
     try {
       if (isFunction(callback)) {
-        dispatch(eth.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5", function (res) {
+        dispatch(eth_sign([account, "0x00000000000000000000000000000000000000000000000000000000000f69b5"], function (res) {
           if (res || res.error) return callback(false);
           callback(true);
         }));
       } else {
-        res = dispatch(eth.sign(account, "0x00000000000000000000000000000000000000000000000000000000000f69b5"));
+        res = dispatch(eth_sign([account, "0x00000000000000000000000000000000000000000000000000000000000f69b5"]));
         if (!res || res.error) return false;
         return true;
       }

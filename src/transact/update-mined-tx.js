@@ -11,81 +11,115 @@ var isFunction = require("../utils/is-function");
 var errors = require("../errors/codes");
 var constants = require("../constants");
 
-function updateMinedTx(tx) {
+function updateMinedTx(storedTransaction) {
   return function (dispatch, getState) {
-    var state, onChainTx;
-    state = getState();
-    onChainTx = tx.tx;
+    var debug, txHash;
+    debug = getState().debug;
+    txHash = storedTransaction.hash;
     dispatch({
       type: "SET_TRANSACTION_CONFIRMATIONS",
-      hash: tx.hash,
-      currentBlockNumber: state.currentBlock.number
+      hash: txHash,
+      currentBlockNumber: getState().currentBlock.number
     });
-    // tx.confirmations = self.block.number - onChainTx.blockNumber;
-    if (state.debug.tx) console.log("confirmations for", tx.hash, tx.confirmations);
-    if (tx.confirmations >= constants.REQUIRED_CONFIRMATIONS) {
-      dispatch({ type: "TRANSACTION_CONFIRMED", hash: tx.hash });
-      // tx.status = "confirmed";
-      if (isFunction(tx.onSuccess)) {
-        dispatch(eth.getBlockByNumber([onChainTx.blockNumber, false], function (block) {
+    // storedTransaction.confirmations = self.block.number - onChainTx.blockNumber;
+    if (getState().transactions[txHash].confirmations >= constants.REQUIRED_CONFIRMATIONS) {
+      dispatch({ type: "TRANSACTION_CONFIRMED", hash: txHash });
+      // storedTransaction.status = "confirmed";
+      if (isFunction(storedTransaction.onSuccess)) {
+        dispatch(eth.getBlockByNumber([getState().transactions[txHash].tx.blockNumber, false], function (block) {
           if (block && block.timestamp) {
-            onChainTx.timestamp = parseInt(block.timestamp, 16);
+            // onChainTx.timestamp = parseInt(block.timestamp, 16);
+            dispatch({
+              type: "UPDATE_TRANSACTION",
+              hash: txHash,
+              data: { tx: { timestamp: parseInt(block.timestamp, 16) } }
+            });
           }
-          if (!tx.payload.mutable) {
-            onChainTx.callReturn = tx.callReturn;
-            dispatch(eth.getTransactionReceipt(tx.hash, function (receipt) {
-              if (state.debug.tx) console.log("got receipt:", receipt);
+          if (!storedTransaction.payload.mutable) {
+            dispatch({
+              type: "UPDATE_TRANSACTION",
+              hash: txHash,
+              data: { tx: { callReturn: storedTransaction.callReturn } }
+            });
+            // onChainTx.callReturn = storedTransaction.callReturn;
+            dispatch(eth.getTransactionReceipt(txHash, function (receipt) {
+              if (debug.tx) console.log("got receipt:", receipt);
               if (receipt && receipt.gasUsed) {
-                onChainTx.gasFees = abi.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(onChainTx.gasPrice, 16)), "string");
+                dispatch({
+                  type: "UPDATE_TRANSACTION",
+                  hash: txHash,
+                  data: {
+                    tx: {
+                      gasFees: abi.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(getState().transactions[txHash].tx.gasPrice, 16)), "string")
+                    }
+                  }
+                });
+                // onChainTx.gasFees = abi.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(onChainTx.gasPrice, 16)), "string");
               }
-              tx.locked = false;
-              tx.onSuccess(onChainTx);
+              dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
+              // storedTransaction.locked = false;
+              storedTransaction.onSuccess(getState().transactions[txHash].tx);
             }));
           } else {
-            dispatch(getLoggedReturnValue(tx.hash, function (err, log) {
+            dispatch(getLoggedReturnValue(txHash, function (err, log) {
               var e;
-              if (state.debug.tx) console.log("loggedReturnValue:", err, log);
+              if (debug.tx) console.log("loggedReturnValue:", err, log);
               if (err) {
-                tx.payload.send = false;
-                dispatch(callContractFunction(tx.payload, function (callReturn) {
+                storedTransaction.payload.send = false;
+                dispatch(callContractFunction(storedTransaction.payload, function (callReturn) {
                   var e;
-                  tx.locked = false;
-                  if (isFunction(tx.onFailed)) {
+                  dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
+                  // storedTransaction.locked = false;
+                  if (isFunction(storedTransaction.onFailed)) {
                     if (err.error !== errors.NULL_CALL_RETURN.error) {
-                      err.hash = tx.hash;
-                      tx.onFailed(err);
+                      err.hash = txHash;
+                      storedTransaction.onFailed(err);
                     } else {
-                      e = handleRPCError(tx.payload.method, tx.payload.returns, callReturn);
-                      e.hash = tx.hash;
-                      tx.onFailed(e);
+                      e = handleRPCError(storedTransaction.payload.method, storedTransaction.payload.returns, callReturn);
+                      e.hash = txHash;
+                      storedTransaction.onFailed(e);
                     }
                   }
                 }));
               } else {
-                e = handleRPCError(tx.payload.method, tx.payload.returns, log.returnValue);
-                if (state.debug.tx) console.log("handleRPCError:", e);
+                e = handleRPCError(storedTransaction.payload.method, storedTransaction.payload.returns, log.returnValue);
+                if (debug.tx) console.log("handleRPCError:", e);
                 if (e && e.error) {
-                  e.gasFees = abi.unfix(log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)), "string");
-                  tx.locked = false;
-                  if (isFunction(tx.onFailed)) {
-                    e.hash = tx.hash;
-                    tx.onFailed(e);
+                  e.gasFees = abi.unfix(log.gasUsed.times(new BigNumber(getState().transactions[txHash].tx.gasPrice, 16)), "string");
+                  dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
+                  // storedTransaction.locked = false;
+                  if (isFunction(storedTransaction.onFailed)) {
+                    e.hash = txHash;
+                    storedTransaction.onFailed(e);
                   }
                 } else {
-                  onChainTx.callReturn = convertResponseToReturnsType(tx.payload.returns, log.returnValue);
-                  onChainTx.gasFees = abi.unfix(log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)), "string");
-                  tx.locked = false;
-                  tx.onSuccess(onChainTx);
+                  dispatch({
+                    type: "UPDATE_TRANSACTION",
+                    hash: txHash,
+                    data: {
+                      tx: {
+                        callReturn: convertResponseToReturnsType(storedTransaction.payload.returns, log.returnValue),
+                        gasFees: abi.unfix(log.gasUsed.times(new BigNumber(getState().transactions[txHash].tx.gasPrice, 16)), "string")
+                      }
+                    }
+                  });
+                  // onChainTx.callReturn = convertResponseToReturnsType(storedTransaction.payload.returns, log.returnValue);
+                  // onChainTx.gasFees = abi.unfix(log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)), "string");
+                  dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
+                  // storedTransaction.locked = false;
+                  storedTransaction.onSuccess(getState().transactions[txHash].tx);
                 }
               }
             }));
           }
         }));
       } else {
-        tx.locked = false;
+        dispatch({ type: "UNLOCK_TRANSACTION", hash: storedTransaction.hash });
+        // storedTransaction.locked = false;
       }
     } else {
-      tx.locked = false;
+      dispatch({ type: "UNLOCK_TRANSACTION", hash: storedTransaction.hash });
+      // storedTransaction.locked = false;
     }
   };
 }

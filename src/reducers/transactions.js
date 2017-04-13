@@ -1,6 +1,8 @@
 "use strict";
 
+var assign = require("lodash.assign");
 var clone = require("clone");
+var isObject = require("../utils/is-object");
 
 var initialState = {};
 
@@ -15,9 +17,16 @@ module.exports = function (transactions, action) {
       updatedTransactions[action.hash] = action.transaction;
       return updatedTransactions;
     case "UPDATE_TRANSACTION":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash][action.key] = action.value;
-      return updatedTransactions;
+      updatedTransactions = {};
+      updatedTransactions[action.hash] = assign({}, transactions[action.hash], Object.keys(action.data).reduce(function (p, key) {
+        if (isObject(action.data[key])) {
+          p[key] = assign({}, transactions[action.hash][key] || {}, action.data[key]);
+        } else {
+          p[key] = action.data[key];
+        }
+        return p;
+      }, {}));
+      return assign({}, transactions, updatedTransactions);
     case "SET_TRANSACTION_CONFIRMATIONS":
       updatedTransactions = clone(transactions);
       updatedTransactions[action.hash].confirmations = action.currentBlockNumber - updatedTransactions[action.hash].tx.blockNumber;
@@ -65,7 +74,7 @@ module.exports = function (transactions, action) {
       return updatedTransactions;
     case "INCREMENT_TRANSACTION_PAYLOAD_TRIES":
       updatedTransactions = clone(transactions);
-      if (updatedTransactions[action.hash].payload.tries) {
+      if (!updatedTransactions[action.hash].payload.tries) {
         updatedTransactions[action.hash].payload.tries = 1;
       } else {
         updatedTransactions[action.hash].payload.tries++;

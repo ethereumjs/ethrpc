@@ -4,12 +4,7 @@ var isFunction = require("../utils/is-function");
 
 function completeTx(tx, callback) {
   return function (dispatch) {
-    dispatch({
-      type: "UPDATE_TRANSACTION",
-      hash: tx.hash,
-      key: "status",
-      value: "confirmed"
-    });
+    dispatch({ type: "TRANSACTION_CONFIRMED", hash: tx.hash });
     // this.txs[tx.hash].status = "confirmed";
     dispatch({ type: "CLEAR_NOTIFICATION", hash: tx.hash });
     // clearTimeout(this.notifications[tx.hash]);
