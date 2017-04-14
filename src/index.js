@@ -42,6 +42,7 @@ var resendRawTransaction = require("./wrappers/resend-raw-transaction");
 var isFunction = require("./utils/is-function");
 var sha3 = require("./utils/sha3");
 
+var setDebugOptions = require("./debug/set-debug-options");
 var errors = require("./errors/codes");
 
 var clearTransactions = require("./clear-transactions");
@@ -64,6 +65,8 @@ module.exports = {
   signRawTransaction: signRawTransaction,
   packageRawTransaction: packageRawTransaction,
   packageRequest: packageRequest,
+
+  setDebugOptions: function (debugOptions) { return store.dispatch(setDebugOptions(debugOptions)); },
 
   connect: function (configuration, initialConnectCallback) {
     return store.dispatch(connect(configuration, initialConnectCallback));

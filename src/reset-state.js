@@ -7,7 +7,9 @@ var isFunction = require("./utils/is-function");
  */
 function resetState() {
   return function (dispatch, getState) {
-    var blockNotifier = getState().blockNotifier;
+    var blockNotifier, debug, state = getState();
+    blockNotifier = state.blockNotifier;
+    debug = state.debug;
 
     // stop any pending timers
     dispatch({ type: "CLEAR_NEW_BLOCK_INTERVAL_TIMEOUT_ID" });
@@ -32,6 +34,9 @@ function resetState() {
         dispatch(this.realMessageHandler(err, jso));
       }.bind(getState().shimMessageHandlerObject)
     });
+
+    // restore debugging options
+    dispatch({ type: "SET_DEBUG_OPTIONS", options: debug });
   };
 }
 

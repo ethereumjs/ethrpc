@@ -11,16 +11,14 @@ var initialState = {
 };
 
 module.exports = function (debug, action) {
-  var debugType;
+  var debugOptions;
   if (typeof debug === "undefined") {
     return initialState;
   }
   switch (action.type) {
-    case "SET_DEBUG_LOGGING":
-      debugType = {};
-      debugType[action.id] = action.debug;
-      return assign({}, debug, debugType);
-    case "RESET_DEBUG_LOGGING":
+    case "SET_DEBUG_OPTIONS":
+      return assign({}, debug, action.options);
+    case "RESET_DEBUG_OPTIONS":
       return initialState;
     default:
       return debug;
