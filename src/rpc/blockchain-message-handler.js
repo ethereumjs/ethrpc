@@ -3,6 +3,7 @@
 var ErrorWithData = require("../errors").ErrorWithData;
 var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
 var parseEthereumResponse = require("../decode-response/parse-ethereum-response");
+var isObject = require("../utils/is-object");
 
 /**
  * Used internally.  Processes a response from the blockchain by looking up the
@@ -45,7 +46,7 @@ function blockchainMessageHandler(error, jso) {
       }
       outstandingRequest = getState().outstandingRequests[jso.id];
       dispatch({ type: "REMOVE_OUTSTANDING_REQUEST", id: jso.id });
-      if (typeof outstandingRequest !== "object") {
+      if (!isObject(outstandingRequest)) {
         return configuration.errorHandler(new ErrorWithData("Unable to locate original request for blockchain response.", jso));
       }
 

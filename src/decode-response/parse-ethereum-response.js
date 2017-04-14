@@ -2,15 +2,14 @@
 
 var clone = require("clone");
 var isFunction = require("../utils/is-function");
+var isObject = require("../utils/is-object");
 var errors = require("../errors/codes");
 var RPCError = require("../errors/rpc-error");
 
 var parseEthereumResponse = function (origResponse, returns, callback) {
   var results, len, err, i, response;
   response = clone(origResponse);
-  // if ((debug.tx && (response && response.error)) || debug.broadcast) {
-  //   console.log("[ethrpc] response:", response);
-  // }
+  // console.log("[ethrpc] response:", response);
   if (response && typeof response === "string") {
     try {
       response = JSON.parse(response);
@@ -21,28 +20,26 @@ var parseEthereumResponse = function (origResponse, returns, callback) {
       throw new RPCError(err);
     }
   }
-  if (response !== undefined && typeof response === "object" && response !== null) {
+  if (isObject(response)) {
     if (response.error) {
       response = { error: response.error.code, message: response.error.message };
       if (!isFunction(callback)) return response;
       return callback(response);
-    } else if (response.result !== undefined) {
-      if (!isFunction(callback)) return response.result;
-      return callback(response.result);
     } else if (Array.isArray(response) && response.length) {
       len = response.length;
       results = new Array(len);
       for (i = 0; i < len; ++i) {
         results[i] = response[i].result;
         if (response.error || (response[i] && response[i].error)) {
-          // if (debug.broadcast) {
           if (isFunction(callback)) return callback(response.error);
           throw new RPCError(response.error);
-          // }
         }
       }
       if (!isFunction(callback)) return results;
       return callback(results);
+    } else if (response.result !== undefined) {
+      if (!isFunction(callback)) return response.result;
+      return callback(response.result);
     }
 
     // no result or error field

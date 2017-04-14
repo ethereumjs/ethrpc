@@ -3,7 +3,7 @@
 var isFunction = require("./utils/is-function");
 
 /**
- * Resets the global state of this module to default.
+ * Resets the Redux store to its initial state.
  */
 function resetState() {
   return function (dispatch, getState) {

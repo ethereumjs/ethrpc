@@ -5,7 +5,7 @@ var assign = require("lodash.assign");
 var initialState = {};
 
 module.exports = function (outstandingRequests, action) {
-  var request;
+  var request, idString;
   if (typeof outstandingRequests === "undefined") {
     return initialState;
   }
@@ -15,8 +15,9 @@ module.exports = function (outstandingRequests, action) {
       request[action.id] = action.request;
       return assign({}, outstandingRequests, request);
     case "REMOVE_OUTSTANDING_REQUEST":
+      idString = action.id.toString();
       return Object.keys(outstandingRequests).reduce(function (p, id) {
-        if (id !== action.id) p[id] = outstandingRequests[id];
+        if (id !== idString) p[id] = outstandingRequests[id];
         return p;
       }, {});
     case "REMOVE_ALL_OUTSTANDING_REQUESTS":
