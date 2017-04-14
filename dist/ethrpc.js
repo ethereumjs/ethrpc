@@ -16170,7 +16170,13 @@ module.exports = function () {
 }).call(this,require("buffer").Buffer)
 },{"buffer":14,"ethereum-common/params.json":37,"ethereumjs-util":45}],45:[function(require,module,exports){
 (function (Buffer){
-var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof3 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof2 = typeof Symbol === "function" && _typeof3(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof3(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof3(obj);
+};
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
@@ -36129,20 +36135,25 @@ module.exports = Notifier;
 },{}],151:[function(require,module,exports){
 "use strict";
 
+var assign = require("lodash.assign");
 var reprocessTransactions = require("../transact/reprocess-transactions");
+var isObject = require("../utils/is-object");
 
 function onNewBlock(block) {
   return function (dispatch) {
-    if (typeof block !== "object") throw new Error("block must be an object");
-    block.number = parseInt(block.number, 16);
-    dispatch({ type: "SET_CURRENT_BLOCK", block: block });
-    dispatch(reprocessTransactions());
+    if (isObject(block)) {
+      dispatch({
+        type: "SET_CURRENT_BLOCK",
+        block: assign({}, block, { number: parseInt(block.number, 16) })
+      });
+      dispatch(reprocessTransactions());
+    }
   };
 }
 
 module.exports = onNewBlock;
 
-},{"../transact/reprocess-transactions":214}],152:[function(require,module,exports){
+},{"../transact/reprocess-transactions":214,"../utils/is-object":242,"lodash.assign":71}],152:[function(require,module,exports){
 "use strict";
 
 var Notifier = require("./notifier");
