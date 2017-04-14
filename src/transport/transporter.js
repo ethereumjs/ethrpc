@@ -2,7 +2,7 @@
 
 var HttpTransport = require("./http-transport");
 var IpcTransport = require("./ipc-transport");
-var MetaMaskTransport = require("./metamask-transport");
+var Web3Transport = require("./web3-transport");
 var SyncTransport = require("./sync-transport");
 var WsTransport = require("./ws-transport");
 var checkIfComplete = require("./helpers/check-if-complete");
@@ -27,7 +27,7 @@ var createArrayWithDefaultValue = require("../utils/create-array-with-default-va
  * @returns {void}
  */
 function Transporter(configuration, messageHandler, syncOnly, debugLogging, callback) {
-  var resultAggregator, metaMaskTransport;
+  var resultAggregator, web3Transport;
 
   // validate configuration
   if (typeof configuration !== "object") {
@@ -50,7 +50,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
 
   // default to all transports undefined, we will look for all of them becoming !== undefined to determine when we are done attempting all connects
   resultAggregator = {
-    metaMaskTransports: [undefined],
+    web3Transports: [undefined],
     ipcTransports: createArrayWithDefaultValue(configuration.ipcAddresses.length, undefined),
     wsTransports: createArrayWithDefaultValue(configuration.wsAddresses.length, undefined),
     httpTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined),
@@ -59,7 +59,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
 
   // set the internal state reasonable default values
   this.internalState = {
-    metaMaskTransport: null,
+    web3Transport: null,
     httpTransport: null,
     wsTransport: null,
     ipcTransport: null,
@@ -70,7 +70,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
   };
 
   if (syncOnly) {
-    resultAggregator.metaMaskTransports = [];
+    resultAggregator.web3Transports = [];
     if (configuration.wsAddresses.length !== 0) {
       throw new Error("Sync connect does not support any addresses other than HTTP.");
     }
@@ -94,8 +94,8 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
   }
 
   // initiate connections to all provided addresses, as each completes it will check to see if everything is done
-  metaMaskTransport = new MetaMaskTransport(messageHandler, function (error) {
-    resultAggregator.metaMaskTransports[0] = (error !== null) ? null : metaMaskTransport;
+  web3Transport = new Web3Transport(messageHandler, function (error) {
+    resultAggregator.web3Transports[0] = (error !== null) ? null : web3Transport;
     checkIfComplete(this, resultAggregator, callback);
   }.bind(this));
   configuration.ipcAddresses.forEach(function (ipcAddress, index) {

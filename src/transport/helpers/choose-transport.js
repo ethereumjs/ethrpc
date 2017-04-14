@@ -12,7 +12,7 @@ function chooseTransport(internalState, requirements) {
   var eligibleTransports;
   switch (requirements) {
     case "ANY":
-      eligibleTransports = [internalState.metaMaskTransport, internalState.ipcTransport, internalState.wsTransport, internalState.httpTransport];
+      eligibleTransports = [internalState.web3Transport, internalState.ipcTransport, internalState.wsTransport, internalState.httpTransport];
       break;
     case "SYNC":
       eligibleTransports = [internalState.syncTransport];

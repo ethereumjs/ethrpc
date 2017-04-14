@@ -38151,28 +38151,28 @@ var isNotNull = require("../../utils/is-not-null");
 function checkIfComplete(transporter, resultAggregator, onCompleteCallback) {
   var internalState = transporter.internalState;
 
-  if (resultAggregator.metaMaskTransports.some(isUndefined)) return;
+  if (resultAggregator.web3Transports.some(isUndefined)) return;
   if (resultAggregator.syncTransports.some(isUndefined)) return;
   if (resultAggregator.httpTransports.some(isUndefined)) return;
   if (resultAggregator.wsTransports.some(isUndefined)) return;
   if (resultAggregator.ipcTransports.some(isUndefined)) return;
 
   if (resultAggregator.syncTransports.every(isNull)
-    && resultAggregator.metaMaskTransports.every(isNull)
+    && resultAggregator.web3Transports.every(isNull)
     && resultAggregator.httpTransports.every(isNull)
     && resultAggregator.wsTransports.every(isNull)
     && resultAggregator.ipcTransports.every(isNull)) {
     return onCompleteCallback(new Error("Unable to connect to an Ethereum node via any tranpsort (MetaMask, HTTP, WS, IPC)."), null);
   }
 
-  internalState.metaMaskTransport = resultAggregator.metaMaskTransports.filter(isNotNull)[0] || null;
+  internalState.web3Transport = resultAggregator.web3Transports.filter(isNotNull)[0] || null;
   internalState.syncTransport = resultAggregator.syncTransports.filter(isNotNull)[0] || null;
   internalState.httpTransport = resultAggregator.httpTransports.filter(isNotNull)[0] || null;
   internalState.wsTransport = resultAggregator.wsTransports.filter(isNotNull)[0] || null;
   internalState.ipcTransport = resultAggregator.ipcTransports.filter(isNotNull)[0] || null;
 
   if (internalState.debugLogging) {
-    console.log("MetaMask: " + (internalState.metaMaskTransport ? "connected" : "not connected"));
+    console.log("MetaMask: " + (internalState.web3Transport ? "connected" : "not connected"));
     console.log("Sync: " + (internalState.syncTransport ? internalState.syncTransport.address : "not connected"));
     console.log("HTTP: " + (internalState.httpTransport ? internalState.httpTransport.address : "not connected"));
     console.log("WS: " + (internalState.wsTransport ? internalState.wsTransport.address : "not connected"));
@@ -38180,7 +38180,7 @@ function checkIfComplete(transporter, resultAggregator, onCompleteCallback) {
   }
 
   // subscribe to reconnect callbacks for all transports
-  [internalState.metaMaskTransport, internalState.ipcTransport, internalState.wsTransport, internalState.httpTransport, internalState.syncTransport].forEach(function (transport) {
+  [internalState.web3Transport, internalState.ipcTransport, internalState.wsTransport, internalState.httpTransport, internalState.syncTransport].forEach(function (transport) {
     if (!transport) return;
     transport.addReconnectListener(function () {
       Object.keys(transporter.internalState.reconnectListeners).forEach(function (key) {
@@ -38209,7 +38209,7 @@ function chooseTransport(internalState, requirements) {
   var eligibleTransports;
   switch (requirements) {
     case "ANY":
-      eligibleTransports = [internalState.metaMaskTransport, internalState.ipcTransport, internalState.wsTransport, internalState.httpTransport];
+      eligibleTransports = [internalState.web3Transport, internalState.ipcTransport, internalState.wsTransport, internalState.httpTransport];
       break;
     case "SYNC":
       eligibleTransports = [internalState.syncTransport];
@@ -38439,16 +38439,16 @@ module.exports = IpcTransport;
 
 var AbstractTransport = require("./abstract-transport.js");
 
-function MetaMaskTransport(messageHandler, initialConnectCallback) {
+function Web3Transport(messageHandler, initialConnectCallback) {
   AbstractTransport.call(this, "metamask", -1, messageHandler);
   this.initialConnect(initialConnectCallback);
 }
 
-MetaMaskTransport.prototype = Object.create(AbstractTransport.prototype);
+Web3Transport.prototype = Object.create(AbstractTransport.prototype);
 
-MetaMaskTransport.prototype.constructor = MetaMaskTransport;
+Web3Transport.prototype.constructor = Web3Transport;
 
-MetaMaskTransport.prototype.connect = function (callback) {
+Web3Transport.prototype.connect = function (callback) {
   if (typeof window !== "undefined" && ((window || {}).web3 || {}).currentProvider) {
     setTimeout(function () { callback(null); }, 1);
   } else {
@@ -38456,7 +38456,7 @@ MetaMaskTransport.prototype.connect = function (callback) {
   }
 };
 
-MetaMaskTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
+Web3Transport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
   var web3Provider;
   if (typeof window === "undefined") return errorCallback("attempted to access 'window' outside of a browser, this shouldn't happen");
   web3Provider = ((window || {}).web3 || {}).currentProvider;
@@ -38464,7 +38464,7 @@ MetaMaskTransport.prototype.submitRpcRequest = function (rpcObject, errorCallbac
   web3Provider.sendAsync(rpcObject, this.messageHandler.bind(this));
 };
 
-module.exports = MetaMaskTransport;
+module.exports = Web3Transport;
 
 },{"./abstract-transport.js":204}],213:[function(require,module,exports){
 "use strict";
@@ -38520,7 +38520,7 @@ module.exports = SyncTransport;
 
 var HttpTransport = require("./http-transport");
 var IpcTransport = require("./ipc-transport");
-var MetaMaskTransport = require("./metamask-transport");
+var Web3Transport = require("./web3-transport");
 var SyncTransport = require("./sync-transport");
 var WsTransport = require("./ws-transport");
 var checkIfComplete = require("./helpers/check-if-complete");
@@ -38545,7 +38545,7 @@ var createArrayWithDefaultValue = require("../utils/create-array-with-default-va
  * @returns {void}
  */
 function Transporter(configuration, messageHandler, syncOnly, debugLogging, callback) {
-  var resultAggregator, metaMaskTransport;
+  var resultAggregator, web3Transport;
 
   // validate configuration
   if (typeof configuration !== "object") return callback(new Error("configuration must be an object."));
@@ -38559,7 +38559,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
 
   // default to all transports undefined, we will look for all of them becoming !== undefined to determine when we are done attempting all connects
   resultAggregator = {
-    metaMaskTransports: [undefined],
+    web3Transports: [undefined],
     ipcTransports: createArrayWithDefaultValue(configuration.ipcAddresses.length, undefined),
     wsTransports: createArrayWithDefaultValue(configuration.wsAddresses.length, undefined),
     httpTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined),
@@ -38568,7 +38568,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
 
   // set the internal state reasonable default values
   this.internalState = {
-    metaMaskTransport: null,
+    web3Transport: null,
     httpTransport: null,
     wsTransport: null,
     ipcTransport: null,
@@ -38580,7 +38580,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
   };
 
   if (syncOnly) {
-    resultAggregator.metaMaskTransports = [];
+    resultAggregator.web3Transports = [];
     if (configuration.wsAddresses.length !== 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
     if (configuration.ipcAddresses.length !== 0) throw new Error("Sync connect does not support any addresses other than HTTP.");
     configuration.httpAddresses.forEach(function (httpAddress, index) {
@@ -38600,8 +38600,8 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
   }
 
   // initiate connections to all provided addresses, as each completes it will check to see if everything is done
-  metaMaskTransport = new MetaMaskTransport(messageHandler, function (error) {
-    resultAggregator.metaMaskTransports[0] = (error !== null) ? null : metaMaskTransport;
+  web3Transport = new Web3Transport(messageHandler, function (error) {
+    resultAggregator.web3Transports[0] = (error !== null) ? null : web3Transport;
     checkIfComplete(this, resultAggregator, callback);
   }.bind(this));
   configuration.ipcAddresses.forEach(function (ipcAddress, index) {
@@ -38659,7 +38659,7 @@ Transporter.prototype.removeReconnectListener = function (token) {
 
 module.exports = Transporter;
 
-},{"../utils/create-array-with-default-value":216,"./helpers/check-if-complete":205,"./helpers/choose-transport":206,"./http-transport":210,"./ipc-transport":211,"./metamask-transport":212,"./sync-transport":213,"./ws-transport":215}],215:[function(require,module,exports){
+},{"../utils/create-array-with-default-value":216,"./helpers/check-if-complete":205,"./helpers/choose-transport":206,"./http-transport":210,"./ipc-transport":211,"./web3-transport":212,"./sync-transport":213,"./ws-transport":215}],215:[function(require,module,exports){
 "use strict";
 
 var AbstractTransport = require("./abstract-transport.js");

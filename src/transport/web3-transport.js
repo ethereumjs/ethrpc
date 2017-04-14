@@ -2,16 +2,16 @@
 
 var AbstractTransport = require("./abstract-transport.js");
 
-function MetaMaskTransport(messageHandler, initialConnectCallback) {
-  AbstractTransport.call(this, "metamask", -1, messageHandler);
+function Web3Transport(messageHandler, initialConnectCallback) {
+  AbstractTransport.call(this, "web3", -1, messageHandler);
   this.initialConnect(initialConnectCallback);
 }
 
-MetaMaskTransport.prototype = Object.create(AbstractTransport.prototype);
+Web3Transport.prototype = Object.create(AbstractTransport.prototype);
 
-MetaMaskTransport.prototype.constructor = MetaMaskTransport;
+Web3Transport.prototype.constructor = Web3Transport;
 
-MetaMaskTransport.prototype.connect = function (callback) {
+Web3Transport.prototype.connect = function (callback) {
   if (typeof window !== "undefined" && ((window || {}).web3 || {}).currentProvider) {
     setTimeout(function () { callback(null); }, 1);
   } else {
@@ -19,7 +19,7 @@ MetaMaskTransport.prototype.connect = function (callback) {
   }
 };
 
-MetaMaskTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
+Web3Transport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
   var web3Provider;
   if (typeof window === "undefined") return errorCallback("attempted to access 'window' outside of a browser, this shouldn't happen");
   web3Provider = ((window || {}).web3 || {}).currentProvider;
@@ -27,4 +27,4 @@ MetaMaskTransport.prototype.submitRpcRequest = function (rpcObject, errorCallbac
   web3Provider.sendAsync(rpcObject, this.messageHandler.bind(this));
 };
 
-module.exports = MetaMaskTransport;
+module.exports = Web3Transport;
