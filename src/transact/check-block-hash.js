@@ -1,29 +1,24 @@
 "use strict";
 
-var clone = require("clone");
 var checkConfirmations = require("../transact/check-confirmations");
 var waitForNextPoll = require("../transact/wait-for-next-poll");
 var isFunction = require("../utils/is-function");
 
 function checkBlockHash(tx, numConfirmations, callback) {
   return function (dispatch, getState) {
-    var state, storedTransaction;
-    state = getState();
-    storedTransaction = clone(state.transactions[tx.hash]);
-    if (!storedTransaction) storedTransaction = {};
-    // if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
-    dispatch({ type: "INCREMENT_TRANSACTION_COUNT", hash: tx.hash });
-    // if (storedTransaction.count === undefined) storedTransaction.count = 0;
-    // ++storedTransaction.count;
-    if (state.debug.tx) console.log("checkBlockHash:", tx.blockHash);
+    var txHash, debug, transactions, state = getState();
+    debug = state.debug;
+    transactions = state.transactions;
+    txHash = tx.hash;
+    if (!transactions[txHash]) {
+      dispatch({ type: "ADD_TRANSACTION", transaction: { hash: txHash, tx: tx } });
+    }
+    dispatch({ type: "INCREMENT_TRANSACTION_COUNT", hash: txHash });
+    if (debug.tx) console.log("checkBlockHash:", tx.blockHash);
     if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
-      tx.txHash = tx.hash;
       if (!numConfirmations) {
-        dispatch({ type: "TRANSACTION_MINED", hash: tx.hash });
-        // storedTransaction.status = "mined";
-        dispatch({ type: "CLEAR_NOTIFICATION", hash: tx.hash });
-        // clearTimeout(this.notifications[tx.hash]);
-        // delete this.notifications[tx.hash];
+        dispatch({ type: "TRANSACTION_MINED", hash: txHash });
+        dispatch({ type: "CLEAR_NOTIFICATION", hash: txHash });
         if (!isFunction(callback)) return tx;
         return callback(null, tx);
       }

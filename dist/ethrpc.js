@@ -21700,7 +21700,13 @@ module.exports={
 
 },{}],103:[function(require,module,exports){
 (function (Buffer){
-var _typeof18 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof19 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof18 = typeof Symbol === "function" && _typeof19(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof19(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof19(obj);
+};
 
 var _typeof17 = typeof Symbol === "function" && _typeof18(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof18(obj);
@@ -37260,7 +37266,6 @@ module.exports = clearTransactions;
 "use strict";
 
 var net_version = require("./wrappers/net").version;
-var blockchainMessageHandler = require("./rpc/blockchain-message-handler");
 var Transporter = require("./transport/transporter");
 var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
@@ -37287,7 +37292,7 @@ var ErrorWithData = require("./errors").ErrorWithData;
  */
 function connect(configuration, initialConnectCallback) {
   return function (dispatch, getState) {
-    var syncOnly, state, debug, storedConfiguration, blockAndLogStreamer, shimMessageHandler;
+    var syncOnly, state, debug, storedConfiguration, shimMessageHandler;
     dispatch(resetState());
     dispatch({ type: "SET_CONFIGURATION", configuration: configuration });
 
@@ -37330,7 +37335,7 @@ function connect(configuration, initialConnectCallback) {
 
 module.exports = connect;
 
-},{"./block-management/create-block-and-log-streamer":193,"./block-management/ethrpc-transport-adapter":195,"./block-management/on-new-block":198,"./errors":215,"./reset-state":250,"./rpc/blockchain-message-handler":251,"./transport/transporter":282,"./wrappers/net":305}],204:[function(require,module,exports){
+},{"./block-management/create-block-and-log-streamer":193,"./block-management/ethrpc-transport-adapter":195,"./block-management/on-new-block":198,"./errors":215,"./reset-state":250,"./transport/transporter":282,"./wrappers/net":305}],204:[function(require,module,exports){
 "use strict";
 
 var BigNumber = require("bignumber.js");
@@ -38733,8 +38738,6 @@ module.exports = function (blockAndLogStreamer, action) {
 },{}],232:[function(require,module,exports){
 "use strict";
 
-var isFunction = require("../utils/is-function");
-
 var initialState = null;
 
 module.exports = function (blockNotifier, action) {
@@ -38752,7 +38755,7 @@ module.exports = function (blockNotifier, action) {
   }
 };
 
-},{"../utils/is-function":286}],233:[function(require,module,exports){
+},{}],233:[function(require,module,exports){
 "use strict";
 
 var validateConfiguration = require("../validate/validate-configuration");
@@ -38829,7 +38832,6 @@ var initialState = {
 };
 
 module.exports = function (debug, action) {
-  var debugOptions;
   if (typeof debug === "undefined") {
     return initialState;
   }
@@ -39161,24 +39163,23 @@ module.exports = function (transactionRelay, action) {
 "use strict";
 
 var assign = require("lodash.assign");
-var clone = require("clone");
 var isObject = require("../utils/is-object");
 
 var initialState = {};
 
 module.exports = function (transactions, action) {
-  var updatedTransactions;
+  var newTransaction, payload;
   if (typeof transactions === "undefined") {
     return initialState;
   }
   switch (action.type) {
     case "ADD_TRANSACTION":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash] = action.transaction;
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.transaction.hash] = action.transaction;
+      return assign({}, transactions, newTransaction);
     case "UPDATE_TRANSACTION":
-      updatedTransactions = {};
-      updatedTransactions[action.hash] = assign({}, transactions[action.hash], Object.keys(action.data).reduce(function (p, key) {
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], Object.keys(action.data).reduce(function (p, key) {
         if (isObject(action.data[key])) {
           p[key] = assign({}, transactions[action.hash][key] || {}, action.data[key]);
         } else {
@@ -39186,60 +39187,53 @@ module.exports = function (transactions, action) {
         }
         return p;
       }, {}));
-      return assign({}, transactions, updatedTransactions);
+      return assign({}, transactions, newTransaction);
     case "SET_TRANSACTION_CONFIRMATIONS":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].confirmations = action.currentBlockNumber - updatedTransactions[action.hash].tx.blockNumber;
-      return updatedTransactions;
-    case "UPDATE_TRANSACTION_BLOCK":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].tx.blockNumber = action.blockNumber;
-      updatedTransactions[action.hash].tx.blockHash = action.blockHash;
-      return updatedTransactions;
-    case "UPDATE_TRANSACTION_STATUS":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].status = action.status;
-      return updatedTransactions;
+      if (transactions[action.hash].tx.blockNumber == null) return transactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], {
+        confirmations: action.currentBlockNumber - transactions[action.hash].tx.blockNumber
+      });
+      return assign({}, transactions, newTransaction);
     case "TRANSACTION_FAILED":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].status = "failed";
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "failed" });
+      return assign({}, transactions, newTransaction);
     case "TRANSACTION_MINED":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].status = "mined";
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "mined" });
+      return assign({}, transactions, newTransaction);
     case "TRANSACTION_RESUBMITTED":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].status = "resubmitted";
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "resubmitted" });
+      return assign({}, transactions, newTransaction);
     case "TRANSACTION_CONFIRMED":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].status = "confirmed";
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "confirmed" });
+      return assign({}, transactions, newTransaction);
     case "LOCK_TRANSACTION":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].locked = true;
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { isLocked: true });
+      return assign({}, transactions, newTransaction);
     case "UNLOCK_TRANSACTION":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].locked = false;
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { isLocked: false });
+      return assign({}, transactions, newTransaction);
     case "INCREMENT_TRANSACTION_COUNT":
-      updatedTransactions = clone(transactions);
-      if (updatedTransactions[action.hash].count) {
-        updatedTransactions[action.hash].count = 1;
-      } else {
-        updatedTransactions[action.hash].count++;
-      }
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], {
+        count: (transactions[action.hash].count) ? transactions[action.hash].count + 1 : 1
+      });
+      return assign({}, transactions, newTransaction);
     case "INCREMENT_TRANSACTION_PAYLOAD_TRIES":
-      updatedTransactions = clone(transactions);
-      if (!updatedTransactions[action.hash].payload.tries) {
-        updatedTransactions[action.hash].payload.tries = 1;
-      } else {
-        updatedTransactions[action.hash].payload.tries++;
-      }
-      return updatedTransactions;
+      payload = transactions[action.hash].payload || {};
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], {
+        payload: assign({}, payload, {
+          tries: (payload.tries) ? payload.tries + 1 : 1
+        })
+      });
+      return assign({}, transactions, newTransaction);
     case "REMOVE_TRANSACTION":
       return Object.keys(transactions).reduce(function (p, hash) {
         if (hash === action.hash) {
@@ -39256,7 +39250,7 @@ module.exports = function (transactions, action) {
   }
 };
 
-},{"../utils/is-object":289,"clone":70,"lodash.assign":126}],249:[function(require,module,exports){
+},{"../utils/is-object":289,"lodash.assign":126}],249:[function(require,module,exports){
 "use strict";
 
 var initialState = null;
@@ -39323,10 +39317,10 @@ module.exports = resetState;
 },{"./utils/is-function":286}],251:[function(require,module,exports){
 "use strict";
 
-var ErrorWithData = require("../errors").ErrorWithData;
-var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
 var parseEthereumResponse = require("../decode-response/parse-ethereum-response");
 var isObject = require("../utils/is-object");
+var ErrorWithData = require("../errors").ErrorWithData;
+var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
 
 /**
  * Used internally.  Processes a response from the blockchain by looking up the
@@ -39571,30 +39565,25 @@ module.exports = callOrSendTransaction;
 },{"../encode-request/package-request":211,"../errors/codes":213,"../utils/is-function":286,"../wrappers/eth":300}],256:[function(require,module,exports){
 "use strict";
 
-var clone = require("clone");
 var checkConfirmations = require("../transact/check-confirmations");
 var waitForNextPoll = require("../transact/wait-for-next-poll");
 var isFunction = require("../utils/is-function");
 
 function checkBlockHash(tx, numConfirmations, callback) {
   return function (dispatch, getState) {
-    var state, storedTransaction;
-    state = getState();
-    storedTransaction = clone(state.transactions[tx.hash]);
-    if (!storedTransaction) storedTransaction = {};
-    // if (!this.txs[tx.hash]) this.txs[tx.hash] = {};
-    dispatch({ type: "INCREMENT_TRANSACTION_COUNT", hash: tx.hash });
-    // if (storedTransaction.count === undefined) storedTransaction.count = 0;
-    // ++storedTransaction.count;
-    if (state.debug.tx) console.log("checkBlockHash:", tx.blockHash);
+    var txHash, debug, transactions, state = getState();
+    debug = state.debug;
+    transactions = state.transactions;
+    txHash = tx.hash;
+    if (!transactions[txHash]) {
+      dispatch({ type: "ADD_TRANSACTION", transaction: { hash: txHash, tx: tx } });
+    }
+    dispatch({ type: "INCREMENT_TRANSACTION_COUNT", hash: txHash });
+    if (debug.tx) console.log("checkBlockHash:", tx.blockHash);
     if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
-      tx.txHash = tx.hash;
       if (!numConfirmations) {
-        dispatch({ type: "TRANSACTION_MINED", hash: tx.hash });
-        // storedTransaction.status = "mined";
-        dispatch({ type: "CLEAR_NOTIFICATION", hash: tx.hash });
-        // clearTimeout(this.notifications[tx.hash]);
-        // delete this.notifications[tx.hash];
+        dispatch({ type: "TRANSACTION_MINED", hash: txHash });
+        dispatch({ type: "CLEAR_NOTIFICATION", hash: txHash });
         if (!isFunction(callback)) return tx;
         return callback(null, tx);
       }
@@ -39606,7 +39595,7 @@ function checkBlockHash(tx, numConfirmations, callback) {
 
 module.exports = checkBlockHash;
 
-},{"../transact/check-confirmations":257,"../transact/wait-for-next-poll":270,"../utils/is-function":286,"clone":70}],257:[function(require,module,exports){
+},{"../transact/check-confirmations":257,"../transact/wait-for-next-poll":270,"../utils/is-function":286}],257:[function(require,module,exports){
 "use strict";
 
 var eth = require("../wrappers/eth");
@@ -39639,10 +39628,7 @@ var isFunction = require("../utils/is-function");
 function completeTx(tx, callback) {
   return function (dispatch) {
     dispatch({ type: "TRANSACTION_CONFIRMED", hash: tx.hash });
-    // this.txs[tx.hash].status = "confirmed";
     dispatch({ type: "CLEAR_NOTIFICATION", hash: tx.hash });
-    // clearTimeout(this.notifications[tx.hash]);
-    // delete this.notifications[tx.hash];
     if (!isFunction(callback)) return tx;
     callback(null, tx);
   };
@@ -39736,11 +39722,11 @@ var updateTx = require("./update-tx");
 
 function reprocessTransactions() {
   return function (dispatch, getState) {
-    var transactionHash, transactions;
+    var txHash, transactions;
     transactions = getState().transactions;
-    for (transactionHash in transactions) {
-      if (transactions.hasOwnProperty(transactionHash)) {
-        dispatch(updateTx.default(transactions[transactionHash]));
+    for (txHash in transactions) {
+      if (transactions.hasOwnProperty(txHash)) {
+        dispatch(updateTx.default(txHash));
       }
     }
   };
@@ -39977,37 +39963,34 @@ var isFunction = require("../utils/is-function");
 var errors = require("../errors/codes");
 var constants = require("../constants");
 
-function updateMinedTx(storedTransaction) {
+function updateMinedTx(txHash) {
   return function (dispatch, getState) {
-    var debug, txHash;
-    debug = getState().debug;
-    txHash = storedTransaction.hash;
+    var debug, transaction, currentBlock, state = getState();
+    debug = state.debug;
+    currentBlock = state.currentBlock;
     dispatch({
       type: "SET_TRANSACTION_CONFIRMATIONS",
       hash: txHash,
-      currentBlockNumber: getState().currentBlock.number
+      currentBlockNumber: currentBlock.number
     });
-    // storedTransaction.confirmations = self.block.number - onChainTx.blockNumber;
-    if (getState().transactions[txHash].confirmations >= constants.REQUIRED_CONFIRMATIONS) {
+    transaction = state.transactions[txHash];
+    if (transaction.confirmations >= constants.REQUIRED_CONFIRMATIONS) {
       dispatch({ type: "TRANSACTION_CONFIRMED", hash: txHash });
-      // storedTransaction.status = "confirmed";
-      if (isFunction(storedTransaction.onSuccess)) {
-        dispatch(eth.getBlockByNumber([getState().transactions[txHash].tx.blockNumber, false], function (block) {
+      if (isFunction(transaction.onSuccess)) {
+        dispatch(eth.getBlockByNumber([transaction.tx.blockNumber, false], function (block) {
           if (block && block.timestamp) {
-            // onChainTx.timestamp = parseInt(block.timestamp, 16);
             dispatch({
               type: "UPDATE_TRANSACTION",
               hash: txHash,
               data: { tx: { timestamp: parseInt(block.timestamp, 16) } }
             });
           }
-          if (!storedTransaction.payload.mutable) {
+          if (!transaction.payload.mutable) {
             dispatch({
               type: "UPDATE_TRANSACTION",
               hash: txHash,
-              data: { tx: { callReturn: storedTransaction.callReturn } }
+              data: { tx: { callReturn: transaction.callReturn } }
             });
-            // onChainTx.callReturn = storedTransaction.callReturn;
             dispatch(eth.getTransactionReceipt(txHash, function (receipt) {
               if (debug.tx) console.log("got receipt:", receipt);
               if (receipt && receipt.gasUsed) {
@@ -40016,47 +39999,43 @@ function updateMinedTx(storedTransaction) {
                   hash: txHash,
                   data: {
                     tx: {
-                      gasFees: abi.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(getState().transactions[txHash].tx.gasPrice, 16)), "string")
+                      gasFees: abi.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(transaction.tx.gasPrice, 16)), "string")
                     }
                   }
                 });
-                // onChainTx.gasFees = abi.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(onChainTx.gasPrice, 16)), "string");
               }
               dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
-              // storedTransaction.locked = false;
-              storedTransaction.onSuccess(getState().transactions[txHash].tx);
+              transaction.onSuccess(getState().transactions[txHash].tx);
             }));
           } else {
             dispatch(getLoggedReturnValue(txHash, function (err, log) {
               var e;
               if (debug.tx) console.log("loggedReturnValue:", err, log);
               if (err) {
-                storedTransaction.payload.send = false;
-                dispatch(callContractFunction(storedTransaction.payload, function (callReturn) {
+                transaction.payload.send = false;
+                dispatch(callContractFunction(transaction.payload, function (callReturn) {
                   var e;
                   dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
-                  // storedTransaction.locked = false;
-                  if (isFunction(storedTransaction.onFailed)) {
+                  if (isFunction(transaction.onFailed)) {
                     if (err.error !== errors.NULL_CALL_RETURN.error) {
                       err.hash = txHash;
-                      storedTransaction.onFailed(err);
+                      transaction.onFailed(err);
                     } else {
-                      e = handleRPCError(storedTransaction.payload.method, storedTransaction.payload.returns, callReturn);
+                      e = handleRPCError(transaction.payload.method, transaction.payload.returns, callReturn);
                       e.hash = txHash;
-                      storedTransaction.onFailed(e);
+                      transaction.onFailed(e);
                     }
                   }
                 }));
               } else {
-                e = handleRPCError(storedTransaction.payload.method, storedTransaction.payload.returns, log.returnValue);
+                e = handleRPCError(transaction.payload.method, transaction.payload.returns, log.returnValue);
                 if (debug.tx) console.log("handleRPCError:", e);
                 if (e && e.error) {
-                  e.gasFees = abi.unfix(log.gasUsed.times(new BigNumber(getState().transactions[txHash].tx.gasPrice, 16)), "string");
+                  e.gasFees = abi.unfix(log.gasUsed.times(new BigNumber(transaction.tx.gasPrice, 16)), "string");
                   dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
-                  // storedTransaction.locked = false;
-                  if (isFunction(storedTransaction.onFailed)) {
+                  if (isFunction(transaction.onFailed)) {
                     e.hash = txHash;
-                    storedTransaction.onFailed(e);
+                    transaction.onFailed(e);
                   }
                 } else {
                   dispatch({
@@ -40064,28 +40043,23 @@ function updateMinedTx(storedTransaction) {
                     hash: txHash,
                     data: {
                       tx: {
-                        callReturn: convertResponseToReturnsType(storedTransaction.payload.returns, log.returnValue),
-                        gasFees: abi.unfix(log.gasUsed.times(new BigNumber(getState().transactions[txHash].tx.gasPrice, 16)), "string")
+                        callReturn: convertResponseToReturnsType(transaction.payload.returns, log.returnValue),
+                        gasFees: abi.unfix(log.gasUsed.times(new BigNumber(transaction.tx.gasPrice, 16)), "string")
                       }
                     }
                   });
-                  // onChainTx.callReturn = convertResponseToReturnsType(storedTransaction.payload.returns, log.returnValue);
-                  // onChainTx.gasFees = abi.unfix(log.gasUsed.times(new BigNumber(onChainTx.gasPrice, 16)), "string");
                   dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
-                  // storedTransaction.locked = false;
-                  storedTransaction.onSuccess(getState().transactions[txHash].tx);
+                  transaction.onSuccess(getState().transactions[txHash].tx);
                 }
               }
             }));
           }
         }));
       } else {
-        dispatch({ type: "UNLOCK_TRANSACTION", hash: storedTransaction.hash });
-        // storedTransaction.locked = false;
+        dispatch({ type: "UNLOCK_TRANSACTION", hash: transaction.hash });
       }
     } else {
-      dispatch({ type: "UNLOCK_TRANSACTION", hash: storedTransaction.hash });
-      // storedTransaction.locked = false;
+      dispatch({ type: "UNLOCK_TRANSACTION", hash: transaction.hash });
     }
   };
 }
@@ -40103,10 +40077,9 @@ var isFunction = require("../utils/is-function");
 var errors = require("../errors/codes");
 var constants = require("../constants");
 
-function updatePendingTx(tx) {
+function updatePendingTx(txHash) {
   return function (dispatch, getState) {
-    var txHash, currentBlock;
-    txHash = tx.hash;
+    var currentBlock;
     dispatch(eth.getTransactionByHash(txHash, function (onChainTx) {
       var e, storedTransaction;
       dispatch({
@@ -40114,19 +40087,15 @@ function updatePendingTx(tx) {
         hash: txHash,
         data: { tx: onChainTx || {} }
       });
-      // tx.tx = abi.copy(onChainTx);
 
       // if transaction is null, then it was dropped from the txpool
       if (onChainTx === null) {
         dispatch({ type: "INCREMENT_TRANSACTION_PAYLOAD_TRIES", hash: txHash });
-        // tx.payload.tries = (tx.payload.tries) ? tx.payload.tries + 1 : 1;
 
         // if we have retries left, then resubmit the transaction
         if (getState().transactions[txHash].payload.tries > constants.TX_RETRY_MAX) {
           dispatch({ type: "TRANSACTION_FAILED", hash: txHash });
-          // tx.status = "failed";
           dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
-          // tx.locked = false;
           storedTransaction = getState().transactions[txHash];
           if (isFunction(storedTransaction.onFailed)) {
             e = clone(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
@@ -40135,11 +40104,8 @@ function updatePendingTx(tx) {
           }
         } else {
           dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
-          // --self.rawTxMaxNonce;
           dispatch({ type: "TRANSACTION_RESUBMITTED", hash: txHash });
-          // tx.status = "resubmitted";
           dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
-          // tx.locked = false;
           storedTransaction = getState().transactions[txHash];
           if (getState().debug.tx) console.log("resubmitting tx:", storedTransaction.hash);
           dispatch(transact(storedTransaction.payload, storedTransaction.onSent, storedTransaction.onSuccess, storedTransaction.onFailed));
@@ -40150,24 +40116,24 @@ function updatePendingTx(tx) {
       } else {
         if (onChainTx.blockNumber) {
           dispatch({
-            type: "UPDATE_TRANSACTION_BLOCK",
+            type: "UPDATE_TRANSACTION",
             hash: txHash,
-            blockNumber: parseInt(onChainTx.blockNumber, 16),
-            blockHash: onChainTx.blockHash
+            data: {
+              tx: {
+                blockNumber: parseInt(onChainTx.blockNumber, 16),
+                blockHash: onChainTx.blockHash
+              }
+            }
           });
-          // tx.tx.blockNumber = parseInt(onChainTx.blockNumber, 16);
-          // tx.tx.blockHash = onChainTx.blockHash;
           dispatch({ type: "TRANSACTION_MINED", hash: txHash });
-          // tx.status = "mined";
           currentBlock = getState().currentBlock;
           if (currentBlock && currentBlock.number != null) {
             dispatch({
               type: "SET_TRANSACTION_CONFIRMATIONS",
               hash: txHash,
-              currentBlockNumber: getState().currentBlock.number
+              currentBlockNumber: currentBlock.number
             });
-            // tx.confirmations = self.block.number - tx.tx.blockNumber;
-            dispatch(updateMinedTx(getState().transactions[txHash]));
+            dispatch(updateMinedTx(txHash));
           } else {
             dispatch(eth.blockNumber(null, function (blockNumber) {
               dispatch({ type: "SET_CURRENT_BLOCK", block: { number: parseInt(blockNumber, 16) } });
@@ -40176,13 +40142,11 @@ function updatePendingTx(tx) {
                 hash: txHash,
                 currentBlockNumber: parseInt(blockNumber, 16)
               });
-              // tx.confirmations = self.block.number - tx.tx.blockNumber;
-              dispatch(updateMinedTx(getState().transactions[txHash]));
+              dispatch(updateMinedTx(txHash));
             }));
           }
         } else {
           dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
-          // tx.locked = false;
         }
       }
     }));
@@ -40197,21 +40161,22 @@ module.exports = updatePendingTx;
 var updateMinedTx = require("../transact/update-mined-tx");
 var updatePendingTx = require("../transact/update-pending-tx");
 
-function updateTx(tx) {
-  return function (dispatch) {
-    if (!tx.locked) {
-      if (tx.tx === undefined) {
-        dispatch({ type: "LOCK_TRANSACTION", hash: tx.hash });
-        return dispatch(updatePendingTx(tx));
+function updateTx(txHash) {
+  return function (dispatch, getState) {
+    var transaction = getState().transactions[txHash];
+    if (!transaction.isLocked) {
+      if (transaction.tx === undefined) {
+        dispatch({ type: "LOCK_TRANSACTION", hash: txHash });
+        return dispatch(updatePendingTx(txHash));
       }
-      switch (tx.status) {
+      switch (transaction.status) {
         case "pending":
-          dispatch({ type: "LOCK_TRANSACTION", hash: tx.hash });
-          dispatch(updatePendingTx(tx));
+          dispatch({ type: "LOCK_TRANSACTION", hash: txHash });
+          dispatch(updatePendingTx(txHash));
           break;
         case "mined":
-          dispatch({ type: "LOCK_TRANSACTION", hash: tx.hash });
-          dispatch(updateMinedTx(tx));
+          dispatch({ type: "LOCK_TRANSACTION", hash: txHash });
+          dispatch(updateMinedTx(txHash));
           break;
         default:
           break;
@@ -40225,7 +40190,6 @@ module.exports.default = updateTx;
 },{"../transact/update-mined-tx":266,"../transact/update-pending-tx":267}],269:[function(require,module,exports){
 "use strict";
 
-var eth_getTransactionByHash = require("../wrappers/eth").getTransactionByHash;
 var updateTx = require("../transact/update-tx");
 var RPCError = require("../errors/rpc-error");
 var isFunction = require("../utils/is-function");
@@ -40242,7 +40206,6 @@ function verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFai
       }
       dispatch({
         type: "ADD_TRANSACTION",
-        hash: txHash,
         transaction: {
           hash: txHash,
           payload: payload,
@@ -40260,7 +40223,6 @@ function verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFai
       }
       dispatch({
         type: "ADD_TRANSACTION",
-        hash: txHash,
         transaction: {
           hash: txHash,
           payload: payload,
@@ -40272,7 +40234,7 @@ function verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFai
           status: "pending"
         }
       });
-      dispatch(updateTx.default(getState().transactions[txHash]));
+      dispatch(updateTx.default(txHash));
       callback(null);
     }
   };
@@ -40280,7 +40242,7 @@ function verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFai
 
 module.exports = verifyTxSubmitted;
 
-},{"../errors/codes":213,"../errors/rpc-error":216,"../transact/update-tx":268,"../utils/is-function":286,"../wrappers/eth":300}],270:[function(require,module,exports){
+},{"../errors/codes":213,"../errors/rpc-error":216,"../transact/update-tx":268,"../utils/is-function":286}],270:[function(require,module,exports){
 "use strict";
 
 var isFunction = require("../utils/is-function");
@@ -40293,7 +40255,6 @@ function waitForNextPoll(tx, callback) {
   return function (dispatch, getState) {
     var storedTransaction = getState().transactions[tx.hash];
     if (storedTransaction.count >= constants.TX_POLL_MAX) {
-      // storedTransaction.status = "unconfirmed";
       dispatch({ type: "TRANSACTION_UNCONFIRMED", hash: tx.hash });
       if (!isFunction(callback)) {
         throw new RPCError(errors.TRANSACTION_NOT_CONFIRMED);
@@ -40315,11 +40276,6 @@ function waitForNextPoll(tx, callback) {
           }
         }, constants.TX_POLL_INTERVAL)
       });
-      // this.notifications[tx.hash] = setTimeout(function () {
-      //   if (storedTransaction.status === "pending" || storedTransaction.status === "mined") {
-      //     callback(null, null);
-      //   }
-      // }, constants.TX_POLL_INTERVAL);
     }
   };
 }
@@ -40373,7 +40329,6 @@ function registerTransactionRelay(relay) {
   return function (dispatch) {
     dispatch({ type: "SET_TRANSACTION_RELAY", relay: relay });
   };
-  // this.txRelay = txRelay;
 }
 
 module.exports = registerTransactionRelay;
@@ -40385,7 +40340,6 @@ function unregisterTransactionRelay() {
   return function (dispatch) {
     dispatch({ type: "CLEAR_TRANSACTION_RELAY" });
   };
-  // this.txRelay = null;
 }
 
 module.exports = unregisterTransactionRelay;

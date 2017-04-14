@@ -11,7 +11,6 @@ var initialState = {
 };
 
 module.exports = function (debug, action) {
-  var debugOptions;
   if (typeof debug === "undefined") {
     return initialState;
   }

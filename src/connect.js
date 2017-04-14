@@ -1,7 +1,6 @@
 "use strict";
 
 var net_version = require("./wrappers/net").version;
-var blockchainMessageHandler = require("./rpc/blockchain-message-handler");
 var Transporter = require("./transport/transporter");
 var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
@@ -28,7 +27,7 @@ var ErrorWithData = require("./errors").ErrorWithData;
  */
 function connect(configuration, initialConnectCallback) {
   return function (dispatch, getState) {
-    var syncOnly, state, debug, storedConfiguration, blockAndLogStreamer, shimMessageHandler;
+    var syncOnly, state, debug, storedConfiguration, shimMessageHandler;
     dispatch(resetState());
     dispatch({ type: "SET_CONFIGURATION", configuration: configuration });
 

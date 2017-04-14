@@ -1,24 +1,23 @@
 "use strict";
 
 var assign = require("lodash.assign");
-var clone = require("clone");
 var isObject = require("../utils/is-object");
 
 var initialState = {};
 
 module.exports = function (transactions, action) {
-  var updatedTransactions;
+  var newTransaction, payload;
   if (typeof transactions === "undefined") {
     return initialState;
   }
   switch (action.type) {
     case "ADD_TRANSACTION":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash] = action.transaction;
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.transaction.hash] = action.transaction;
+      return assign({}, transactions, newTransaction);
     case "UPDATE_TRANSACTION":
-      updatedTransactions = {};
-      updatedTransactions[action.hash] = assign({}, transactions[action.hash], Object.keys(action.data).reduce(function (p, key) {
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], Object.keys(action.data).reduce(function (p, key) {
         if (isObject(action.data[key])) {
           p[key] = assign({}, transactions[action.hash][key] || {}, action.data[key]);
         } else {
@@ -26,60 +25,53 @@ module.exports = function (transactions, action) {
         }
         return p;
       }, {}));
-      return assign({}, transactions, updatedTransactions);
+      return assign({}, transactions, newTransaction);
     case "SET_TRANSACTION_CONFIRMATIONS":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].confirmations = action.currentBlockNumber - updatedTransactions[action.hash].tx.blockNumber;
-      return updatedTransactions;
-    case "UPDATE_TRANSACTION_BLOCK":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].tx.blockNumber = action.blockNumber;
-      updatedTransactions[action.hash].tx.blockHash = action.blockHash;
-      return updatedTransactions;
-    case "UPDATE_TRANSACTION_STATUS":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].status = action.status;
-      return updatedTransactions;
+      if (transactions[action.hash].tx.blockNumber == null) return transactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], {
+        confirmations: action.currentBlockNumber - transactions[action.hash].tx.blockNumber
+      });
+      return assign({}, transactions, newTransaction);
     case "TRANSACTION_FAILED":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].status = "failed";
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "failed" });
+      return assign({}, transactions, newTransaction);
     case "TRANSACTION_MINED":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].status = "mined";
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "mined" });
+      return assign({}, transactions, newTransaction);
     case "TRANSACTION_RESUBMITTED":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].status = "resubmitted";
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "resubmitted" });
+      return assign({}, transactions, newTransaction);
     case "TRANSACTION_CONFIRMED":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].status = "confirmed";
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "confirmed" });
+      return assign({}, transactions, newTransaction);
     case "LOCK_TRANSACTION":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].locked = true;
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { isLocked: true });
+      return assign({}, transactions, newTransaction);
     case "UNLOCK_TRANSACTION":
-      updatedTransactions = clone(transactions);
-      updatedTransactions[action.hash].locked = false;
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { isLocked: false });
+      return assign({}, transactions, newTransaction);
     case "INCREMENT_TRANSACTION_COUNT":
-      updatedTransactions = clone(transactions);
-      if (updatedTransactions[action.hash].count) {
-        updatedTransactions[action.hash].count = 1;
-      } else {
-        updatedTransactions[action.hash].count++;
-      }
-      return updatedTransactions;
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], {
+        count: (transactions[action.hash].count) ? transactions[action.hash].count + 1 : 1
+      });
+      return assign({}, transactions, newTransaction);
     case "INCREMENT_TRANSACTION_PAYLOAD_TRIES":
-      updatedTransactions = clone(transactions);
-      if (!updatedTransactions[action.hash].payload.tries) {
-        updatedTransactions[action.hash].payload.tries = 1;
-      } else {
-        updatedTransactions[action.hash].payload.tries++;
-      }
-      return updatedTransactions;
+      payload = transactions[action.hash].payload || {};
+      newTransaction = {};
+      newTransaction[action.hash] = assign({}, transactions[action.hash], {
+        payload: assign({}, payload, {
+          tries: (payload.tries) ? payload.tries + 1 : 1
+        })
+      });
+      return assign({}, transactions, newTransaction);
     case "REMOVE_TRANSACTION":
       return Object.keys(transactions).reduce(function (p, hash) {
         if (hash === action.hash) {

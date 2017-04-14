@@ -1,9 +1,9 @@
 "use strict";
 
-var ErrorWithData = require("../errors").ErrorWithData;
-var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
 var parseEthereumResponse = require("../decode-response/parse-ethereum-response");
 var isObject = require("../utils/is-object");
+var ErrorWithData = require("../errors").ErrorWithData;
+var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
 
 /**
  * Used internally.  Processes a response from the blockchain by looking up the

@@ -1,6 +1,5 @@
 "use strict";
 
-var eth_getTransactionByHash = require("../wrappers/eth").getTransactionByHash;
 var updateTx = require("../transact/update-tx");
 var RPCError = require("../errors/rpc-error");
 var isFunction = require("../utils/is-function");
@@ -17,7 +16,6 @@ function verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFai
       }
       dispatch({
         type: "ADD_TRANSACTION",
-        hash: txHash,
         transaction: {
           hash: txHash,
           payload: payload,
@@ -35,7 +33,6 @@ function verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFai
       }
       dispatch({
         type: "ADD_TRANSACTION",
-        hash: txHash,
         transaction: {
           hash: txHash,
           payload: payload,
@@ -47,7 +44,7 @@ function verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFai
           status: "pending"
         }
       });
-      dispatch(updateTx.default(getState().transactions[txHash]));
+      dispatch(updateTx.default(txHash));
       callback(null);
     }
   };

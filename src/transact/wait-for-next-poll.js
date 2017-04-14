@@ -10,7 +10,6 @@ function waitForNextPoll(tx, callback) {
   return function (dispatch, getState) {
     var storedTransaction = getState().transactions[tx.hash];
     if (storedTransaction.count >= constants.TX_POLL_MAX) {
-      // storedTransaction.status = "unconfirmed";
       dispatch({ type: "TRANSACTION_UNCONFIRMED", hash: tx.hash });
       if (!isFunction(callback)) {
         throw new RPCError(errors.TRANSACTION_NOT_CONFIRMED);
@@ -32,11 +31,6 @@ function waitForNextPoll(tx, callback) {
           }
         }, constants.TX_POLL_INTERVAL)
       });
-      // this.notifications[tx.hash] = setTimeout(function () {
-      //   if (storedTransaction.status === "pending" || storedTransaction.status === "mined") {
-      //     callback(null, null);
-      //   }
-      // }, constants.TX_POLL_INTERVAL);
     }
   };
 }

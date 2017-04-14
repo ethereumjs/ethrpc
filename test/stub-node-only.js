@@ -63,7 +63,7 @@ describe("tests that only work against stub server", function () {
           });
         });
 
-        // // NOTE: this test is brittle on Linux.  see: https://github.com/nodejs/node/issues/11973
+        // NOTE: this test is brittle on Linux.  see: https://github.com/nodejs/node/issues/11973
         it("starts connected > uses connection > loses connection > uses connection > reconnects > uses connection (brittle)", function (done) {
           this.timeout(6000);
           stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple" });

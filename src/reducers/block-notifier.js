@@ -1,7 +1,5 @@
 "use strict";
 
-var isFunction = require("../utils/is-function");
-
 var initialState = null;
 
 module.exports = function (blockNotifier, action) {
