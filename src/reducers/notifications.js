@@ -1,19 +1,19 @@
 "use strict";
 
-var clone = require("clone");
+var assign = require("lodash.assign");
 
 var initialState = {};
 
 module.exports = function (notifications, action) {
-  var updatedNotifications;
+  var newNotification;
   if (typeof notifications === "undefined") {
     return initialState;
   }
   switch (action.type) {
     case "ADD_NOTIFICATION":
-      updatedNotifications = clone(notifications);
-      updatedNotifications[action.hash] = action.notification;
-      return updatedNotifications;
+      newNotification = {};
+      newNotification[action.hash] = action.notification;
+      return assign({}, notifications, newNotification);
     case "CLEAR_NOTIFICATION":
       return Object.keys(notifications).reduce(function (p, hash) {
         if (hash === action.hash) {
