@@ -2,6 +2,7 @@
 
 var abi = require("augur-abi");
 var BigNumber = require("bignumber.js");
+var eth = require("../wrappers/eth");
 var callOrSendTransaction = require("../transact/call-or-send-transaction");
 var verifyTxSubmitted = require("../transact/verify-tx-submitted");
 var pollForTxConfirmation = require("../transact/poll-for-tx-confirmation");
@@ -56,10 +57,10 @@ function transactSync(payload) {
       }
       return dispatch(transact(payload));
     }
-    tx.timestamp = parseInt(this.getBlock(tx.blockNumber, false).timestamp, 16);
+    tx.timestamp = parseInt(eth.getBlock(tx.blockNumber, false).timestamp, 16);
     if (!payload.mutable) {
       tx.callReturn = callReturn;
-      receipt = this.getTransactionReceipt(txHash);
+      receipt = eth.getTransactionReceipt(txHash);
       if (debug.tx) console.log("got receipt:", receipt);
       if (receipt && receipt.gasUsed) {
         tx.gasFees = abi.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(tx.gasPrice, 16)), "string");

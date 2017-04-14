@@ -1,5 +1,6 @@
 "use strict";
 
+var eth_getTransaction = require("../wrappers/eth").getTransaction;
 var isFunction = require("../utils/is-function");
 
 function txNotify(txHash, callback) {
@@ -7,13 +8,13 @@ function txNotify(txHash, callback) {
     var tx, debug;
     debug = getState().debug;
     if (!isFunction(callback)) {
-      tx = this.getTransaction(txHash);
+      tx = eth_getTransaction(txHash);
       if (tx) return tx;
       dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
       dispatch({ type: "TRANSACTION_RESUBMITTED", hash: txHash });
       return null;
     }
-    this.getTransaction(txHash, function (tx) {
+    eth_getTransaction(txHash, function (tx) {
       if (tx) return callback(null, tx);
       dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
       if (debug.broadcast) console.log(" *** Re-submitting transaction:", txHash);

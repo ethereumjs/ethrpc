@@ -21700,7 +21700,13 @@ module.exports={
 
 },{}],103:[function(require,module,exports){
 (function (Buffer){
-var _typeof20 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof21 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof20 = typeof Symbol === "function" && _typeof21(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof21(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof21(obj);
+};
 
 var _typeof19 = typeof Symbol === "function" && _typeof20(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof20(obj);
@@ -39794,6 +39800,7 @@ module.exports = transactAsync;
 
 var abi = require("augur-abi");
 var BigNumber = require("bignumber.js");
+var eth = require("../wrappers/eth");
 var callOrSendTransaction = require("../transact/call-or-send-transaction");
 var verifyTxSubmitted = require("../transact/verify-tx-submitted");
 var pollForTxConfirmation = require("../transact/poll-for-tx-confirmation");
@@ -39848,10 +39855,10 @@ function transactSync(payload) {
       }
       return dispatch(transact(payload));
     }
-    tx.timestamp = parseInt(this.getBlock(tx.blockNumber, false).timestamp, 16);
+    tx.timestamp = parseInt(eth.getBlock(tx.blockNumber, false).timestamp, 16);
     if (!payload.mutable) {
       tx.callReturn = callReturn;
-      receipt = this.getTransactionReceipt(txHash);
+      receipt = eth.getTransactionReceipt(txHash);
       if (debug.tx) console.log("got receipt:", receipt);
       if (receipt && receipt.gasUsed) {
         tx.gasFees = abi.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(tx.gasPrice, 16)), "string");
@@ -39879,7 +39886,7 @@ function transactSync(payload) {
 
 module.exports = transactSync;
 
-},{"../constants":204,"../decode-response/convert-response-to-returns-type":206,"../decode-response/handle-rpc-error":207,"../errors/codes":213,"../errors/rpc-error":216,"../transact/call-contract-function":254,"../transact/call-or-send-transaction":255,"../transact/get-logged-return-value":259,"../transact/poll-for-tx-confirmation":260,"../transact/transact":264,"../transact/verify-tx-submitted":269,"augur-abi":1,"bignumber.js":60}],264:[function(require,module,exports){
+},{"../constants":204,"../decode-response/convert-response-to-returns-type":206,"../decode-response/handle-rpc-error":207,"../errors/codes":213,"../errors/rpc-error":216,"../transact/call-contract-function":254,"../transact/call-or-send-transaction":255,"../transact/get-logged-return-value":259,"../transact/poll-for-tx-confirmation":260,"../transact/transact":264,"../transact/verify-tx-submitted":269,"../wrappers/eth":300,"augur-abi":1,"bignumber.js":60}],264:[function(require,module,exports){
 /**
  * Send-call-confirm callback sequence
  */
@@ -39935,6 +39942,7 @@ module.exports = transact;
 },{"../errors/codes":213,"../transact/call-contract-function":254,"../transact/transact-async":262,"../transact/transact-sync":263,"../transaction-relay/wrap-transaction-relay-callback":275,"../utils/is-function":286,"../utils/noop":291}],265:[function(require,module,exports){
 "use strict";
 
+var eth_getTransaction = require("../wrappers/eth").getTransaction;
 var isFunction = require("../utils/is-function");
 
 function txNotify(txHash, callback) {
@@ -39942,13 +39950,13 @@ function txNotify(txHash, callback) {
     var tx, debug;
     debug = getState().debug;
     if (!isFunction(callback)) {
-      tx = this.getTransaction(txHash);
+      tx = eth_getTransaction(txHash);
       if (tx) return tx;
       dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
       dispatch({ type: "TRANSACTION_RESUBMITTED", hash: txHash });
       return null;
     }
-    this.getTransaction(txHash, function (tx) {
+    eth_getTransaction(txHash, function (tx) {
       if (tx) return callback(null, tx);
       dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
       if (debug.broadcast) console.log(" *** Re-submitting transaction:", txHash);
@@ -39960,7 +39968,7 @@ function txNotify(txHash, callback) {
 
 module.exports = txNotify;
 
-},{"../utils/is-function":286}],266:[function(require,module,exports){
+},{"../utils/is-function":286,"../wrappers/eth":300}],266:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
