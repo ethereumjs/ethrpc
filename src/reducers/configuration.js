@@ -20,7 +20,6 @@ module.exports = function (configuration, action) {
   }
   switch (action.type) {
     case "SET_CONFIGURATION":
-      // overwrite configuration values with user config, throw away unused user config
       updatedConfiguration = Object.keys(configuration).reduce(function (p, key) {
         p[key] = (action.configuration[key] != null) ? action.configuration[key] : configuration[key];
         return p;
@@ -30,6 +29,7 @@ module.exports = function (configuration, action) {
       if (!isFunction(updatedConfiguration.errorHandler)) {
         updatedConfiguration.errorHandler = function (err) { console.error(err); };
       }
+
       validateConfiguration(updatedConfiguration);
       return updatedConfiguration;
     case "RESET_CONFIGURATION":

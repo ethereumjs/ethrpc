@@ -5,7 +5,6 @@
 var assert = require("chai").assert;
 var clone = require("clone");
 var abi = require("augur-abi");
-var noop = require("../../src/utils/noop");
 var reducer = require("../../src/reducers/network-id");
 
 describe("reducers/network-id", function () {
