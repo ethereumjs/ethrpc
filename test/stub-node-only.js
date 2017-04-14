@@ -49,7 +49,6 @@ describe("tests that only work against stub server", function () {
         });
 
         it("starts connected > uses connection > loses connection > reconnects > uses connection", function (done) {
-          this.timeout(4000);
           stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple" });
           helpers.rpcConnect(transportType, transportAddress, function () {
             rpc.version(function (errorOrVersion) {
@@ -67,7 +66,6 @@ describe("tests that only work against stub server", function () {
 
         // NOTE: this test is brittle on Linux.  see: https://github.com/nodejs/node/issues/11973
         it("starts connected > uses connection > loses connection > uses connection > reconnects > uses connection (brittle)", function (done) {
-          this.timeout(6000);
           stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple" });
           helpers.rpcConnect(transportType, transportAddress, function () {
             rpc.version(function (errorOrVersion) {
@@ -136,8 +134,8 @@ describe("tests that only work against stub server", function () {
 
         it("sha3", function (done) {
           // sha3 is optimized to do the hash locally rather than on the ethereum node, so we don't need any setup
-          assert.strictEqual(rpc.sha3("0x68656c6c6f20776f726c64", true), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
-          assert.strictEqual(rpc.sha3("hello world", false), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
+          assert.strictEqual(rpc.sha3("0x68656c6c6f20776f726c64", "hex"), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
+          assert.strictEqual(rpc.sha3("hello world", "utf8"), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
           done();
         });
       });

@@ -1,13 +1,18 @@
 "use strict";
 
 var abi = require("augur-abi");
-var keccak_256 = require("js-sha3").keccak_256;
+var createKeccakHash = require("keccak/js");
 var isFunction = require("../utils/is-function");
 
-module.exports = function (data, isHex, callback) {
-  var hash;
-  if (isHex) data = abi.decode_hex(data);
-  hash = abi.prefix_hex(keccak_256(data));
+module.exports = function (data, encoding, callback) {
+  var hash, buffer;
+  if (callback === undefined && isFunction(encoding)) {
+    callback = encoding;
+    encoding = null;
+  }
+  if (encoding === "hex") data = abi.strip_0x(data);
+  buffer = Buffer.from(data, encoding);
+  hash = abi.hex(createKeccakHash("keccak256").update(buffer).digest());
   if (!isFunction(callback)) return hash;
   callback(hash);
 };
