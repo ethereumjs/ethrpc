@@ -23,7 +23,7 @@ function resetState() {
     // redirect any not-yet-received responses to /dev/null
     dispatch({
       type: "REDIRECT_SHIM_MESSAGE_HANDLER",
-      redirect: function () { return function (dispatch) {}; }
+      redirect: function () { return dispatch({ type: "DEV_NULL" }); }
     });
 
     // reset state to defaults

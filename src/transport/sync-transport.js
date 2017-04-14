@@ -2,7 +2,6 @@
 
 var AbstractTransport = require("./abstract-transport.js");
 var HttpTransport = require("./http-transport.js");
-
 var syncRequest = require("../platform/sync-request.js");
 
 function SyncTransport(address, timeout, messageHandler, syncConnect, initialConnectCallback) {
