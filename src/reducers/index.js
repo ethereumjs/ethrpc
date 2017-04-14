@@ -17,7 +17,7 @@ var blockNotifierReducer = require("./block-notifier");
 var blockAndLogStreamerReducer = require("./block-and-log-streamer");
 var outstandingRequestsReducer = require("./outstanding-requests");
 var subscriptionsReducer = require("./subscriptions");
-var newBlockIntervalTimeoutIDReducer = require("./new-block-interval-timeout-id");
+var newBlockTimerReducer = require("./new-block-timer");
 var shimMessageHandlerObjectReducer = require("./shim-message-handler-object");
 var shimMessageHandlerReducer = require("./shim-message-handler");
 
@@ -40,7 +40,7 @@ function reducer(state, action) {
     blockAndLogStreamer: blockAndLogStreamerReducer(state.blockAndLogStreamer, action),
     outstandingRequests: outstandingRequestsReducer(state.outstandingRequests, action),
     subscriptions: subscriptionsReducer(state.subscriptions, action),
-    newBlockIntervalTimeoutID: newBlockIntervalTimeoutIDReducer(state.newBlockIntervalTimeoutID, action),
+    newBlockTimer: newBlockTimerReducer(state.newBlockTimer, action),
     shimMessageHandlerObject: shimMessageHandlerObjectReducer(state.shimMessageHandlerObject, action),
     shimMessageHandler: shimMessageHandlerReducer(state.shimMessageHandler, action)
   };

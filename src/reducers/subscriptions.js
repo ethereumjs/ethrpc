@@ -5,18 +5,19 @@ var assign = require("lodash.assign");
 var initialState = {};
 
 module.exports = function (subscriptions, action) {
-  var subscription;
+  var newSubscription, idString;
   if (typeof subscriptions === "undefined") {
     return initialState;
   }
   switch (action.type) {
     case "ADD_SUBSCRIPTION":
-      subscription = {};
-      subscription[action.id] = action.callback;
-      return assign({}, subscriptions, subscription);
+      newSubscription = {};
+      newSubscription[action.id] = action.callback;
+      return assign({}, subscriptions, newSubscription);
     case "REMOVE_SUBSCRIPTION":
+      idString = action.id.toString();
       return Object.keys(subscriptions).reduce(function (p, id) {
-        if (id !== action.id) p[id] = subscriptions[id];
+        if (id !== idString) p[id] = subscriptions[id];
         return p;
       }, {});
     case "REMOVE_ALL_SUBSCRIPTIONS":

@@ -12,6 +12,8 @@ module.exports = function (blockNotifier, action) {
     case "ADD_BLOCK_NOTIFIER_SUBSCRIPTION":
       blockNotifier.subscribe(action.subscription); // FIXME mutates blockNotifier
       return blockNotifier;
+    case "CLEAR_BLOCK_NOTIFIER":
+      return initialState;
     default:
       return blockNotifier;
   }

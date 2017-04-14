@@ -3,8 +3,6 @@
 "use strict";
 
 var assert = require("chai").assert;
-var clone = require("clone");
-var abi = require("augur-abi");
 var reducer = require("../../src/reducers/transactions");
 
 describe("reducers/transactions", function () {

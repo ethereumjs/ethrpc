@@ -12,7 +12,7 @@ function resetState() {
     debug = state.debug;
 
     // stop any pending timers
-    dispatch({ type: "CLEAR_NEW_BLOCK_INTERVAL_TIMEOUT_ID" });
+    dispatch({ type: "CLEAR_NEW_BLOCK_TIMER" });
 
     // reset configuration to defaults
     dispatch({ type: "RESET_CONFIGURATION" });

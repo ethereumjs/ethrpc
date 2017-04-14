@@ -1,6 +1,8 @@
 "use strict";
 
-var initialState = {};
+var noop = require("../utils/noop");
+
+var initialState = noop;
 
 module.exports = function (shimMessageHandler, action) {
   if (typeof shimMessageHandler === "undefined") {
