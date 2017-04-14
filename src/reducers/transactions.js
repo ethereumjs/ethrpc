@@ -74,11 +74,7 @@ module.exports = function (transactions, action) {
       return assign({}, transactions, newTransaction);
     case "REMOVE_TRANSACTION":
       return Object.keys(transactions).reduce(function (p, hash) {
-        if (hash === action.hash) {
-          if (transactions[hash]) clearTimeout(transactions[action.hash]);
-        } else {
-          p[hash] = transactions[hash];
-        }
+        if (hash !== action.hash) p[hash] = transactions[hash];
         return p;
       }, {});
     case "REMOVE_ALL_TRANSACTIONS":

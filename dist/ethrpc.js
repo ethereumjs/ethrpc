@@ -21700,7 +21700,13 @@ module.exports={
 
 },{}],103:[function(require,module,exports){
 (function (Buffer){
-var _typeof21 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof22 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof21 = typeof Symbol === "function" && _typeof22(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof22(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof22(obj);
+};
 
 var _typeof20 = typeof Symbol === "function" && _typeof21(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof21(obj);
@@ -39253,11 +39259,7 @@ module.exports = function (transactions, action) {
       return assign({}, transactions, newTransaction);
     case "REMOVE_TRANSACTION":
       return Object.keys(transactions).reduce(function (p, hash) {
-        if (hash === action.hash) {
-          if (transactions[hash]) clearTimeout(transactions[action.hash]);
-        } else {
-          p[hash] = transactions[hash];
-        }
+        if (hash !== action.hash) p[hash] = transactions[hash];
         return p;
       }, {});
     case "REMOVE_ALL_TRANSACTIONS":
