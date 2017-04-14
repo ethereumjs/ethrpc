@@ -5,7 +5,7 @@ var assign = require("lodash.assign");
 var initialState = {};
 
 module.exports = function (subscriptions, action) {
-  var newSubscription, idString;
+  var newSubscription;
   if (typeof subscriptions === "undefined") {
     return initialState;
   }
@@ -15,9 +15,8 @@ module.exports = function (subscriptions, action) {
       newSubscription[action.id] = action.callback;
       return assign({}, subscriptions, newSubscription);
     case "REMOVE_SUBSCRIPTION":
-      idString = action.id.toString();
       return Object.keys(subscriptions).reduce(function (p, id) {
-        if (id !== idString) p[id] = subscriptions[id];
+        if (id !== action.id) p[id] = subscriptions[id];
         return p;
       }, {});
     case "REMOVE_ALL_SUBSCRIPTIONS":

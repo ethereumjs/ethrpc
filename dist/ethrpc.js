@@ -21700,7 +21700,13 @@ module.exports={
 
 },{}],103:[function(require,module,exports){
 (function (Buffer){
-var _typeof19 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof20 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof19 = typeof Symbol === "function" && _typeof20(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof20(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof20(obj);
+};
 
 var _typeof18 = typeof Symbol === "function" && _typeof19(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof19(obj);
@@ -37322,6 +37328,7 @@ function connect(configuration, initialConnectCallback) {
         if (errorOrResult instanceof Error || errorOrResult.error) {
           return initialConnectCallback(errorOrResult);
         }
+        dispatch({ type: "SET_NETWORK_ID", networkID: errorOrResult });
         dispatch(createBlockAndLogStreamer({
           pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
           blockRetention: storedConfiguration.blockRetention
@@ -38750,6 +38757,8 @@ module.exports = function (blockNotifier, action) {
     case "ADD_BLOCK_NOTIFIER_SUBSCRIPTION":
       blockNotifier.subscribe(action.subscription); // FIXME mutates blockNotifier
       return blockNotifier;
+    case "CLEAR_BLOCK_NOTIFIER":
+      return initialState;
     default:
       return blockNotifier;
   }
@@ -38778,7 +38787,6 @@ module.exports = function (configuration, action) {
   }
   switch (action.type) {
     case "SET_CONFIGURATION":
-      // overwrite configuration values with user config, throw away unused user config
       updatedConfiguration = Object.keys(configuration).reduce(function (p, key) {
         p[key] = (action.configuration[key] != null) ? action.configuration[key] : configuration[key];
         return p;
@@ -38788,6 +38796,7 @@ module.exports = function (configuration, action) {
       if (!isFunction(updatedConfiguration.errorHandler)) {
         updatedConfiguration.errorHandler = function (err) { console.error(err); };
       }
+
       validateConfiguration(updatedConfiguration);
       return updatedConfiguration;
     case "RESET_CONFIGURATION":
@@ -38811,7 +38820,7 @@ module.exports = function (currentBlock, action) {
   switch (action.type) {
     case "SET_CURRENT_BLOCK":
       return clone(action.block);
-    case "REMOVE_CURRENT_BLOCK":
+    case "CLEAR_CURRENT_BLOCK":
       return initialState;
     default:
       return currentBlock;
@@ -38907,7 +38916,7 @@ var blockNotifierReducer = require("./block-notifier");
 var blockAndLogStreamerReducer = require("./block-and-log-streamer");
 var outstandingRequestsReducer = require("./outstanding-requests");
 var subscriptionsReducer = require("./subscriptions");
-var newBlockIntervalTimeoutIDReducer = require("./new-block-interval-timeout-id");
+var newBlockTimerReducer = require("./new-block-timer");
 var shimMessageHandlerObjectReducer = require("./shim-message-handler-object");
 var shimMessageHandlerReducer = require("./shim-message-handler");
 
@@ -38930,7 +38939,7 @@ function reducer(state, action) {
     blockAndLogStreamer: blockAndLogStreamerReducer(state.blockAndLogStreamer, action),
     outstandingRequests: outstandingRequestsReducer(state.outstandingRequests, action),
     subscriptions: subscriptionsReducer(state.subscriptions, action),
-    newBlockIntervalTimeoutID: newBlockIntervalTimeoutIDReducer(state.newBlockIntervalTimeoutID, action),
+    newBlockTimer: newBlockTimerReducer(state.newBlockTimer, action),
     shimMessageHandlerObject: shimMessageHandlerObjectReducer(state.shimMessageHandlerObject, action),
     shimMessageHandler: shimMessageHandlerReducer(state.shimMessageHandler, action)
   };
@@ -38943,7 +38952,7 @@ module.exports = function (state, action) {
   return reducer(state || {}, action);
 };
 
-},{"./block-and-log-streamer":231,"./block-notifier":232,"./configuration":233,"./current-block":234,"./debug":235,"./gas-price":236,"./highest-nonce":237,"./network-id":239,"./new-block-interval-timeout-id":240,"./no-relay":241,"./notifications":242,"./outstanding-requests":243,"./shim-message-handler":245,"./shim-message-handler-object":244,"./subscriptions":246,"./transaction-relay":247,"./transactions":248,"./transporter":249}],239:[function(require,module,exports){
+},{"./block-and-log-streamer":231,"./block-notifier":232,"./configuration":233,"./current-block":234,"./debug":235,"./gas-price":236,"./highest-nonce":237,"./network-id":239,"./new-block-timer":240,"./no-relay":241,"./notifications":242,"./outstanding-requests":243,"./shim-message-handler":245,"./shim-message-handler-object":244,"./subscriptions":246,"./transaction-relay":247,"./transactions":248,"./transporter":249}],239:[function(require,module,exports){
 "use strict";
 
 var initialState = null;
@@ -38967,42 +38976,42 @@ module.exports = function (networkID, action) {
 
 var initialState = null;
 
-module.exports = function (newBlockIntervalTimeoutID, action) {
-  if (typeof newBlockIntervalTimeoutID === "undefined") {
+module.exports = function (newBlockTimer, action) {
+  if (typeof newBlockTimer === "undefined") {
     return initialState;
   }
   switch (action.type) {
-    case "SET_NEW_BLOCK_INTERVAL_TIMEOUT_ID":
-      return action.id;
-    case "CLEAR_NEW_BLOCK_INTERVAL_TIMEOUT_ID":
-      if (newBlockIntervalTimeoutID) clearInterval(newBlockIntervalTimeoutID);
-      return initialState;
+    case "SET_NEW_BLOCK_TIMER":
+      return action.timer;
+    case "CLEAR_NEW_BLOCK_TIMER":
+      if (newBlockTimer) clearInterval(newBlockTimer); // mutation >:o
+      return newBlockTimer;
     default:
-      return newBlockIntervalTimeoutID;
+      return newBlockTimer;
   }
 };
 
 },{}],241:[function(require,module,exports){
 "use strict";
 
-var clone = require("clone");
+var assign = require("lodash.assign");
 
 var initialState = {};
 
 module.exports = function (noRelay, action) {
-  var updatedNoRelay;
+  var newNoRelay;
   if (typeof noRelay === "undefined") {
     return initialState;
   }
   switch (action.type) {
     case "EXCLUDE_METHOD_FROM_TRANSACTION_RELAY":
-      updatedNoRelay = clone(noRelay);
-      updatedNoRelay[action.method] = true;
-      return updatedNoRelay;
+      newNoRelay = {};
+      newNoRelay[action.method] = true;
+      return assign({}, noRelay, newNoRelay);
     case "INCLUDE_METHOD_IN_TRANSACTION_RELAY":
-      updatedNoRelay = clone(noRelay);
-      updatedNoRelay[action.method] = false;
-      return updatedNoRelay;
+      newNoRelay = {};
+      newNoRelay[action.method] = false;
+      return assign({}, noRelay, newNoRelay);
     case "CLEAR_NO_RELAY":
       return initialState;
     default:
@@ -39010,23 +39019,23 @@ module.exports = function (noRelay, action) {
   }
 };
 
-},{"clone":70}],242:[function(require,module,exports){
+},{"lodash.assign":126}],242:[function(require,module,exports){
 "use strict";
 
-var clone = require("clone");
+var assign = require("lodash.assign");
 
 var initialState = {};
 
 module.exports = function (notifications, action) {
-  var updatedNotifications;
+  var newNotification;
   if (typeof notifications === "undefined") {
     return initialState;
   }
   switch (action.type) {
     case "ADD_NOTIFICATION":
-      updatedNotifications = clone(notifications);
-      updatedNotifications[action.hash] = action.notification;
-      return updatedNotifications;
+      newNotification = {};
+      newNotification[action.hash] = action.notification;
+      return assign({}, notifications, newNotification);
     case "CLEAR_NOTIFICATION":
       return Object.keys(notifications).reduce(function (p, hash) {
         if (hash === action.hash) {
@@ -39046,7 +39055,7 @@ module.exports = function (notifications, action) {
   }
 };
 
-},{"clone":70}],243:[function(require,module,exports){
+},{"lodash.assign":126}],243:[function(require,module,exports){
 "use strict";
 
 var assign = require("lodash.assign");
@@ -39097,7 +39106,9 @@ module.exports = function (shimMessageHandlerObject, action) {
 },{"../rpc/blockchain-message-handler":251}],245:[function(require,module,exports){
 "use strict";
 
-var initialState = {};
+var noop = require("../utils/noop");
+
+var initialState = noop;
 
 module.exports = function (shimMessageHandler, action) {
   if (typeof shimMessageHandler === "undefined") {
@@ -39111,7 +39122,7 @@ module.exports = function (shimMessageHandler, action) {
   }
 };
 
-},{}],246:[function(require,module,exports){
+},{"../utils/noop":291}],246:[function(require,module,exports){
 "use strict";
 
 var assign = require("lodash.assign");
@@ -39119,15 +39130,15 @@ var assign = require("lodash.assign");
 var initialState = {};
 
 module.exports = function (subscriptions, action) {
-  var subscription;
+  var newSubscription;
   if (typeof subscriptions === "undefined") {
     return initialState;
   }
   switch (action.type) {
     case "ADD_SUBSCRIPTION":
-      subscription = {};
-      subscription[action.id] = action.callback;
-      return assign({}, subscriptions, subscription);
+      newSubscription = {};
+      newSubscription[action.id] = action.callback;
+      return assign({}, subscriptions, newSubscription);
     case "REMOVE_SUBSCRIPTION":
       return Object.keys(subscriptions).reduce(function (p, id) {
         if (id !== action.id) p[id] = subscriptions[id];
@@ -39284,7 +39295,7 @@ function resetState() {
     debug = state.debug;
 
     // stop any pending timers
-    dispatch({ type: "CLEAR_NEW_BLOCK_INTERVAL_TIMEOUT_ID" });
+    dispatch({ type: "CLEAR_NEW_BLOCK_TIMER" });
 
     // reset configuration to defaults
     dispatch({ type: "RESET_CONFIGURATION" });

@@ -19,56 +19,56 @@ describe("reducers/subscriptions", function () {
       state: {},
       action: {
         type: "ADD_SUBSCRIPTION",
-        id: 1,
+        id: "0x0000000000000",
         callback: noop
       },
       assertions: function (state) {
-        assert.deepEqual(state, { "1": noop });
+        assert.deepEqual(state, { "0x0000000000000": noop });
       }
     });
     test({
       description: "Add a new subscription, initial state non-empty",
-      state: { "1": noop },
+      state: { "0x0000000000000": noop },
       action: {
         type: "ADD_SUBSCRIPTION",
-        id: 2,
+        id: "0x00000000000001",
         callback: op
       },
       assertions: function (state) {
-        assert.deepEqual(state, { "1": noop, "2": op });
+        assert.deepEqual(state, { "0x0000000000000": noop, "0x00000000000001": op });
       }
     });
     test({
       description: "Overwrite an existing subscription",
-      state: { "1": noop },
+      state: { "0x0000000000000": noop },
       action: {
         type: "ADD_SUBSCRIPTION",
-        id: 1,
+        id: "0x0000000000000",
         callback: op
       },
       assertions: function (state) {
-        assert.deepEqual(state, { "1": op });
+        assert.deepEqual(state, { "0x0000000000000": op });
       }
     });
   });
   describe("REMOVE_SUBSCRIPTION", function () {
     test({
       description: "Remove a subscription",
-      state: { "1": noop, "2": op },
+      state: { "0x0000000000000": noop, "0x00000000000001": op },
       action: {
         type: "REMOVE_SUBSCRIPTION",
-        id: 1
+        id: "0x0000000000000"
       },
       assertions: function (state) {
-        assert.deepEqual(state, { "2": op });
+        assert.deepEqual(state, { "0x00000000000001": op });
       }
     });
     test({
       description: "Remove the last subscription",
-      state: { "1": noop },
+      state: { "0x0000000000000": noop },
       action: {
         type: "REMOVE_SUBSCRIPTION",
-        id: 1
+        id: "0x0000000000000"
       },
       assertions: function (state) {
         assert.deepEqual(state, {});
@@ -79,8 +79,8 @@ describe("reducers/subscriptions", function () {
     test({
       description: "Remove all subscriptions (reset state)",
       state: {
-        "1": noop,
-        "2": op
+        "0x0000000000000": noop,
+        "0x00000000000001": op
       },
       action: {
         type: "REMOVE_ALL_SUBSCRIPTIONS"
