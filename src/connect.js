@@ -57,6 +57,7 @@ function connect(configuration, initialConnectCallback) {
         if (errorOrResult instanceof Error || errorOrResult.error) {
           return initialConnectCallback(errorOrResult);
         }
+        dispatch({ type: "SET_NETWORK_ID", networkID: errorOrResult });
         dispatch(createBlockAndLogStreamer({
           pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
           blockRetention: storedConfiguration.blockRetention
