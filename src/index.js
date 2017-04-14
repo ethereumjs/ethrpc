@@ -75,8 +75,8 @@ module.exports = {
   clear: function () { return store.dispatch(clearTransactions()); },
   resetState: function () { return store.dispatch(resetState()); },
 
-  registerTransactionRelay: function () { return store.dispatch(registerTransactionRelay()); },
-  unregisterTransactionRelay: function () { return store.dispatch(unregisterTransactionRelay()); },
+  registerTransactionRelay: function (relayer) { return store.dispatch(registerTransactionRelay(relayer)); },
+  unregisterTransactionRelay: function (relayer) { return store.dispatch(unregisterTransactionRelay(relayer)); },
   excludeFromTransactionRelay: function (method) { return store.dispatch(excludeFromTransactionRelay(method)); },
   includeInTransactionRelay: function (method) { return store.dispatch(includeInTransactionRelay(method)); },
 
