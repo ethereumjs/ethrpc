@@ -19,10 +19,10 @@ describe("utils/is-hex", function () {
     }
   });
   test({
-    description: "deadbee -> false",
+    description: "deadbee -> true",
     s: "deadbee",
     assertions: function (isHex) {
-      assert.isFalse(isHex);
+      assert.isTrue(isHex);
     }
   });
   test({
@@ -47,10 +47,10 @@ describe("utils/is-hex", function () {
     }
   });
   test({
-    description: "0xdEaDbEeF -> false",
+    description: "0xdEaDbEeF -> true",
     s: "0xdEaDbEeF",
     assertions: function (isHex) {
-      assert.isFalse(isHex);
+      assert.isTrue(isHex);
     }
   });
   test({

@@ -1,6 +1,7 @@
 "use strict";
 
 var net_version = require("./wrappers/net").version;
+var getGasPrice = require("./wrappers/get-gas-price");
 var Transporter = require("./transport/transporter");
 var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
@@ -63,6 +64,7 @@ function connect(configuration, initialConnectCallback) {
           blockRetention: storedConfiguration.blockRetention
         }, dispatch(createTransportAdapter())));
         getState().blockAndLogStreamer.subscribeToOnBlockAdded(function (block) { dispatch(onNewBlock(block)); });
+        dispatch(getGasPrice());
         initialConnectCallback(null);
       }));
     });
