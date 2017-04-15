@@ -1036,7 +1036,7 @@ describe("tests that only work against stub server", function () {
               && jso.params.length === 0;
           });
           server.addResponder(function (jso) { if (jso.method === "shh_newIdentity") return expectedResult; });
-          rpc.shh("newIdentity", [], function (resultOrError) {
+          rpc.shh.newIdentity(function (resultOrError) {
             assert.deepEqual(resultOrError, expectedResult);
             server.assertExpectations();
             done();
@@ -1078,7 +1078,7 @@ describe("tests that only work against stub server", function () {
           clearInterval(interval);
         });
 
-        it("fire no parameters", function (done) {
+        it("callContractFunction no parameters", function (done) {
           var expectedObject = {}
           var payload = {
             method: "getBranches",
@@ -1115,7 +1115,7 @@ describe("tests that only work against stub server", function () {
               return "0x" + ethereumjsAbi.rawEncode(['uint256[]'], [[1, 100, 100000]]).toString('hex');
             }
           });
-          rpc.fire(payload, callback, wrapper, expectedObject);
+          rpc.callContractFunction(payload, callback, wrapper, expectedObject);
         });
 
         it("transact pool not accepting", function (done) {
@@ -1153,36 +1153,36 @@ describe("tests that only work against stub server", function () {
           });
         });
 
-        it("unlocked (locked)", function (done) {
+        it("isUnlocked (locked)", function (done) {
           server.addResponder(function (jso) {
             if (jso.method === "eth_sign") {
               return new ErrorWithCode("account is locked", -32000);
             }
           });
-          rpc.unlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
+          rpc.isUnlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
             assert.strictEqual(resultOrError, false);
             done();
           });
         });
 
-        it("unlocked (unlocked)", function (done) {
+        it("isUnlocked (unlocked)", function (done) {
           server.addResponder(function (jso) {
             if (jso.method === "eth_sign") {
               return "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b";
             }
           });
-          rpc.unlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
+          rpc.isUnlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
             assert.strictEqual(resultOrError, true);
             done();
           });
         });
 
-        it("fastforward", function (done) {
+        it("waitForNextBlocks", function (done) {
           constants.BLOCK_POLL_INTERVAL = 1;
           var currentBlock = 5;
           server.addExpectations(3, function (jso) { return jso.method === "eth_blockNumber"; });
           server.addResponder(function (jso) { if (jso.method === "eth_blockNumber") return "0x" + (currentBlock++).toString(16); });
-          rpc.fastforward(2, null, function (resultOrError) {
+          rpc.waitForNextBlocks(2, null, function (resultOrError) {
             assert.strictEqual(resultOrError, 7);
             server.assertExpectations();
             constants.BLOCK_POLL_INTERVAL = 30000;
@@ -1190,7 +1190,7 @@ describe("tests that only work against stub server", function () {
           });
         });
 
-        it("invoke", function (done) {
+        it("callOrSendTransaction", function (done) {
           var expectedResults = "0x" + ethereumjsAbi.rawEncode(['uint256[]'], [[1, 100, 100000]]).toString('hex');
           var payload = {
             method: "getBranches",
@@ -1201,7 +1201,7 @@ describe("tests that only work against stub server", function () {
             params: [],
           };
           server.addResponder(function (jso) { if (jso.method === "eth_call") return expectedResults; });
-          rpc.invoke(payload, function (resultOrError) {
+          rpc.callOrSendTransaction(payload, function (resultOrError) {
             assert.strictEqual(resultOrError, expectedResults);
             done();
           });

@@ -32,9 +32,17 @@ var includeInTransactionRelay = require("./transaction-relay/include-in-transact
 
 var sendEther = require("./wrappers/send-ether");
 var publish = require("./wrappers/publish");
+var bindDispatch = require("./wrappers/bind-dispatch");
 
 var raw = require("./wrappers/raw");
-var wrappers = require("./wrappers");
+var eth = require("./wrappers/eth");
+var net_ = require("./wrappers/net");
+var web3 = require("./wrappers/web3");
+var personal = require("./wrappers/personal");
+var shh = require("./wrappers/shh");
+var txpool = require("./wrappers/txpool");
+var miner = require("./wrappers/miner");
+
 var isUnlocked = require("./wrappers/is-unlocked");
 var resendTransaction = require("./wrappers/resend-transaction");
 var resendRawTransaction = require("./wrappers/resend-raw-transaction");
@@ -49,6 +57,7 @@ var clearTransactions = require("./clear-transactions");
 var resetState = require("./reset-state");
 var connect = require("./connect");
 var store = require("./store");
+var dispatch = store.dispatch;
 
 BigNumber.config({
   MODULO_MODE: BigNumber.EUCLID,
@@ -66,168 +75,113 @@ module.exports = {
   packageRawTransaction: packageRawTransaction,
   packageRequest: packageRequest,
 
-  setDebugOptions: function (debugOptions) { return store.dispatch(setDebugOptions(debugOptions)); },
+  setDebugOptions: function (debugOptions) { return dispatch(setDebugOptions(debugOptions)); },
 
-  connect: function (configuration, initialConnectCallback) {
-    return store.dispatch(connect(configuration, initialConnectCallback));
-  },
-  getBlockAndLogStreamer: function () { return store.dispatch(getBlockAndLogStreamer()); },
-  clear: function () { return store.dispatch(clearTransactions()); },
-  resetState: function () { return store.dispatch(resetState()); },
+  connect: function (configuration, initialConnectCallback) { return dispatch(connect(configuration, initialConnectCallback)); },
+  getBlockAndLogStreamer: function () { return dispatch(getBlockAndLogStreamer()); },
+  clear: function () { return dispatch(clearTransactions()); },
+  resetState: function () { return dispatch(resetState()); },
 
-  registerTransactionRelay: function (relayer) { return store.dispatch(registerTransactionRelay(relayer)); },
-  unregisterTransactionRelay: function (relayer) { return store.dispatch(unregisterTransactionRelay(relayer)); },
-  excludeFromTransactionRelay: function (method) { return store.dispatch(excludeFromTransactionRelay(method)); },
-  includeInTransactionRelay: function (method) { return store.dispatch(includeInTransactionRelay(method)); },
+  registerTransactionRelay: function (relayer) { return dispatch(registerTransactionRelay(relayer)); },
+  unregisterTransactionRelay: function (relayer) { return dispatch(unregisterTransactionRelay(relayer)); },
+  excludeFromTransactionRelay: function (method) { return dispatch(excludeFromTransactionRelay(method)); },
+  includeInTransactionRelay: function (method) { return dispatch(includeInTransactionRelay(method)); },
 
   /******************************
    * Ethereum JSON-RPC bindings *
    ******************************/
 
-  raw: function (cmd, params, callback) { return store.dispatch(raw(cmd, params, callback)); },
-  eth: function (cmd, params, callback) { return store.dispatch(raw("eth_" + cmd, params, callback)); },
-  net: function (cmd, params, callback) { return store.dispatch(raw("net_" + cmd, params, callback)); },
-  web3: function (cmd, params, callback) { return store.dispatch(raw("web3_" + cmd, params, callback)); },
-  txpool: function (cmd, params, callback) { return store.dispatch(raw("txpool_" + cmd, params, callback)); },
-  shh: function (cmd, params, callback) { return store.dispatch(raw("shh_" + cmd, params, callback)); },
-  miner: function (cmd, params, callback) { return store.dispatch(raw("miner_" + cmd, params, callback)); },
-  admin: function (cmd, params, callback) { return store.dispatch(raw("admin_" + cmd, params, callback)); },
-  personal: function (cmd, params, callback) { return store.dispatch(raw("personal_" + cmd, params, callback)); },
+  raw: function (cmd, params, callback) { return dispatch(raw(cmd, params, callback)); },
+
+  eth: bindDispatch(dispatch, eth),
+  net: bindDispatch(dispatch, net_),
+  web3: bindDispatch(dispatch, web3),
+  txpool: bindDispatch(dispatch, txpool),
+  shh: bindDispatch(dispatch, shh),
+  miner: bindDispatch(dispatch, miner),
+  personal: bindDispatch(dispatch, personal),
 
   // web3_
   sha3: sha3,
-  clientVersion: function (callback) { return store.dispatch(wrappers.web3.clientVersion(null, callback)); },
+  clientVersion: function (callback) { return dispatch(web3.clientVersion(null, callback)); },
 
   // net_
-  listening: function (callback) { return store.dispatch(wrappers.net.listening(null, callback)); },
-  peerCount: function (callback) { return store.dispatch(wrappers.net.peerCount(null, callback)); },
-  version: function (callback) { return store.dispatch(wrappers.net.version(null, callback)); },
+  listening: function (callback) { return dispatch(net_.listening(null, callback)); },
+  peerCount: function (callback) { return dispatch(net_.peerCount(null, callback)); },
+  version: function (callback) { return dispatch(net_.version(null, callback)); },
   netVersion: function (callback) { return this.version(callback); },
 
   // eth_
-  accounts: function (callback) { return store.dispatch(wrappers.eth.accounts(null, callback)); },
-  blockNumber: function (callback) { return store.dispatch(wrappers.eth.blockNumber(null, callback)); },
+  accounts: function (callback) { return dispatch(eth.accounts(null, callback)); },
+  blockNumber: function (callback) { return dispatch(eth.blockNumber(null, callback)); },
   call: function (transaction, blockNumber, callback) {
     if (isFunction(blockNumber)) {
       callback = blockNumber;
       blockNumber = null;
     }
-    return store.dispatch(wrappers.eth.call([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
+    return dispatch(eth.call([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
-  coinbase: function (callback) { return store.dispatch(wrappers.eth.coinbase(null, callback)); },
-  // compileLLL, compileSerpent, and compileSolidity intentionally left out
+  coinbase: function (callback) { return dispatch(eth.coinbase(null, callback)); },
+  // note: compileLLL, compileSerpent, and compileSolidity intentionally left out
   estimateGas: function (transaction, blockNumber, callback) {
     if (isFunction(blockNumber)) {
       callback = blockNumber;
       blockNumber = null;
     }
-    return store.dispatch(wrappers.eth.estimateGas([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
+    return dispatch(eth.estimateGas([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
-  gasPrice: function (callback) { return store.dispatch(wrappers.eth.gasPrice(null, callback)); },
+  gasPrice: function (callback) { return dispatch(eth.gasPrice(null, callback)); },
   getGasPrice: function (callback) { return this.gasPrice(callback); },
   getBalance: function (address, blockNumber, callback) {
     if (isFunction(blockNumber)) {
       callback = blockNumber;
       blockNumber = null;
     }
-    return store.dispatch(wrappers.eth.getBalance([address, validateAndDefaultBlockNumber(blockNumber)], callback));
+    return dispatch(eth.getBalance([address, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
   balance: function (address, blockNumber, callback) {
     return this.getBalance(address, blockNumber, callback);
   },
   getBlockByHash: function (hash, shouldReturnFullTransactions, callback) {
     if (shouldReturnFullTransactions === undefined) shouldReturnFullTransactions = true;
-    return store.dispatch(wrappers.eth.getBlockByHash([hash, Boolean(shouldReturnFullTransactions)], callback));
+    return dispatch(eth.getBlockByHash([hash, Boolean(shouldReturnFullTransactions)], callback));
   },
   getBlockByNumber: function (number, shouldReturnFullTransactions, callback) {
     if (shouldReturnFullTransactions !== true) shouldReturnFullTransactions = false;
-    return store.dispatch(wrappers.eth.getBlockByNumber([validateAndDefaultBlockNumber(number), Boolean(shouldReturnFullTransactions)], callback));
+    return dispatch(eth.getBlockByNumber([validateAndDefaultBlockNumber(number), Boolean(shouldReturnFullTransactions)], callback));
   },
-  getBlock: function (number, shouldReturnFullTransactions, callback) {
-    return this.getBlockByNumber(number, shouldReturnFullTransactions, callback);
-  },
-  getCode: function (address, blockNumber, callback) {
-    return store.dispatch(wrappers.eth.getCode([address, validateAndDefaultBlockNumber(blockNumber)], callback));
-  },
-  // TODO remove
-  read: function (address, blockNumber, callback) {
-    return this.getCode(address, blockNumber, callback);
-  },
-  getFilterChanges: function (filter, callback) {
-    return store.dispatch(wrappers.eth.getFilterChanges([filter], callback));
-  },
-  getFilterLogs: function (filter, callback) {
-    return store.dispatch(wrappers.eth.getFilterLogs(filter, callback));
-  },
-  getLogs: function (filter, callback) {
-    return store.dispatch(wrappers.eth.getLogs(filter, callback));
-  },
+  getBlock: function (number, shouldReturnFullTransactions, callback) { return this.getBlockByNumber(number, shouldReturnFullTransactions, callback); },
+  getCode: function (address, blockNumber, callback) { return dispatch(eth.getCode([address, validateAndDefaultBlockNumber(blockNumber)], callback)); },
+  getFilterChanges: function (filter, callback) { return dispatch(eth.getFilterChanges([filter], callback)); },
+  getFilterLogs: function (filter, callback) { return dispatch(eth.getFilterLogs(filter, callback)); },
+  getLogs: function (filter, callback) { return dispatch(eth.getLogs(filter, callback)); },
   // TODO: add map lookup support (at the moment, this function doesn't support
   // map lookups due to rounding errors after 51-bits for JS numbers)
-  getStorageAt: function (address, position, blockNumber, callback) {
-    return store.dispatch(wrappers.eth.getStorageAt([address, position, validateAndDefaultBlockNumber(blockNumber)], callback));
-  },
-  getTransactionByHash: function (transactionHash, callback) {
-    return store.dispatch(wrappers.eth.getTransactionByHash([transactionHash], callback));
-  },
-  getTransaction: function (transactionHash, callback) {
-    return this.getTransactionByHash(transactionHash, callback);
-  },
-  getTx: function (transactionHash, callback) {
-    return this.getTransactionByHash(transactionHash, callback);
-  },
-  getTransactionCount: function (address, callback) {
-    return store.dispatch(wrappers.eth.getTransactionCount([address, "latest"], callback));
-  },
-  // TODO remove
-  txCount: function (address, callback) {
-    return this.getTransactionCount(address, callback);
-  },
-  getPendingTransactionCount: function (address, callback) {
-    return store.dispatch(wrappers.eth.getTransactionCount([address, "pending"], callback));
-  },
-  // TODO remove
-  pendingTxCount: function (address, callback) {
-    return this.getPendingTransactionCount(address, callback);
-  },
-  getTransactionReceipt: function (transactionHash, callback) {
-    return store.dispatch(wrappers.eth.getTransactionReceipt(transactionHash, callback));
-  },
-  // TODO remove
-  receipt: function (transactionHash, callback) {
-    return this.getTransactionReceipt(transactionHash, callback);
-  },
-  getUncleByBlockHashAndIndex: function (blockHash, index, callback) {
-    return store.dispatch(wrappers.eth.getUncleByBlockHashAndIndex([blockHash, index], callback));
-  },
-  getUncleByBlockNumberAndIndex: function (blockNumber, index, callback) {
-    return store.dispatch(wrappers.eth.getUncleByBlockNumberAndIndex([validateAndDefaultBlockNumber(blockNumber), index], callback));
-  },
-  getUncle: function (blockNumber, index, callback) {
-    return this.getUncleByBlockNumberAndIndex(blockNumber, index, callback);
-  },
-  getUncleCountByBlockHash: function (blockHash, callback) {
-    return store.dispatch(wrappers.eth.getUncleCountByBlockHash([blockHash], callback));
-  },
-  getUncleCountByBlockNumber: function (blockNumber, callback) {
-    return store.dispatch(wrappers.eth.getUncleCountByBlockNumber([validateAndDefaultBlockNumber(blockNumber)], callback));
-  },
-  getUncleCount: function (blockNumber, callback) {
-    return this.getUncleCountByBlockNumber(blockNumber, callback);
-  },
-  hashrate: function (callback) { return store.dispatch(wrappers.eth.hashrate(null, callback)); },
-  mining: function (callback) { return store.dispatch(wrappers.eth.mining(null, callback)); },
-  newBlockFilter: function (callback) { return store.dispatch(wrappers.eth.newBlockFilter(null, callback)); },
+  getStorageAt: function (address, position, blockNumber, callback) { return dispatch(eth.getStorageAt([address, position, validateAndDefaultBlockNumber(blockNumber)], callback)); },
+  getTransactionByHash: function (transactionHash, callback) { return dispatch(eth.getTransactionByHash([transactionHash], callback)); },
+  getTransaction: function (transactionHash, callback) { return this.getTransactionByHash(transactionHash, callback); },
+  getTransactionCount: function (address, callback) { return dispatch(eth.getTransactionCount([address, "latest"], callback)); },
+  getPendingTransactionCount: function (address, callback) { return dispatch(eth.getTransactionCount([address, "pending"], callback)); },
+  getTransactionReceipt: function (transactionHash, callback) { return dispatch(eth.getTransactionReceipt(transactionHash, callback)); },
+  getUncleByBlockHashAndIndex: function (blockHash, index, callback) { return dispatch(eth.getUncleByBlockHashAndIndex([blockHash, index], callback)); },
+  getUncleByBlockNumberAndIndex: function (blockNumber, index, callback) { return dispatch(eth.getUncleByBlockNumberAndIndex([validateAndDefaultBlockNumber(blockNumber), index], callback)); },
+  getUncle: function (blockNumber, index, callback) { return this.getUncleByBlockNumberAndIndex(blockNumber, index, callback); },
+  getUncleCountByBlockHash: function (blockHash, callback) { return dispatch(eth.getUncleCountByBlockHash([blockHash], callback)); },
+  getUncleCountByBlockNumber: function (blockNumber, callback) { return dispatch(eth.getUncleCountByBlockNumber([validateAndDefaultBlockNumber(blockNumber)], callback)); },
+  getUncleCount: function (blockNumber, callback) { return this.getUncleCountByBlockNumber(blockNumber, callback); },
+  hashrate: function (callback) { return dispatch(eth.hashrate(null, callback)); },
+  mining: function (callback) { return dispatch(eth.mining(null, callback)); },
+  newBlockFilter: function (callback) { return dispatch(eth.newBlockFilter(null, callback)); },
   /**
    * @param {{fromBlock:number|string, toBlock:number|string, address:string, topics:string[], limit:number}} filterOptions
    */
   newFilter: function (filterOptions, callback) {
     filterOptions.fromBlock = validateAndDefaultBlockNumber(filterOptions.fromBlock);
     filterOptions.toBlock = validateAndDefaultBlockNumber(filterOptions.toBlock);
-    return store.dispatch(wrappers.eth.newFilter(filterOptions, callback));
+    return dispatch(eth.newFilter(filterOptions, callback));
   },
-  newPendingTransactionFilter: function (callback) { return store.dispatch(wrappers.eth.newPendingTransactionFilter(null, callback)); },
-  protocolVersion: function (callback) { return store.dispatch(wrappers.eth.protocolVersion(null, callback)); },
+  newPendingTransactionFilter: function (callback) { return dispatch(eth.newPendingTransactionFilter(null, callback)); },
+  protocolVersion: function (callback) { return dispatch(eth.protocolVersion(null, callback)); },
   /**
    * @param {string} signedTransaction - RLP encoded transaction signed with private key
    */
@@ -239,79 +193,47 @@ module.exports = {
     if (!/^0x[0-9a-fA-F]*$/.test(signedTransaction)) {
       throw new Error("signedTransaction must be RLP encoded hex byte array encoded into a string");
     }
-    return store.dispatch(wrappers.eth.sendRawTransaction([signedTransaction], callback));
+    return dispatch(eth.sendRawTransaction([signedTransaction], callback));
   },
   /**
    * @param {{from:string, to:string, gas:number, gasPrice:number, value:number, data:string, nonce:number}} transaction
    */
   sendTransaction: function (transaction, callback) {
     validateTransaction(transaction);
-    return store.dispatch(wrappers.eth.sendTransaction([transaction], callback));
+    return dispatch(eth.sendTransaction([transaction], callback));
   },
-  sign: function (address, data, callback) {
-    return store.dispatch(wrappers.eth.sign([address, data], callback));
-  },
+  sign: function (address, data, callback) { return dispatch(eth.sign([address, data], callback)); },
   signTransaction: function (transaction, callback) {
     validateTransaction(transaction);
-    return store.dispatch(wrappers.eth.signTransaction([transaction], callback));
+    return dispatch(eth.signTransaction([transaction], callback));
   },
   subscribe: function (label, options, callback) {
     if (options === undefined) options = {};
     if (options === null) options = {};
     if (typeof options !== "object") throw new Error("options must be an object");
-    return store.dispatch(wrappers.eth.subscribe([label, options], callback));
+    return dispatch(eth.subscribe([label, options], callback));
   },
-  subscribeLogs: function (options, callback) {
-    return this.subscribe("logs", options, callback);
-  },
-  subscribeNewHeads: function (callback) {
-    return this.subscribe("newHeads", null, callback);
-  },
-  subscribeNewPendingTransactions: function (callback) {
-    return this.subscribe("newPendingTransactions", null, callback);
-  },
-  syncing: function (callback) { return store.dispatch(wrappers.eth.syncing(null, callback)); },
-  uninstallFilter: function (filter, callback) {
-    return store.dispatch(wrappers.eth.uninstallFilter([filter], callback));
-  },
-  unsubscribe: function (label, callback) {
-    return store.dispatch(wrappers.eth.unsubscribe([label], callback));
-  },
+  subscribeLogs: function (options, callback) { return this.subscribe("logs", options, callback); },
+  subscribeNewHeads: function (callback) { return this.subscribe("newHeads", null, callback); },
+  subscribeNewPendingTransactions: function (callback) { return this.subscribe("newPendingTransactions", null, callback); },
+  syncing: function (callback) { return dispatch(eth.syncing(null, callback)); },
+  uninstallFilter: function (filter, callback) { return dispatch(eth.uninstallFilter([filter], callback)); },
+  unsubscribe: function (label, callback) { return dispatch(eth.unsubscribe([label], callback)); },
 
   /************************
    * Convenience wrappers *
    ************************/
 
-  sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
-    return store.dispatch(sendEther(to, value, from, onSent, onSuccess, onFailed));
-  },
-  publish: function (compiled, callback) {
-    return store.dispatch(publish(compiled, callback));
-  },
-  ensureLatestBlock: function (callback) {
-    return store.dispatch(ensureLatestBlock(callback));
-  },
-  unlocked: function (account, callback) {
-    return store.dispatch(isUnlocked(account, callback));
-  },
-  fastforward: function (blocks, mine, callback) {
-    return store.dispatch(waitForNextBlocks(blocks, mine, callback));
-  },
-  resend: function (transaction, gasPrice, gasLimit, callback) {
-    return store.dispatch(resendTransaction(transaction, gasPrice, gasLimit, callback));
-  },
-  resendRawTransaction: function (transaction, privateKey, gasPrice, gasLimit, callback) {
-    return store.dispatch(resendRawTransaction(transaction, privateKey, gasPrice, gasLimit, callback));
-  },
+  sendEther: function (to, value, from, onSent, onSuccess, onFailed) { return dispatch(sendEther(to, value, from, onSent, onSuccess, onFailed)); },
+  publish: function (compiled, callback) { return dispatch(publish(compiled, callback)); },
+  ensureLatestBlock: function (callback) { return dispatch(ensureLatestBlock(callback)); },
+  isUnlocked: function (account, callback) { return dispatch(isUnlocked(account, callback)); },
+  waitForNextBlocks: function (blocks, mine, callback) { return dispatch(waitForNextBlocks(blocks, mine, callback)); },
+  resend: function (transaction, gasPrice, gasLimit, callback) { return dispatch(resendTransaction(transaction, gasPrice, gasLimit, callback)); },
+  resendRawTransaction: function (transaction, privateKey, gasPrice, gasLimit, callback) { return dispatch(resendRawTransaction(transaction, privateKey, gasPrice, gasLimit, callback)); },
 
-  invoke: function (payload, callback) {
-    return store.dispatch(callOrSendTransaction(payload, callback));
-  },
-  fire: function (payload, callback, wrapper, aux) {
-    return store.dispatch(callContractFunction(payload, callback, wrapper, aux));
-  },
-  transact: function (payload, onSent, onSuccess, onFailed) {
-    return store.dispatch(transact(payload, onSent, onSuccess, onFailed));
-  }
+  callOrSendTransaction: function (payload, callback) { return dispatch(callOrSendTransaction(payload, callback)); },
+  callContractFunction: function (payload, callback, wrapper, aux) { return dispatch(callContractFunction(payload, callback, wrapper, aux)); },
+  transact: function (payload, onSent, onSuccess, onFailed) { return dispatch(transact(payload, onSent, onSuccess, onFailed)); }
 
 };

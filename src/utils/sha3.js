@@ -11,6 +11,7 @@ module.exports = function (data, encoding, callback) {
     encoding = null;
   }
   if (encoding === "hex") data = abi.strip_0x(data);
+  // if (data.length % 2 !== 0) data = "0" + data;
   buffer = Buffer.from(data, encoding);
   hash = abi.hex(createKeccakHash("keccak256").update(buffer).digest());
   if (!isFunction(callback)) return hash;

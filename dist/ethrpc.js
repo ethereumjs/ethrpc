@@ -16170,7 +16170,25 @@ module.exports = function () {
 }).call(this,require("buffer").Buffer)
 },{"buffer":14,"ethereum-common/params.json":37,"ethereumjs-util":45}],45:[function(require,module,exports){
 (function (Buffer){
-var _typeof4 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof7 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof6 = typeof Symbol === "function" && _typeof7(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof7(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof7(obj);
+};
+
+var _typeof5 = typeof Symbol === "function" && _typeof6(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof6(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof6(obj);
+};
+
+var _typeof4 = typeof Symbol === "function" && _typeof5(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof5(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof5(obj);
+};
 
 var _typeof3 = typeof Symbol === "function" && _typeof4(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof4(obj);
@@ -36019,7 +36037,7 @@ function ensureLatestBlock(callback) {
 
 module.exports = ensureLatestBlock;
 
-},{"../block-management/on-new-block":151,"../utils/is-function":239,"../wrappers/eth":254}],148:[function(require,module,exports){
+},{"../block-management/on-new-block":151,"../utils/is-function":239,"../wrappers/eth":256}],148:[function(require,module,exports){
 "use strict";
 
 var eth = require("../wrappers/eth");
@@ -36085,7 +36103,7 @@ var createTransportAdapter = function () {
 
 module.exports = createTransportAdapter;
 
-},{"../errors/error-splitting-wrapper":167,"../utils/noop":245,"../wrappers/eth":254}],149:[function(require,module,exports){
+},{"../errors/error-splitting-wrapper":167,"../utils/noop":245,"../wrappers/eth":256}],149:[function(require,module,exports){
 "use strict";
 
 /**
@@ -36251,7 +36269,7 @@ module.exports = SubscribingBlockNotifier;
 },{"../validate/validate-block":250,"./notifier":150}],154:[function(require,module,exports){
 "use strict";
 
-var eth = require("../wrappers/eth");
+var eth_blockNumber = require("../wrappers/eth").blockNumber;
 var miner = require("../wrappers/miner");
 var isFunction = require("../utils/is-function");
 var constants = require("../constants");
@@ -36259,11 +36277,11 @@ var constants = require("../constants");
 /**
  * Wait for the specified number of blocks to appear before calling `callback`
  */
-function waitForNextBlocks(blocks, mine, callback) {
+module.exports = function (blocks, mine, callback) {
   return function (dispatch) {
     var startBlock, endBlock;
-    function fastforward() {
-      dispatch(eth.blockNumber(null, function (blockNumber) {
+    function waitForNextBlocks() {
+      dispatch(eth_blockNumber(null, function (blockNumber) {
         blockNumber = parseInt(blockNumber, 16);
         if (startBlock === undefined) {
           startBlock = blockNumber;
@@ -36271,11 +36289,9 @@ function waitForNextBlocks(blocks, mine, callback) {
         }
         if (blockNumber >= endBlock) {
           if (!mine) return callback(endBlock);
-          dispatch(miner.stop(null, function () {
-            callback(endBlock);
-          }));
+          dispatch(miner.stop(null, function () { callback(endBlock); }));
         } else {
-          setTimeout(fastforward, constants.BLOCK_POLL_INTERVAL);
+          setTimeout(waitForNextBlocks, constants.BLOCK_POLL_INTERVAL);
         }
       }));
     }
@@ -36283,14 +36299,12 @@ function waitForNextBlocks(blocks, mine, callback) {
       callback = mine;
       mine = null;
     }
-    if (!mine) return fastforward();
-    dispatch(miner.start(null, fastforward));
+    if (!mine) return waitForNextBlocks();
+    dispatch(miner.start(null, waitForNextBlocks));
   };
-}
+};
 
-module.exports = waitForNextBlocks;
-
-},{"../constants":157,"../utils/is-function":239,"../wrappers/eth":254,"../wrappers/miner":259}],155:[function(require,module,exports){
+},{"../constants":157,"../utils/is-function":239,"../wrappers/eth":256,"../wrappers/miner":260}],155:[function(require,module,exports){
 "use strict";
 
 // delete cached network, notification, and transaction data
@@ -36380,7 +36394,7 @@ function connect(configuration, initialConnectCallback) {
 
 module.exports = connect;
 
-},{"./block-management/create-block-and-log-streamer":146,"./block-management/ethrpc-transport-adapter":148,"./block-management/on-new-block":151,"./errors":168,"./reset-state":203,"./transport/transporter":235,"./wrappers/get-gas-price":255,"./wrappers/net":260}],157:[function(require,module,exports){
+},{"./block-management/create-block-and-log-streamer":146,"./block-management/ethrpc-transport-adapter":148,"./block-management/on-new-block":151,"./errors":168,"./reset-state":203,"./transport/transporter":235,"./wrappers/get-gas-price":257,"./wrappers/net":261}],157:[function(require,module,exports){
 "use strict";
 
 var BigNumber = require("bignumber.js");
@@ -37142,9 +37156,17 @@ var includeInTransactionRelay = require("./transaction-relay/include-in-transact
 
 var sendEther = require("./wrappers/send-ether");
 var publish = require("./wrappers/publish");
+var bindDispatch = require("./wrappers/bind-dispatch");
 
 var raw = require("./wrappers/raw");
-var wrappers = require("./wrappers");
+var eth = require("./wrappers/eth");
+var net_ = require("./wrappers/net");
+var web3 = require("./wrappers/web3");
+var personal = require("./wrappers/personal");
+var shh = require("./wrappers/shh");
+var txpool = require("./wrappers/txpool");
+var miner = require("./wrappers/miner");
+
 var isUnlocked = require("./wrappers/is-unlocked");
 var resendTransaction = require("./wrappers/resend-transaction");
 var resendRawTransaction = require("./wrappers/resend-raw-transaction");
@@ -37159,6 +37181,7 @@ var clearTransactions = require("./clear-transactions");
 var resetState = require("./reset-state");
 var connect = require("./connect");
 var store = require("./store");
+var dispatch = store.dispatch;
 
 BigNumber.config({
   MODULO_MODE: BigNumber.EUCLID,
@@ -37176,168 +37199,113 @@ module.exports = {
   packageRawTransaction: packageRawTransaction,
   packageRequest: packageRequest,
 
-  setDebugOptions: function (debugOptions) { return store.dispatch(setDebugOptions(debugOptions)); },
+  setDebugOptions: function (debugOptions) { return dispatch(setDebugOptions(debugOptions)); },
 
-  connect: function (configuration, initialConnectCallback) {
-    return store.dispatch(connect(configuration, initialConnectCallback));
-  },
-  getBlockAndLogStreamer: function () { return store.dispatch(getBlockAndLogStreamer()); },
-  clear: function () { return store.dispatch(clearTransactions()); },
-  resetState: function () { return store.dispatch(resetState()); },
+  connect: function (configuration, initialConnectCallback) { return dispatch(connect(configuration, initialConnectCallback)); },
+  getBlockAndLogStreamer: function () { return dispatch(getBlockAndLogStreamer()); },
+  clear: function () { return dispatch(clearTransactions()); },
+  resetState: function () { return dispatch(resetState()); },
 
-  registerTransactionRelay: function (relayer) { return store.dispatch(registerTransactionRelay(relayer)); },
-  unregisterTransactionRelay: function (relayer) { return store.dispatch(unregisterTransactionRelay(relayer)); },
-  excludeFromTransactionRelay: function (method) { return store.dispatch(excludeFromTransactionRelay(method)); },
-  includeInTransactionRelay: function (method) { return store.dispatch(includeInTransactionRelay(method)); },
+  registerTransactionRelay: function (relayer) { return dispatch(registerTransactionRelay(relayer)); },
+  unregisterTransactionRelay: function (relayer) { return dispatch(unregisterTransactionRelay(relayer)); },
+  excludeFromTransactionRelay: function (method) { return dispatch(excludeFromTransactionRelay(method)); },
+  includeInTransactionRelay: function (method) { return dispatch(includeInTransactionRelay(method)); },
 
   /******************************
    * Ethereum JSON-RPC bindings *
    ******************************/
 
-  raw: function (cmd, params, callback) { return store.dispatch(raw(cmd, params, callback)); },
-  eth: function (cmd, params, callback) { return store.dispatch(raw("eth_" + cmd, params, callback)); },
-  net: function (cmd, params, callback) { return store.dispatch(raw("net_" + cmd, params, callback)); },
-  web3: function (cmd, params, callback) { return store.dispatch(raw("web3_" + cmd, params, callback)); },
-  txpool: function (cmd, params, callback) { return store.dispatch(raw("txpool_" + cmd, params, callback)); },
-  shh: function (cmd, params, callback) { return store.dispatch(raw("shh_" + cmd, params, callback)); },
-  miner: function (cmd, params, callback) { return store.dispatch(raw("miner_" + cmd, params, callback)); },
-  admin: function (cmd, params, callback) { return store.dispatch(raw("admin_" + cmd, params, callback)); },
-  personal: function (cmd, params, callback) { return store.dispatch(raw("personal_" + cmd, params, callback)); },
+  raw: function (cmd, params, callback) { return dispatch(raw(cmd, params, callback)); },
+
+  eth: bindDispatch(dispatch, eth),
+  net: bindDispatch(dispatch, net_),
+  web3: bindDispatch(dispatch, web3),
+  txpool: bindDispatch(dispatch, txpool),
+  shh: bindDispatch(dispatch, shh),
+  miner: bindDispatch(dispatch, miner),
+  personal: bindDispatch(dispatch, personal),
 
   // web3_
   sha3: sha3,
-  clientVersion: function (callback) { return store.dispatch(wrappers.web3.clientVersion(null, callback)); },
+  clientVersion: function (callback) { return dispatch(web3.clientVersion(null, callback)); },
 
   // net_
-  listening: function (callback) { return store.dispatch(wrappers.net.listening(null, callback)); },
-  peerCount: function (callback) { return store.dispatch(wrappers.net.peerCount(null, callback)); },
-  version: function (callback) { return store.dispatch(wrappers.net.version(null, callback)); },
+  listening: function (callback) { return dispatch(net_.listening(null, callback)); },
+  peerCount: function (callback) { return dispatch(net_.peerCount(null, callback)); },
+  version: function (callback) { return dispatch(net_.version(null, callback)); },
   netVersion: function (callback) { return this.version(callback); },
 
   // eth_
-  accounts: function (callback) { return store.dispatch(wrappers.eth.accounts(null, callback)); },
-  blockNumber: function (callback) { return store.dispatch(wrappers.eth.blockNumber(null, callback)); },
+  accounts: function (callback) { return dispatch(eth.accounts(null, callback)); },
+  blockNumber: function (callback) { return dispatch(eth.blockNumber(null, callback)); },
   call: function (transaction, blockNumber, callback) {
     if (isFunction(blockNumber)) {
       callback = blockNumber;
       blockNumber = null;
     }
-    return store.dispatch(wrappers.eth.call([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
+    return dispatch(eth.call([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
-  coinbase: function (callback) { return store.dispatch(wrappers.eth.coinbase(null, callback)); },
-  // compileLLL, compileSerpent, and compileSolidity intentionally left out
+  coinbase: function (callback) { return dispatch(eth.coinbase(null, callback)); },
+  // note: compileLLL, compileSerpent, and compileSolidity intentionally left out
   estimateGas: function (transaction, blockNumber, callback) {
     if (isFunction(blockNumber)) {
       callback = blockNumber;
       blockNumber = null;
     }
-    return store.dispatch(wrappers.eth.estimateGas([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
+    return dispatch(eth.estimateGas([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
-  gasPrice: function (callback) { return store.dispatch(wrappers.eth.gasPrice(null, callback)); },
+  gasPrice: function (callback) { return dispatch(eth.gasPrice(null, callback)); },
   getGasPrice: function (callback) { return this.gasPrice(callback); },
   getBalance: function (address, blockNumber, callback) {
     if (isFunction(blockNumber)) {
       callback = blockNumber;
       blockNumber = null;
     }
-    return store.dispatch(wrappers.eth.getBalance([address, validateAndDefaultBlockNumber(blockNumber)], callback));
+    return dispatch(eth.getBalance([address, validateAndDefaultBlockNumber(blockNumber)], callback));
   },
   balance: function (address, blockNumber, callback) {
     return this.getBalance(address, blockNumber, callback);
   },
   getBlockByHash: function (hash, shouldReturnFullTransactions, callback) {
     if (shouldReturnFullTransactions === undefined) shouldReturnFullTransactions = true;
-    return store.dispatch(wrappers.eth.getBlockByHash([hash, Boolean(shouldReturnFullTransactions)], callback));
+    return dispatch(eth.getBlockByHash([hash, Boolean(shouldReturnFullTransactions)], callback));
   },
   getBlockByNumber: function (number, shouldReturnFullTransactions, callback) {
     if (shouldReturnFullTransactions !== true) shouldReturnFullTransactions = false;
-    return store.dispatch(wrappers.eth.getBlockByNumber([validateAndDefaultBlockNumber(number), Boolean(shouldReturnFullTransactions)], callback));
+    return dispatch(eth.getBlockByNumber([validateAndDefaultBlockNumber(number), Boolean(shouldReturnFullTransactions)], callback));
   },
-  getBlock: function (number, shouldReturnFullTransactions, callback) {
-    return this.getBlockByNumber(number, shouldReturnFullTransactions, callback);
-  },
-  getCode: function (address, blockNumber, callback) {
-    return store.dispatch(wrappers.eth.getCode([address, validateAndDefaultBlockNumber(blockNumber)], callback));
-  },
-  // TODO remove
-  read: function (address, blockNumber, callback) {
-    return this.getCode(address, blockNumber, callback);
-  },
-  getFilterChanges: function (filter, callback) {
-    return store.dispatch(wrappers.eth.getFilterChanges([filter], callback));
-  },
-  getFilterLogs: function (filter, callback) {
-    return store.dispatch(wrappers.eth.getFilterLogs(filter, callback));
-  },
-  getLogs: function (filter, callback) {
-    return store.dispatch(wrappers.eth.getLogs(filter, callback));
-  },
+  getBlock: function (number, shouldReturnFullTransactions, callback) { return this.getBlockByNumber(number, shouldReturnFullTransactions, callback); },
+  getCode: function (address, blockNumber, callback) { return dispatch(eth.getCode([address, validateAndDefaultBlockNumber(blockNumber)], callback)); },
+  getFilterChanges: function (filter, callback) { return dispatch(eth.getFilterChanges([filter], callback)); },
+  getFilterLogs: function (filter, callback) { return dispatch(eth.getFilterLogs(filter, callback)); },
+  getLogs: function (filter, callback) { return dispatch(eth.getLogs(filter, callback)); },
   // TODO: add map lookup support (at the moment, this function doesn't support
   // map lookups due to rounding errors after 51-bits for JS numbers)
-  getStorageAt: function (address, position, blockNumber, callback) {
-    return store.dispatch(wrappers.eth.getStorageAt([address, position, validateAndDefaultBlockNumber(blockNumber)], callback));
-  },
-  getTransactionByHash: function (transactionHash, callback) {
-    return store.dispatch(wrappers.eth.getTransactionByHash([transactionHash], callback));
-  },
-  getTransaction: function (transactionHash, callback) {
-    return this.getTransactionByHash(transactionHash, callback);
-  },
-  getTx: function (transactionHash, callback) {
-    return this.getTransactionByHash(transactionHash, callback);
-  },
-  getTransactionCount: function (address, callback) {
-    return store.dispatch(wrappers.eth.getTransactionCount([address, "latest"], callback));
-  },
-  // TODO remove
-  txCount: function (address, callback) {
-    return this.getTransactionCount(address, callback);
-  },
-  getPendingTransactionCount: function (address, callback) {
-    return store.dispatch(wrappers.eth.getTransactionCount([address, "pending"], callback));
-  },
-  // TODO remove
-  pendingTxCount: function (address, callback) {
-    return this.getPendingTransactionCount(address, callback);
-  },
-  getTransactionReceipt: function (transactionHash, callback) {
-    return store.dispatch(wrappers.eth.getTransactionReceipt(transactionHash, callback));
-  },
-  // TODO remove
-  receipt: function (transactionHash, callback) {
-    return this.getTransactionReceipt(transactionHash, callback);
-  },
-  getUncleByBlockHashAndIndex: function (blockHash, index, callback) {
-    return store.dispatch(wrappers.eth.getUncleByBlockHashAndIndex([blockHash, index], callback));
-  },
-  getUncleByBlockNumberAndIndex: function (blockNumber, index, callback) {
-    return store.dispatch(wrappers.eth.getUncleByBlockNumberAndIndex([validateAndDefaultBlockNumber(blockNumber), index], callback));
-  },
-  getUncle: function (blockNumber, index, callback) {
-    return this.getUncleByBlockNumberAndIndex(blockNumber, index, callback);
-  },
-  getUncleCountByBlockHash: function (blockHash, callback) {
-    return store.dispatch(wrappers.eth.getUncleCountByBlockHash([blockHash], callback));
-  },
-  getUncleCountByBlockNumber: function (blockNumber, callback) {
-    return store.dispatch(wrappers.eth.getUncleCountByBlockNumber([validateAndDefaultBlockNumber(blockNumber)], callback));
-  },
-  getUncleCount: function (blockNumber, callback) {
-    return this.getUncleCountByBlockNumber(blockNumber, callback);
-  },
-  hashrate: function (callback) { return store.dispatch(wrappers.eth.hashrate(null, callback)); },
-  mining: function (callback) { return store.dispatch(wrappers.eth.mining(null, callback)); },
-  newBlockFilter: function (callback) { return store.dispatch(wrappers.eth.newBlockFilter(null, callback)); },
+  getStorageAt: function (address, position, blockNumber, callback) { return dispatch(eth.getStorageAt([address, position, validateAndDefaultBlockNumber(blockNumber)], callback)); },
+  getTransactionByHash: function (transactionHash, callback) { return dispatch(eth.getTransactionByHash([transactionHash], callback)); },
+  getTransaction: function (transactionHash, callback) { return this.getTransactionByHash(transactionHash, callback); },
+  getTransactionCount: function (address, callback) { return dispatch(eth.getTransactionCount([address, "latest"], callback)); },
+  getPendingTransactionCount: function (address, callback) { return dispatch(eth.getTransactionCount([address, "pending"], callback)); },
+  getTransactionReceipt: function (transactionHash, callback) { return dispatch(eth.getTransactionReceipt(transactionHash, callback)); },
+  getUncleByBlockHashAndIndex: function (blockHash, index, callback) { return dispatch(eth.getUncleByBlockHashAndIndex([blockHash, index], callback)); },
+  getUncleByBlockNumberAndIndex: function (blockNumber, index, callback) { return dispatch(eth.getUncleByBlockNumberAndIndex([validateAndDefaultBlockNumber(blockNumber), index], callback)); },
+  getUncle: function (blockNumber, index, callback) { return this.getUncleByBlockNumberAndIndex(blockNumber, index, callback); },
+  getUncleCountByBlockHash: function (blockHash, callback) { return dispatch(eth.getUncleCountByBlockHash([blockHash], callback)); },
+  getUncleCountByBlockNumber: function (blockNumber, callback) { return dispatch(eth.getUncleCountByBlockNumber([validateAndDefaultBlockNumber(blockNumber)], callback)); },
+  getUncleCount: function (blockNumber, callback) { return this.getUncleCountByBlockNumber(blockNumber, callback); },
+  hashrate: function (callback) { return dispatch(eth.hashrate(null, callback)); },
+  mining: function (callback) { return dispatch(eth.mining(null, callback)); },
+  newBlockFilter: function (callback) { return dispatch(eth.newBlockFilter(null, callback)); },
   /**
    * @param {{fromBlock:number|string, toBlock:number|string, address:string, topics:string[], limit:number}} filterOptions
    */
   newFilter: function (filterOptions, callback) {
     filterOptions.fromBlock = validateAndDefaultBlockNumber(filterOptions.fromBlock);
     filterOptions.toBlock = validateAndDefaultBlockNumber(filterOptions.toBlock);
-    return store.dispatch(wrappers.eth.newFilter(filterOptions, callback));
+    return dispatch(eth.newFilter(filterOptions, callback));
   },
-  newPendingTransactionFilter: function (callback) { return store.dispatch(wrappers.eth.newPendingTransactionFilter(null, callback)); },
-  protocolVersion: function (callback) { return store.dispatch(wrappers.eth.protocolVersion(null, callback)); },
+  newPendingTransactionFilter: function (callback) { return dispatch(eth.newPendingTransactionFilter(null, callback)); },
+  protocolVersion: function (callback) { return dispatch(eth.protocolVersion(null, callback)); },
   /**
    * @param {string} signedTransaction - RLP encoded transaction signed with private key
    */
@@ -37349,84 +37317,52 @@ module.exports = {
     if (!/^0x[0-9a-fA-F]*$/.test(signedTransaction)) {
       throw new Error("signedTransaction must be RLP encoded hex byte array encoded into a string");
     }
-    return store.dispatch(wrappers.eth.sendRawTransaction([signedTransaction], callback));
+    return dispatch(eth.sendRawTransaction([signedTransaction], callback));
   },
   /**
    * @param {{from:string, to:string, gas:number, gasPrice:number, value:number, data:string, nonce:number}} transaction
    */
   sendTransaction: function (transaction, callback) {
     validateTransaction(transaction);
-    return store.dispatch(wrappers.eth.sendTransaction([transaction], callback));
+    return dispatch(eth.sendTransaction([transaction], callback));
   },
-  sign: function (address, data, callback) {
-    return store.dispatch(wrappers.eth.sign([address, data], callback));
-  },
+  sign: function (address, data, callback) { return dispatch(eth.sign([address, data], callback)); },
   signTransaction: function (transaction, callback) {
     validateTransaction(transaction);
-    return store.dispatch(wrappers.eth.signTransaction([transaction], callback));
+    return dispatch(eth.signTransaction([transaction], callback));
   },
   subscribe: function (label, options, callback) {
     if (options === undefined) options = {};
     if (options === null) options = {};
     if (typeof options !== "object") throw new Error("options must be an object");
-    return store.dispatch(wrappers.eth.subscribe([label, options], callback));
+    return dispatch(eth.subscribe([label, options], callback));
   },
-  subscribeLogs: function (options, callback) {
-    return this.subscribe("logs", options, callback);
-  },
-  subscribeNewHeads: function (callback) {
-    return this.subscribe("newHeads", null, callback);
-  },
-  subscribeNewPendingTransactions: function (callback) {
-    return this.subscribe("newPendingTransactions", null, callback);
-  },
-  syncing: function (callback) { return store.dispatch(wrappers.eth.syncing(null, callback)); },
-  uninstallFilter: function (filter, callback) {
-    return store.dispatch(wrappers.eth.uninstallFilter([filter], callback));
-  },
-  unsubscribe: function (label, callback) {
-    return store.dispatch(wrappers.eth.unsubscribe([label], callback));
-  },
+  subscribeLogs: function (options, callback) { return this.subscribe("logs", options, callback); },
+  subscribeNewHeads: function (callback) { return this.subscribe("newHeads", null, callback); },
+  subscribeNewPendingTransactions: function (callback) { return this.subscribe("newPendingTransactions", null, callback); },
+  syncing: function (callback) { return dispatch(eth.syncing(null, callback)); },
+  uninstallFilter: function (filter, callback) { return dispatch(eth.uninstallFilter([filter], callback)); },
+  unsubscribe: function (label, callback) { return dispatch(eth.unsubscribe([label], callback)); },
 
   /************************
    * Convenience wrappers *
    ************************/
 
-  sendEther: function (to, value, from, onSent, onSuccess, onFailed) {
-    return store.dispatch(sendEther(to, value, from, onSent, onSuccess, onFailed));
-  },
-  publish: function (compiled, callback) {
-    return store.dispatch(publish(compiled, callback));
-  },
-  ensureLatestBlock: function (callback) {
-    return store.dispatch(ensureLatestBlock(callback));
-  },
-  unlocked: function (account, callback) {
-    return store.dispatch(isUnlocked(account, callback));
-  },
-  fastforward: function (blocks, mine, callback) {
-    return store.dispatch(waitForNextBlocks(blocks, mine, callback));
-  },
-  resend: function (transaction, gasPrice, gasLimit, callback) {
-    return store.dispatch(resendTransaction(transaction, gasPrice, gasLimit, callback));
-  },
-  resendRawTransaction: function (transaction, privateKey, gasPrice, gasLimit, callback) {
-    return store.dispatch(resendRawTransaction(transaction, privateKey, gasPrice, gasLimit, callback));
-  },
+  sendEther: function (to, value, from, onSent, onSuccess, onFailed) { return dispatch(sendEther(to, value, from, onSent, onSuccess, onFailed)); },
+  publish: function (compiled, callback) { return dispatch(publish(compiled, callback)); },
+  ensureLatestBlock: function (callback) { return dispatch(ensureLatestBlock(callback)); },
+  isUnlocked: function (account, callback) { return dispatch(isUnlocked(account, callback)); },
+  waitForNextBlocks: function (blocks, mine, callback) { return dispatch(waitForNextBlocks(blocks, mine, callback)); },
+  resend: function (transaction, gasPrice, gasLimit, callback) { return dispatch(resendTransaction(transaction, gasPrice, gasLimit, callback)); },
+  resendRawTransaction: function (transaction, privateKey, gasPrice, gasLimit, callback) { return dispatch(resendRawTransaction(transaction, privateKey, gasPrice, gasLimit, callback)); },
 
-  invoke: function (payload, callback) {
-    return store.dispatch(callOrSendTransaction(payload, callback));
-  },
-  fire: function (payload, callback, wrapper, aux) {
-    return store.dispatch(callContractFunction(payload, callback, wrapper, aux));
-  },
-  transact: function (payload, onSent, onSuccess, onFailed) {
-    return store.dispatch(transact(payload, onSent, onSuccess, onFailed));
-  }
+  callOrSendTransaction: function (payload, callback) { return dispatch(callOrSendTransaction(payload, callback)); },
+  callContractFunction: function (payload, callback, wrapper, aux) { return dispatch(callContractFunction(payload, callback, wrapper, aux)); },
+  transact: function (payload, onSent, onSuccess, onFailed) { return dispatch(transact(payload, onSent, onSuccess, onFailed)); }
 
 };
 
-},{"./block-management/ensure-latest-block":147,"./block-management/get-block-and-log-streamer":149,"./block-management/wait-for-next-blocks":154,"./clear-transactions":155,"./connect":156,"./debug/set-debug-options":158,"./encode-request/package-request":164,"./errors/codes":166,"./raw-transactions/package-and-sign-raw-transaction":177,"./raw-transactions/package-and-submit-raw-transaction":178,"./raw-transactions/package-raw-transaction":179,"./raw-transactions/sign-raw-transaction":182,"./reset-state":203,"./store":206,"./transact/call-contract-function":207,"./transact/call-or-send-transaction":208,"./transact/transact":217,"./transaction-relay/exclude-from-transaction-relay":224,"./transaction-relay/include-in-transaction-relay":225,"./transaction-relay/register-transaction-relay":226,"./transaction-relay/unregister-transaction-relay":227,"./utils/is-function":239,"./utils/sha3":246,"./validate/validate-and-default-block-number":249,"./validate/validate-transaction":253,"./wrappers":256,"./wrappers/is-unlocked":257,"./wrappers/publish":262,"./wrappers/raw":263,"./wrappers/resend-raw-transaction":264,"./wrappers/resend-transaction":265,"./wrappers/send-ether":266,"bignumber.js":4}],172:[function(require,module,exports){
+},{"./block-management/ensure-latest-block":147,"./block-management/get-block-and-log-streamer":149,"./block-management/wait-for-next-blocks":154,"./clear-transactions":155,"./connect":156,"./debug/set-debug-options":158,"./encode-request/package-request":164,"./errors/codes":166,"./raw-transactions/package-and-sign-raw-transaction":177,"./raw-transactions/package-and-submit-raw-transaction":178,"./raw-transactions/package-raw-transaction":179,"./raw-transactions/sign-raw-transaction":182,"./reset-state":203,"./store":206,"./transact/call-contract-function":207,"./transact/call-or-send-transaction":208,"./transact/transact":217,"./transaction-relay/exclude-from-transaction-relay":224,"./transaction-relay/include-in-transaction-relay":225,"./transaction-relay/register-transaction-relay":226,"./transaction-relay/unregister-transaction-relay":227,"./utils/is-function":239,"./utils/sha3":246,"./validate/validate-and-default-block-number":249,"./validate/validate-transaction":253,"./wrappers/bind-dispatch":255,"./wrappers/eth":256,"./wrappers/is-unlocked":258,"./wrappers/miner":260,"./wrappers/net":261,"./wrappers/personal":262,"./wrappers/publish":263,"./wrappers/raw":264,"./wrappers/resend-raw-transaction":265,"./wrappers/resend-transaction":266,"./wrappers/send-ether":267,"./wrappers/shh":268,"./wrappers/txpool":269,"./wrappers/web3":270,"bignumber.js":4}],172:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -37593,7 +37529,7 @@ function packageAndSubmitRawTransaction(payload, address, privateKey, callback) 
 
 module.exports = packageAndSubmitRawTransaction;
 
-},{"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"../wrappers/eth":254,"./handle-raw-transaction-error":176,"./package-and-sign-raw-transaction":177}],179:[function(require,module,exports){
+},{"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"../wrappers/eth":256,"./handle-raw-transaction-error":176,"./package-and-sign-raw-transaction":177}],179:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -37664,7 +37600,7 @@ var setRawTransactionGasPrice = function (packaged, callback) {
 
 module.exports = setRawTransactionGasPrice;
 
-},{"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"../wrappers/eth":254}],181:[function(require,module,exports){
+},{"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"../wrappers/eth":256}],181:[function(require,module,exports){
 "use strict";
 
 var eth = require("../wrappers/eth");
@@ -37701,7 +37637,7 @@ function setRawTransactionNonce(packaged, address, callback) {
 
 module.exports = setRawTransactionNonce;
 
-},{"../utils/is-function":239,"../wrappers/eth":254,"./verify-raw-transaction-nonce":183}],182:[function(require,module,exports){
+},{"../utils/is-function":239,"../wrappers/eth":256,"./verify-raw-transaction-nonce":183}],182:[function(require,module,exports){
 "use strict";
 
 var Transaction = require("ethereumjs-tx");
@@ -38607,7 +38543,7 @@ function callOrSendTransaction(payload, callback) {
 
 module.exports = callOrSendTransaction;
 
-},{"../encode-request/package-request":164,"../errors/codes":166,"../utils/is-function":239,"../wrappers/eth":254}],209:[function(require,module,exports){
+},{"../encode-request/package-request":164,"../errors/codes":166,"../utils/is-function":239,"../wrappers/eth":256}],209:[function(require,module,exports){
 "use strict";
 
 var checkConfirmations = require("../transact/check-confirmations");
@@ -38665,7 +38601,7 @@ function checkConfirmations(tx, numConfirmations, callback) {
 
 module.exports = checkConfirmations;
 
-},{"../transact/complete-tx":211,"../transact/wait-for-next-poll":223,"../wrappers/eth":254}],211:[function(require,module,exports){
+},{"../transact/complete-tx":211,"../transact/wait-for-next-poll":223,"../wrappers/eth":256}],211:[function(require,module,exports){
 "use strict";
 
 var isFunction = require("../utils/is-function");
@@ -38727,7 +38663,7 @@ function getLoggedReturnValue(txHash, callback) {
 
 module.exports = getLoggedReturnValue;
 
-},{"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"../wrappers/eth":254,"bignumber.js":4}],213:[function(require,module,exports){
+},{"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"../wrappers/eth":256,"bignumber.js":4}],213:[function(require,module,exports){
 "use strict";
 
 var checkBlockHash = require("./check-block-hash");
@@ -38914,7 +38850,7 @@ function transactSync(payload) {
 
 module.exports = transactSync;
 
-},{"../constants":157,"../decode-response/convert-response-to-returns-type":159,"../decode-response/handle-rpc-error":160,"../errors/codes":166,"../errors/rpc-error":169,"../transact/call-contract-function":207,"../transact/call-or-send-transaction":208,"../transact/get-logged-return-value":212,"../transact/poll-for-tx-confirmation":213,"../transact/transact":217,"../transact/verify-tx-submitted":222,"../wrappers/eth":254,"augur-abi":2,"bignumber.js":4}],217:[function(require,module,exports){
+},{"../constants":157,"../decode-response/convert-response-to-returns-type":159,"../decode-response/handle-rpc-error":160,"../errors/codes":166,"../errors/rpc-error":169,"../transact/call-contract-function":207,"../transact/call-or-send-transaction":208,"../transact/get-logged-return-value":212,"../transact/poll-for-tx-confirmation":213,"../transact/transact":217,"../transact/verify-tx-submitted":222,"../wrappers/eth":256,"augur-abi":2,"bignumber.js":4}],217:[function(require,module,exports){
 /**
  * Send-call-confirm callback sequence
  */
@@ -38996,7 +38932,7 @@ function txNotify(txHash, callback) {
 
 module.exports = txNotify;
 
-},{"../utils/is-function":239,"../wrappers/eth":254}],219:[function(require,module,exports){
+},{"../utils/is-function":239,"../wrappers/eth":256}],219:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -39113,7 +39049,7 @@ function updateMinedTx(txHash) {
 
 module.exports = updateMinedTx;
 
-},{"../constants":157,"../decode-response/convert-response-to-returns-type":159,"../decode-response/handle-rpc-error":160,"../errors/codes":166,"../transact/call-contract-function":207,"../transact/get-logged-return-value":212,"../utils/is-function":239,"../wrappers/eth":254,"augur-abi":2,"bignumber.js":4}],220:[function(require,module,exports){
+},{"../constants":157,"../decode-response/convert-response-to-returns-type":159,"../decode-response/handle-rpc-error":160,"../errors/codes":166,"../transact/call-contract-function":207,"../transact/get-logged-return-value":212,"../utils/is-function":239,"../wrappers/eth":256,"augur-abi":2,"bignumber.js":4}],220:[function(require,module,exports){
 "use strict";
 
 var clone = require("clone");
@@ -39202,7 +39138,7 @@ function updatePendingTx(txHash) {
 
 module.exports = updatePendingTx;
 
-},{"../constants":157,"../errors/codes":166,"../transact/transact":217,"../transact/update-mined-tx":219,"../utils/is-function":239,"../wrappers/eth":254,"clone":16}],221:[function(require,module,exports){
+},{"../constants":157,"../errors/codes":166,"../transact/transact":217,"../transact/update-mined-tx":219,"../utils/is-function":239,"../wrappers/eth":256,"clone":16}],221:[function(require,module,exports){
 "use strict";
 
 var updateMinedTx = require("../transact/update-mined-tx");
@@ -40191,6 +40127,7 @@ module.exports = function (data, encoding, callback) {
     encoding = null;
   }
   if (encoding === "hex") data = abi.strip_0x(data);
+  // if (data.length % 2 !== 0) data = "0" + data;
   buffer = Buffer.from(data, encoding);
   hash = abi.hex(createKeccakHash("keccak256").update(buffer).digest());
   if (!isFunction(callback)) return hash;
@@ -40336,6 +40273,31 @@ module.exports = validateTransaction;
 },{"./validate-address":248,"./validate-number":252}],254:[function(require,module,exports){
 "use strict";
 
+function bindDispatchToMethod(dispatch, method) {
+  return function (params, callback) {
+    return dispatch(method(params, callback));
+  };
+}
+
+module.exports = bindDispatchToMethod;
+
+},{}],255:[function(require,module,exports){
+"use strict";
+
+var bindDispatchToMethod = require("./bind-dispatch-to-method");
+
+function bindDispatch(dispatch, namespace) {
+  return Object.keys(namespace).reduce(function (p, method) {
+    p[method] = bindDispatchToMethod(dispatch, namespace[method]);
+    return p;
+  }, {});
+}
+
+module.exports = bindDispatch;
+
+},{"./bind-dispatch-to-method":254}],256:[function(require,module,exports){
+"use strict";
+
 var makeWrapper = require("./make-wrapper");
 
 module.exports = {
@@ -40387,7 +40349,7 @@ module.exports = {
   unsubscribe: makeWrapper("eth_unsubscribe")
 };
 
-},{"./make-wrapper":258}],255:[function(require,module,exports){
+},{"./make-wrapper":259}],257:[function(require,module,exports){
 "use strict";
 
 var eth_gasPrice = require("./eth").gasPrice;
@@ -40405,20 +40367,7 @@ function getGasPrice() {
 
 module.exports = getGasPrice;
 
-},{"../utils/is-hex":240,"./eth":254}],256:[function(require,module,exports){
-"use strict";
-
-module.exports = {
-  net: require("./net"),
-  web3: require("./web3"),
-  eth: require("./eth"),
-  personal: require("./personal"),
-  shh: require("./shh"),
-  txpool: require("./txpool"),
-  miner: require("./miner")
-};
-
-},{"./eth":254,"./miner":259,"./net":260,"./personal":261,"./shh":267,"./txpool":268,"./web3":269}],257:[function(require,module,exports){
+},{"../utils/is-hex":240,"./eth":256}],258:[function(require,module,exports){
 "use strict";
 
 var eth_sign = require("../wrappers/eth").sign;
@@ -40450,7 +40399,7 @@ function isUnlocked(account, callback) {
 
 module.exports = isUnlocked;
 
-},{"../utils/is-function":239,"../wrappers/eth":254}],258:[function(require,module,exports){
+},{"../utils/is-function":239,"../wrappers/eth":256}],259:[function(require,module,exports){
 "use strict";
 
 var raw = require("./raw");
@@ -40469,7 +40418,7 @@ function makeWrapper(command) {
 
 module.exports = makeWrapper;
 
-},{"../utils/is-function":239,"./raw":263}],259:[function(require,module,exports){
+},{"../utils/is-function":239,"./raw":264}],260:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
@@ -40479,7 +40428,7 @@ module.exports = {
   stop: makeWrapper("miner_stop")
 };
 
-},{"./make-wrapper":258}],260:[function(require,module,exports){
+},{"./make-wrapper":259}],261:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
@@ -40490,7 +40439,7 @@ module.exports = {
   peerCount: makeWrapper("net_peerCount")
 };
 
-},{"./make-wrapper":258}],261:[function(require,module,exports){
+},{"./make-wrapper":259}],262:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
@@ -40501,7 +40450,7 @@ module.exports = {
   lockAccount: makeWrapper("personal_lockAccount")
 };
 
-},{"./make-wrapper":258}],262:[function(require,module,exports){
+},{"./make-wrapper":259}],263:[function(require,module,exports){
 "use strict";
 
 var eth = require("./eth");
@@ -40521,7 +40470,7 @@ function publish(compiled, callback) {
 
 module.exports = publish;
 
-},{"../utils/is-function":239,"./eth":254}],263:[function(require,module,exports){
+},{"../utils/is-function":239,"./eth":256}],264:[function(require,module,exports){
 "use strict";
 
 var submitRequestToBlockchain = require("../rpc/submit-request-to-blockchain");
@@ -40535,7 +40484,7 @@ function raw(command, params, callback) {
 
 module.exports = raw;
 
-},{"../encode-request/make-request-payload":163,"../rpc/submit-request-to-blockchain":205,"../utils/is-function":239}],264:[function(require,module,exports){
+},{"../encode-request/make-request-payload":163,"../rpc/submit-request-to-blockchain":205,"../utils/is-function":239}],265:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -40554,7 +40503,7 @@ function resendRawTransaction(transaction, privateKey, gasPrice, gasLimit, callb
 
 module.exports = resendRawTransaction;
 
-},{"../raw-transactions/sign-raw-transaction":182,"../wrappers/eth":254,"augur-abi":2,"clone":16}],265:[function(require,module,exports){
+},{"../raw-transactions/sign-raw-transaction":182,"../wrappers/eth":256,"augur-abi":2,"clone":16}],266:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -40572,7 +40521,7 @@ function resendTransaction(transaction, gasPrice, gasLimit, callback) {
 
 module.exports = resendTransaction;
 
-},{"../wrappers/eth":254,"augur-abi":2,"clone":16}],266:[function(require,module,exports){
+},{"../wrappers/eth":256,"augur-abi":2,"clone":16}],267:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -40600,18 +40549,25 @@ function sendEther(to, value, from, onSent, onSuccess, onFailed) {
 
 module.exports = sendEther;
 
-},{"../transact/transact":217,"augur-abi":2}],267:[function(require,module,exports){
+},{"../transact/transact":217,"augur-abi":2}],268:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
 
 module.exports = {
+  post: makeWrapper("shh_post"),
+  version: makeWrapper("shh_version"),
+  newIdentity: makeWrapper("shh_newIdentity"),
+  hasIdentity: makeWrapper("shh_hasIdentity"),
+  newGroup: makeWrapper("shh_newGroup"),
+  addToGroup: makeWrapper("shh_addToGroup"),
   newFilter: makeWrapper("shh_newFilter"),
+  uninstallFilter: makeWrapper("shh_uninstallFilter"),
   getFilterChanges: makeWrapper("shh_getFilterChanges"),
-  uninstallFilter: makeWrapper("shh_uninstallFilter")
+  getMessages: makeWrapper("shh_getMessages")
 };
 
-},{"./make-wrapper":258}],268:[function(require,module,exports){
+},{"./make-wrapper":259}],269:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
@@ -40622,15 +40578,19 @@ module.exports = {
   status: makeWrapper("txpool_status")
 };
 
-},{"./make-wrapper":258}],269:[function(require,module,exports){
+},{"./make-wrapper":259}],270:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
 var sha3 = require("../utils/sha3");
 
 module.exports = {
-  sha3: sha3,
+  sha3: function (data, encoding, callback) {
+    return function () {
+      return sha3(data, encoding, callback);
+    };
+  },
   clientVersion: makeWrapper("web3_clientVersion")
 };
 
-},{"../utils/sha3":246,"./make-wrapper":258}]},{},[170]);
+},{"../utils/sha3":246,"./make-wrapper":259}]},{},[170]);

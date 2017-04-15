@@ -1,6 +1,6 @@
 "use strict";
 
-var eth = require("../wrappers/eth");
+var eth_blockNumber = require("../wrappers/eth").blockNumber;
 var miner = require("../wrappers/miner");
 var isFunction = require("../utils/is-function");
 var constants = require("../constants");
@@ -8,11 +8,11 @@ var constants = require("../constants");
 /**
  * Wait for the specified number of blocks to appear before calling `callback`
  */
-function waitForNextBlocks(blocks, mine, callback) {
+module.exports = function (blocks, mine, callback) {
   return function (dispatch) {
     var startBlock, endBlock;
-    function fastforward() {
-      dispatch(eth.blockNumber(null, function (blockNumber) {
+    function waitForNextBlocks() {
+      dispatch(eth_blockNumber(null, function (blockNumber) {
         blockNumber = parseInt(blockNumber, 16);
         if (startBlock === undefined) {
           startBlock = blockNumber;
@@ -20,11 +20,9 @@ function waitForNextBlocks(blocks, mine, callback) {
         }
         if (blockNumber >= endBlock) {
           if (!mine) return callback(endBlock);
-          dispatch(miner.stop(null, function () {
-            callback(endBlock);
-          }));
+          dispatch(miner.stop(null, function () { callback(endBlock); }));
         } else {
-          setTimeout(fastforward, constants.BLOCK_POLL_INTERVAL);
+          setTimeout(waitForNextBlocks, constants.BLOCK_POLL_INTERVAL);
         }
       }));
     }
@@ -32,9 +30,7 @@ function waitForNextBlocks(blocks, mine, callback) {
       callback = mine;
       mine = null;
     }
-    if (!mine) return fastforward();
-    dispatch(miner.start(null, fastforward));
+    if (!mine) return waitForNextBlocks();
+    dispatch(miner.start(null, waitForNextBlocks));
   };
-}
-
-module.exports = waitForNextBlocks;
+};
