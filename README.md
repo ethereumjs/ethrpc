@@ -45,16 +45,16 @@ The `raw` method allows you to send in commands that won't be parsed/mangled by 
 ```javascript
 rpc.raw("net_peerCount");
 "0x10"
-
-rpc.eth("gasPrice");
-"0x015f90"
 ```
 
-Almost all commands listed in the [Ethereum JSON RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC) wiki page have named wrappers.  For example, `blockNumber` fetches the current block number:
+Almost all commands listed in the [Ethereum JSON RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC) wiki page have named wrappers:
 
 
 ```javascript
-rpc.blockNumber();
+rpc.net.peerCount();
+"0x10"
+
+rpc.eth.blockNumber();
 "0x35041"
 ```
 
@@ -96,7 +96,7 @@ var txHash = rpc.publish("0x603980600b6000396044567c0100000000000000000000000000
 "0x6a532c807eb49d78bf0fb7962743c7f155a4b2fc1258b749df85c88b66fc3316"
 
 // To get the contract's address, after the transaction is sealed (mined), get its receipt:
-var address = rpc.getTransactionReceipt(txHash).contractAddress;
+var address = rpc.eth.getTransactionReceipt(txHash).contractAddress;
 // address:
 "0x86fb6d1f1bd78cc13c6354b6436b6ea0c144de2e"
 ```
@@ -104,7 +104,7 @@ var address = rpc.getTransactionReceipt(txHash).contractAddress;
 `getCode` downloads code from a contract already on the Ethereum network:
 
 ```javascript
-var contractCode = rpc.getCode("0x86fb6d1f1bd78cc13c6354b6436b6ea0c144de2e");
+var contractCode = rpc.eth.getCode("0x86fb6d1f1bd78cc13c6354b6436b6ea0c144de2e");
 // contractCode:
 "0x7c010000000000000000000000000000000000000000000000000000000060003504636ffa1caa81141560415760043560405260026040510260605260206060f35b50"
 ```

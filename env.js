@@ -11,7 +11,7 @@ var configuration = {
 rpc.setDebugOptions({ connect: true });
 rpc.connect(configuration, function (err) {
   if (err) return console.error("ethrpc connection failed:", err);
-  global.COINBASE = rpc.coinbase();
-  global.NETWORK_ID = rpc.version();
+  global.COINBASE = rpc.eth.coinbase();
+  global.NETWORK_ID = rpc.net.version();
   global.contracts = require("augur-contracts")[NETWORK_ID];
 });
