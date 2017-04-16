@@ -27,6 +27,7 @@
     "clone": "1.0.2",
     "ethereumjs-blockstream": "2.0.4",
     "ethereumjs-tx": "1.2.5",
+    "immutable-delete": "1.0.0",
     "keccak": "1.2.0",
     "lodash.assign": "4.2.0",
     "oboe": "2.1.3",

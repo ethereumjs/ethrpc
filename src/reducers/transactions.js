@@ -1,6 +1,7 @@
 "use strict";
 
 var assign = require("lodash.assign");
+var immutableDelete = require("immutable-delete");
 var isObject = require("../utils/is-object");
 
 var initialState = {};
@@ -73,10 +74,7 @@ module.exports = function (transactions, action) {
       });
       return assign({}, transactions, newTransaction);
     case "REMOVE_TRANSACTION":
-      return Object.keys(transactions).reduce(function (p, hash) {
-        if (hash !== action.hash) p[hash] = transactions[hash];
-        return p;
-      }, {});
+      return immutableDelete(transactions, action.hash);
     case "REMOVE_ALL_TRANSACTIONS":
       return initialState;
     default:
