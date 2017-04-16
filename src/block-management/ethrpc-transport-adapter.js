@@ -1,13 +1,15 @@
 "use strict";
 
 var eth = require("../wrappers/eth");
+var addNewHeadsSubscription = require("../subscriptions/add-new-heads-subscription");
+var removeSubscription = require("../subscriptions/remove-subscription");
 var errorSplittingWrapper = require("../errors/error-splitting-wrapper");
 var noop = require("../utils/noop");
 
 var nextToken = 1;
 var subscriptionMapping = {};
 
-var createTransportAdapter = function () {
+function createTransportAdapter() {
   return function (dispatch, getState) {
     var transporter = getState().transporter;
     return {
@@ -39,7 +41,9 @@ var createTransportAdapter = function () {
             dispatch(eth.unsubscribe(subscriptionID, noop));
           } else {
             subscriptionMapping[token] = subscriptionID;
-            dispatch({ type: "ADD_SUBSCRIPTION", id: subscriptionID, callback: onNewHead });
+            // new block -> store
+            // store notifies subscribers of new block arrival
+            dispatch(addNewHeadsSubscription(subscriptionID, onNewHead));
           }
         }));
         return token;
@@ -49,7 +53,7 @@ var createTransportAdapter = function () {
         if (token) {
           subscriptionID = subscriptionMapping[token];
           delete subscriptionMapping[token];
-          dispatch({ type: "REMOVE_SUBSCRIPTION", id: subscriptionID });
+          dispatch(removeSubscription(subscriptionID));
           if (subscriptionID) {
             // we don't care about the result, this unsubscribe is just to be
             // nice to the remote host
@@ -59,6 +63,6 @@ var createTransportAdapter = function () {
       }
     };
   };
-};
+}
 
 module.exports = createTransportAdapter;

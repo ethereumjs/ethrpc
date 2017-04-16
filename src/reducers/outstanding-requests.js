@@ -1,11 +1,12 @@
 "use strict";
 
 var assign = require("lodash.assign");
+var immutableDelete = require("immutable-delete");
 
 var initialState = {};
 
 module.exports = function (outstandingRequests, action) {
-  var request, idString;
+  var request;
   if (typeof outstandingRequests === "undefined") {
     return initialState;
   }
@@ -15,11 +16,7 @@ module.exports = function (outstandingRequests, action) {
       request[action.id] = action.request;
       return assign({}, outstandingRequests, request);
     case "REMOVE_OUTSTANDING_REQUEST":
-      idString = action.id.toString();
-      return Object.keys(outstandingRequests).reduce(function (p, id) {
-        if (id !== idString) p[id] = outstandingRequests[id];
-        return p;
-      }, {});
+      return immutableDelete(outstandingRequests, action.id.toString());
     case "REMOVE_ALL_OUTSTANDING_REQUESTS":
       return initialState;
     default:

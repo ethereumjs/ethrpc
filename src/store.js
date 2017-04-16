@@ -1,9 +1,5 @@
 "use strict";
 
-var redux = require("redux");
-var thunk = require("redux-thunk").default;
-var reducer = require("./reducers");
+var createStore = require("redux").createStore;
 
-var store = redux.createStore(reducer, redux.applyMiddleware(thunk));
-
-module.exports = store;
+module.exports = createStore(require("./reducers"), require("redux-thunk-subscribe"));

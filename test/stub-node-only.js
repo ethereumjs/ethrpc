@@ -49,7 +49,9 @@ describe("tests that only work against stub server", function () {
         });
 
         it("starts connected > uses connection > loses connection > reconnects > uses connection", function (done) {
-          stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple" });
+          stubRpcServer.addResponder(function (request) {
+            if (request.method === "net_version") return "apple";
+          });
           helpers.rpcConnect(transportType, transportAddress, function () {
             rpc.version(function (errorOrVersion) {
               assert.strictEqual(errorOrVersion, "apple");
@@ -1032,10 +1034,13 @@ describe("tests that only work against stub server", function () {
         it("newIdentity", function (done) {
           var expectedResult = "0xc931d93e97ab07fe42d923478ba2465f283f440fd6cabea4dd7a2c807108f651b7135d1d6ca9007d5b68aa497e4619ac10aa3b27726e1863c1fd9b570d99bbaf";
           server.addExpectation(function (jso) {
-            return jso.method === "shh_newIdentity"
-              && jso.params.length === 0;
+            return jso.method === "shh_newIdentity" && jso.params.length === 0;
           });
-          server.addResponder(function (jso) { if (jso.method === "shh_newIdentity") return expectedResult; });
+          server.addResponder(function (jso) {
+            if (jso.method === "shh_newIdentity") {
+              return expectedResult;
+            }
+          });
           rpc.shh.newIdentity(function (resultOrError) {
             assert.deepEqual(resultOrError, expectedResult);
             server.assertExpectations();
@@ -1258,7 +1263,7 @@ describe("tests that only work against stub server", function () {
     });
   }
 
-  tests("IPC", (os.type() === "Windows_NT") ? "\\\\.\\pipe\\TestRPC" : "testrpc.ipc");
+  // tests("IPC", (os.type() === "Windows_NT") ? "\\\\.\\pipe\\TestRPC" : "testrpc.ipc");
   tests("WS", "ws://localhost:1337");
   tests("HTTP", "http://localhost:1337");
 });

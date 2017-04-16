@@ -1,5 +1,6 @@
 "use strict";
 
+var removeAllStoreListeners = require("./store-observer").removeAllStoreListeners;
 var isFunction = require("./utils/is-function");
 
 /**
@@ -25,6 +26,9 @@ function resetState() {
       type: "REDIRECT_SHIM_MESSAGE_HANDLER",
       redirect: function () { return dispatch({ type: "DEV_NULL" }); }
     });
+
+    removeAllStoreListeners();
+    dispatch({ type: "REMOVE_ALL_SUBSCRIPTIONS" });
 
     // reset state to defaults
     dispatch({ type: "RESET_STATE" });

@@ -9,7 +9,6 @@ var gasPriceReducer = require("./gas-price");
 var noRelayReducer = require("./no-relay");
 var networkIDReducer = require("./network-id");
 var notificationsReducer = require("./notifications");
-var transactionRelayReducer = require("./transaction-relay");
 var transactionsReducer = require("./transactions");
 
 var transporterReducer = require("./transporter");
@@ -32,7 +31,6 @@ function reducer(state, action) {
     noRelay: noRelayReducer(state.noRelay, action),
     networkID: networkIDReducer(state.networkID, action),
     notifications: notificationsReducer(state.notifications, action),
-    transactionRelay: transactionRelayReducer(state.transactionRelay, action),
     transactions: transactionsReducer(state.transactions, action),
 
     transporter: transporterReducer(state.transporter, action),

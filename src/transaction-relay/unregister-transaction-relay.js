@@ -1,8 +1,10 @@
 "use strict";
 
+var removeSubscription = require("../subscriptions/remove-subscription");
+
 function unregisterTransactionRelay() {
   return function (dispatch) {
-    dispatch({ type: "CLEAR_TRANSACTION_RELAY" });
+    dispatch(removeSubscription("transactions"));
   };
 }
 

@@ -11,10 +11,9 @@ var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
  */
 function blockchainMessageHandler(error, jso) {
   return function (dispatch, getState) {
-    var subscriptionHandler, responseHandler, errorHandler, state, configuration, subscriptions;
+    var subscriptionHandler, responseHandler, errorHandler, state, configuration;
     state = getState();
     configuration = state.configuration;
-    subscriptions = state.subscriptions;
 
     if (error !== null) {
       return configuration.errorHandler(error);
@@ -24,7 +23,6 @@ function blockchainMessageHandler(error, jso) {
     }
 
     subscriptionHandler = function () {
-      var subscriptionCallback;
       if (jso.method !== "eth_subscription") {
         return configuration.errorHandler(new ErrorWithData("Received an RPC request that wasn't an `eth_subscription`.", jso));
       }
@@ -34,9 +32,6 @@ function blockchainMessageHandler(error, jso) {
       if (jso.params.result === null || jso.params.result === undefined) {
         return configuration.errorHandler(new ErrorWithData("Received an `eth_subscription` request without a result.", jso));
       }
-
-      subscriptionCallback = subscriptions[jso.params.subscription];
-      if (subscriptionCallback) subscriptionCallback(jso.params.result);
     };
 
     responseHandler = function () {
