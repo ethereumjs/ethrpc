@@ -1,11 +1,11 @@
 "use strict";
 
-var redux = require("redux");
+var createStore = require("redux").createStore;
 var thunkSubscribeEnhancer = require("redux-thunk-subscribe");
 var reducer = require("../src/reducers");
 
 var mockStore = function (state) {
-  return redux.createStore(reducer, state, thunkSubscribeEnhancer);
+  return createStore(reducer, state, thunkSubscribeEnhancer);
 };
 
 module.exports = mockStore;
