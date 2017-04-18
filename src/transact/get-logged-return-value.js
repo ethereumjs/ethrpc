@@ -4,6 +4,8 @@ var BigNumber = require("bignumber.js");
 var eth = require("../wrappers/eth");
 var errors = require("../errors/codes");
 
+BigNumber.config({ MODULO_MODE: BigNumber.EUCLID, ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN });
+
 function getLoggedReturnValue(txHash, callback) {
   return function (dispatch, getState) {
     dispatch(eth.getTransactionReceipt(txHash, function (receipt) {

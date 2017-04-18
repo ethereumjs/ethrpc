@@ -11,6 +11,8 @@ var isFunction = require("../utils/is-function");
 var errors = require("../errors/codes");
 var constants = require("../constants");
 
+BigNumber.config({ MODULO_MODE: BigNumber.EUCLID, ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN });
+
 function updateMinedTx(txHash) {
   return function (dispatch, getState) {
     var debug, transaction, currentBlock, state = getState();
