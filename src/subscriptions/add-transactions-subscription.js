@@ -9,7 +9,7 @@ function selectTransactions(state) {
 // subscribe to all transactions
 function addTransactionsSubscription(onStateChange) {
   return function (dispatch) {
-    dispatch(addSubscription("transactions", selectTransactions, onStateChange));
+    dispatch(addSubscription("transactions", "transactions", selectTransactions, onStateChange));
   };
 }
 

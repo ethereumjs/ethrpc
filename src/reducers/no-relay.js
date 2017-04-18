@@ -1,8 +1,7 @@
 "use strict";
 
 var assign = require("lodash.assign");
-
-var initialState = {};
+var initialState = require("./initial-state").noRelay;
 
 module.exports = function (noRelay, action) {
   var newNoRelay;

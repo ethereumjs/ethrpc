@@ -8,7 +8,7 @@ function selectCurrentBlock(state) {
 
 function addNewHeadsSubscription(id, onStateChange) {
   return function (dispatch) {
-    dispatch(addSubscription(id, selectCurrentBlock, onStateChange));
+    dispatch(addSubscription(id, "SET_CURRENT_BLOCK", selectCurrentBlock, onStateChange));
   };
 }
 

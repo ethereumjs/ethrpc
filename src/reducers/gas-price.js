@@ -1,6 +1,6 @@
 "use strict";
 
-var initialState = 20000000000;
+var initialState = require("./initial-state").gasPrice;
 
 module.exports = function (gasPrice, action) {
   if (typeof gasPrice === "undefined") {

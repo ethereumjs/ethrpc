@@ -3,11 +3,14 @@
 var net_version = require("./wrappers/net").version;
 var getGasPrice = require("./wrappers/get-gas-price");
 var Transporter = require("./transport/transporter");
-var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
+var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var onNewBlock = require("./block-management/on-new-block");
+var validateConfiguration = require("./validate/validate-configuration");
 var resetState = require("./reset-state");
 var ErrorWithData = require("./errors").ErrorWithData;
+var isFunction = require("./utils/is-function");
+var internalState = require("./internal-state");
 
 /**
  * Initiates a connection to Ethereum.  This must be called before any other methods are called.
@@ -28,42 +31,39 @@ var ErrorWithData = require("./errors").ErrorWithData;
  */
 function connect(configuration, initialConnectCallback) {
   return function (dispatch, getState) {
-    var syncOnly, state, debug, storedConfiguration, shimMessageHandler;
+    var syncOnly, storedConfiguration, debug = getState().debug;
     dispatch(resetState());
-    dispatch({ type: "SET_CONFIGURATION", configuration: configuration });
 
-    state = getState();
-    debug = state.debug;
-    storedConfiguration = state.configuration;
-    shimMessageHandler = state.shimMessageHandler;
+    // Use console.error as default out-of-band error handler if not set
+    if (!isFunction(configuration.errorHandler)) {
+      configuration.errorHandler = function (err) { if (err) console.error(err); };
+    }
+    internalState.set("outOfBandErrorHandler", configuration.errorHandler);
+    dispatch({ type: "SET_CONFIGURATION", configuration: validateConfiguration(configuration) });
 
     syncOnly = !initialConnectCallback;
     if (syncOnly) {
       initialConnectCallback = function (error) {
-        if (error instanceof Error) {
-          throw error;
-        } else if (error) {
-          throw new ErrorWithData(error);
-        }
+        if (error instanceof Error) throw error;
+        else if (error) throw new ErrorWithData(error);
       };
     }
 
     // initialize the transporter, this will be how we send to and receive from the blockchain
-    new Transporter(storedConfiguration, shimMessageHandler, syncOnly, debug.connect, function (error, transporter) {
-      if (error !== null) return initialConnectCallback(error);
-      dispatch({ type: "SET_TRANSPORTER", transporter: transporter });
+    storedConfiguration = getState().configuration;
+    new Transporter(storedConfiguration, internalState.get("shimMessageHandler"), syncOnly, debug.connect, function (err, transporter) {
+      if (err !== null) return initialConnectCallback(err);
+      internalState.set("transporter", transporter);
 
       // ensure we can do basic JSON-RPC over this connection
-      dispatch(net_version(null, function (errorOrResult) {
-        if (errorOrResult instanceof Error || errorOrResult.error) {
-          return initialConnectCallback(errorOrResult);
-        }
-        dispatch({ type: "SET_NETWORK_ID", networkID: errorOrResult });
-        dispatch(createBlockAndLogStreamer({
+      dispatch(net_version(null, function (networkID) {
+        if (networkID instanceof Error || networkID.error) return initialConnectCallback(networkID);
+        dispatch({ type: "SET_NETWORK_ID", networkID: networkID });
+        createBlockAndLogStreamer({
           pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
           blockRetention: storedConfiguration.blockRetention
-        }, dispatch(createTransportAdapter())));
-        getState().blockAndLogStreamer.subscribeToOnBlockAdded(function (block) { dispatch(onNewBlock(block)); });
+        }, dispatch(createTransportAdapter(transporter)), internalState.get("outOfBandErrorHandler"));
+        internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) { dispatch(onNewBlock(block)); });
         dispatch(getGasPrice());
         initialConnectCallback(null);
       }));

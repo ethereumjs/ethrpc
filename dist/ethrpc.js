@@ -359,7 +359,7 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":139}],2:[function(require,module,exports){
+},{"util/":143}],2:[function(require,module,exports){
 (function (Buffer){
 /**
  * Ethereum contract ABI data serialization.
@@ -1014,7 +1014,525 @@ module.exports = {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"bignumber.js":4,"buffer":14,"ethereumjs-abi":38,"js-sha3":63}],3:[function(require,module,exports){
+},{"bignumber.js":6,"buffer":16,"ethereumjs-abi":3,"js-sha3":64}],3:[function(require,module,exports){
+module.exports = require('./lib/index.js')
+
+},{"./lib/index.js":4}],4:[function(require,module,exports){
+(function (Buffer){
+const utils = require('ethereumjs-util')
+const BN = require('bn.js')
+
+var ABI = function () {
+}
+
+// Convert from short to canonical names
+// FIXME: optimise or make this nicer?
+function elementaryName (name) {
+  if (name.startsWith('int[')) {
+    return 'int256' + name.slice(4)
+  } else if (name === 'int') {
+    return 'int256'
+  } else if (name.startsWith('uint[')) {
+    return 'uint256' + name.slice(4)
+  } else if (name === 'uint') {
+    return 'uint256'
+  } else if (name.startsWith('real[')) {
+    return 'real128x128' + name.slice(4)
+  } else if (name === 'real') {
+    return 'real128x128'
+  } else if (name.startsWith('ureal[')) {
+    return 'ureal128x128' + name.slice(4)
+  } else if (name === 'ureal') {
+    return 'ureal128x128'
+  }
+  return name
+}
+
+ABI.eventID = function (name, types) {
+  // FIXME: use node.js util.format?
+  var sig = name + '(' + types.map(elementaryName).join(',') + ')'
+  return utils.sha3(new Buffer(sig))
+}
+
+ABI.methodID = function (name, types) {
+  return ABI.eventID(name, types).slice(0, 4)
+}
+
+// Parse N from type<N>
+function parseTypeN (type) {
+  return parseInt(/^\D+(\d+)$/.exec(type)[1], 10)
+}
+
+// Parse N,M from type<N>x<M>
+// function parseTypeNxM (type) {
+//   var tmp = /^\D+(\d+)x(\d+)$/.exec(type)
+//   return [ parseInt(tmp[1], 10), parseInt(tmp[2], 10) ]
+// }
+
+// Parse N from type[<N>]
+function parseTypeArray (type) {
+  var tmp = /^\w+\[(\d*)\]$/.exec(type)[1]
+  if (tmp.length === 0) {
+    return 0
+  } else {
+    return parseInt(tmp, 10)
+  }
+}
+
+function parseNumber (arg) {
+  var type = typeof arg
+  if (type === 'string') {
+    if (utils.isHexPrefixed(arg)) {
+      return new BN(utils.stripHexPrefix(arg), 16)
+    } else {
+      return new BN(arg, 10)
+    }
+  } else if (type === 'number') {
+    return new BN(arg)
+  } else if (arg.toArray) {
+    // assume this is a BN for the moment, replace with BN.isBN soon
+    return arg
+  } else {
+    throw new Error('Argument is not a number')
+  }
+}
+
+// someMethod(bytes,uint)
+// someMethod(bytes,uint):(boolean)
+function parseSignature (sig) {
+  var tmp = /^(\w+)\((.+)\)$/.exec(sig)
+  if (tmp.length !== 3) {
+    throw new Error('Invalid method signature')
+  }
+
+  var args = /^(.+)\):\((.+)$/.exec(tmp[2])
+
+  if (args !== null && args.length === 3) {
+    return {
+      method: tmp[1],
+      args: args[1].split(','),
+      retargs: args[2].split(',')
+    }
+  } else {
+    return {
+      method: tmp[1],
+      args: tmp[2].split(',')
+    }
+  }
+}
+
+// Encodes a single item (can be dynamic array)
+// @returns: Buffer
+function encodeSingle (type, arg) {
+  var size, num, ret, i
+
+  if (type === 'address') {
+    return encodeSingle('uint160', parseNumber(arg))
+  } else if (type === 'bool') {
+    return encodeSingle('uint8', arg ? 1 : 0)
+  } else if (type === 'string') {
+    return encodeSingle('bytes', new Buffer(arg, 'utf8'))
+  } else if (type.match(/\w+\[\d+\]/)) {
+    // this part handles fixed-length arrays ([2])
+    // NOTE: we catch here all calls to arrays, that simplifies the rest
+    if (typeof arg.length === 'undefined') {
+      throw new Error('Not an array?')
+    }
+
+    size = parseTypeArray(type)
+    if ((size !== 0) && (arg.length > size)) {
+      throw new Error('Elements exceed array size: ' + size)
+    }
+
+    type = type.slice(0, type.indexOf('['))
+
+    ret = []
+    for (i in arg) {
+      ret.push(encodeSingle(type, arg[i]))
+    }
+
+    return Buffer.concat(ret)
+  } else if (type.match(/\w+\[\]/)) {
+    // this part handles variable length ([])
+    // NOTE: we catch here all calls to arrays, that simplifies the rest
+    if (typeof arg.length === 'undefined') {
+      throw new Error('Not an array?')
+    }
+
+    type = type.slice(0, type.indexOf('['))
+
+    ret = [ encodeSingle('uint256', arg.length) ]
+    for (i in arg) {
+      ret.push(encodeSingle(type, arg[i]))
+    }
+
+    return Buffer.concat(ret)
+  } else if (type === 'bytes') {
+    arg = new Buffer(arg)
+    return Buffer.concat([ encodeSingle('uint256', arg.length), arg, utils.zeros(32 - (arg.length % 32)) ])
+  } else if (type.startsWith('bytes')) {
+    size = parseTypeN(type)
+    if (size < 1 || size > 32) {
+      throw new Error('Invalid bytes<N> width: ' + size)
+    }
+
+    return utils.setLengthRight(arg, 32)
+  } else if (type.startsWith('uint')) {
+    size = parseTypeN(type)
+    if ((size % 8) || (size < 8) || (size > 256)) {
+      throw new Error('Invalid uint<N> width: ' + size)
+    }
+
+    num = parseNumber(arg)
+    if (num.bitLength() > size) {
+      throw new Error('Supplied uint exceeds width: ' + size + ' vs ' + num.bitLength())
+    }
+
+    return num.toArrayLike(Buffer, 'be', 32)
+  } else if (type.startsWith('int')) {
+    size = parseTypeN(type)
+    if ((size % 8) || (size < 8) || (size > 256)) {
+      throw new Error('Invalid int<N> width: ' + size)
+    }
+
+    num = parseNumber(arg)
+    if (num.bitLength() > size) {
+      throw new Error('Supplied int exceeds width: ' + size + ' vs ' + num.bitLength())
+    }
+
+    return num.toTwos(256).toArrayLike(Buffer, 'be', 32)
+  }
+  // FIXME: support ureal<N>x<M> and real<N>x<M>
+
+  throw new Error('Unsupported or invalid type: ' + type)
+}
+
+// Decodes a single item (can be dynamic array)
+// @returns: array
+// FIXME: this method will need a lot of attention at checking limits and validation
+function decodeSingle (type, arg) {
+  var size, num, ret, i
+
+  if (type === 'address') {
+    return decodeSingle('uint160', arg)
+  } else if (type === 'bool') {
+    return decodeSingle('uint8', arg).toString() === new BN(1).toString()
+  } else if (type === 'string') {
+    return new Buffer(decodeSingle('bytes', arg), 'utf8').toString()
+  } else if (type.match(/\w+\[\d+\]/)) {
+    // this part handles fixed-length arrays ([2])
+    // NOTE: we catch here all calls to arrays, that simplifies the rest
+    size = parseTypeArray(type)
+    type = type.slice(0, type.indexOf('['))
+
+    ret = []
+    for (i = 0; i < size; i++) {
+      ret.push(decodeSingle(type, arg.slice(i * 32)))
+    }
+
+    return ret
+  } else if (type.match(/\w+\[\]/)) {
+    // this part handles variable length ([])
+    // NOTE: we catch here all calls to arrays, that simplifies the rest
+    type = type.slice(0, type.indexOf('['))
+    var count = decodeSingle('uint256', arg.slice(0, 32)).toNumber()
+
+    ret = []
+    for (i = 1; i < count + 1; i++) {
+      ret.push(decodeSingle(type, arg.slice(i * 32)))
+    }
+
+    return ret
+  } else if (type === 'bytes') {
+    size = decodeSingle('uint256', arg.slice(0, 32)).toNumber()
+    return arg.slice(32, 32 + size)
+  } else if (type.startsWith('bytes')) {
+    size = parseTypeN(type)
+    if (size < 1 || size > 32) {
+      throw new Error('Invalid bytes<N> width: ' + size)
+    }
+
+    return arg.slice(0, size)
+  } else if (type.startsWith('uint')) {
+    size = parseTypeN(type)
+    if ((size % 8) || (size < 8) || (size > 256)) {
+      throw new Error('Invalid uint<N> width: ' + size)
+    }
+
+    num = new BN(arg.slice(0, 32), 16, 'be')
+    if (num.bitLength() > size) {
+      throw new Error('Decoded int exceeds width: ' + size + ' vs ' + num.bitLength())
+    }
+
+    return num
+  } else if (type.startsWith('int')) {
+    size = parseTypeN(type)
+    if ((size % 8) || (size < 8) || (size > 256)) {
+      throw new Error('Invalid uint<N> width: ' + size)
+    }
+
+    num = new BN(arg.slice(0, 32), 16, 'be').fromTwos(256)
+    if (num.bitLength() > size) {
+      throw new Error('Decoded uint exceeds width: ' + size + ' vs ' + num.bitLength())
+    }
+
+    return num
+  }
+  // FIXME: support ureal<N>x<M> and real<N>x<M>
+
+  throw new Error('Unsupported or invalid type: ' + type)
+}
+
+// Is a type dynamic?
+function isDynamic (type) {
+  // FIXME: handle all types? I don't think anything is missing now
+  return (type === 'string') || (type === 'bytes') || type.match(/\w+\[\]/)
+}
+
+// Encode a method/event with arguments
+// @types an array of string type names
+// @args  an array of the appropriate values
+ABI.rawEncode = function (types, values) {
+  var output = []
+  var data = []
+
+  var headLength = 32 * types.length
+
+  for (var i in types) {
+    var type = elementaryName(types[i])
+    var value = values[i]
+    var cur = encodeSingle(type, value)
+
+    // Use the head/tail method for storing dynamic data
+    if (isDynamic(type)) {
+      output.push(encodeSingle('uint256', headLength))
+      data.push(cur)
+      headLength += cur.length
+    } else {
+      output.push(cur)
+    }
+  }
+
+  return Buffer.concat(output.concat(data))
+}
+
+ABI.rawDecode = function (types, data) {
+  var ret = []
+
+  data = new Buffer(data)
+
+  var offset = 0
+  for (var i in types) {
+    var type = elementaryName(types[i])
+    var cur = data.slice(offset, offset + 32)
+
+    if (isDynamic(type)) {
+      var dataOffset = decodeSingle('uint256', cur).toNumber()
+      // We will read at least 32 bytes
+      if (dataOffset > (data.length - 32)) {
+        throw new Error('Invalid offset: ' + dataOffset)
+      }
+
+      cur = data.slice(dataOffset)
+    } else if (type.match(/\w+\[\d+\]/)) {
+      var count = parseTypeArray(type)
+      if (count > 1) {
+        cur = data.slice(offset, offset + (count * 32))
+      }
+    }
+
+    ret.push(decodeSingle(type, cur))
+    offset += 32
+  }
+
+  return ret
+}
+
+ABI.simpleEncode = function (method) {
+  var args = Array.prototype.slice.call(arguments).slice(1)
+  var sig = parseSignature(method)
+
+  // FIXME: validate/convert arguments
+  if (args.length !== sig.args.length) {
+    throw new Error('Argument count mismatch')
+  }
+
+  return Buffer.concat([ ABI.methodID(sig.method, sig.args), ABI.rawEncode(sig.args, args) ])
+}
+
+ABI.simpleDecode = function (method, data) {
+  var sig = parseSignature(method)
+
+  // FIXME: validate/convert arguments
+  if (!sig.retargs) {
+    throw new Error('No return values in method')
+  }
+
+  return ABI.rawDecode(sig.retargs, data)
+}
+
+function stringify (type, value) {
+  if (type.startsWith('address') || type.startsWith('bytes')) {
+    return '0x' + value.toString('hex')
+  } else {
+    return value.toString()
+  }
+}
+
+ABI.stringify = function (types, values) {
+  var ret = []
+
+  for (var i in types) {
+    var type = types[i]
+    var value = values[i]
+
+    // if it is an array type, concat the items
+    if (/^[^\[]+\[.*\]$/.test(type)) {
+      value = value.map(function (item) {
+        return stringify(type, item)
+      }).join(', ')
+    } else {
+      value = stringify(type, value)
+    }
+
+    ret.push(value)
+  }
+
+  return ret
+}
+
+ABI.solidityPack = function (types, values) {
+  if (types.length !== values.length) {
+    throw new Error('Number of types are not matching the values')
+  }
+
+  var size, num
+  var ret = []
+
+  for (var i = 0; i < types.length; i++) {
+    var type = elementaryName(types[i])
+    var value = values[i]
+
+    if (type === 'bytes') {
+      ret.push(value)
+    } else if (type === 'string') {
+      ret.push(new Buffer(value, 'utf8'))
+    } else if (type === 'bool') {
+      ret.push(new Buffer(value ? '01' : '00', 'hex'))
+    } else if (type === 'address') {
+      ret.push(utils.setLengthLeft(value, 20))
+    } else if (type.startsWith('bytes')) {
+      size = parseTypeN(type)
+      if (size < 1 || size > 32) {
+        throw new Error('Invalid bytes<N> width: ' + size)
+      }
+
+      return utils.setLengthRight(value, size)
+    } else if (type.startsWith('uint')) {
+      size = parseTypeN(type)
+      if ((size % 8) || (size < 8) || (size > 256)) {
+        throw new Error('Invalid uint<N> width: ' + size)
+      }
+
+      num = parseNumber(value)
+      if (num.bitLength() > size) {
+        throw new Error('Supplied uint exceeds width: ' + size + ' vs ' + num.bitLength())
+      }
+
+      ret.push(num.toArrayLike(Buffer, 'be', size / 8))
+    } else if (type.startsWith('int')) {
+      size = parseTypeN(type)
+      if ((size % 8) || (size < 8) || (size > 256)) {
+        throw new Error('Invalid int<N> width: ' + size)
+      }
+
+      num = parseNumber(value)
+      if (num.bitLength() > size) {
+        throw new Error('Supplied int exceeds width: ' + size + ' vs ' + num.bitLength())
+      }
+
+      ret.push(num.toTwos(size).toArrayLike(Buffer, 'be', size / 8))
+    } else {
+      // FIXME: support all other types
+      throw new Error('Unsupported or invalid type: ' + type)
+    }
+  }
+
+  return Buffer.concat(ret)
+}
+
+ABI.soliditySHA3 = function (types, values) {
+  return utils.sha3(ABI.solidityPack(types, values))
+}
+
+ABI.soliditySHA256 = function (types, values) {
+  return utils.sha256(ABI.solidityPack(types, values))
+}
+
+ABI.solidityRIPEMD160 = function (types, values) {
+  return utils.ripemd160(ABI.solidityPack(types, values), true)
+}
+
+// Serpent's users are familiar with this encoding
+// - s: string
+// - b: bytes
+// - b<N>: bytes<N>
+// - i: int256
+// - a: int256[]
+
+function isNumeric (c) {
+  // FIXME: is this correct? Seems to work
+  return (c >= '0') && (c <= '9')
+}
+
+// For a "documentation" refer to https://github.com/ethereum/serpent/blob/develop/preprocess.cpp
+ABI.fromSerpent = function (sig) {
+  var ret = []
+  for (var i = 0; i < sig.length; i++) {
+    var type = sig[i]
+    if (type === 's' || type === 'b') {
+      var tmp = 'bytes'
+      var j = i + 1
+      while ((j < sig.length) && isNumeric(sig[j])) {
+        tmp += sig[j] - '0'
+        j++
+      }
+      i = j - 1
+      ret.push(tmp)
+    } else if (type === 'i') {
+      ret.push('int256')
+    } else if (type === 'a') {
+      ret.push('int256[]')
+    } else {
+      throw new Error('Unsupported or invalid type: ' + type)
+    }
+  }
+  return ret
+}
+
+ABI.toSerpent = function (types) {
+  var ret = []
+  for (var i = 0; i < types.length; i++) {
+    var type = types[i]
+    if (type === 'bytes' || type === 'string') {
+      ret.push('s')
+    } else if (type.startsWith('bytes')) {
+      ret.push('b' + parseTypeN(type))
+    } else if (type === 'int256') {
+      ret.push('i')
+    } else if (type === 'int256[]') {
+      ret.push('a')
+    } else {
+      throw new Error('Unsupported or invalid type: ' + type)
+    }
+  }
+  return ret.join('')
+}
+
+module.exports = ABI
+
+}).call(this,require("buffer").Buffer)
+},{"bn.js":8,"buffer":16,"ethereumjs-util":46}],5:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -1140,7 +1658,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /*! bignumber.js v2.3.0 https://github.com/MikeMcl/bignumber.js/LICENCE */
 
 ;(function (globalObj) {
@@ -3875,7 +4393,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     }
 })(this);
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 (function (Buffer){
 // Reference https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki
 // Format: 0x30 [total-length] 0x02 [R-length] [R] 0x02 [S-length] [S]
@@ -3990,7 +4508,7 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":14}],6:[function(require,module,exports){
+},{"buffer":16}],8:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -7419,7 +7937,7 @@ module.exports = {
   };
 })(typeof module === 'undefined' || module, this);
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var r;
 
 module.exports = function rand(len) {
@@ -7486,7 +8004,7 @@ if (typeof self === 'object') {
   }
 }
 
-},{"crypto":9}],8:[function(require,module,exports){
+},{"crypto":11}],10:[function(require,module,exports){
 // Browser Request
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -7982,9 +8500,9 @@ function b64_enc (data) {
 }));
 //UMD FOOTER END
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function (Buffer){
 const Sha3 = require('js-sha3')
 
@@ -8022,9 +8540,9 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":14,"js-sha3":63}],11:[function(require,module,exports){
-arguments[4][9][0].apply(exports,arguments)
-},{"dup":9}],12:[function(require,module,exports){
+},{"buffer":16,"js-sha3":64}],13:[function(require,module,exports){
+arguments[4][11][0].apply(exports,arguments)
+},{"dup":11}],14:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8247,7 +8765,7 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":14}],13:[function(require,module,exports){
+},{"buffer":16}],15:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -8359,7 +8877,7 @@ exports.allocUnsafeSlow = function allocUnsafeSlow(size) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"buffer":14}],14:[function(require,module,exports){
+},{"buffer":16}],16:[function(require,module,exports){
 (function (global){
 /*!
  * The buffer module from node.js, for the browser.
@@ -9911,7 +10429,7 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":3,"ieee754":57,"isarray":62}],15:[function(require,module,exports){
+},{"base64-js":5,"ieee754":57,"isarray":63}],17:[function(require,module,exports){
 (function (Buffer){
 var Transform = require('stream').Transform
 var inherits = require('inherits')
@@ -10005,7 +10523,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":14,"inherits":59,"stream":123,"string_decoder":12}],16:[function(require,module,exports){
+},{"buffer":16,"inherits":60,"stream":127,"string_decoder":14}],18:[function(require,module,exports){
 (function (Buffer){
 var clone = (function() {
 'use strict';
@@ -10169,7 +10687,7 @@ if (typeof module === 'object' && module.exports) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":14}],17:[function(require,module,exports){
+},{"buffer":16}],19:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -10280,7 +10798,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":60}],18:[function(require,module,exports){
+},{"../../is-buffer/index.js":61}],20:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var inherits = require('inherits')
@@ -10336,7 +10854,7 @@ module.exports = function createHash (alg) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./md5":20,"buffer":14,"cipher-base":15,"inherits":59,"ripemd160":107,"sha.js":116}],19:[function(require,module,exports){
+},{"./md5":22,"buffer":16,"cipher-base":17,"inherits":60,"ripemd160":111,"sha.js":120}],21:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var intSize = 4;
@@ -10373,7 +10891,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 }
 exports.hash = hash;
 }).call(this,require("buffer").Buffer)
-},{"buffer":14}],20:[function(require,module,exports){
+},{"buffer":16}],22:[function(require,module,exports){
 'use strict';
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -10530,7 +11048,7 @@ function bit_rol(num, cnt)
 module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
-},{"./helpers":19}],21:[function(require,module,exports){
+},{"./helpers":21}],23:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -10545,7 +11063,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":36,"./elliptic/curve":24,"./elliptic/curves":27,"./elliptic/ec":28,"./elliptic/eddsa":31,"./elliptic/utils":35,"brorand":7}],22:[function(require,module,exports){
+},{"../package.json":38,"./elliptic/curve":26,"./elliptic/curves":29,"./elliptic/ec":30,"./elliptic/eddsa":33,"./elliptic/utils":37,"brorand":9}],24:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -10922,7 +11440,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../../elliptic":21,"bn.js":6}],23:[function(require,module,exports){
+},{"../../elliptic":23,"bn.js":8}],25:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -11357,7 +11875,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../../elliptic":21,"../curve":24,"bn.js":6,"inherits":59}],24:[function(require,module,exports){
+},{"../../elliptic":23,"../curve":26,"bn.js":8,"inherits":60}],26:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -11367,7 +11885,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":22,"./edwards":23,"./mont":25,"./short":26}],25:[function(require,module,exports){
+},{"./base":24,"./edwards":25,"./mont":27,"./short":28}],27:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -11549,7 +12067,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../../elliptic":21,"../curve":24,"bn.js":6,"inherits":59}],26:[function(require,module,exports){
+},{"../../elliptic":23,"../curve":26,"bn.js":8,"inherits":60}],28:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -12489,7 +13007,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../../elliptic":21,"../curve":24,"bn.js":6,"inherits":59}],27:[function(require,module,exports){
+},{"../../elliptic":23,"../curve":26,"bn.js":8,"inherits":60}],29:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -12696,7 +13214,7 @@ defineCurve('secp256k1', {
   ]
 });
 
-},{"../elliptic":21,"./precomputed/secp256k1":34,"hash.js":49}],28:[function(require,module,exports){
+},{"../elliptic":23,"./precomputed/secp256k1":36,"hash.js":49}],30:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -12938,7 +13456,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../../elliptic":21,"./key":29,"./signature":30,"bn.js":6,"hmac-drbg":55}],29:[function(require,module,exports){
+},{"../../elliptic":23,"./key":31,"./signature":32,"bn.js":8,"hmac-drbg":55}],31:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -13059,7 +13577,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"../../elliptic":21,"bn.js":6}],30:[function(require,module,exports){
+},{"../../elliptic":23,"bn.js":8}],32:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -13196,7 +13714,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../../elliptic":21,"bn.js":6}],31:[function(require,module,exports){
+},{"../../elliptic":23,"bn.js":8}],33:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -13316,7 +13834,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../../elliptic":21,"./key":32,"./signature":33,"hash.js":49}],32:[function(require,module,exports){
+},{"../../elliptic":23,"./key":34,"./signature":35,"hash.js":49}],34:[function(require,module,exports){
 'use strict';
 
 var elliptic = require('../../elliptic');
@@ -13414,7 +13932,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../../elliptic":21}],33:[function(require,module,exports){
+},{"../../elliptic":23}],35:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -13482,7 +14000,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../../elliptic":21,"bn.js":6}],34:[function(require,module,exports){
+},{"../../elliptic":23,"bn.js":8}],36:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -14264,7 +14782,7 @@ module.exports = {
   }
 };
 
-},{}],35:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -14386,7 +14904,7 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":6,"minimalistic-assert":82,"minimalistic-crypto-utils":83}],36:[function(require,module,exports){
+},{"bn.js":8,"minimalistic-assert":86,"minimalistic-crypto-utils":87}],38:[function(require,module,exports){
 module.exports={
   "_args": [
     [
@@ -14511,7 +15029,7 @@ module.exports={
   "version": "6.4.0"
 }
 
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 module.exports={
   "genesisGasLimit": {
     "v": 5000,
@@ -14748,571 +15266,7 @@ module.exports={
   }
 }
 
-},{}],38:[function(require,module,exports){
-module.exports = require('./lib/index.js')
-
-},{"./lib/index.js":39}],39:[function(require,module,exports){
-(function (Buffer){
-const utils = require('ethereumjs-util')
-const BN = require('bn.js')
-
-var ABI = function () {
-}
-
-// Convert from short to canonical names
-// FIXME: optimise or make this nicer?
-function elementaryName (name) {
-  if (name.startsWith('int[')) {
-    return 'int256' + name.slice(3)
-  } else if (name === 'int') {
-    return 'int256'
-  } else if (name.startsWith('uint[')) {
-    return 'uint256' + name.slice(4)
-  } else if (name === 'uint') {
-    return 'uint256'
-  } else if (name.startsWith('fixed[')) {
-    return 'fixed128x128' + name.slice(5)
-  } else if (name === 'fixed') {
-    return 'fixed128x128'
-  } else if (name.startsWith('ufixed[')) {
-    return 'ufixed128x128' + name.slice(6)
-  } else if (name === 'ufixed') {
-    return 'ufixed128x128'
-  }
-  return name
-}
-
-ABI.eventID = function (name, types) {
-  // FIXME: use node.js util.format?
-  var sig = name + '(' + types.map(elementaryName).join(',') + ')'
-  return utils.sha3(new Buffer(sig))
-}
-
-ABI.methodID = function (name, types) {
-  return ABI.eventID(name, types).slice(0, 4)
-}
-
-// Parse N from type<N>
-function parseTypeN (type) {
-  return parseInt(/^\D+(\d+)$/.exec(type)[1], 10)
-}
-
-// Parse N,M from type<N>x<M>
-function parseTypeNxM (type) {
-  var tmp = /^\D+(\d+)x(\d+)$/.exec(type)
-  return [ parseInt(tmp[1], 10), parseInt(tmp[2], 10) ]
-}
-
-// Parse N from type[<N>]
-function parseTypeArray (type) {
-  var tmp = /^\w+\[(\d*)\]$/.exec(type)[1]
-  if (tmp.length === 0) {
-    return 0
-  } else {
-    return parseInt(tmp, 10)
-  }
-}
-
-function parseNumber (arg) {
-  var type = typeof arg
-  if (type === 'string') {
-    if (utils.isHexPrefixed(arg)) {
-      return new BN(utils.stripHexPrefix(arg), 16)
-    } else {
-      return new BN(arg, 10)
-    }
-  } else if (type === 'number') {
-    return new BN(arg)
-  } else if (arg.toArray) {
-    // assume this is a BN for the moment, replace with BN.isBN soon
-    return arg
-  } else {
-    throw new Error('Argument is not a number')
-  }
-}
-
-// someMethod(bytes,uint)
-// someMethod(bytes,uint):(boolean)
-function parseSignature (sig) {
-  var tmp = /^(\w+)\((.+)\)$/.exec(sig)
-  if (tmp.length !== 3) {
-    throw new Error('Invalid method signature')
-  }
-
-  var args = /^(.+)\):\((.+)$/.exec(tmp[2])
-
-  if (args !== null && args.length === 3) {
-    return {
-      method: tmp[1],
-      args: args[1].split(','),
-      retargs: args[2].split(',')
-    }
-  } else {
-    return {
-      method: tmp[1],
-      args: tmp[2].split(',')
-    }
-  }
-}
-
-// Encodes a single item (can be dynamic array)
-// @returns: Buffer
-function encodeSingle (type, arg) {
-  var size, num, ret, i
-
-  if (type === 'address') {
-    return encodeSingle('uint160', parseNumber(arg))
-  } else if (type === 'bool') {
-    return encodeSingle('uint8', arg ? 1 : 0)
-  } else if (type === 'string') {
-    return encodeSingle('bytes', new Buffer(arg, 'utf8'))
-  } else if (type.match(/\w+\[\d+\]/)) {
-    // this part handles fixed-length arrays ([2])
-    // NOTE: we catch here all calls to arrays, that simplifies the rest
-    if (typeof arg.length === 'undefined') {
-      throw new Error('Not an array?')
-    }
-
-    size = parseTypeArray(type)
-    if ((size !== 0) && (arg.length > size)) {
-      throw new Error('Elements exceed array size: ' + size)
-    }
-
-    type = type.slice(0, type.indexOf('['))
-
-    ret = []
-    for (i in arg) {
-      ret.push(encodeSingle(type, arg[i]))
-    }
-
-    return Buffer.concat(ret)
-  } else if (type.match(/\w+\[\]/)) {
-    // this part handles variable length ([])
-    // NOTE: we catch here all calls to arrays, that simplifies the rest
-    if (typeof arg.length === 'undefined') {
-      throw new Error('Not an array?')
-    }
-
-    type = type.slice(0, type.indexOf('['))
-
-    ret = [ encodeSingle('uint256', arg.length) ]
-    for (i in arg) {
-      ret.push(encodeSingle(type, arg[i]))
-    }
-
-    return Buffer.concat(ret)
-  } else if (type === 'bytes') {
-    arg = new Buffer(arg)
-
-    ret = Buffer.concat([ encodeSingle('uint256', arg.length), arg ])
-
-    if ((arg.length % 32) !== 0) {
-      ret = Buffer.concat([ ret, utils.zeros(32 - (arg.length % 32)) ])
-    }
-
-    return ret
-  } else if (type.startsWith('bytes')) {
-    size = parseTypeN(type)
-    if (size < 1 || size > 32) {
-      throw new Error('Invalid bytes<N> width: ' + size)
-    }
-
-    return utils.setLengthRight(arg, 32)
-  } else if (type.startsWith('uint')) {
-    size = parseTypeN(type)
-    if ((size % 8) || (size < 8) || (size > 256)) {
-      throw new Error('Invalid uint<N> width: ' + size)
-    }
-
-    num = parseNumber(arg)
-    if (num.bitLength() > size) {
-      throw new Error('Supplied uint exceeds width: ' + size + ' vs ' + num.bitLength())
-    }
-
-    if (num < 0) {
-      throw new Error('Supplied uint is negative')
-    }
-
-    return num.toArrayLike(Buffer, 'be', 32)
-  } else if (type.startsWith('int')) {
-    size = parseTypeN(type)
-    if ((size % 8) || (size < 8) || (size > 256)) {
-      throw new Error('Invalid int<N> width: ' + size)
-    }
-
-    num = parseNumber(arg)
-    if (num.bitLength() > size) {
-      throw new Error('Supplied int exceeds width: ' + size + ' vs ' + num.bitLength())
-    }
-
-    return num.toTwos(256).toArrayLike(Buffer, 'be', 32)
-  } else if (type.startsWith('ufixed')) {
-    size = parseTypeNxM(type)
-
-    num = parseNumber(arg)
-
-    if (num < 0) {
-      throw new Error('Supplied ufixed is negative')
-    }
-
-    return encodeSingle('uint256', num.mul(new BN(2).pow(new BN(size[1]))))
-  } else if (type.startsWith('fixed')) {
-    size = parseTypeNxM(type)
-
-    return encodeSingle('int256', parseNumber(arg).mul(new BN(2).pow(new BN(size[1]))))
-  }
-
-  throw new Error('Unsupported or invalid type: ' + type)
-}
-
-// Decodes a single item (can be dynamic array)
-// @returns: array
-// FIXME: this method will need a lot of attention at checking limits and validation
-function decodeSingle (type, arg) {
-  var size, num, ret, i
-
-  if (type === 'address') {
-    return decodeSingle('uint160', arg)
-  } else if (type === 'bool') {
-    return decodeSingle('uint8', arg).toString() === new BN(1).toString()
-  } else if (type === 'string') {
-    return new Buffer(decodeSingle('bytes', arg), 'utf8').toString()
-  } else if (type.match(/\w+\[\d+\]/)) {
-    // this part handles fixed-length arrays ([2])
-    // NOTE: we catch here all calls to arrays, that simplifies the rest
-    size = parseTypeArray(type)
-    type = type.slice(0, type.indexOf('['))
-
-    ret = []
-    for (i = 0; i < size; i++) {
-      ret.push(decodeSingle(type, arg.slice(i * 32)))
-    }
-
-    return ret
-  } else if (type.match(/\w+\[\]/)) {
-    // this part handles variable length ([])
-    // NOTE: we catch here all calls to arrays, that simplifies the rest
-    type = type.slice(0, type.indexOf('['))
-    var count = decodeSingle('uint256', arg.slice(0, 32)).toNumber()
-
-    ret = []
-    for (i = 1; i < count + 1; i++) {
-      ret.push(decodeSingle(type, arg.slice(i * 32)))
-    }
-
-    return ret
-  } else if (type === 'bytes') {
-    size = decodeSingle('uint256', arg.slice(0, 32)).toNumber()
-    return arg.slice(32, 32 + size)
-  } else if (type.startsWith('bytes')) {
-    size = parseTypeN(type)
-    if (size < 1 || size > 32) {
-      throw new Error('Invalid bytes<N> width: ' + size)
-    }
-
-    return arg.slice(0, size)
-  } else if (type.startsWith('uint')) {
-    size = parseTypeN(type)
-    if ((size % 8) || (size < 8) || (size > 256)) {
-      throw new Error('Invalid uint<N> width: ' + size)
-    }
-
-    num = new BN(arg.slice(0, 32), 16, 'be')
-    if (num.bitLength() > size) {
-      throw new Error('Decoded int exceeds width: ' + size + ' vs ' + num.bitLength())
-    }
-
-    return num
-  } else if (type.startsWith('int')) {
-    size = parseTypeN(type)
-    if ((size % 8) || (size < 8) || (size > 256)) {
-      throw new Error('Invalid uint<N> width: ' + size)
-    }
-
-    num = new BN(arg.slice(0, 32), 16, 'be').fromTwos(256)
-    if (num.bitLength() > size) {
-      throw new Error('Decoded uint exceeds width: ' + size + ' vs ' + num.bitLength())
-    }
-
-    return num
-  } else if (type.startsWith('ufixed')) {
-    size = parseTypeNxM(type)
-    size = new BN(2).pow(new BN(size[1]))
-
-    num = decodeSingle('uint256', arg)
-    if (!num.mod(size).isZero()) {
-      throw new Error('Decimals not supported yet')
-    }
-
-    return num.div(size)
-  } else if (type.startsWith('fixed')) {
-    size = parseTypeNxM(type)
-    size = new BN(2).pow(new BN(size[1]))
-
-    num = decodeSingle('int256', arg)
-    if (!num.mod(size).isZero()) {
-      throw new Error('Decimals not supported yet')
-    }
-
-    return num.div(size)
-  }
-
-  throw new Error('Unsupported or invalid type: ' + type)
-}
-
-// Is a type dynamic?
-function isDynamic (type) {
-  // FIXME: handle all types? I don't think anything is missing now
-  return (type === 'string') || (type === 'bytes') || type.match(/\w+\[\]/)
-}
-
-// Encode a method/event with arguments
-// @types an array of string type names
-// @args  an array of the appropriate values
-ABI.rawEncode = function (types, values) {
-  var output = []
-  var data = []
-
-  var headLength = 32 * types.length
-
-  for (var i in types) {
-    var type = elementaryName(types[i])
-    var value = values[i]
-    var cur = encodeSingle(type, value)
-
-    // Use the head/tail method for storing dynamic data
-    if (isDynamic(type)) {
-      output.push(encodeSingle('uint256', headLength))
-      data.push(cur)
-      headLength += cur.length
-    } else {
-      output.push(cur)
-    }
-  }
-
-  return Buffer.concat(output.concat(data))
-}
-
-ABI.rawDecode = function (types, data) {
-  var ret = []
-
-  data = new Buffer(data)
-
-  var offset = 0
-  for (var i in types) {
-    var type = elementaryName(types[i])
-    var cur = data.slice(offset, offset + 32)
-
-    if (isDynamic(type)) {
-      var dataOffset = decodeSingle('uint256', cur).toNumber()
-      // We will read at least 32 bytes
-      if (dataOffset > (data.length - 32)) {
-        throw new Error('Invalid offset: ' + dataOffset)
-      }
-
-      cur = data.slice(dataOffset)
-    } else if (type.match(/\w+\[\d+\]/)) {
-      var count = parseTypeArray(type)
-      if (count > 1) {
-        cur = data.slice(offset, offset + (count * 32))
-        offset += (count - 1) * 32
-      }
-    }
-
-    ret.push(decodeSingle(type, cur))
-    offset += 32
-  }
-
-  return ret
-}
-
-ABI.simpleEncode = function (method) {
-  var args = Array.prototype.slice.call(arguments).slice(1)
-  var sig = parseSignature(method)
-
-  // FIXME: validate/convert arguments
-  if (args.length !== sig.args.length) {
-    throw new Error('Argument count mismatch')
-  }
-
-  return Buffer.concat([ ABI.methodID(sig.method, sig.args), ABI.rawEncode(sig.args, args) ])
-}
-
-ABI.simpleDecode = function (method, data) {
-  var sig = parseSignature(method)
-
-  // FIXME: validate/convert arguments
-  if (!sig.retargs) {
-    throw new Error('No return values in method')
-  }
-
-  return ABI.rawDecode(sig.retargs, data)
-}
-
-function stringify (type, value) {
-  if (type.startsWith('address') || type.startsWith('bytes')) {
-    return '0x' + value.toString('hex')
-  } else {
-    return value.toString()
-  }
-}
-
-ABI.stringify = function (types, values) {
-  var ret = []
-
-  for (var i in types) {
-    var type = types[i]
-    var value = values[i]
-
-    // if it is an array type, concat the items
-    if (/^[^\[]+\[.*\]$/.test(type)) {
-      value = value.map(function (item) {
-        return stringify(type, item)
-      }).join(', ')
-    } else {
-      value = stringify(type, value)
-    }
-
-    ret.push(value)
-  }
-
-  return ret
-}
-
-ABI.solidityPack = function (types, values) {
-  if (types.length !== values.length) {
-    throw new Error('Number of types are not matching the values')
-  }
-
-  var size, num
-  var ret = []
-
-  for (var i = 0; i < types.length; i++) {
-    var type = elementaryName(types[i])
-    var value = values[i]
-
-    if (type === 'bytes') {
-      ret.push(value)
-    } else if (type === 'string') {
-      ret.push(new Buffer(value, 'utf8'))
-    } else if (type === 'bool') {
-      ret.push(new Buffer(value ? '01' : '00', 'hex'))
-    } else if (type === 'address') {
-      ret.push(utils.setLengthLeft(value, 20))
-    } else if (type.startsWith('bytes')) {
-      size = parseTypeN(type)
-      if (size < 1 || size > 32) {
-        throw new Error('Invalid bytes<N> width: ' + size)
-      }
-
-      return utils.setLengthRight(value, size)
-    } else if (type.startsWith('uint')) {
-      size = parseTypeN(type)
-      if ((size % 8) || (size < 8) || (size > 256)) {
-        throw new Error('Invalid uint<N> width: ' + size)
-      }
-
-      num = parseNumber(value)
-      if (num.bitLength() > size) {
-        throw new Error('Supplied uint exceeds width: ' + size + ' vs ' + num.bitLength())
-      }
-
-      ret.push(num.toArrayLike(Buffer, 'be', size / 8))
-    } else if (type.startsWith('int')) {
-      size = parseTypeN(type)
-      if ((size % 8) || (size < 8) || (size > 256)) {
-        throw new Error('Invalid int<N> width: ' + size)
-      }
-
-      num = parseNumber(value)
-      if (num.bitLength() > size) {
-        throw new Error('Supplied int exceeds width: ' + size + ' vs ' + num.bitLength())
-      }
-
-      ret.push(num.toTwos(size).toArrayLike(Buffer, 'be', size / 8))
-    } else {
-      // FIXME: support all other types
-      throw new Error('Unsupported or invalid type: ' + type)
-    }
-  }
-
-  return Buffer.concat(ret)
-}
-
-ABI.soliditySHA3 = function (types, values) {
-  return utils.sha3(ABI.solidityPack(types, values))
-}
-
-ABI.soliditySHA256 = function (types, values) {
-  return utils.sha256(ABI.solidityPack(types, values))
-}
-
-ABI.solidityRIPEMD160 = function (types, values) {
-  return utils.ripemd160(ABI.solidityPack(types, values), true)
-}
-
-// Serpent's users are familiar with this encoding
-// - s: string
-// - b: bytes
-// - b<N>: bytes<N>
-// - i: int256
-// - a: int256[]
-
-function isNumeric (c) {
-  // FIXME: is this correct? Seems to work
-  return (c >= '0') && (c <= '9')
-}
-
-// For a "documentation" refer to https://github.com/ethereum/serpent/blob/develop/preprocess.cpp
-ABI.fromSerpent = function (sig) {
-  var ret = []
-  for (var i = 0; i < sig.length; i++) {
-    var type = sig[i]
-    if (type === 's') {
-      ret.push('bytes')
-    } else if (type === 'b') {
-      var tmp = 'bytes'
-      var j = i + 1
-      while ((j < sig.length) && isNumeric(sig[j])) {
-        tmp += sig[j] - '0'
-        j++
-      }
-      i = j - 1
-      ret.push(tmp)
-    } else if (type === 'i') {
-      ret.push('int256')
-    } else if (type === 'a') {
-      ret.push('int256[]')
-    } else {
-      throw new Error('Unsupported or invalid type: ' + type)
-    }
-  }
-  return ret
-}
-
-ABI.toSerpent = function (types) {
-  var ret = []
-  for (var i = 0; i < types.length; i++) {
-    var type = types[i]
-    if (type === 'bytes') {
-      ret.push('s')
-    } else if (type.startsWith('bytes')) {
-      ret.push('b' + parseTypeN(type))
-    } else if (type === 'int256') {
-      ret.push('i')
-    } else if (type === 'int256[]') {
-      ret.push('a')
-    } else {
-      throw new Error('Unsupported or invalid type: ' + type)
-    }
-  }
-  return ret.join('')
-}
-
-module.exports = ABI
-
-}).call(this,require("buffer").Buffer)
-},{"bn.js":6,"buffer":14,"ethereumjs-util":46}],40:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -15534,7 +15488,7 @@ function logAndSwallowWrapper(callback) {
     };
 }
 
-},{"./block-reconciler":41,"./log-reconciler":43,"immutable":58,"uuid":140}],41:[function(require,module,exports){
+},{"./block-reconciler":41,"./log-reconciler":43,"immutable":59,"uuid":144}],41:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -16168,9 +16122,27 @@ module.exports = function () {
   return Transaction;
 }();
 }).call(this,require("buffer").Buffer)
-},{"buffer":14,"ethereum-common/params.json":37,"ethereumjs-util":45}],45:[function(require,module,exports){
+},{"buffer":16,"ethereum-common/params.json":39,"ethereumjs-util":45}],45:[function(require,module,exports){
 (function (Buffer){
-var _typeof8 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof11 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof10 = typeof Symbol === "function" && _typeof11(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof11(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof11(obj);
+};
+
+var _typeof9 = typeof Symbol === "function" && _typeof10(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof10(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof10(obj);
+};
+
+var _typeof8 = typeof Symbol === "function" && _typeof9(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof9(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof9(obj);
+};
 
 var _typeof7 = typeof Symbol === "function" && _typeof8(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof8(obj);
@@ -16878,7 +16850,7 @@ exports.defineProperties = function (self, fields, data) {
   }
 };
 }).call(this,require("buffer").Buffer)
-},{"assert":1,"bn.js":6,"buffer":14,"create-hash":18,"ethjs-util":47,"keccak":64,"rlp":108,"secp256k1":109}],46:[function(require,module,exports){
+},{"assert":1,"bn.js":8,"buffer":16,"create-hash":20,"ethjs-util":47,"keccak":65,"rlp":112,"secp256k1":113}],46:[function(require,module,exports){
 (function (Buffer){
 const SHA3 = require('keccakjs')
 const secp256k1 = require('secp256k1')
@@ -17583,7 +17555,7 @@ exports.defineProperties = function (self, fields, data) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"assert":1,"bn.js":6,"buffer":14,"create-hash":18,"keccakjs":70,"rlp":108,"secp256k1":109}],47:[function(require,module,exports){
+},{"assert":1,"bn.js":8,"buffer":16,"create-hash":20,"keccakjs":71,"rlp":112,"secp256k1":113}],47:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -17806,7 +17778,7 @@ module.exports = {
   isHexString: isHexString
 };
 }).call(this,require("buffer").Buffer)
-},{"buffer":14,"is-hex-prefixed":61,"strip-hex-prefix":125}],48:[function(require,module,exports){
+},{"buffer":16,"is-hex-prefixed":62,"strip-hex-prefix":129}],48:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19240,7 +19212,7 @@ function shr64_lo(ah, al, num) {
 };
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":59}],55:[function(require,module,exports){
+},{"inherits":60}],55:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -19355,7 +19327,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"hash.js":49,"minimalistic-assert":82,"minimalistic-crypto-utils":83}],56:[function(require,module,exports){
+},{"hash.js":49,"minimalistic-assert":86,"minimalistic-crypto-utils":87}],56:[function(require,module,exports){
 'use strict';
 
 module.exports = Response;
@@ -19487,6 +19459,23 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 }
 
 },{}],58:[function(require,module,exports){
+"use strict";
+
+/**
+ * Shallow copy an object, excluding one of its keys.
+ *
+ * @param {Object} originalObject Object from which to remove a key.
+ * @param {string} excludeKey Key to remove from originalObject.
+ * @return {Object} Shallow copy of originalObject without excludeKey.
+ */
+module.exports = function (originalObject, excludeKey) {
+  return Object.keys(originalObject).reduce(function (objectWithoutExcludedKey, key) {
+    if (key !== excludeKey) objectWithoutExcludedKey[key] = originalObject[key];
+    return objectWithoutExcludedKey;
+  }, {});
+};
+
+},{}],59:[function(require,module,exports){
 /**
  *  Copyright (c) 2014-2015, Facebook, Inc.
  *  All rights reserved.
@@ -24466,7 +24455,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   return Immutable;
 
 }));
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -24491,7 +24480,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -24514,7 +24503,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 /**
  * Returns a `Boolean` on whether or not the a `String` starts with '0x'
  * @param {String} str the string input value
@@ -24529,14 +24518,14 @@ module.exports = function isHexPrefixed(str) {
   return str.slice(0, 2) === '0x';
 }
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 (function (global){
 /*
  * js-sha3 v0.3.1
@@ -24972,11 +24961,11 @@ module.exports = Array.isArray || function (arr) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 'use strict'
 module.exports = require('./lib/api')(require('./lib/keccak'))
 
-},{"./lib/api":65,"./lib/keccak":69}],65:[function(require,module,exports){
+},{"./lib/api":66,"./lib/keccak":70}],66:[function(require,module,exports){
 'use strict'
 var createKeccak = require('./keccak')
 var createShake = require('./shake')
@@ -25006,7 +24995,7 @@ module.exports = function (KeccakState) {
   }
 }
 
-},{"./keccak":66,"./shake":67}],66:[function(require,module,exports){
+},{"./keccak":67,"./shake":68}],67:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var Transform = require('stream').Transform
@@ -25093,7 +25082,7 @@ module.exports = function (KeccakState) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":14,"inherits":59,"stream":123}],67:[function(require,module,exports){
+},{"buffer":16,"inherits":60,"stream":127}],68:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var Transform = require('stream').Transform
@@ -25171,7 +25160,7 @@ module.exports = function (KeccakState) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":14,"inherits":59,"stream":123}],68:[function(require,module,exports){
+},{"buffer":16,"inherits":60,"stream":127}],69:[function(require,module,exports){
 'use strict'
 var P1600_ROUND_CONSTANTS = [1, 0, 32898, 0, 32906, 2147483648, 2147516416, 2147483648, 32907, 0, 2147483649, 0, 2147516545, 2147483648, 32777, 2147483648, 138, 0, 136, 0, 2147516425, 0, 2147483658, 0, 2147516555, 0, 139, 2147483648, 32905, 2147483648, 32771, 2147483648, 32770, 2147483648, 128, 2147483648, 32778, 0, 2147483658, 2147483648, 2147516545, 2147483648, 32896, 2147483648, 2147483649, 0, 2147516424, 2147483648]
 
@@ -25360,7 +25349,7 @@ exports.p1600 = function (s) {
   }
 }
 
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var keccakState = require('./keccak-state-unroll')
@@ -25433,10 +25422,10 @@ Keccak.prototype.copy = function (dest) {
 module.exports = Keccak
 
 }).call(this,require("buffer").Buffer)
-},{"./keccak-state-unroll":68,"buffer":14}],70:[function(require,module,exports){
+},{"./keccak-state-unroll":69,"buffer":16}],71:[function(require,module,exports){
 module.exports = require('browserify-sha3').SHA3Hash
 
-},{"browserify-sha3":10}],71:[function(require,module,exports){
+},{"browserify-sha3":12}],72:[function(require,module,exports){
 /**
  * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -26075,7 +26064,2949 @@ function keys(object) {
 
 module.exports = assign;
 
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
+(function (global){
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/** Used to stand-in for `undefined` hash values. */
+var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0;
+
+/** `Object#toString` result references. */
+var funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    symbolTag = '[object Symbol]';
+
+/** Used to match property names within property paths. */
+var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
+    reIsPlainProp = /^\w*$/,
+    reLeadingDot = /^\./,
+    rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+
+/**
+ * Used to match `RegExp`
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+ */
+var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+/** Used to match backslashes in property paths. */
+var reEscapeChar = /\\(\\)?/g;
+
+/** Used to detect host constructors (Safari). */
+var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+/**
+ * Gets the value at `key` of `object`.
+ *
+ * @private
+ * @param {Object} [object] The object to query.
+ * @param {string} key The key of the property to get.
+ * @returns {*} Returns the property value.
+ */
+function getValue(object, key) {
+  return object == null ? undefined : object[key];
+}
+
+/**
+ * Checks if `value` is a host object in IE < 9.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+ */
+function isHostObject(value) {
+  // Many host objects are `Object` objects that can coerce to strings
+  // despite having improperly defined `toString` methods.
+  var result = false;
+  if (value != null && typeof value.toString != 'function') {
+    try {
+      result = !!(value + '');
+    } catch (e) {}
+  }
+  return result;
+}
+
+/** Used for built-in method references. */
+var arrayProto = Array.prototype,
+    funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to detect overreaching core-js shims. */
+var coreJsData = root['__core-js_shared__'];
+
+/** Used to detect methods masquerading as native. */
+var maskSrcKey = (function() {
+  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
+  return uid ? ('Symbol(src)_1.' + uid) : '';
+}());
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/** Used to detect if a method is native. */
+var reIsNative = RegExp('^' +
+  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
+  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+);
+
+/** Built-in value references. */
+var Symbol = root.Symbol,
+    splice = arrayProto.splice;
+
+/* Built-in method references that are verified to be native. */
+var Map = getNative(root, 'Map'),
+    nativeCreate = getNative(Object, 'create');
+
+/** Used to convert symbols to primitives and strings. */
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolToString = symbolProto ? symbolProto.toString : undefined;
+
+/**
+ * Creates a hash object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function Hash(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the hash.
+ *
+ * @private
+ * @name clear
+ * @memberOf Hash
+ */
+function hashClear() {
+  this.__data__ = nativeCreate ? nativeCreate(null) : {};
+}
+
+/**
+ * Removes `key` and its value from the hash.
+ *
+ * @private
+ * @name delete
+ * @memberOf Hash
+ * @param {Object} hash The hash to modify.
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function hashDelete(key) {
+  return this.has(key) && delete this.__data__[key];
+}
+
+/**
+ * Gets the hash value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf Hash
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function hashGet(key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key) ? data[key] : undefined;
+}
+
+/**
+ * Checks if a hash value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf Hash
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function hashHas(key) {
+  var data = this.__data__;
+  return nativeCreate ? data[key] !== undefined : hasOwnProperty.call(data, key);
+}
+
+/**
+ * Sets the hash `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf Hash
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the hash instance.
+ */
+function hashSet(key, value) {
+  var data = this.__data__;
+  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+  return this;
+}
+
+// Add methods to `Hash`.
+Hash.prototype.clear = hashClear;
+Hash.prototype['delete'] = hashDelete;
+Hash.prototype.get = hashGet;
+Hash.prototype.has = hashHas;
+Hash.prototype.set = hashSet;
+
+/**
+ * Creates an list cache object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function ListCache(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the list cache.
+ *
+ * @private
+ * @name clear
+ * @memberOf ListCache
+ */
+function listCacheClear() {
+  this.__data__ = [];
+}
+
+/**
+ * Removes `key` and its value from the list cache.
+ *
+ * @private
+ * @name delete
+ * @memberOf ListCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function listCacheDelete(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    return false;
+  }
+  var lastIndex = data.length - 1;
+  if (index == lastIndex) {
+    data.pop();
+  } else {
+    splice.call(data, index, 1);
+  }
+  return true;
+}
+
+/**
+ * Gets the list cache value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf ListCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function listCacheGet(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  return index < 0 ? undefined : data[index][1];
+}
+
+/**
+ * Checks if a list cache value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf ListCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function listCacheHas(key) {
+  return assocIndexOf(this.__data__, key) > -1;
+}
+
+/**
+ * Sets the list cache `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf ListCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the list cache instance.
+ */
+function listCacheSet(key, value) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    data.push([key, value]);
+  } else {
+    data[index][1] = value;
+  }
+  return this;
+}
+
+// Add methods to `ListCache`.
+ListCache.prototype.clear = listCacheClear;
+ListCache.prototype['delete'] = listCacheDelete;
+ListCache.prototype.get = listCacheGet;
+ListCache.prototype.has = listCacheHas;
+ListCache.prototype.set = listCacheSet;
+
+/**
+ * Creates a map cache object to store key-value pairs.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function MapCache(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the map.
+ *
+ * @private
+ * @name clear
+ * @memberOf MapCache
+ */
+function mapCacheClear() {
+  this.__data__ = {
+    'hash': new Hash,
+    'map': new (Map || ListCache),
+    'string': new Hash
+  };
+}
+
+/**
+ * Removes `key` and its value from the map.
+ *
+ * @private
+ * @name delete
+ * @memberOf MapCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function mapCacheDelete(key) {
+  return getMapData(this, key)['delete'](key);
+}
+
+/**
+ * Gets the map value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf MapCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function mapCacheGet(key) {
+  return getMapData(this, key).get(key);
+}
+
+/**
+ * Checks if a map value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf MapCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function mapCacheHas(key) {
+  return getMapData(this, key).has(key);
+}
+
+/**
+ * Sets the map `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf MapCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the map cache instance.
+ */
+function mapCacheSet(key, value) {
+  getMapData(this, key).set(key, value);
+  return this;
+}
+
+// Add methods to `MapCache`.
+MapCache.prototype.clear = mapCacheClear;
+MapCache.prototype['delete'] = mapCacheDelete;
+MapCache.prototype.get = mapCacheGet;
+MapCache.prototype.has = mapCacheHas;
+MapCache.prototype.set = mapCacheSet;
+
+/**
+ * Gets the index at which the `key` is found in `array` of key-value pairs.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {*} key The key to search for.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function assocIndexOf(array, key) {
+  var length = array.length;
+  while (length--) {
+    if (eq(array[length][0], key)) {
+      return length;
+    }
+  }
+  return -1;
+}
+
+/**
+ * The base implementation of `_.get` without support for default values.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path of the property to get.
+ * @returns {*} Returns the resolved value.
+ */
+function baseGet(object, path) {
+  path = isKey(path, object) ? [path] : castPath(path);
+
+  var index = 0,
+      length = path.length;
+
+  while (object != null && index < length) {
+    object = object[toKey(path[index++])];
+  }
+  return (index && index == length) ? object : undefined;
+}
+
+/**
+ * The base implementation of `_.isNative` without bad shim checks.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a native function,
+ *  else `false`.
+ */
+function baseIsNative(value) {
+  if (!isObject(value) || isMasked(value)) {
+    return false;
+  }
+  var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
+  return pattern.test(toSource(value));
+}
+
+/**
+ * The base implementation of `_.toString` which doesn't convert nullish
+ * values to empty strings.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ */
+function baseToString(value) {
+  // Exit early for strings to avoid a performance hit in some environments.
+  if (typeof value == 'string') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return symbolToString ? symbolToString.call(value) : '';
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+}
+
+/**
+ * Casts `value` to a path array if it's not one.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the cast property path array.
+ */
+function castPath(value) {
+  return isArray(value) ? value : stringToPath(value);
+}
+
+/**
+ * Gets the data for `map`.
+ *
+ * @private
+ * @param {Object} map The map to query.
+ * @param {string} key The reference key.
+ * @returns {*} Returns the map data.
+ */
+function getMapData(map, key) {
+  var data = map.__data__;
+  return isKeyable(key)
+    ? data[typeof key == 'string' ? 'string' : 'hash']
+    : data.map;
+}
+
+/**
+ * Gets the native function at `key` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {string} key The key of the method to get.
+ * @returns {*} Returns the function if it's native, else `undefined`.
+ */
+function getNative(object, key) {
+  var value = getValue(object, key);
+  return baseIsNative(value) ? value : undefined;
+}
+
+/**
+ * Checks if `value` is a property name and not a property path.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {Object} [object] The object to query keys on.
+ * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
+ */
+function isKey(value, object) {
+  if (isArray(value)) {
+    return false;
+  }
+  var type = typeof value;
+  if (type == 'number' || type == 'symbol' || type == 'boolean' ||
+      value == null || isSymbol(value)) {
+    return true;
+  }
+  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+    (object != null && value in Object(object));
+}
+
+/**
+ * Checks if `value` is suitable for use as unique object key.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
+ */
+function isKeyable(value) {
+  var type = typeof value;
+  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+    ? (value !== '__proto__')
+    : (value === null);
+}
+
+/**
+ * Checks if `func` has its source masked.
+ *
+ * @private
+ * @param {Function} func The function to check.
+ * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+ */
+function isMasked(func) {
+  return !!maskSrcKey && (maskSrcKey in func);
+}
+
+/**
+ * Converts `string` to a property path array.
+ *
+ * @private
+ * @param {string} string The string to convert.
+ * @returns {Array} Returns the property path array.
+ */
+var stringToPath = memoize(function(string) {
+  string = toString(string);
+
+  var result = [];
+  if (reLeadingDot.test(string)) {
+    result.push('');
+  }
+  string.replace(rePropName, function(match, number, quote, string) {
+    result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
+  });
+  return result;
+});
+
+/**
+ * Converts `value` to a string key if it's not a string or symbol.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {string|symbol} Returns the key.
+ */
+function toKey(value) {
+  if (typeof value == 'string' || isSymbol(value)) {
+    return value;
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+}
+
+/**
+ * Converts `func` to its source code.
+ *
+ * @private
+ * @param {Function} func The function to process.
+ * @returns {string} Returns the source code.
+ */
+function toSource(func) {
+  if (func != null) {
+    try {
+      return funcToString.call(func);
+    } catch (e) {}
+    try {
+      return (func + '');
+    } catch (e) {}
+  }
+  return '';
+}
+
+/**
+ * Creates a function that memoizes the result of `func`. If `resolver` is
+ * provided, it determines the cache key for storing the result based on the
+ * arguments provided to the memoized function. By default, the first argument
+ * provided to the memoized function is used as the map cache key. The `func`
+ * is invoked with the `this` binding of the memoized function.
+ *
+ * **Note:** The cache is exposed as the `cache` property on the memoized
+ * function. Its creation may be customized by replacing the `_.memoize.Cache`
+ * constructor with one whose instances implement the
+ * [`Map`](http://ecma-international.org/ecma-262/7.0/#sec-properties-of-the-map-prototype-object)
+ * method interface of `delete`, `get`, `has`, and `set`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to have its output memoized.
+ * @param {Function} [resolver] The function to resolve the cache key.
+ * @returns {Function} Returns the new memoized function.
+ * @example
+ *
+ * var object = { 'a': 1, 'b': 2 };
+ * var other = { 'c': 3, 'd': 4 };
+ *
+ * var values = _.memoize(_.values);
+ * values(object);
+ * // => [1, 2]
+ *
+ * values(other);
+ * // => [3, 4]
+ *
+ * object.a = 2;
+ * values(object);
+ * // => [1, 2]
+ *
+ * // Modify the result cache.
+ * values.cache.set(object, ['a', 'b']);
+ * values(object);
+ * // => ['a', 'b']
+ *
+ * // Replace `_.memoize.Cache`.
+ * _.memoize.Cache = WeakMap;
+ */
+function memoize(func, resolver) {
+  if (typeof func != 'function' || (resolver && typeof resolver != 'function')) {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  var memoized = function() {
+    var args = arguments,
+        key = resolver ? resolver.apply(this, args) : args[0],
+        cache = memoized.cache;
+
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    var result = func.apply(this, args);
+    memoized.cache = cache.set(key, result);
+    return result;
+  };
+  memoized.cache = new (memoize.Cache || MapCache);
+  return memoized;
+}
+
+// Assign cache to `_.memoize`.
+memoize.Cache = MapCache;
+
+/**
+ * Performs a
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * comparison between two values to determine if they are equivalent.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ * var other = { 'a': 1 };
+ *
+ * _.eq(object, object);
+ * // => true
+ *
+ * _.eq(object, other);
+ * // => false
+ *
+ * _.eq('a', 'a');
+ * // => true
+ *
+ * _.eq('a', Object('a'));
+ * // => false
+ *
+ * _.eq(NaN, NaN);
+ * // => true
+ */
+function eq(value, other) {
+  return value === other || (value !== value && other !== other);
+}
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8-9 which returns 'object' for typed array and other constructors.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+}
+
+/**
+ * Converts `value` to a string. An empty string is returned for `null`
+ * and `undefined` values. The sign of `-0` is preserved.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ * @example
+ *
+ * _.toString(null);
+ * // => ''
+ *
+ * _.toString(-0);
+ * // => '-0'
+ *
+ * _.toString([1, 2, 3]);
+ * // => '1,2,3'
+ */
+function toString(value) {
+  return value == null ? '' : baseToString(value);
+}
+
+/**
+ * Gets the value at `path` of `object`. If the resolved value is
+ * `undefined`, the `defaultValue` is returned in its place.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.7.0
+ * @category Object
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path of the property to get.
+ * @param {*} [defaultValue] The value returned for `undefined` resolved values.
+ * @returns {*} Returns the resolved value.
+ * @example
+ *
+ * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+ *
+ * _.get(object, 'a[0].b.c');
+ * // => 3
+ *
+ * _.get(object, ['a', '0', 'b', 'c']);
+ * // => 3
+ *
+ * _.get(object, 'a.b.c', 'default');
+ * // => 'default'
+ */
+function get(object, path, defaultValue) {
+  var result = object == null ? undefined : baseGet(object, path);
+  return result === undefined ? defaultValue : result;
+}
+
+module.exports = get;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],74:[function(require,module,exports){
+(function (global){
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/** Used to stand-in for `undefined` hash values. */
+var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0,
+    MAX_SAFE_INTEGER = 9007199254740991;
+
+/** `Object#toString` result references. */
+var funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    symbolTag = '[object Symbol]';
+
+/** Used to match property names within property paths. */
+var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
+    reIsPlainProp = /^\w*$/,
+    reLeadingDot = /^\./,
+    rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+
+/**
+ * Used to match `RegExp`
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+ */
+var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+/** Used to match backslashes in property paths. */
+var reEscapeChar = /\\(\\)?/g;
+
+/** Used to detect host constructors (Safari). */
+var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+/**
+ * Gets the value at `key` of `object`.
+ *
+ * @private
+ * @param {Object} [object] The object to query.
+ * @param {string} key The key of the property to get.
+ * @returns {*} Returns the property value.
+ */
+function getValue(object, key) {
+  return object == null ? undefined : object[key];
+}
+
+/**
+ * Checks if `value` is a host object in IE < 9.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+ */
+function isHostObject(value) {
+  // Many host objects are `Object` objects that can coerce to strings
+  // despite having improperly defined `toString` methods.
+  var result = false;
+  if (value != null && typeof value.toString != 'function') {
+    try {
+      result = !!(value + '');
+    } catch (e) {}
+  }
+  return result;
+}
+
+/** Used for built-in method references. */
+var arrayProto = Array.prototype,
+    funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to detect overreaching core-js shims. */
+var coreJsData = root['__core-js_shared__'];
+
+/** Used to detect methods masquerading as native. */
+var maskSrcKey = (function() {
+  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
+  return uid ? ('Symbol(src)_1.' + uid) : '';
+}());
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/** Used to detect if a method is native. */
+var reIsNative = RegExp('^' +
+  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
+  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+);
+
+/** Built-in value references. */
+var Symbol = root.Symbol,
+    splice = arrayProto.splice;
+
+/* Built-in method references that are verified to be native. */
+var Map = getNative(root, 'Map'),
+    nativeCreate = getNative(Object, 'create');
+
+/** Used to convert symbols to primitives and strings. */
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolToString = symbolProto ? symbolProto.toString : undefined;
+
+/**
+ * Creates a hash object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function Hash(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the hash.
+ *
+ * @private
+ * @name clear
+ * @memberOf Hash
+ */
+function hashClear() {
+  this.__data__ = nativeCreate ? nativeCreate(null) : {};
+}
+
+/**
+ * Removes `key` and its value from the hash.
+ *
+ * @private
+ * @name delete
+ * @memberOf Hash
+ * @param {Object} hash The hash to modify.
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function hashDelete(key) {
+  return this.has(key) && delete this.__data__[key];
+}
+
+/**
+ * Gets the hash value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf Hash
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function hashGet(key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key) ? data[key] : undefined;
+}
+
+/**
+ * Checks if a hash value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf Hash
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function hashHas(key) {
+  var data = this.__data__;
+  return nativeCreate ? data[key] !== undefined : hasOwnProperty.call(data, key);
+}
+
+/**
+ * Sets the hash `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf Hash
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the hash instance.
+ */
+function hashSet(key, value) {
+  var data = this.__data__;
+  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+  return this;
+}
+
+// Add methods to `Hash`.
+Hash.prototype.clear = hashClear;
+Hash.prototype['delete'] = hashDelete;
+Hash.prototype.get = hashGet;
+Hash.prototype.has = hashHas;
+Hash.prototype.set = hashSet;
+
+/**
+ * Creates an list cache object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function ListCache(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the list cache.
+ *
+ * @private
+ * @name clear
+ * @memberOf ListCache
+ */
+function listCacheClear() {
+  this.__data__ = [];
+}
+
+/**
+ * Removes `key` and its value from the list cache.
+ *
+ * @private
+ * @name delete
+ * @memberOf ListCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function listCacheDelete(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    return false;
+  }
+  var lastIndex = data.length - 1;
+  if (index == lastIndex) {
+    data.pop();
+  } else {
+    splice.call(data, index, 1);
+  }
+  return true;
+}
+
+/**
+ * Gets the list cache value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf ListCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function listCacheGet(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  return index < 0 ? undefined : data[index][1];
+}
+
+/**
+ * Checks if a list cache value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf ListCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function listCacheHas(key) {
+  return assocIndexOf(this.__data__, key) > -1;
+}
+
+/**
+ * Sets the list cache `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf ListCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the list cache instance.
+ */
+function listCacheSet(key, value) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    data.push([key, value]);
+  } else {
+    data[index][1] = value;
+  }
+  return this;
+}
+
+// Add methods to `ListCache`.
+ListCache.prototype.clear = listCacheClear;
+ListCache.prototype['delete'] = listCacheDelete;
+ListCache.prototype.get = listCacheGet;
+ListCache.prototype.has = listCacheHas;
+ListCache.prototype.set = listCacheSet;
+
+/**
+ * Creates a map cache object to store key-value pairs.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function MapCache(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the map.
+ *
+ * @private
+ * @name clear
+ * @memberOf MapCache
+ */
+function mapCacheClear() {
+  this.__data__ = {
+    'hash': new Hash,
+    'map': new (Map || ListCache),
+    'string': new Hash
+  };
+}
+
+/**
+ * Removes `key` and its value from the map.
+ *
+ * @private
+ * @name delete
+ * @memberOf MapCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function mapCacheDelete(key) {
+  return getMapData(this, key)['delete'](key);
+}
+
+/**
+ * Gets the map value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf MapCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function mapCacheGet(key) {
+  return getMapData(this, key).get(key);
+}
+
+/**
+ * Checks if a map value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf MapCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function mapCacheHas(key) {
+  return getMapData(this, key).has(key);
+}
+
+/**
+ * Sets the map `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf MapCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the map cache instance.
+ */
+function mapCacheSet(key, value) {
+  getMapData(this, key).set(key, value);
+  return this;
+}
+
+// Add methods to `MapCache`.
+MapCache.prototype.clear = mapCacheClear;
+MapCache.prototype['delete'] = mapCacheDelete;
+MapCache.prototype.get = mapCacheGet;
+MapCache.prototype.has = mapCacheHas;
+MapCache.prototype.set = mapCacheSet;
+
+/**
+ * Assigns `value` to `key` of `object` if the existing value is not equivalent
+ * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * for equality comparisons.
+ *
+ * @private
+ * @param {Object} object The object to modify.
+ * @param {string} key The key of the property to assign.
+ * @param {*} value The value to assign.
+ */
+function assignValue(object, key, value) {
+  var objValue = object[key];
+  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
+      (value === undefined && !(key in object))) {
+    object[key] = value;
+  }
+}
+
+/**
+ * Gets the index at which the `key` is found in `array` of key-value pairs.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {*} key The key to search for.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function assocIndexOf(array, key) {
+  var length = array.length;
+  while (length--) {
+    if (eq(array[length][0], key)) {
+      return length;
+    }
+  }
+  return -1;
+}
+
+/**
+ * The base implementation of `_.isNative` without bad shim checks.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a native function,
+ *  else `false`.
+ */
+function baseIsNative(value) {
+  if (!isObject(value) || isMasked(value)) {
+    return false;
+  }
+  var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
+  return pattern.test(toSource(value));
+}
+
+/**
+ * The base implementation of `_.set`.
+ *
+ * @private
+ * @param {Object} object The object to modify.
+ * @param {Array|string} path The path of the property to set.
+ * @param {*} value The value to set.
+ * @param {Function} [customizer] The function to customize path creation.
+ * @returns {Object} Returns `object`.
+ */
+function baseSet(object, path, value, customizer) {
+  if (!isObject(object)) {
+    return object;
+  }
+  path = isKey(path, object) ? [path] : castPath(path);
+
+  var index = -1,
+      length = path.length,
+      lastIndex = length - 1,
+      nested = object;
+
+  while (nested != null && ++index < length) {
+    var key = toKey(path[index]),
+        newValue = value;
+
+    if (index != lastIndex) {
+      var objValue = nested[key];
+      newValue = customizer ? customizer(objValue, key, nested) : undefined;
+      if (newValue === undefined) {
+        newValue = isObject(objValue)
+          ? objValue
+          : (isIndex(path[index + 1]) ? [] : {});
+      }
+    }
+    assignValue(nested, key, newValue);
+    nested = nested[key];
+  }
+  return object;
+}
+
+/**
+ * The base implementation of `_.toString` which doesn't convert nullish
+ * values to empty strings.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ */
+function baseToString(value) {
+  // Exit early for strings to avoid a performance hit in some environments.
+  if (typeof value == 'string') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return symbolToString ? symbolToString.call(value) : '';
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+}
+
+/**
+ * Casts `value` to a path array if it's not one.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the cast property path array.
+ */
+function castPath(value) {
+  return isArray(value) ? value : stringToPath(value);
+}
+
+/**
+ * Gets the data for `map`.
+ *
+ * @private
+ * @param {Object} map The map to query.
+ * @param {string} key The reference key.
+ * @returns {*} Returns the map data.
+ */
+function getMapData(map, key) {
+  var data = map.__data__;
+  return isKeyable(key)
+    ? data[typeof key == 'string' ? 'string' : 'hash']
+    : data.map;
+}
+
+/**
+ * Gets the native function at `key` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {string} key The key of the method to get.
+ * @returns {*} Returns the function if it's native, else `undefined`.
+ */
+function getNative(object, key) {
+  var value = getValue(object, key);
+  return baseIsNative(value) ? value : undefined;
+}
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return !!length &&
+    (typeof value == 'number' || reIsUint.test(value)) &&
+    (value > -1 && value % 1 == 0 && value < length);
+}
+
+/**
+ * Checks if `value` is a property name and not a property path.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {Object} [object] The object to query keys on.
+ * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
+ */
+function isKey(value, object) {
+  if (isArray(value)) {
+    return false;
+  }
+  var type = typeof value;
+  if (type == 'number' || type == 'symbol' || type == 'boolean' ||
+      value == null || isSymbol(value)) {
+    return true;
+  }
+  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+    (object != null && value in Object(object));
+}
+
+/**
+ * Checks if `value` is suitable for use as unique object key.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
+ */
+function isKeyable(value) {
+  var type = typeof value;
+  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+    ? (value !== '__proto__')
+    : (value === null);
+}
+
+/**
+ * Checks if `func` has its source masked.
+ *
+ * @private
+ * @param {Function} func The function to check.
+ * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+ */
+function isMasked(func) {
+  return !!maskSrcKey && (maskSrcKey in func);
+}
+
+/**
+ * Converts `string` to a property path array.
+ *
+ * @private
+ * @param {string} string The string to convert.
+ * @returns {Array} Returns the property path array.
+ */
+var stringToPath = memoize(function(string) {
+  string = toString(string);
+
+  var result = [];
+  if (reLeadingDot.test(string)) {
+    result.push('');
+  }
+  string.replace(rePropName, function(match, number, quote, string) {
+    result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
+  });
+  return result;
+});
+
+/**
+ * Converts `value` to a string key if it's not a string or symbol.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {string|symbol} Returns the key.
+ */
+function toKey(value) {
+  if (typeof value == 'string' || isSymbol(value)) {
+    return value;
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+}
+
+/**
+ * Converts `func` to its source code.
+ *
+ * @private
+ * @param {Function} func The function to process.
+ * @returns {string} Returns the source code.
+ */
+function toSource(func) {
+  if (func != null) {
+    try {
+      return funcToString.call(func);
+    } catch (e) {}
+    try {
+      return (func + '');
+    } catch (e) {}
+  }
+  return '';
+}
+
+/**
+ * Creates a function that memoizes the result of `func`. If `resolver` is
+ * provided, it determines the cache key for storing the result based on the
+ * arguments provided to the memoized function. By default, the first argument
+ * provided to the memoized function is used as the map cache key. The `func`
+ * is invoked with the `this` binding of the memoized function.
+ *
+ * **Note:** The cache is exposed as the `cache` property on the memoized
+ * function. Its creation may be customized by replacing the `_.memoize.Cache`
+ * constructor with one whose instances implement the
+ * [`Map`](http://ecma-international.org/ecma-262/7.0/#sec-properties-of-the-map-prototype-object)
+ * method interface of `delete`, `get`, `has`, and `set`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to have its output memoized.
+ * @param {Function} [resolver] The function to resolve the cache key.
+ * @returns {Function} Returns the new memoized function.
+ * @example
+ *
+ * var object = { 'a': 1, 'b': 2 };
+ * var other = { 'c': 3, 'd': 4 };
+ *
+ * var values = _.memoize(_.values);
+ * values(object);
+ * // => [1, 2]
+ *
+ * values(other);
+ * // => [3, 4]
+ *
+ * object.a = 2;
+ * values(object);
+ * // => [1, 2]
+ *
+ * // Modify the result cache.
+ * values.cache.set(object, ['a', 'b']);
+ * values(object);
+ * // => ['a', 'b']
+ *
+ * // Replace `_.memoize.Cache`.
+ * _.memoize.Cache = WeakMap;
+ */
+function memoize(func, resolver) {
+  if (typeof func != 'function' || (resolver && typeof resolver != 'function')) {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  var memoized = function() {
+    var args = arguments,
+        key = resolver ? resolver.apply(this, args) : args[0],
+        cache = memoized.cache;
+
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    var result = func.apply(this, args);
+    memoized.cache = cache.set(key, result);
+    return result;
+  };
+  memoized.cache = new (memoize.Cache || MapCache);
+  return memoized;
+}
+
+// Assign cache to `_.memoize`.
+memoize.Cache = MapCache;
+
+/**
+ * Performs a
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * comparison between two values to determine if they are equivalent.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ * var other = { 'a': 1 };
+ *
+ * _.eq(object, object);
+ * // => true
+ *
+ * _.eq(object, other);
+ * // => false
+ *
+ * _.eq('a', 'a');
+ * // => true
+ *
+ * _.eq('a', Object('a'));
+ * // => false
+ *
+ * _.eq(NaN, NaN);
+ * // => true
+ */
+function eq(value, other) {
+  return value === other || (value !== value && other !== other);
+}
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8-9 which returns 'object' for typed array and other constructors.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+}
+
+/**
+ * Converts `value` to a string. An empty string is returned for `null`
+ * and `undefined` values. The sign of `-0` is preserved.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ * @example
+ *
+ * _.toString(null);
+ * // => ''
+ *
+ * _.toString(-0);
+ * // => '-0'
+ *
+ * _.toString([1, 2, 3]);
+ * // => '1,2,3'
+ */
+function toString(value) {
+  return value == null ? '' : baseToString(value);
+}
+
+/**
+ * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,
+ * it's created. Arrays are created for missing index properties while objects
+ * are created for all other missing properties. Use `_.setWith` to customize
+ * `path` creation.
+ *
+ * **Note:** This method mutates `object`.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.7.0
+ * @category Object
+ * @param {Object} object The object to modify.
+ * @param {Array|string} path The path of the property to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns `object`.
+ * @example
+ *
+ * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+ *
+ * _.set(object, 'a[0].b.c', 4);
+ * console.log(object.a[0].b.c);
+ * // => 4
+ *
+ * _.set(object, ['x', '0', 'y', 'z'], 5);
+ * console.log(object.x[0].y.z);
+ * // => 5
+ */
+function set(object, path, value) {
+  return object == null ? object : baseSet(object, path, value);
+}
+
+module.exports = set;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],75:[function(require,module,exports){
+(function (global){
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/** Used to stand-in for `undefined` hash values. */
+var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0;
+
+/** `Object#toString` result references. */
+var funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    symbolTag = '[object Symbol]';
+
+/** Used to match property names within property paths. */
+var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
+    reIsPlainProp = /^\w*$/,
+    reLeadingDot = /^\./,
+    rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+
+/**
+ * Used to match `RegExp`
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+ */
+var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+/** Used to match backslashes in property paths. */
+var reEscapeChar = /\\(\\)?/g;
+
+/** Used to detect host constructors (Safari). */
+var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+/**
+ * Gets the value at `key` of `object`.
+ *
+ * @private
+ * @param {Object} [object] The object to query.
+ * @param {string} key The key of the property to get.
+ * @returns {*} Returns the property value.
+ */
+function getValue(object, key) {
+  return object == null ? undefined : object[key];
+}
+
+/**
+ * Checks if `value` is a host object in IE < 9.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+ */
+function isHostObject(value) {
+  // Many host objects are `Object` objects that can coerce to strings
+  // despite having improperly defined `toString` methods.
+  var result = false;
+  if (value != null && typeof value.toString != 'function') {
+    try {
+      result = !!(value + '');
+    } catch (e) {}
+  }
+  return result;
+}
+
+/** Used for built-in method references. */
+var arrayProto = Array.prototype,
+    funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to detect overreaching core-js shims. */
+var coreJsData = root['__core-js_shared__'];
+
+/** Used to detect methods masquerading as native. */
+var maskSrcKey = (function() {
+  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
+  return uid ? ('Symbol(src)_1.' + uid) : '';
+}());
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/** Used to detect if a method is native. */
+var reIsNative = RegExp('^' +
+  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
+  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+);
+
+/** Built-in value references. */
+var Symbol = root.Symbol,
+    splice = arrayProto.splice;
+
+/* Built-in method references that are verified to be native. */
+var Map = getNative(root, 'Map'),
+    nativeCreate = getNative(Object, 'create');
+
+/** Used to convert symbols to primitives and strings. */
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolToString = symbolProto ? symbolProto.toString : undefined;
+
+/**
+ * Creates a hash object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function Hash(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the hash.
+ *
+ * @private
+ * @name clear
+ * @memberOf Hash
+ */
+function hashClear() {
+  this.__data__ = nativeCreate ? nativeCreate(null) : {};
+}
+
+/**
+ * Removes `key` and its value from the hash.
+ *
+ * @private
+ * @name delete
+ * @memberOf Hash
+ * @param {Object} hash The hash to modify.
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function hashDelete(key) {
+  return this.has(key) && delete this.__data__[key];
+}
+
+/**
+ * Gets the hash value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf Hash
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function hashGet(key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key) ? data[key] : undefined;
+}
+
+/**
+ * Checks if a hash value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf Hash
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function hashHas(key) {
+  var data = this.__data__;
+  return nativeCreate ? data[key] !== undefined : hasOwnProperty.call(data, key);
+}
+
+/**
+ * Sets the hash `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf Hash
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the hash instance.
+ */
+function hashSet(key, value) {
+  var data = this.__data__;
+  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+  return this;
+}
+
+// Add methods to `Hash`.
+Hash.prototype.clear = hashClear;
+Hash.prototype['delete'] = hashDelete;
+Hash.prototype.get = hashGet;
+Hash.prototype.has = hashHas;
+Hash.prototype.set = hashSet;
+
+/**
+ * Creates an list cache object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function ListCache(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the list cache.
+ *
+ * @private
+ * @name clear
+ * @memberOf ListCache
+ */
+function listCacheClear() {
+  this.__data__ = [];
+}
+
+/**
+ * Removes `key` and its value from the list cache.
+ *
+ * @private
+ * @name delete
+ * @memberOf ListCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function listCacheDelete(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    return false;
+  }
+  var lastIndex = data.length - 1;
+  if (index == lastIndex) {
+    data.pop();
+  } else {
+    splice.call(data, index, 1);
+  }
+  return true;
+}
+
+/**
+ * Gets the list cache value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf ListCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function listCacheGet(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  return index < 0 ? undefined : data[index][1];
+}
+
+/**
+ * Checks if a list cache value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf ListCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function listCacheHas(key) {
+  return assocIndexOf(this.__data__, key) > -1;
+}
+
+/**
+ * Sets the list cache `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf ListCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the list cache instance.
+ */
+function listCacheSet(key, value) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    data.push([key, value]);
+  } else {
+    data[index][1] = value;
+  }
+  return this;
+}
+
+// Add methods to `ListCache`.
+ListCache.prototype.clear = listCacheClear;
+ListCache.prototype['delete'] = listCacheDelete;
+ListCache.prototype.get = listCacheGet;
+ListCache.prototype.has = listCacheHas;
+ListCache.prototype.set = listCacheSet;
+
+/**
+ * Creates a map cache object to store key-value pairs.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function MapCache(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the map.
+ *
+ * @private
+ * @name clear
+ * @memberOf MapCache
+ */
+function mapCacheClear() {
+  this.__data__ = {
+    'hash': new Hash,
+    'map': new (Map || ListCache),
+    'string': new Hash
+  };
+}
+
+/**
+ * Removes `key` and its value from the map.
+ *
+ * @private
+ * @name delete
+ * @memberOf MapCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function mapCacheDelete(key) {
+  return getMapData(this, key)['delete'](key);
+}
+
+/**
+ * Gets the map value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf MapCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function mapCacheGet(key) {
+  return getMapData(this, key).get(key);
+}
+
+/**
+ * Checks if a map value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf MapCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function mapCacheHas(key) {
+  return getMapData(this, key).has(key);
+}
+
+/**
+ * Sets the map `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf MapCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the map cache instance.
+ */
+function mapCacheSet(key, value) {
+  getMapData(this, key).set(key, value);
+  return this;
+}
+
+// Add methods to `MapCache`.
+MapCache.prototype.clear = mapCacheClear;
+MapCache.prototype['delete'] = mapCacheDelete;
+MapCache.prototype.get = mapCacheGet;
+MapCache.prototype.has = mapCacheHas;
+MapCache.prototype.set = mapCacheSet;
+
+/**
+ * Gets the index at which the `key` is found in `array` of key-value pairs.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {*} key The key to search for.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function assocIndexOf(array, key) {
+  var length = array.length;
+  while (length--) {
+    if (eq(array[length][0], key)) {
+      return length;
+    }
+  }
+  return -1;
+}
+
+/**
+ * The base implementation of `_.get` without support for default values.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path of the property to get.
+ * @returns {*} Returns the resolved value.
+ */
+function baseGet(object, path) {
+  path = isKey(path, object) ? [path] : castPath(path);
+
+  var index = 0,
+      length = path.length;
+
+  while (object != null && index < length) {
+    object = object[toKey(path[index++])];
+  }
+  return (index && index == length) ? object : undefined;
+}
+
+/**
+ * The base implementation of `_.isNative` without bad shim checks.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a native function,
+ *  else `false`.
+ */
+function baseIsNative(value) {
+  if (!isObject(value) || isMasked(value)) {
+    return false;
+  }
+  var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
+  return pattern.test(toSource(value));
+}
+
+/**
+ * The base implementation of `_.slice` without an iteratee call guard.
+ *
+ * @private
+ * @param {Array} array The array to slice.
+ * @param {number} [start=0] The start position.
+ * @param {number} [end=array.length] The end position.
+ * @returns {Array} Returns the slice of `array`.
+ */
+function baseSlice(array, start, end) {
+  var index = -1,
+      length = array.length;
+
+  if (start < 0) {
+    start = -start > length ? 0 : (length + start);
+  }
+  end = end > length ? length : end;
+  if (end < 0) {
+    end += length;
+  }
+  length = start > end ? 0 : ((end - start) >>> 0);
+  start >>>= 0;
+
+  var result = Array(length);
+  while (++index < length) {
+    result[index] = array[index + start];
+  }
+  return result;
+}
+
+/**
+ * The base implementation of `_.toString` which doesn't convert nullish
+ * values to empty strings.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ */
+function baseToString(value) {
+  // Exit early for strings to avoid a performance hit in some environments.
+  if (typeof value == 'string') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return symbolToString ? symbolToString.call(value) : '';
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+}
+
+/**
+ * The base implementation of `_.unset`.
+ *
+ * @private
+ * @param {Object} object The object to modify.
+ * @param {Array|string} path The path of the property to unset.
+ * @returns {boolean} Returns `true` if the property is deleted, else `false`.
+ */
+function baseUnset(object, path) {
+  path = isKey(path, object) ? [path] : castPath(path);
+  object = parent(object, path);
+
+  var key = toKey(last(path));
+  return !(object != null && hasOwnProperty.call(object, key)) || delete object[key];
+}
+
+/**
+ * Casts `value` to a path array if it's not one.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the cast property path array.
+ */
+function castPath(value) {
+  return isArray(value) ? value : stringToPath(value);
+}
+
+/**
+ * Gets the data for `map`.
+ *
+ * @private
+ * @param {Object} map The map to query.
+ * @param {string} key The reference key.
+ * @returns {*} Returns the map data.
+ */
+function getMapData(map, key) {
+  var data = map.__data__;
+  return isKeyable(key)
+    ? data[typeof key == 'string' ? 'string' : 'hash']
+    : data.map;
+}
+
+/**
+ * Gets the native function at `key` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {string} key The key of the method to get.
+ * @returns {*} Returns the function if it's native, else `undefined`.
+ */
+function getNative(object, key) {
+  var value = getValue(object, key);
+  return baseIsNative(value) ? value : undefined;
+}
+
+/**
+ * Checks if `value` is a property name and not a property path.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {Object} [object] The object to query keys on.
+ * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
+ */
+function isKey(value, object) {
+  if (isArray(value)) {
+    return false;
+  }
+  var type = typeof value;
+  if (type == 'number' || type == 'symbol' || type == 'boolean' ||
+      value == null || isSymbol(value)) {
+    return true;
+  }
+  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+    (object != null && value in Object(object));
+}
+
+/**
+ * Checks if `value` is suitable for use as unique object key.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
+ */
+function isKeyable(value) {
+  var type = typeof value;
+  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+    ? (value !== '__proto__')
+    : (value === null);
+}
+
+/**
+ * Checks if `func` has its source masked.
+ *
+ * @private
+ * @param {Function} func The function to check.
+ * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+ */
+function isMasked(func) {
+  return !!maskSrcKey && (maskSrcKey in func);
+}
+
+/**
+ * Gets the parent value at `path` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array} path The path to get the parent value of.
+ * @returns {*} Returns the parent value.
+ */
+function parent(object, path) {
+  return path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+}
+
+/**
+ * Converts `string` to a property path array.
+ *
+ * @private
+ * @param {string} string The string to convert.
+ * @returns {Array} Returns the property path array.
+ */
+var stringToPath = memoize(function(string) {
+  string = toString(string);
+
+  var result = [];
+  if (reLeadingDot.test(string)) {
+    result.push('');
+  }
+  string.replace(rePropName, function(match, number, quote, string) {
+    result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
+  });
+  return result;
+});
+
+/**
+ * Converts `value` to a string key if it's not a string or symbol.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {string|symbol} Returns the key.
+ */
+function toKey(value) {
+  if (typeof value == 'string' || isSymbol(value)) {
+    return value;
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+}
+
+/**
+ * Converts `func` to its source code.
+ *
+ * @private
+ * @param {Function} func The function to process.
+ * @returns {string} Returns the source code.
+ */
+function toSource(func) {
+  if (func != null) {
+    try {
+      return funcToString.call(func);
+    } catch (e) {}
+    try {
+      return (func + '');
+    } catch (e) {}
+  }
+  return '';
+}
+
+/**
+ * Gets the last element of `array`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Array
+ * @param {Array} array The array to query.
+ * @returns {*} Returns the last element of `array`.
+ * @example
+ *
+ * _.last([1, 2, 3]);
+ * // => 3
+ */
+function last(array) {
+  var length = array ? array.length : 0;
+  return length ? array[length - 1] : undefined;
+}
+
+/**
+ * Creates a function that memoizes the result of `func`. If `resolver` is
+ * provided, it determines the cache key for storing the result based on the
+ * arguments provided to the memoized function. By default, the first argument
+ * provided to the memoized function is used as the map cache key. The `func`
+ * is invoked with the `this` binding of the memoized function.
+ *
+ * **Note:** The cache is exposed as the `cache` property on the memoized
+ * function. Its creation may be customized by replacing the `_.memoize.Cache`
+ * constructor with one whose instances implement the
+ * [`Map`](http://ecma-international.org/ecma-262/7.0/#sec-properties-of-the-map-prototype-object)
+ * method interface of `delete`, `get`, `has`, and `set`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to have its output memoized.
+ * @param {Function} [resolver] The function to resolve the cache key.
+ * @returns {Function} Returns the new memoized function.
+ * @example
+ *
+ * var object = { 'a': 1, 'b': 2 };
+ * var other = { 'c': 3, 'd': 4 };
+ *
+ * var values = _.memoize(_.values);
+ * values(object);
+ * // => [1, 2]
+ *
+ * values(other);
+ * // => [3, 4]
+ *
+ * object.a = 2;
+ * values(object);
+ * // => [1, 2]
+ *
+ * // Modify the result cache.
+ * values.cache.set(object, ['a', 'b']);
+ * values(object);
+ * // => ['a', 'b']
+ *
+ * // Replace `_.memoize.Cache`.
+ * _.memoize.Cache = WeakMap;
+ */
+function memoize(func, resolver) {
+  if (typeof func != 'function' || (resolver && typeof resolver != 'function')) {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  var memoized = function() {
+    var args = arguments,
+        key = resolver ? resolver.apply(this, args) : args[0],
+        cache = memoized.cache;
+
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    var result = func.apply(this, args);
+    memoized.cache = cache.set(key, result);
+    return result;
+  };
+  memoized.cache = new (memoize.Cache || MapCache);
+  return memoized;
+}
+
+// Assign cache to `_.memoize`.
+memoize.Cache = MapCache;
+
+/**
+ * Performs a
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * comparison between two values to determine if they are equivalent.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ * var other = { 'a': 1 };
+ *
+ * _.eq(object, object);
+ * // => true
+ *
+ * _.eq(object, other);
+ * // => false
+ *
+ * _.eq('a', 'a');
+ * // => true
+ *
+ * _.eq('a', Object('a'));
+ * // => false
+ *
+ * _.eq(NaN, NaN);
+ * // => true
+ */
+function eq(value, other) {
+  return value === other || (value !== value && other !== other);
+}
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8-9 which returns 'object' for typed array and other constructors.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+}
+
+/**
+ * Converts `value` to a string. An empty string is returned for `null`
+ * and `undefined` values. The sign of `-0` is preserved.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ * @example
+ *
+ * _.toString(null);
+ * // => ''
+ *
+ * _.toString(-0);
+ * // => '-0'
+ *
+ * _.toString([1, 2, 3]);
+ * // => '1,2,3'
+ */
+function toString(value) {
+  return value == null ? '' : baseToString(value);
+}
+
+/**
+ * Removes the property at `path` of `object`.
+ *
+ * **Note:** This method mutates `object`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Object
+ * @param {Object} object The object to modify.
+ * @param {Array|string} path The path of the property to unset.
+ * @returns {boolean} Returns `true` if the property is deleted, else `false`.
+ * @example
+ *
+ * var object = { 'a': [{ 'b': { 'c': 7 } }] };
+ * _.unset(object, 'a[0].b.c');
+ * // => true
+ *
+ * console.log(object);
+ * // => { 'a': [{ 'b': {} }] };
+ *
+ * _.unset(object, ['a', '0', 'b', 'c']);
+ * // => true
+ *
+ * console.log(object);
+ * // => { 'a': [{ 'b': {} }] };
+ */
+function unset(object, path) {
+  return object == null ? true : baseUnset(object, path);
+}
+
+module.exports = unset;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],76:[function(require,module,exports){
 var root = require('./_root');
 
 /** Built-in value references. */
@@ -26083,7 +29014,7 @@ var Symbol = root.Symbol;
 
 module.exports = Symbol;
 
-},{"./_root":79}],73:[function(require,module,exports){
+},{"./_root":83}],77:[function(require,module,exports){
 var Symbol = require('./_Symbol'),
     getRawTag = require('./_getRawTag'),
     objectToString = require('./_objectToString');
@@ -26113,7 +29044,7 @@ function baseGetTag(value) {
 
 module.exports = baseGetTag;
 
-},{"./_Symbol":72,"./_getRawTag":76,"./_objectToString":77}],74:[function(require,module,exports){
+},{"./_Symbol":76,"./_getRawTag":80,"./_objectToString":81}],78:[function(require,module,exports){
 (function (global){
 /** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
@@ -26121,7 +29052,7 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 module.exports = freeGlobal;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],75:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 var overArg = require('./_overArg');
 
 /** Built-in value references. */
@@ -26129,7 +29060,7 @@ var getPrototype = overArg(Object.getPrototypeOf, Object);
 
 module.exports = getPrototype;
 
-},{"./_overArg":78}],76:[function(require,module,exports){
+},{"./_overArg":82}],80:[function(require,module,exports){
 var Symbol = require('./_Symbol');
 
 /** Used for built-in method references. */
@@ -26177,7 +29108,7 @@ function getRawTag(value) {
 
 module.exports = getRawTag;
 
-},{"./_Symbol":72}],77:[function(require,module,exports){
+},{"./_Symbol":76}],81:[function(require,module,exports){
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -26201,7 +29132,7 @@ function objectToString(value) {
 
 module.exports = objectToString;
 
-},{}],78:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 /**
  * Creates a unary function that invokes `func` with its argument transformed.
  *
@@ -26218,7 +29149,7 @@ function overArg(func, transform) {
 
 module.exports = overArg;
 
-},{}],79:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var freeGlobal = require('./_freeGlobal');
 
 /** Detect free variable `self`. */
@@ -26229,7 +29160,7 @@ var root = freeGlobal || freeSelf || Function('return this')();
 
 module.exports = root;
 
-},{"./_freeGlobal":74}],80:[function(require,module,exports){
+},{"./_freeGlobal":78}],84:[function(require,module,exports){
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
  * and has a `typeof` result of "object".
@@ -26260,7 +29191,7 @@ function isObjectLike(value) {
 
 module.exports = isObjectLike;
 
-},{}],81:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 var baseGetTag = require('./_baseGetTag'),
     getPrototype = require('./_getPrototype'),
     isObjectLike = require('./isObjectLike');
@@ -26324,7 +29255,7 @@ function isPlainObject(value) {
 
 module.exports = isPlainObject;
 
-},{"./_baseGetTag":73,"./_getPrototype":75,"./isObjectLike":80}],82:[function(require,module,exports){
+},{"./_baseGetTag":77,"./_getPrototype":79,"./isObjectLike":84}],86:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -26337,7 +29268,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-},{}],83:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -26397,7 +29328,7 @@ utils.encode = function encode(arr, enc) {
     return arr;
 };
 
-},{}],84:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 // This file is the concatenation of many js files.
 // See http://github.com/jimhigson/oboe.js for the raw source
 
@@ -29101,7 +32032,7 @@ oboe.drop = function() {
       }
    }()), Object, Array, Error, JSON);
 
-},{}],85:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -29148,7 +32079,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 }
 
 }).call(this,require('_process'))
-},{"_process":86}],86:[function(require,module,exports){
+},{"_process":90}],90:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -29330,10 +32261,10 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],87:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 module.exports = require('./lib/_stream_duplex.js');
 
-},{"./lib/_stream_duplex.js":88}],88:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":92}],92:[function(require,module,exports){
 // a duplex stream is just a stream that is both readable and writable.
 // Since JS doesn't have multiple prototypal inheritance, this class
 // prototypally inherits from Readable, and then parasitically from
@@ -29409,7 +32340,7 @@ function forEach(xs, f) {
     f(xs[i], i);
   }
 }
-},{"./_stream_readable":90,"./_stream_writable":92,"core-util-is":17,"inherits":59,"process-nextick-args":85}],89:[function(require,module,exports){
+},{"./_stream_readable":94,"./_stream_writable":96,"core-util-is":19,"inherits":60,"process-nextick-args":89}],93:[function(require,module,exports){
 // a passthrough stream.
 // basically just the most minimal sort of Transform stream.
 // Every written chunk gets output as-is.
@@ -29436,7 +32367,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":91,"core-util-is":17,"inherits":59}],90:[function(require,module,exports){
+},{"./_stream_transform":95,"core-util-is":19,"inherits":60}],94:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -30374,7 +33305,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":88,"./internal/streams/BufferList":93,"./internal/streams/stream":94,"_process":86,"buffer":14,"buffer-shims":13,"core-util-is":17,"events":48,"inherits":59,"isarray":62,"process-nextick-args":85,"string_decoder/":124,"util":9}],91:[function(require,module,exports){
+},{"./_stream_duplex":92,"./internal/streams/BufferList":97,"./internal/streams/stream":98,"_process":90,"buffer":16,"buffer-shims":15,"core-util-is":19,"events":48,"inherits":60,"isarray":63,"process-nextick-args":89,"string_decoder/":128,"util":11}],95:[function(require,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -30557,7 +33488,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":88,"core-util-is":17,"inherits":59}],92:[function(require,module,exports){
+},{"./_stream_duplex":92,"core-util-is":19,"inherits":60}],96:[function(require,module,exports){
 (function (process){
 // A bit simpler than readable streams.
 // Implement an async ._write(chunk, encoding, cb), and it'll handle all
@@ -31104,7 +34035,7 @@ function CorkedRequest(state) {
   };
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":88,"./internal/streams/stream":94,"_process":86,"buffer":14,"buffer-shims":13,"core-util-is":17,"inherits":59,"process-nextick-args":85,"util-deprecate":136}],93:[function(require,module,exports){
+},{"./_stream_duplex":92,"./internal/streams/stream":98,"_process":90,"buffer":16,"buffer-shims":15,"core-util-is":19,"inherits":60,"process-nextick-args":89,"util-deprecate":140}],97:[function(require,module,exports){
 'use strict';
 
 var Buffer = require('buffer').Buffer;
@@ -31169,13 +34100,13 @@ BufferList.prototype.concat = function (n) {
   }
   return ret;
 };
-},{"buffer":14,"buffer-shims":13}],94:[function(require,module,exports){
+},{"buffer":16,"buffer-shims":15}],98:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":48}],95:[function(require,module,exports){
+},{"events":48}],99:[function(require,module,exports){
 module.exports = require('./readable').PassThrough
 
-},{"./readable":96}],96:[function(require,module,exports){
+},{"./readable":100}],100:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -31184,37 +34115,37 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":88,"./lib/_stream_passthrough.js":89,"./lib/_stream_readable.js":90,"./lib/_stream_transform.js":91,"./lib/_stream_writable.js":92}],97:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":92,"./lib/_stream_passthrough.js":93,"./lib/_stream_readable.js":94,"./lib/_stream_transform.js":95,"./lib/_stream_writable.js":96}],101:[function(require,module,exports){
 module.exports = require('./readable').Transform
 
-},{"./readable":96}],98:[function(require,module,exports){
+},{"./readable":100}],102:[function(require,module,exports){
 module.exports = require('./lib/_stream_writable.js');
 
-},{"./lib/_stream_writable.js":92}],99:[function(require,module,exports){
-'use strict';
+},{"./lib/_stream_writable.js":96}],103:[function(require,module,exports){
+"use strict";
 
-exports.__esModule = true;
-function createThunkMiddleware(extraArgument) {
-  return function (_ref) {
-    var dispatch = _ref.dispatch,
-        getState = _ref.getState;
-    return function (next) {
-      return function (action) {
-        if (typeof action === 'function') {
-          return action(dispatch, getState, extraArgument);
+var createThunkSubscribeEnhancer = function (extraArgument) {
+  return function (createStore) {
+    return function (reducer, initialState) {
+      var store = createStore(reducer, initialState);
+      var dispatch = store.dispatch;
+      store.dispatch = function (action) {
+        if (typeof action === "function") {
+          return action(store.dispatch, store.getState, store.subscribe, extraArgument);
         }
-
-        return next(action);
+        return dispatch(action);
       };
+      return store;
     };
   };
-}
+};
 
-var thunk = createThunkMiddleware();
-thunk.withExtraArgument = createThunkMiddleware;
+var thunkSubscribeEnhancer = createThunkSubscribeEnhancer();
+thunkSubscribeEnhancer.withExtraArgument = createThunkSubscribeEnhancer;
 
-exports['default'] = thunk;
-},{}],100:[function(require,module,exports){
+module.exports = thunkSubscribeEnhancer;
+
+},{}],104:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -31273,7 +34204,7 @@ function applyMiddleware() {
     };
   };
 }
-},{"./compose":103}],101:[function(require,module,exports){
+},{"./compose":107}],105:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -31325,7 +34256,7 @@ function bindActionCreators(actionCreators, dispatch) {
   }
   return boundActionCreators;
 }
-},{}],102:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -31470,7 +34401,7 @@ function combineReducers(reducers) {
   };
 }
 }).call(this,require('_process'))
-},{"./createStore":104,"./utils/warning":106,"_process":86,"lodash/isPlainObject":81}],103:[function(require,module,exports){
+},{"./createStore":108,"./utils/warning":110,"_process":90,"lodash/isPlainObject":85}],107:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -31509,7 +34440,7 @@ function compose() {
     }, last.apply(undefined, arguments));
   };
 }
-},{}],104:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -31771,7 +34702,7 @@ function createStore(reducer, preloadedState, enhancer) {
     replaceReducer: replaceReducer
   }, _ref2[_symbolObservable2['default']] = observable, _ref2;
 }
-},{"lodash/isPlainObject":81,"symbol-observable":126}],105:[function(require,module,exports){
+},{"lodash/isPlainObject":85,"symbol-observable":130}],109:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -31820,7 +34751,7 @@ exports.bindActionCreators = _bindActionCreators2['default'];
 exports.applyMiddleware = _applyMiddleware2['default'];
 exports.compose = _compose2['default'];
 }).call(this,require('_process'))
-},{"./applyMiddleware":100,"./bindActionCreators":101,"./combineReducers":102,"./compose":103,"./createStore":104,"./utils/warning":106,"_process":86}],106:[function(require,module,exports){
+},{"./applyMiddleware":104,"./bindActionCreators":105,"./combineReducers":106,"./compose":107,"./createStore":108,"./utils/warning":110,"_process":90}],110:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -31846,7 +34777,7 @@ function warning(message) {
   } catch (e) {}
   /* eslint-enable no-empty */
 }
-},{}],107:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 (function (Buffer){
 /*
 CryptoJS v3.1.2
@@ -32060,7 +34991,7 @@ function ripemd160 (message) {
 module.exports = ripemd160
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":14}],108:[function(require,module,exports){
+},{"buffer":16}],112:[function(require,module,exports){
 (function (Buffer){
 const assert = require('assert')
 /**
@@ -32293,11 +35224,11 @@ function toBuffer (v) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"assert":1,"buffer":14}],109:[function(require,module,exports){
+},{"assert":1,"buffer":16}],113:[function(require,module,exports){
 'use strict'
 module.exports = require('./lib')(require('./lib/elliptic'))
 
-},{"./lib":113,"./lib/elliptic":112}],110:[function(require,module,exports){
+},{"./lib":117,"./lib/elliptic":116}],114:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var toString = Object.prototype.toString
@@ -32345,7 +35276,7 @@ exports.isNumberInInterval = function (number, x, y, message) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":60}],111:[function(require,module,exports){
+},{"../../is-buffer/index.js":61}],115:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var bip66 = require('bip66')
@@ -32546,7 +35477,7 @@ exports.signatureImportLax = function (sig) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bip66":5,"buffer":14}],112:[function(require,module,exports){
+},{"bip66":7,"buffer":16}],116:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var createHash = require('create-hash')
@@ -32797,7 +35728,7 @@ exports.ecdhUnsafe = function (publicKey, privateKey, compressed) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../messages.json":114,"bn.js":6,"buffer":14,"create-hash":18,"elliptic":21}],113:[function(require,module,exports){
+},{"../messages.json":118,"bn.js":8,"buffer":16,"create-hash":20,"elliptic":23}],117:[function(require,module,exports){
 'use strict'
 var assert = require('./assert')
 var der = require('./der')
@@ -33030,7 +35961,7 @@ module.exports = function (secp256k1) {
   }
 }
 
-},{"./assert":110,"./der":111,"./messages.json":114}],114:[function(require,module,exports){
+},{"./assert":114,"./der":115,"./messages.json":118}],118:[function(require,module,exports){
 module.exports={
   "COMPRESSED_TYPE_INVALID": "compressed should be a boolean",
   "EC_PRIVATE_KEY_TYPE_INVALID": "private key should be a Buffer",
@@ -33068,7 +35999,7 @@ module.exports={
   "TWEAK_LENGTH_INVALID": "tweak length is invalid"
 }
 
-},{}],115:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 (function (Buffer){
 // prototype class for hash functions
 function Hash (blockSize, finalSize) {
@@ -33141,7 +36072,7 @@ Hash.prototype._update = function () {
 module.exports = Hash
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":14}],116:[function(require,module,exports){
+},{"buffer":16}],120:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -33158,7 +36089,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":117,"./sha1":118,"./sha224":119,"./sha256":120,"./sha384":121,"./sha512":122}],117:[function(require,module,exports){
+},{"./sha":121,"./sha1":122,"./sha224":123,"./sha256":124,"./sha384":125,"./sha512":126}],121:[function(require,module,exports){
 (function (Buffer){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
@@ -33255,7 +36186,7 @@ Sha.prototype._hash = function () {
 module.exports = Sha
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":115,"buffer":14,"inherits":59}],118:[function(require,module,exports){
+},{"./hash":119,"buffer":16,"inherits":60}],122:[function(require,module,exports){
 (function (Buffer){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
@@ -33357,7 +36288,7 @@ Sha1.prototype._hash = function () {
 module.exports = Sha1
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":115,"buffer":14,"inherits":59}],119:[function(require,module,exports){
+},{"./hash":119,"buffer":16,"inherits":60}],123:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -33413,7 +36344,7 @@ Sha224.prototype._hash = function () {
 module.exports = Sha224
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":115,"./sha256":120,"buffer":14,"inherits":59}],120:[function(require,module,exports){
+},{"./hash":119,"./sha256":124,"buffer":16,"inherits":60}],124:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -33551,7 +36482,7 @@ Sha256.prototype._hash = function () {
 module.exports = Sha256
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":115,"buffer":14,"inherits":59}],121:[function(require,module,exports){
+},{"./hash":119,"buffer":16,"inherits":60}],125:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
@@ -33611,7 +36542,7 @@ Sha384.prototype._hash = function () {
 module.exports = Sha384
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":115,"./sha512":122,"buffer":14,"inherits":59}],122:[function(require,module,exports){
+},{"./hash":119,"./sha512":126,"buffer":16,"inherits":60}],126:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var Hash = require('./hash')
@@ -33874,7 +36805,7 @@ Sha512.prototype._hash = function () {
 module.exports = Sha512
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":115,"buffer":14,"inherits":59}],123:[function(require,module,exports){
+},{"./hash":119,"buffer":16,"inherits":60}],127:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -34003,7 +36934,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":48,"inherits":59,"readable-stream/duplex.js":87,"readable-stream/passthrough.js":95,"readable-stream/readable.js":96,"readable-stream/transform.js":97,"readable-stream/writable.js":98}],124:[function(require,module,exports){
+},{"events":48,"inherits":60,"readable-stream/duplex.js":91,"readable-stream/passthrough.js":99,"readable-stream/readable.js":100,"readable-stream/transform.js":101,"readable-stream/writable.js":102}],128:[function(require,module,exports){
 'use strict';
 
 var Buffer = require('buffer').Buffer;
@@ -34277,7 +37208,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"buffer":14,"buffer-shims":13}],125:[function(require,module,exports){
+},{"buffer":16,"buffer-shims":15}],129:[function(require,module,exports){
 var isHexPrefixed = require('is-hex-prefixed');
 
 /**
@@ -34293,10 +37224,10 @@ module.exports = function stripHexPrefix(str) {
   return isHexPrefixed(str) ? str.slice(2) : str;
 }
 
-},{"is-hex-prefixed":61}],126:[function(require,module,exports){
+},{"is-hex-prefixed":62}],130:[function(require,module,exports){
 module.exports = require('./lib/index');
 
-},{"./lib/index":127}],127:[function(require,module,exports){
+},{"./lib/index":131}],131:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -34328,7 +37259,7 @@ if (typeof self !== 'undefined') {
 var result = (0, _ponyfill2['default'])(root);
 exports['default'] = result;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./ponyfill":128}],128:[function(require,module,exports){
+},{"./ponyfill":132}],132:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34352,7 +37283,7 @@ function symbolObservablePonyfill(root) {
 
 	return result;
 };
-},{}],129:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 'use strict';
 
 var Response = require('http-response-object');
@@ -34425,7 +37356,7 @@ function doRequest(method, url, options, callback) {
   return new Response(xhr.status, headers, xhr.responseText);
 }
 
-},{"http-response-object":56,"then-request/lib/handle-qs.js":130}],130:[function(require,module,exports){
+},{"http-response-object":56,"then-request/lib/handle-qs.js":134}],134:[function(require,module,exports){
 'use strict';
 
 var parse = require('qs').parse;
@@ -34449,7 +37380,7 @@ function handleQs(url, query) {
   return start + qs + end;
 }
 
-},{"qs":132}],131:[function(require,module,exports){
+},{"qs":136}],135:[function(require,module,exports){
 'use strict';
 
 var replace = String.prototype.replace;
@@ -34469,7 +37400,7 @@ module.exports = {
     RFC3986: 'RFC3986'
 };
 
-},{}],132:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 'use strict';
 
 var stringify = require('./stringify');
@@ -34482,7 +37413,7 @@ module.exports = {
     stringify: stringify
 };
 
-},{"./formats":131,"./parse":133,"./stringify":134}],133:[function(require,module,exports){
+},{"./formats":135,"./parse":137,"./stringify":138}],137:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -34651,7 +37582,7 @@ module.exports = function (str, opts) {
     return utils.compact(obj);
 };
 
-},{"./utils":135}],134:[function(require,module,exports){
+},{"./utils":139}],138:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -34860,7 +37791,7 @@ module.exports = function (object, opts) {
     return keys.join(delimiter);
 };
 
-},{"./formats":131,"./utils":135}],135:[function(require,module,exports){
+},{"./formats":135,"./utils":139}],139:[function(require,module,exports){
 'use strict';
 
 var has = Object.prototype.hasOwnProperty;
@@ -35044,7 +37975,7 @@ exports.isBuffer = function (obj) {
     return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));
 };
 
-},{}],136:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 (function (global){
 
 /**
@@ -35115,16 +38046,16 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],137:[function(require,module,exports){
-arguments[4][59][0].apply(exports,arguments)
-},{"dup":59}],138:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
+arguments[4][60][0].apply(exports,arguments)
+},{"dup":60}],142:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],139:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -35714,7 +38645,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":138,"_process":86,"inherits":137}],140:[function(require,module,exports){
+},{"./support/isBuffer":142,"_process":90,"inherits":141}],144:[function(require,module,exports){
 var v1 = require('./v1');
 var v4 = require('./v4');
 
@@ -35724,7 +38655,7 @@ uuid.v4 = v4;
 
 module.exports = uuid;
 
-},{"./v1":143,"./v4":144}],141:[function(require,module,exports){
+},{"./v1":147,"./v4":148}],145:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -35749,7 +38680,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],142:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 (function (global){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
@@ -35786,7 +38717,7 @@ if (!rng) {
 module.exports = rng;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],143:[function(require,module,exports){
+},{}],147:[function(require,module,exports){
 // Unique ID creation requires a high quality random # generator.  We feature
 // detect to determine the best RNG source, normalizing to a function that
 // returns 128-bits of randomness, since that's what's usually required
@@ -35891,7 +38822,7 @@ function v1(options, buf, offset) {
 
 module.exports = v1;
 
-},{"./lib/bytesToUuid":141,"./lib/rng":142}],144:[function(require,module,exports){
+},{"./lib/bytesToUuid":145,"./lib/rng":146}],148:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -35922,7 +38853,7 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":141,"./lib/rng":142}],145:[function(require,module,exports){
+},{"./lib/bytesToUuid":145,"./lib/rng":146}],149:[function(require,module,exports){
 "use strict";
 
 var Notifier = require("./notifier.js");
@@ -35951,11 +38882,12 @@ BlockNotifier.prototype.constructor = BlockNotifier;
 
 module.exports = BlockNotifier;
 
-},{"./notifier.js":150,"./polling-block-notifier.js":152,"./subscribing-block-notifier.js":153}],146:[function(require,module,exports){
+},{"./notifier.js":153,"./polling-block-notifier.js":155,"./subscribing-block-notifier.js":156}],150:[function(require,module,exports){
 "use strict";
 
 var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
 var BlockNotifier = require("../block-management/block-notifier");
+var internalState = require("../internal-state");
 
 /**
  * Used internally.  Instantiates a new BlockAndLogStreamer backed by ethrpc and BlockNotifier.
@@ -35992,26 +38924,25 @@ var BlockNotifier = require("../block-management/block-notifier");
  * @param {Transport} transport
  */
 function createBlockAndLogStreamer(configuration, transport) {
-  return function (dispatch) {
-    var reconcileWithErrorLogging, blockNotifier, blockAndLogStreamer;
-    blockNotifier = new BlockNotifier(transport, configuration.pollingIntervalMilliseconds);
-    dispatch({ type: "SET_BLOCK_NOTIFIER", blockNotifier: blockNotifier });
-    blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, {
-      blockRetention: configuration.blockRetention
-    });
-    dispatch({ type: "SET_BLOCK_AND_LOG_STREAMER", blockAndLogStreamer: blockAndLogStreamer });
-    reconcileWithErrorLogging = function (block) {
-      blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (error) {
-        if (error) console.error(error);
-      });
-    };
-    dispatch({ type: "ADD_BLOCK_NOTIFIER_SUBSCRIPTION", subscription: reconcileWithErrorLogging });
-  };
+  var blockNotifier = new BlockNotifier({
+    getLatestBlock: transport.getLatestBlock,
+    subscribeToReconnects: transport.subscribeToReconnects,
+    unsubscribeFromReconnects: transport.unsubscribeFromReconnects,
+    subscribeToNewHeads: transport.subscribeToNewHeads,
+    unsubscribeFromNewHeads: transport.unsubscribeFromNewHeads
+  }, configuration.pollingIntervalMilliseconds);
+  var blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, {
+    blockRetention: configuration.blockRetention
+  });
+  blockNotifier.subscribe(function (block) {
+    blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
+  });
+  internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
 }
 
 module.exports = createBlockAndLogStreamer;
 
-},{"../block-management/block-notifier":145,"ethereumjs-blockstream":42}],147:[function(require,module,exports){
+},{"../block-management/block-notifier":149,"../internal-state":175,"ethereumjs-blockstream":42}],151:[function(require,module,exports){
 "use strict";
 
 var onNewBlock = require("../block-management/on-new-block");
@@ -36043,19 +38974,20 @@ function ensureLatestBlock(callback) {
 
 module.exports = ensureLatestBlock;
 
-},{"../block-management/on-new-block":151,"../utils/is-function":239,"../wrappers/eth":256}],148:[function(require,module,exports){
+},{"../block-management/on-new-block":154,"../utils/is-function":232,"../wrappers/eth":248}],152:[function(require,module,exports){
 "use strict";
 
 var eth = require("../wrappers/eth");
+var addNewHeadsSubscription = require("../subscriptions/add-new-heads-subscription");
+var removeSubscription = require("../subscriptions/remove-subscription");
 var errorSplittingWrapper = require("../errors/error-splitting-wrapper");
 var noop = require("../utils/noop");
 
 var nextToken = 1;
 var subscriptionMapping = {};
 
-var createTransportAdapter = function () {
-  return function (dispatch, getState) {
-    var transporter = getState().transporter;
+function createTransportAdapter(transporter) {
+  return function (dispatch) {
     return {
       getLatestBlock: function (callback) {
         dispatch(eth.getBlockByNumber(["latest", false], errorSplittingWrapper(callback)));
@@ -36076,7 +39008,7 @@ var createTransportAdapter = function () {
         var token = (nextToken++).toString();
         subscriptionMapping[token] = null;
         dispatch(eth.subscribe(["newHeads", {}], function (subscriptionID) {
-          if (subscriptionID instanceof Error || subscriptionID.error) {
+          if (!subscriptionID || subscriptionID.error) {
             return onSubscriptionError(subscriptionID);
           }
           // if the caller already unsubscribed by the time this callback is
@@ -36085,45 +39017,27 @@ var createTransportAdapter = function () {
             dispatch(eth.unsubscribe(subscriptionID, noop));
           } else {
             subscriptionMapping[token] = subscriptionID;
-            dispatch({ type: "ADD_SUBSCRIPTION", id: subscriptionID, callback: onNewHead });
+            dispatch(addNewHeadsSubscription(subscriptionID, onNewHead));
           }
         }));
-        return token;
+        return "1";
       },
       unsubscribeFromNewHeads: function (token) {
         var subscriptionID;
         if (token) {
           subscriptionID = subscriptionMapping[token];
           delete subscriptionMapping[token];
-          dispatch({ type: "REMOVE_SUBSCRIPTION", id: subscriptionID });
-          if (subscriptionID) {
-            // we don't care about the result, this unsubscribe is just to be
-            // nice to the remote host
-            dispatch(eth.unsubscribe(subscriptionID, noop));
-          }
+          dispatch(removeSubscription(subscriptionID));
+          dispatch(eth.unsubscribe(subscriptionID, noop));
         }
       }
     };
   };
-};
+}
 
 module.exports = createTransportAdapter;
 
-},{"../errors/error-splitting-wrapper":167,"../utils/noop":245,"../wrappers/eth":256}],149:[function(require,module,exports){
-"use strict";
-
-/**
- * Provides access to the internally managed BlockAndLogStreamer instance.
- */
-function getBlockAndLogStreamer() {
-  return function (dispatch, getState) {
-    return getState().blockAndLogStreamer;
-  };
-}
-
-module.exports = getBlockAndLogStreamer;
-
-},{}],150:[function(require,module,exports){
+},{"../errors/error-splitting-wrapper":170,"../subscriptions/add-new-heads-subscription":203,"../subscriptions/remove-subscription":206,"../utils/noop":238,"../wrappers/eth":248}],153:[function(require,module,exports){
 "use strict";
 
 /**
@@ -36162,20 +39076,16 @@ Notifier.prototype.constructor = Notifier;
 
 module.exports = Notifier;
 
-},{}],151:[function(require,module,exports){
+},{}],154:[function(require,module,exports){
 "use strict";
 
-var assign = require("lodash.assign");
 var reprocessTransactions = require("../transact/reprocess-transactions");
 var isObject = require("../utils/is-object");
 
 function onNewBlock(block) {
   return function (dispatch) {
     if (isObject(block)) {
-      dispatch({
-        type: "SET_CURRENT_BLOCK",
-        block: assign({}, block, { number: parseInt(block.number, 16) })
-      });
+      dispatch({ type: "SET_CURRENT_BLOCK", data: block });
       dispatch(reprocessTransactions());
     }
   };
@@ -36183,7 +39093,7 @@ function onNewBlock(block) {
 
 module.exports = onNewBlock;
 
-},{"../transact/reprocess-transactions":214,"../utils/is-object":243,"lodash.assign":71}],152:[function(require,module,exports){
+},{"../transact/reprocess-transactions":211,"../utils/is-object":236}],155:[function(require,module,exports){
 "use strict";
 
 var Notifier = require("./notifier");
@@ -36218,7 +39128,7 @@ PollingBlockNotifier.prototype.constructor = PollingBlockNotifier;
 
 module.exports = PollingBlockNotifier;
 
-},{"../validate/validate-block":250,"./notifier":150}],153:[function(require,module,exports){
+},{"../validate/validate-block":242,"./notifier":153}],156:[function(require,module,exports){
 "use strict";
 
 var Notifier = require("./notifier");
@@ -36272,7 +39182,7 @@ SubscribingBlockNotifier.prototype.constructor = SubscribingBlockNotifier;
 
 module.exports = SubscribingBlockNotifier;
 
-},{"../validate/validate-block":250,"./notifier":150}],154:[function(require,module,exports){
+},{"../validate/validate-block":242,"./notifier":153}],157:[function(require,module,exports){
 "use strict";
 
 var eth_blockNumber = require("../wrappers/eth").blockNumber;
@@ -36310,13 +39220,21 @@ module.exports = function (blocks, mine, callback) {
   };
 };
 
-},{"../constants":157,"../utils/is-function":239,"../wrappers/eth":256,"../wrappers/miner":260}],155:[function(require,module,exports){
+},{"../constants":160,"../utils/is-function":232,"../wrappers/eth":248,"../wrappers/miner":252}],158:[function(require,module,exports){
 "use strict";
+
+var isObject = require("./utils/is-object");
+var internalState = require("./internal-state");
 
 // delete cached network, notification, and transaction data
 function clearTransactions() {
   return function (dispatch) {
-    dispatch({ type: "CLEAR_ALL_NOTIFICATIONS" });
+    var notifications = internalState.get("notifications");
+    if (isObject(notifications)) {
+      Object.keys(notifications).map(function (hash) {
+        if (notifications[hash]) clearTimeout(notifications[hash]);
+      });
+    }
     dispatch({ type: "REMOVE_ALL_TRANSACTIONS" });
     dispatch({ type: "RESET_HIGHEST_NONCE" });
   };
@@ -36324,17 +39242,20 @@ function clearTransactions() {
 
 module.exports = clearTransactions;
 
-},{}],156:[function(require,module,exports){
+},{"./internal-state":175,"./utils/is-object":236}],159:[function(require,module,exports){
 "use strict";
 
 var net_version = require("./wrappers/net").version;
 var getGasPrice = require("./wrappers/get-gas-price");
 var Transporter = require("./transport/transporter");
-var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
+var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var onNewBlock = require("./block-management/on-new-block");
+var validateConfiguration = require("./validate/validate-configuration");
 var resetState = require("./reset-state");
 var ErrorWithData = require("./errors").ErrorWithData;
+var isFunction = require("./utils/is-function");
+var internalState = require("./internal-state");
 
 /**
  * Initiates a connection to Ethereum.  This must be called before any other methods are called.
@@ -36355,42 +39276,39 @@ var ErrorWithData = require("./errors").ErrorWithData;
  */
 function connect(configuration, initialConnectCallback) {
   return function (dispatch, getState) {
-    var syncOnly, state, debug, storedConfiguration, shimMessageHandler;
+    var syncOnly, storedConfiguration, debug = getState().debug;
     dispatch(resetState());
-    dispatch({ type: "SET_CONFIGURATION", configuration: configuration });
 
-    state = getState();
-    debug = state.debug;
-    storedConfiguration = state.configuration;
-    shimMessageHandler = state.shimMessageHandler;
+    // Use console.error as default out-of-band error handler if not set
+    if (!isFunction(configuration.errorHandler)) {
+      configuration.errorHandler = function (err) { if (err) console.error(err); };
+    }
+    internalState.set("outOfBandErrorHandler", configuration.errorHandler);
+    dispatch({ type: "SET_CONFIGURATION", configuration: validateConfiguration(configuration) });
 
     syncOnly = !initialConnectCallback;
     if (syncOnly) {
       initialConnectCallback = function (error) {
-        if (error instanceof Error) {
-          throw error;
-        } else if (error) {
-          throw new ErrorWithData(error);
-        }
+        if (error instanceof Error) throw error;
+        else if (error) throw new ErrorWithData(error);
       };
     }
 
     // initialize the transporter, this will be how we send to and receive from the blockchain
-    new Transporter(storedConfiguration, shimMessageHandler, syncOnly, debug.connect, function (error, transporter) {
-      if (error !== null) return initialConnectCallback(error);
-      dispatch({ type: "SET_TRANSPORTER", transporter: transporter });
+    storedConfiguration = getState().configuration;
+    new Transporter(storedConfiguration, internalState.get("shimMessageHandler"), syncOnly, debug.connect, function (err, transporter) {
+      if (err !== null) return initialConnectCallback(err);
+      internalState.set("transporter", transporter);
 
       // ensure we can do basic JSON-RPC over this connection
-      dispatch(net_version(null, function (errorOrResult) {
-        if (errorOrResult instanceof Error || errorOrResult.error) {
-          return initialConnectCallback(errorOrResult);
-        }
-        dispatch({ type: "SET_NETWORK_ID", networkID: errorOrResult });
-        dispatch(createBlockAndLogStreamer({
+      dispatch(net_version(null, function (networkID) {
+        if (networkID instanceof Error || networkID.error) return initialConnectCallback(networkID);
+        dispatch({ type: "SET_NETWORK_ID", networkID: networkID });
+        createBlockAndLogStreamer({
           pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
           blockRetention: storedConfiguration.blockRetention
-        }, dispatch(createTransportAdapter())));
-        getState().blockAndLogStreamer.subscribeToOnBlockAdded(function (block) { dispatch(onNewBlock(block)); });
+        }, dispatch(createTransportAdapter(transporter)), internalState.get("outOfBandErrorHandler"));
+        internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) { dispatch(onNewBlock(block)); });
         dispatch(getGasPrice());
         initialConnectCallback(null);
       }));
@@ -36400,7 +39318,7 @@ function connect(configuration, initialConnectCallback) {
 
 module.exports = connect;
 
-},{"./block-management/create-block-and-log-streamer":146,"./block-management/ethrpc-transport-adapter":148,"./block-management/on-new-block":151,"./errors":168,"./reset-state":203,"./transport/transporter":235,"./wrappers/get-gas-price":257,"./wrappers/net":261}],157:[function(require,module,exports){
+},{"./block-management/create-block-and-log-streamer":150,"./block-management/ethrpc-transport-adapter":152,"./block-management/on-new-block":154,"./errors":171,"./internal-state":175,"./reset-state":199,"./transport/transporter":228,"./utils/is-function":232,"./validate/validate-configuration":243,"./wrappers/get-gas-price":249,"./wrappers/net":253}],160:[function(require,module,exports){
 "use strict";
 
 var BigNumber = require("bignumber.js");
@@ -36428,7 +39346,7 @@ module.exports = {
 
 };
 
-},{"bignumber.js":4}],158:[function(require,module,exports){
+},{"bignumber.js":6}],161:[function(require,module,exports){
 "use strict";
 
 module.exports = function (debugOptions) {
@@ -36437,7 +39355,7 @@ module.exports = function (debugOptions) {
   };
 };
 
-},{}],159:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -36478,7 +39396,7 @@ var convertResponseToReturnsType = function (returnsType, response) {
 
 module.exports = convertResponseToReturnsType;
 
-},{"augur-abi":2,"clone":16}],160:[function(require,module,exports){
+},{"augur-abi":2,"clone":18}],163:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -36514,7 +39432,7 @@ var handleRPCError = function (method, returns, response) {
 
 module.exports = handleRPCError;
 
-},{"../errors/codes":166,"augur-abi":2}],161:[function(require,module,exports){
+},{"../errors/codes":169,"augur-abi":2}],164:[function(require,module,exports){
 "use strict";
 
 var clone = require("clone");
@@ -36569,7 +39487,7 @@ var parseEthereumResponse = function (origResponse, returns, callback) {
 
 module.exports = parseEthereumResponse;
 
-},{"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"../utils/is-object":243,"clone":16}],162:[function(require,module,exports){
+},{"../errors/codes":169,"../errors/rpc-error":172,"../utils/is-function":232,"../utils/is-object":236,"clone":18}],165:[function(require,module,exports){
 "use strict";
 
 var isFunction = require("../utils/is-function");
@@ -36617,7 +39535,7 @@ module.exports = {
   encodeObject: encodeObject
 };
 
-},{"../utils/is-function":239}],163:[function(require,module,exports){
+},{"../utils/is-function":232}],166:[function(require,module,exports){
 "use strict";
 
 var abiEncode = require("./abi-encode");
@@ -36645,7 +39563,7 @@ var makeRequestPayload = function (command, params, prefix) {
 
 module.exports = makeRequestPayload;
 
-},{"./abi-encode":162}],164:[function(require,module,exports){
+},{"./abi-encode":165}],167:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -36706,7 +39624,7 @@ var packageRequest = function (payload) {
 
 module.exports = packageRequest;
 
-},{"../constants":157,"../errors/codes":166,"../errors/rpc-error":169,"augur-abi":2,"clone":16}],165:[function(require,module,exports){
+},{"../constants":160,"../errors/codes":169,"../errors/rpc-error":172,"augur-abi":2,"clone":18}],168:[function(require,module,exports){
 "use strict";
 
 var stripReturnsTypeAndInvocation = function (tx) {
@@ -36726,7 +39644,7 @@ var stripReturnsTypeAndInvocation = function (tx) {
 
 module.exports = stripReturnsTypeAndInvocation;
 
-},{}],166:[function(require,module,exports){
+},{}],169:[function(require,module,exports){
 module.exports={
   "0x": "no response or bad input",
   "buy": {
@@ -37055,7 +39973,7 @@ module.exports={
   }
 }
 
-},{}],167:[function(require,module,exports){
+},{}],170:[function(require,module,exports){
 "use strict";
 
 function errorSplittingWrapper(callback) {
@@ -37069,7 +39987,7 @@ function errorSplittingWrapper(callback) {
 
 module.exports = errorSplittingWrapper;
 
-},{}],168:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 "use strict";
 
 function BetterError(message) {
@@ -37108,7 +40026,7 @@ module.exports = {
   ErrorWithCodeAndData: ErrorWithCodeAndData
 };
 
-},{}],169:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 "use strict";
 
 function RPCError(err) {
@@ -37121,13 +40039,13 @@ RPCError.prototype = Error.prototype;
 
 module.exports = RPCError;
 
-},{}],170:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 (function (global){
 var ethrpc = global.ethrpc || require("./");
 global.ethrpc = ethrpc;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./":171}],171:[function(require,module,exports){
+},{"./":174}],174:[function(require,module,exports){
 /**
  * JSON RPC methods for Ethereum
  * @author Jack Peterson (jack@tinybike.net)
@@ -37137,7 +40055,6 @@ global.ethrpc = ethrpc;
 
 var BigNumber = require("bignumber.js");
 
-var getBlockAndLogStreamer = require("./block-management/get-block-and-log-streamer");
 var ensureLatestBlock = require("./block-management/ensure-latest-block");
 var waitForNextBlocks = require("./block-management/wait-for-next-blocks");
 
@@ -37189,10 +40106,9 @@ var connect = require("./connect");
 var store = require("./store");
 var dispatch = store.dispatch;
 
-BigNumber.config({
-  MODULO_MODE: BigNumber.EUCLID,
-  ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN
-});
+var internalState = require("./internal-state");
+
+BigNumber.config({ MODULO_MODE: BigNumber.EUCLID, ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN });
 
 module.exports = {
 
@@ -37207,8 +40123,10 @@ module.exports = {
 
   setDebugOptions: function (debugOptions) { return dispatch(setDebugOptions(debugOptions)); },
 
-  connect: function (configuration, initialConnectCallback) { return dispatch(connect(configuration, initialConnectCallback)); },
-  getBlockAndLogStreamer: function () { return dispatch(getBlockAndLogStreamer()); },
+  connect: function (configuration, initialConnectCallback) {
+    return dispatch(connect(configuration, initialConnectCallback));
+  },
+  getBlockAndLogStreamer: function () { return internalState.get("blockAndLogStreamer"); },
   clear: function () { return dispatch(clearTransactions()); },
   resetState: function () { return dispatch(resetState()); },
 
@@ -37368,20 +40286,36 @@ module.exports = {
 
 };
 
-},{"./block-management/ensure-latest-block":147,"./block-management/get-block-and-log-streamer":149,"./block-management/wait-for-next-blocks":154,"./clear-transactions":155,"./connect":156,"./debug/set-debug-options":158,"./encode-request/package-request":164,"./errors/codes":166,"./raw-transactions/package-and-sign-raw-transaction":177,"./raw-transactions/package-and-submit-raw-transaction":178,"./raw-transactions/package-raw-transaction":179,"./raw-transactions/sign-raw-transaction":182,"./reset-state":203,"./store":206,"./transact/call-contract-function":207,"./transact/call-or-send-transaction":208,"./transact/transact":217,"./transaction-relay/exclude-from-transaction-relay":224,"./transaction-relay/include-in-transaction-relay":225,"./transaction-relay/register-transaction-relay":226,"./transaction-relay/unregister-transaction-relay":227,"./utils/is-function":239,"./utils/sha3":246,"./validate/validate-and-default-block-number":249,"./validate/validate-transaction":253,"./wrappers/bind-dispatch":255,"./wrappers/eth":256,"./wrappers/is-unlocked":258,"./wrappers/miner":260,"./wrappers/net":261,"./wrappers/personal":262,"./wrappers/publish":263,"./wrappers/raw":264,"./wrappers/resend-raw-transaction":265,"./wrappers/resend-transaction":266,"./wrappers/send-ether":267,"./wrappers/shh":268,"./wrappers/txpool":269,"./wrappers/web3":270,"bignumber.js":4}],172:[function(require,module,exports){
+},{"./block-management/ensure-latest-block":151,"./block-management/wait-for-next-blocks":157,"./clear-transactions":158,"./connect":159,"./debug/set-debug-options":161,"./encode-request/package-request":167,"./errors/codes":169,"./internal-state":175,"./raw-transactions/package-and-sign-raw-transaction":181,"./raw-transactions/package-and-submit-raw-transaction":182,"./raw-transactions/package-raw-transaction":183,"./raw-transactions/sign-raw-transaction":186,"./reset-state":199,"./store":202,"./transact/call-contract-function":208,"./transact/call-or-send-transaction":209,"./transact/transact":213,"./transaction-relay/exclude-from-transaction-relay":218,"./transaction-relay/include-in-transaction-relay":219,"./transaction-relay/register-transaction-relay":220,"./transaction-relay/unregister-transaction-relay":221,"./utils/is-function":232,"./utils/sha3":239,"./validate/validate-and-default-block-number":241,"./validate/validate-transaction":245,"./wrappers/bind-dispatch":247,"./wrappers/eth":248,"./wrappers/is-unlocked":250,"./wrappers/miner":252,"./wrappers/net":253,"./wrappers/personal":254,"./wrappers/publish":255,"./wrappers/raw":256,"./wrappers/resend-raw-transaction":257,"./wrappers/resend-transaction":258,"./wrappers/send-ether":259,"./wrappers/shh":260,"./wrappers/txpool":261,"./wrappers/web3":262,"bignumber.js":6}],175:[function(require,module,exports){
+"use strict";
+
+var assign = require("lodash.assign");
+var get = require("lodash.get");
+var set = require("lodash.set");
+var unset = require("lodash.unset");
+
+var state = {};
+
+module.exports.getState = function () { return state; };
+module.exports.get = function (path) { return get(state, path); };
+module.exports.setState = function (newState) { assign(state, newState); };
+module.exports.set = function (path, newState) { set(state, path, newState); };
+module.exports.unset = function (path) { unset(state, path); };
+
+},{"lodash.assign":72,"lodash.get":73,"lodash.set":74,"lodash.unset":75}],176:[function(require,module,exports){
 (function (process){
 "use strict";
 
 module.exports = (typeof module !== "undefined") && process && !process.browser;
 
 }).call(this,require('_process'))
-},{"_process":86}],173:[function(require,module,exports){
+},{"_process":90}],177:[function(require,module,exports){
 "use strict";
 
 var isNodeJs = require("./is-node-js.js");
 if (isNodeJs)  {module.exports = require("request");} else	{module.exports = require("browser-request");}
 
-},{"./is-node-js.js":172,"browser-request":8,"request":9}],174:[function(require,module,exports){
+},{"./is-node-js.js":176,"browser-request":10,"request":11}],178:[function(require,module,exports){
 "use strict";
 
 var syncRequest = require("sync-request");
@@ -37394,13 +40328,13 @@ module.exports = function (method, uri, options) {
   return syncRequest(method, uri, options);
 };
 
-},{"sync-request":129}],175:[function(require,module,exports){
+},{"sync-request":133}],179:[function(require,module,exports){
 "use strict";
 
 var isNode = require("./is-node-js.js");
 if (isNode)  {module.exports = require("websocket").w3cwebsocket;} else	{module.exports = WebSocket;}
 
-},{"./is-node-js.js":172,"websocket":9}],176:[function(require,module,exports){
+},{"./is-node-js.js":176,"websocket":11}],180:[function(require,module,exports){
 "use strict";
 
 var errors = require("../errors/codes");
@@ -37424,7 +40358,7 @@ function handleRawTransactionError(rawTransactionResponse) {
 
 module.exports = handleRawTransactionError;
 
-},{"../errors/codes":166}],177:[function(require,module,exports){
+},{"../errors/codes":169}],181:[function(require,module,exports){
 "use strict";
 
 var packageRawTransaction = require("./package-raw-transaction");
@@ -37482,7 +40416,7 @@ function packageAndSignRawTransaction(payload, address, privateKey, callback) {
 
 module.exports = packageAndSignRawTransaction;
 
-},{"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"./package-raw-transaction":179,"./set-raw-transaction-gas-price":180,"./set-raw-transaction-nonce":181,"./sign-raw-transaction":182}],178:[function(require,module,exports){
+},{"../errors/codes":169,"../errors/rpc-error":172,"../utils/is-function":232,"./package-raw-transaction":183,"./set-raw-transaction-gas-price":184,"./set-raw-transaction-nonce":185,"./sign-raw-transaction":186}],182:[function(require,module,exports){
 "use strict";
 
 var eth_sendRawTransaction = require("../wrappers/eth").sendRawTransaction;
@@ -37535,7 +40469,7 @@ function packageAndSubmitRawTransaction(payload, address, privateKey, callback) 
 
 module.exports = packageAndSubmitRawTransaction;
 
-},{"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"../wrappers/eth":256,"./handle-raw-transaction-error":176,"./package-and-sign-raw-transaction":177}],179:[function(require,module,exports){
+},{"../errors/codes":169,"../errors/rpc-error":172,"../utils/is-function":232,"../wrappers/eth":248,"./handle-raw-transaction-error":180,"./package-and-sign-raw-transaction":181}],183:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -37571,7 +40505,7 @@ function packageRawTransaction(payload, address, networkID, currentBlock) {
 
 module.exports = packageRawTransaction;
 
-},{"../constants":157,"../encode-request/package-request":164,"augur-abi":2}],180:[function(require,module,exports){
+},{"../constants":160,"../encode-request/package-request":167,"augur-abi":2}],184:[function(require,module,exports){
 "use strict";
 
 var eth_gasPrice = require("../wrappers/eth").gasPrice;
@@ -37606,7 +40540,7 @@ var setRawTransactionGasPrice = function (packaged, callback) {
 
 module.exports = setRawTransactionGasPrice;
 
-},{"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"../wrappers/eth":256}],181:[function(require,module,exports){
+},{"../errors/codes":169,"../errors/rpc-error":172,"../utils/is-function":232,"../wrappers/eth":248}],185:[function(require,module,exports){
 "use strict";
 
 var eth = require("../wrappers/eth");
@@ -37643,7 +40577,7 @@ function setRawTransactionNonce(packaged, address, callback) {
 
 module.exports = setRawTransactionNonce;
 
-},{"../utils/is-function":239,"../wrappers/eth":256,"./verify-raw-transaction-nonce":183}],182:[function(require,module,exports){
+},{"../utils/is-function":232,"../wrappers/eth":248,"./verify-raw-transaction-nonce":187}],186:[function(require,module,exports){
 "use strict";
 
 var Transaction = require("ethereumjs-tx");
@@ -37678,7 +40612,7 @@ var signRawTransaction = function (packaged, privateKey) {
 
 module.exports = signRawTransaction;
 
-},{"../errors/codes":166,"../errors/rpc-error":169,"ethereumjs-tx":44}],183:[function(require,module,exports){
+},{"../errors/codes":169,"../errors/rpc-error":172,"ethereumjs-tx":44}],187:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -37703,62 +40637,11 @@ function verifyRawTransactionNonce(nonce) {
 
 module.exports = verifyRawTransactionNonce;
 
-},{"augur-abi":2}],184:[function(require,module,exports){
+},{"augur-abi":2}],188:[function(require,module,exports){
 "use strict";
 
-var initialState = null;
-
-module.exports = function (blockAndLogStreamer, action) {
-  if (typeof blockAndLogStreamer === "undefined") {
-    return initialState;
-  }
-  switch (action.type) {
-    case "SET_BLOCK_AND_LOG_STREAMER":
-      return action.blockAndLogStreamer;
-    case "CLEAR_BLOCK_AND_LOG_STREAMER":
-      return initialState;
-    default:
-      return blockAndLogStreamer;
-  }
-};
-
-},{}],185:[function(require,module,exports){
-"use strict";
-
-var initialState = null;
-
-module.exports = function (blockNotifier, action) {
-  if (typeof blockNotifier === "undefined") {
-    return initialState;
-  }
-  switch (action.type) {
-    case "SET_BLOCK_NOTIFIER":
-      return action.blockNotifier;
-    case "ADD_BLOCK_NOTIFIER_SUBSCRIPTION":
-      blockNotifier.subscribe(action.subscription); // FIXME mutates blockNotifier
-      return blockNotifier;
-    case "CLEAR_BLOCK_NOTIFIER":
-      return initialState;
-    default:
-      return blockNotifier;
-  }
-};
-
-},{}],186:[function(require,module,exports){
-"use strict";
-
-var validateConfiguration = require("../validate/validate-configuration");
 var isFunction = require("../utils/is-function");
-
-var initialState = {
-  httpAddresses: [],
-  wsAddresses: [],
-  ipcAddresses: [],
-  connectionTimeout: 3000,
-  pollingIntervalMilliseconds: 30000,
-  blockRetention: 100,
-  errorHandler: null
-};
+var initialState = require("./initial-state").configuration;
 
 module.exports = function (configuration, action) {
   var updatedConfiguration;
@@ -37768,16 +40651,13 @@ module.exports = function (configuration, action) {
   switch (action.type) {
     case "SET_CONFIGURATION":
       updatedConfiguration = Object.keys(configuration).reduce(function (p, key) {
-        p[key] = (action.configuration[key] != null) ? action.configuration[key] : configuration[key];
+        if (action.configuration[key] != null && !isFunction(action.configuration[key])) {
+          p[key] = action.configuration[key];
+        } else {
+          p[key] = configuration[key];
+        }
         return p;
       }, {});
-
-      // use default error handler (console.error) if not set
-      if (!isFunction(updatedConfiguration.errorHandler)) {
-        updatedConfiguration.errorHandler = function (err) { console.error(err); };
-      }
-
-      validateConfiguration(updatedConfiguration);
       return updatedConfiguration;
     case "RESET_CONFIGURATION":
       return initialState;
@@ -37786,12 +40666,11 @@ module.exports = function (configuration, action) {
   }
 };
 
-},{"../utils/is-function":239,"../validate/validate-configuration":251}],187:[function(require,module,exports){
+},{"../utils/is-function":232,"./initial-state":194}],189:[function(require,module,exports){
 "use strict";
 
 var clone = require("clone");
-
-var initialState = null;
+var initialState = require("./initial-state").currentBlock;
 
 module.exports = function (currentBlock, action) {
   if (typeof currentBlock === "undefined") {
@@ -37799,7 +40678,7 @@ module.exports = function (currentBlock, action) {
   }
   switch (action.type) {
     case "SET_CURRENT_BLOCK":
-      return clone(action.block);
+      return clone(action.data);
     case "CLEAR_CURRENT_BLOCK":
       return initialState;
     default:
@@ -37807,18 +40686,11 @@ module.exports = function (currentBlock, action) {
   }
 };
 
-},{"clone":16}],188:[function(require,module,exports){
+},{"./initial-state":194,"clone":18}],190:[function(require,module,exports){
 "use strict";
 
 var assign = require("lodash.assign");
-
-var initialState = {
-  connect: false,
-  tx: false,
-  broadcast: false,
-  nonce: false,
-  sync: false
-};
+var initialState = require("./initial-state").debug;
 
 module.exports = function (debug, action) {
   if (typeof debug === "undefined") {
@@ -37834,10 +40706,10 @@ module.exports = function (debug, action) {
   }
 };
 
-},{"lodash.assign":71}],189:[function(require,module,exports){
+},{"./initial-state":194,"lodash.assign":72}],191:[function(require,module,exports){
 "use strict";
 
-var initialState = 20000000000;
+var initialState = require("./initial-state").gasPrice;
 
 module.exports = function (gasPrice, action) {
   if (typeof gasPrice === "undefined") {
@@ -37853,10 +40725,10 @@ module.exports = function (gasPrice, action) {
   }
 };
 
-},{}],190:[function(require,module,exports){
+},{"./initial-state":194}],192:[function(require,module,exports){
 "use strict";
 
-var initialState = -1;
+var initialState = require("./initial-state").highestNonce;
 
 module.exports = function (highestNonce, action) {
   if (typeof highestNonce === "undefined") {
@@ -37876,52 +40748,30 @@ module.exports = function (highestNonce, action) {
   }
 };
 
-},{}],191:[function(require,module,exports){
+},{"./initial-state":194}],193:[function(require,module,exports){
 "use strict";
 
 var debugReducer = require("./debug");
-
 var configurationReducer = require("./configuration");
 var currentBlockReducer = require("./current-block");
 var highestNonceReducer = require("./highest-nonce");
 var gasPriceReducer = require("./gas-price");
 var noRelayReducer = require("./no-relay");
 var networkIDReducer = require("./network-id");
-var notificationsReducer = require("./notifications");
-var transactionRelayReducer = require("./transaction-relay");
 var transactionsReducer = require("./transactions");
-
-var transporterReducer = require("./transporter");
-var blockNotifierReducer = require("./block-notifier");
-var blockAndLogStreamerReducer = require("./block-and-log-streamer");
-var outstandingRequestsReducer = require("./outstanding-requests");
 var subscriptionsReducer = require("./subscriptions");
-var newBlockTimerReducer = require("./new-block-timer");
-var shimMessageHandlerObjectReducer = require("./shim-message-handler-object");
-var shimMessageHandlerReducer = require("./shim-message-handler");
 
 function reducer(state, action) {
   return {
     debug: debugReducer(state.debug, action),
-
     configuration: configurationReducer(state.configuration, action),
     currentBlock: currentBlockReducer(state.currentBlock, action),
     highestNonce: highestNonceReducer(state.highestNonce, action),
     gasPrice: gasPriceReducer(state.gasPrice, action),
     noRelay: noRelayReducer(state.noRelay, action),
     networkID: networkIDReducer(state.networkID, action),
-    notifications: notificationsReducer(state.notifications, action),
-    transactionRelay: transactionRelayReducer(state.transactionRelay, action),
     transactions: transactionsReducer(state.transactions, action),
-
-    transporter: transporterReducer(state.transporter, action),
-    blockNotifier: blockNotifierReducer(state.blockNotifier, action),
-    blockAndLogStreamer: blockAndLogStreamerReducer(state.blockAndLogStreamer, action),
-    outstandingRequests: outstandingRequestsReducer(state.outstandingRequests, action),
-    subscriptions: subscriptionsReducer(state.subscriptions, action),
-    newBlockTimer: newBlockTimerReducer(state.newBlockTimer, action),
-    shimMessageHandlerObject: shimMessageHandlerObjectReducer(state.shimMessageHandlerObject, action),
-    shimMessageHandler: shimMessageHandlerReducer(state.shimMessageHandler, action)
+    subscriptions: subscriptionsReducer(state.subscriptions, action)
   };
 }
 
@@ -37932,10 +40782,36 @@ module.exports = function (state, action) {
   return reducer(state || {}, action);
 };
 
-},{"./block-and-log-streamer":184,"./block-notifier":185,"./configuration":186,"./current-block":187,"./debug":188,"./gas-price":189,"./highest-nonce":190,"./network-id":192,"./new-block-timer":193,"./no-relay":194,"./notifications":195,"./outstanding-requests":196,"./shim-message-handler":198,"./shim-message-handler-object":197,"./subscriptions":199,"./transaction-relay":200,"./transactions":201,"./transporter":202}],192:[function(require,module,exports){
+},{"./configuration":188,"./current-block":189,"./debug":190,"./gas-price":191,"./highest-nonce":192,"./network-id":195,"./no-relay":196,"./subscriptions":197,"./transactions":198}],194:[function(require,module,exports){
 "use strict";
 
-var initialState = null;
+module.exports.debug = {
+  connect: false,
+  tx: false,
+  broadcast: false,
+  nonce: false,
+  sync: false
+};
+module.exports.configuration = {
+  httpAddresses: [],
+  wsAddresses: [],
+  ipcAddresses: [],
+  connectionTimeout: 3000,
+  pollingIntervalMilliseconds: 30000,
+  blockRetention: 100
+};
+module.exports.currentBlock = null;
+module.exports.highestNonce = -1;
+module.exports.gasPrice = 20000000000;
+module.exports.noRelay = {};
+module.exports.networkID = null;
+module.exports.transactions = {};
+module.exports.subscriptions = {};
+
+},{}],195:[function(require,module,exports){
+"use strict";
+
+var initialState = require("./initial-state").networkID;
 
 module.exports = function (networkID, action) {
   if (typeof networkID === "undefined") {
@@ -37951,32 +40827,11 @@ module.exports = function (networkID, action) {
   }
 };
 
-},{}],193:[function(require,module,exports){
-"use strict";
-
-var initialState = null;
-
-module.exports = function (newBlockTimer, action) {
-  if (typeof newBlockTimer === "undefined") {
-    return initialState;
-  }
-  switch (action.type) {
-    case "SET_NEW_BLOCK_TIMER":
-      return action.timer;
-    case "CLEAR_NEW_BLOCK_TIMER":
-      if (newBlockTimer) clearInterval(newBlockTimer); // mutation >:o
-      return newBlockTimer;
-    default:
-      return newBlockTimer;
-  }
-};
-
-},{}],194:[function(require,module,exports){
+},{"./initial-state":194}],196:[function(require,module,exports){
 "use strict";
 
 var assign = require("lodash.assign");
-
-var initialState = {};
+var initialState = require("./initial-state").noRelay;
 
 module.exports = function (noRelay, action) {
   var newNoRelay;
@@ -37999,115 +40854,12 @@ module.exports = function (noRelay, action) {
   }
 };
 
-},{"lodash.assign":71}],195:[function(require,module,exports){
+},{"./initial-state":194,"lodash.assign":72}],197:[function(require,module,exports){
 "use strict";
 
 var assign = require("lodash.assign");
-
-var initialState = {};
-
-module.exports = function (notifications, action) {
-  var newNotification;
-  if (typeof notifications === "undefined") {
-    return initialState;
-  }
-  switch (action.type) {
-    case "ADD_NOTIFICATION":
-      newNotification = {};
-      newNotification[action.hash] = action.notification;
-      return assign({}, notifications, newNotification);
-    case "CLEAR_NOTIFICATION":
-      return Object.keys(notifications).reduce(function (p, hash) {
-        if (hash === action.hash) {
-          if (notifications[hash]) clearTimeout(notifications[action.hash]);
-        } else {
-          p[hash] = notifications[hash];
-        }
-        return p;
-      }, {});
-    case "CLEAR_ALL_NOTIFICATIONS":
-      Object.keys(notifications).map(function (hash) {
-        if (notifications[hash]) clearTimeout(notifications[hash]);
-      });
-      return initialState;
-    default:
-      return notifications;
-  }
-};
-
-},{"lodash.assign":71}],196:[function(require,module,exports){
-"use strict";
-
-var assign = require("lodash.assign");
-
-var initialState = {};
-
-module.exports = function (outstandingRequests, action) {
-  var request, idString;
-  if (typeof outstandingRequests === "undefined") {
-    return initialState;
-  }
-  switch (action.type) {
-    case "ADD_OUTSTANDING_REQUEST":
-      request = {};
-      request[action.id] = action.request;
-      return assign({}, outstandingRequests, request);
-    case "REMOVE_OUTSTANDING_REQUEST":
-      idString = action.id.toString();
-      return Object.keys(outstandingRequests).reduce(function (p, id) {
-        if (id !== idString) p[id] = outstandingRequests[id];
-        return p;
-      }, {});
-    case "REMOVE_ALL_OUTSTANDING_REQUESTS":
-      return initialState;
-    default:
-      return outstandingRequests;
-  }
-};
-
-},{"lodash.assign":71}],197:[function(require,module,exports){
-"use strict";
-
-var blockchainMessageHandler = require("../rpc/blockchain-message-handler");
-
-module.exports = function (shimMessageHandlerObject, action) {
-  if (typeof shimMessageHandlerObject === "undefined") {
-    return { realMessageHandler: blockchainMessageHandler };
-  }
-  switch (action.type) {
-    case "REDIRECT_SHIM_MESSAGE_HANDLER":
-      shimMessageHandlerObject.realMessageHandler = action.redirect; // mutation >:o
-      return shimMessageHandlerObject;
-    default:
-      return shimMessageHandlerObject;
-  }
-};
-
-},{"../rpc/blockchain-message-handler":204}],198:[function(require,module,exports){
-"use strict";
-
-var noop = require("../utils/noop");
-
-var initialState = noop;
-
-module.exports = function (shimMessageHandler, action) {
-  if (typeof shimMessageHandler === "undefined") {
-    return initialState;
-  }
-  switch (action.type) {
-    case "SET_SHIM_MESSAGE_HANDLER":
-      return action.messageHandler;
-    default:
-      return shimMessageHandler;
-  }
-};
-
-},{"../utils/noop":245}],199:[function(require,module,exports){
-"use strict";
-
-var assign = require("lodash.assign");
-
-var initialState = {};
+var immutableDelete = require("immutable-delete");
+var initialState = require("./initial-state").subscriptions;
 
 module.exports = function (subscriptions, action) {
   var newSubscription;
@@ -38116,14 +40868,15 @@ module.exports = function (subscriptions, action) {
   }
   switch (action.type) {
     case "ADD_SUBSCRIPTION":
+      // console.log('ADD_SUBSCRIPTION:', subscriptions, action.id, action.reaction, action.unsubscribeToken);
       newSubscription = {};
-      newSubscription[action.id] = action.callback;
+      newSubscription[action.id] = {
+        reaction: action.reaction,
+        unsubscribeToken: action.unsubscribeToken
+      };
       return assign({}, subscriptions, newSubscription);
     case "REMOVE_SUBSCRIPTION":
-      return Object.keys(subscriptions).reduce(function (p, id) {
-        if (id !== action.id) p[id] = subscriptions[id];
-        return p;
-      }, {});
+      return immutableDelete(subscriptions, action.id);
     case "REMOVE_ALL_SUBSCRIPTIONS":
       return initialState;
     default:
@@ -38131,32 +40884,13 @@ module.exports = function (subscriptions, action) {
   }
 };
 
-},{"lodash.assign":71}],200:[function(require,module,exports){
-"use strict";
-
-var initialState = null;
-
-module.exports = function (transactionRelay, action) {
-  if (typeof transactionRelay === "undefined") {
-    return initialState;
-  }
-  switch (action.type) {
-    case "SET_TRANSACTION_RELAY":
-      return action.transactionRelay;
-    case "CLEAR_TRANSACTION_RELAY":
-      return initialState;
-    default:
-      return transactionRelay;
-  }
-};
-
-},{}],201:[function(require,module,exports){
+},{"./initial-state":194,"immutable-delete":58,"lodash.assign":72}],198:[function(require,module,exports){
 "use strict";
 
 var assign = require("lodash.assign");
+var immutableDelete = require("immutable-delete");
 var isObject = require("../utils/is-object");
-
-var initialState = {};
+var initialState = require("./initial-state").transactions;
 
 module.exports = function (transactions, action) {
   var newTransaction, payload;
@@ -38226,10 +40960,7 @@ module.exports = function (transactions, action) {
       });
       return assign({}, transactions, newTransaction);
     case "REMOVE_TRANSACTION":
-      return Object.keys(transactions).reduce(function (p, hash) {
-        if (hash !== action.hash) p[hash] = transactions[hash];
-        return p;
-      }, {});
+      return immutableDelete(transactions, action.hash);
     case "REMOVE_ALL_TRANSACTIONS":
       return initialState;
     default:
@@ -38237,62 +40968,59 @@ module.exports = function (transactions, action) {
   }
 };
 
-},{"../utils/is-object":243,"lodash.assign":71}],202:[function(require,module,exports){
+},{"../utils/is-object":236,"./initial-state":194,"immutable-delete":58,"lodash.assign":72}],199:[function(require,module,exports){
 "use strict";
 
-var initialState = null;
+var blockchainMessageHandler = require("./rpc/blockchain-message-handler");
+var removeAllStoreListeners = require("./subscriptions/store-observer").removeAllStoreListeners;
+var clearTransactions = require("./clear-transactions");
+var isObject = require("./utils/is-object");
+var internalState = require("./internal-state");
 
-module.exports = function (transporter, action) {
-  if (typeof transporter === "undefined") {
-    return initialState;
-  }
-  switch (action.type) {
-    case "SET_TRANSPORTER":
-      return action.transporter;
-    case "CLEAR_TRANSPORTER":
-      return initialState;
-    default:
-      return transporter;
-  }
-};
-
-},{}],203:[function(require,module,exports){
-"use strict";
-
-var isFunction = require("./utils/is-function");
-
-/**
- * Resets the Redux store to its initial state.
- */
 function resetState() {
   return function (dispatch, getState) {
-    var blockNotifier, debug, state = getState();
-    blockNotifier = state.blockNotifier;
-    debug = state.debug;
+    var messageHandlerObject, blockNotifier, notifications, debug = getState().debug;
+    dispatch(clearTransactions());
 
     // stop any pending timers
-    dispatch({ type: "CLEAR_NEW_BLOCK_TIMER" });
-
-    // reset configuration to defaults
-    dispatch({ type: "RESET_CONFIGURATION" });
+    clearInterval(internalState.get("newBlockIntervalTimeoutId"));
 
     // destroy the old BlockNotifier so it doesn't try to reconnect or continue polling
-    if (blockNotifier && isFunction(blockNotifier.destroy)) blockNotifier.destroy();
+    blockNotifier = internalState.get("blockNotifier");
+    if (blockNotifier && blockNotifier.destroy) blockNotifier.destroy();
+
+    notifications = internalState.get("notifications");
+    if (isObject(notifications)) {
+      Object.keys(notifications).map(function (hash) {
+        if (notifications[hash]) clearTimeout(notifications[hash]);
+      });
+    }
+
+    removeAllStoreListeners();
 
     // redirect any not-yet-received responses to /dev/null
-    dispatch({
-      type: "REDIRECT_SHIM_MESSAGE_HANDLER",
-      redirect: function () { return dispatch({ type: "DEV_NULL" }); }
+    internalState.set("shimMessageHandlerObject.realMessageHandler", function () { return dispatch({ type: "DEV_NULL" }); });
+    messageHandlerObject = { realMessageHandler: blockchainMessageHandler };
+
+    // reset state to defaults
+    internalState.setState({
+      transporter: null,
+      blockNotifier: null,
+      blockAndLogStreamer: null,
+      outstandingRequests: {},
+      subscriptions: {},
+      newBlockIntervalTimeoutId: null,
+      outOfBandErrorHandler: null,
+      shimMessageHandlerObject: messageHandlerObject,
+      // by binding this function to `shimMessageHandlerObject`, its `this` value will
+      // be a pointer to an object that we can mutate before replacing when reset
+      shimMessageHandler: function (error, jso) {
+        dispatch(this.realMessageHandler(error, jso));
+      }.bind(messageHandlerObject)
     });
 
     // reset state to defaults
     dispatch({ type: "RESET_STATE" });
-    dispatch({
-      type: "SET_SHIM_MESSAGE_HANDLER",
-      messageHandler: function (err, jso) {
-        dispatch(this.realMessageHandler(err, jso));
-      }.bind(getState().shimMessageHandlerObject)
-    });
 
     // restore debugging options
     dispatch({ type: "SET_DEBUG_OPTIONS", options: debug });
@@ -38301,13 +41029,14 @@ function resetState() {
 
 module.exports = resetState;
 
-},{"./utils/is-function":239}],204:[function(require,module,exports){
+},{"./clear-transactions":158,"./internal-state":175,"./rpc/blockchain-message-handler":200,"./subscriptions/store-observer":207,"./utils/is-object":236}],200:[function(require,module,exports){
 "use strict";
 
 var parseEthereumResponse = require("../decode-response/parse-ethereum-response");
 var isObject = require("../utils/is-object");
 var ErrorWithData = require("../errors").ErrorWithData;
 var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
+var internalState = require("../internal-state");
 
 /**
  * Used internally.  Processes a response from the blockchain by looking up the
@@ -38315,32 +41044,33 @@ var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
  */
 function blockchainMessageHandler(error, jso) {
   return function (dispatch, getState) {
-    var subscriptionHandler, responseHandler, errorHandler, state, configuration, subscriptions;
-    state = getState();
-    configuration = state.configuration;
+    var outOfBandErrorHandler, subscriptionHandler, responseHandler, errorHandler, subscriptions, state = getState();
     subscriptions = state.subscriptions;
+    outOfBandErrorHandler = internalState.get("outOfBandErrorHandler");
 
     if (error !== null) {
-      return configuration.errorHandler(error);
+      return outOfBandErrorHandler(error);
     }
     if (typeof jso !== "object") {
-      return configuration.errorHandler(new ErrorWithData("Unexpectedly received a message from the transport that was not an object.", jso));
+      return outOfBandErrorHandler(new ErrorWithData("Unexpectedly received a message from the transport that was not an object.", jso));
     }
 
     subscriptionHandler = function () {
-      var subscriptionCallback;
+      var subscription;
       if (jso.method !== "eth_subscription") {
-        return configuration.errorHandler(new ErrorWithData("Received an RPC request that wasn't an `eth_subscription`.", jso));
+        return outOfBandErrorHandler(new ErrorWithData("Received an RPC request that wasn't an `eth_subscription`.", jso));
       }
       if (typeof jso.params.subscription !== "string") {
-        return configuration.errorHandler(new ErrorWithData("Received an `eth_subscription` request without a subscription ID.", jso));
+        return outOfBandErrorHandler(new ErrorWithData("Received an `eth_subscription` request without a subscription ID.", jso));
       }
       if (jso.params.result === null || jso.params.result === undefined) {
-        return configuration.errorHandler(new ErrorWithData("Received an `eth_subscription` request without a result.", jso));
+        return outOfBandErrorHandler(new ErrorWithData("Received an `eth_subscription` request without a result.", jso));
       }
-
-      subscriptionCallback = subscriptions[jso.params.subscription];
-      if (subscriptionCallback) subscriptionCallback(jso.params.result);
+      subscription = subscriptions[jso.params.subscription];
+      if (subscription != null) {
+        // console.log("REACTION:", subscription.reaction, jso);
+        dispatch({ type: subscription.reaction, data: jso });
+      }
     };
 
     responseHandler = function () {
@@ -38348,10 +41078,10 @@ function blockchainMessageHandler(error, jso) {
       if (typeof jso.id !== "number") {
         return errorHandler(new ErrorWithData("Received a message from the blockchain that didn't have a valid id.", jso));
       }
-      outstandingRequest = getState().outstandingRequests[jso.id];
-      dispatch({ type: "REMOVE_OUTSTANDING_REQUEST", id: jso.id });
+      outstandingRequest = internalState.get("outstandingRequests." + jso.id);
+      internalState.unset("outstandingRequests." + jso.id);
       if (!isObject(outstandingRequest)) {
-        return configuration.errorHandler(new ErrorWithData("Unable to locate original request for blockchain response.", jso));
+        return outOfBandErrorHandler(new ErrorWithData("Unable to locate original request for blockchain response.", jso));
       }
 
       // FIXME: outstandingRequest.callback should be function(Error,object) not function(Error|object)
@@ -38363,7 +41093,7 @@ function blockchainMessageHandler(error, jso) {
       if (jso.id !== null && jso.id !== undefined) {
         return responseHandler(jso);
       }
-      configuration.errorHandler(new ErrorWithCodeAndData(jso.error.message, jso.error.code, jso.error.data));
+      outOfBandErrorHandler(new ErrorWithCodeAndData(jso.error.message, jso.error.code, jso.error.data));
     };
 
     // depending on the type of message it is (request, response, error, invalid) we will handle it differently
@@ -38374,18 +41104,19 @@ function blockchainMessageHandler(error, jso) {
     } else if (jso.error !== undefined) {
       errorHandler();
     } else {
-      configuration.errorHandler(new ErrorWithData("Received an invalid JSON-RPC message.", jso));
+      outOfBandErrorHandler(new ErrorWithData("Received an invalid JSON-RPC message.", jso));
     }
   };
 }
 
 module.exports = blockchainMessageHandler;
 
-},{"../decode-response/parse-ethereum-response":161,"../errors":168,"../utils/is-object":243}],205:[function(require,module,exports){
+},{"../decode-response/parse-ethereum-response":164,"../errors":171,"../internal-state":175,"../utils/is-object":236}],201:[function(require,module,exports){
 "use strict";
 
 var stripReturnsTypeAndInvocation = require("../encode-request/strip-returns-type-and-invocation");
 var isFunction = require("../utils/is-function");
+var internalState = require("../internal-state");
 
 /**
  * Used internally.  Submits a remote procedure call to the blockchain.
@@ -38397,10 +41128,9 @@ var isFunction = require("../utils/is-function");
  */
 function submitRequestToBlockchain(jso, transportRequirements, callback) {
   return function (dispatch, getState) {
-    var state, debug, transporter, syncErrorOrResult, expectedReturnTypes;
+    var state, debug, syncErrorOrResult, expectedReturnTypes;
     state = getState();
     debug = state.debug;
-    transporter = state.transporter;
 
     if (transportRequirements === "SYNC") {
       callback = function (error, result) {
@@ -38422,20 +41152,16 @@ function submitRequestToBlockchain(jso, transportRequirements, callback) {
 
     // FIXME: return types shouldn't be embedded into the RPC JSO
     expectedReturnTypes = stripReturnsTypeAndInvocation(jso);
-    dispatch({
-      type: "ADD_OUTSTANDING_REQUEST",
-      id: jso.id,
-      request: {
-        jso: jso,
-        expectedReturnTypes: expectedReturnTypes,
-        callback: callback
-      }
+    internalState.set("outstandingRequests." + jso.id, {
+      jso: jso,
+      expectedReturnTypes: expectedReturnTypes,
+      callback: callback
     });
 
-    transporter.blockchainRpc(jso, transportRequirements, debug.broadcast);
+    internalState.get("transporter").blockchainRpc(jso, transportRequirements, debug.broadcast);
 
     if (transportRequirements === "SYNC") {
-      if (typeof getState().outstandingRequests[jso.id] !== "undefined") {
+      if (typeof internalState.get("outstandingRequests." + jso.id) !== "undefined") {
         return new Error("SYNC request didn't receive messageHandler call before returning.");
       }
       return syncErrorOrResult;
@@ -38445,18 +41171,127 @@ function submitRequestToBlockchain(jso, transportRequirements, callback) {
 
 module.exports = submitRequestToBlockchain;
 
-},{"../encode-request/strip-returns-type-and-invocation":165,"../utils/is-function":239}],206:[function(require,module,exports){
+},{"../encode-request/strip-returns-type-and-invocation":168,"../internal-state":175,"../utils/is-function":232}],202:[function(require,module,exports){
 "use strict";
 
-var redux = require("redux");
-var thunk = require("redux-thunk").default;
-var reducer = require("./reducers");
+module.exports = require("redux").createStore(require("./reducers"), require("redux-thunk-subscribe"));
 
-var store = redux.createStore(reducer, redux.applyMiddleware(thunk));
+},{"./reducers":193,"redux":109,"redux-thunk-subscribe":103}],203:[function(require,module,exports){
+"use strict";
 
-module.exports = store;
+var addSubscription = require("./add-subscription");
 
-},{"./reducers":191,"redux":105,"redux-thunk":99}],207:[function(require,module,exports){
+function selectCurrentBlock(state) {
+  return state.currentBlock;
+}
+
+function addNewHeadsSubscription(id, onStateChange) {
+  return function (dispatch) {
+    dispatch(addSubscription(id, "SET_CURRENT_BLOCK", selectCurrentBlock, onStateChange));
+  };
+}
+
+module.exports = addNewHeadsSubscription;
+
+},{"./add-subscription":204}],204:[function(require,module,exports){
+"use strict";
+
+var addStoreListener = require("./store-observer").addStoreListener;
+
+function addSubscription(id, reaction, select, onStateChange) {
+  return function (dispatch) {
+    dispatch({
+      type: "ADD_SUBSCRIPTION",
+      id: id,
+      reaction: reaction,
+      unsubscribeToken: dispatch(addStoreListener(select, onStateChange))
+    });
+  };
+}
+
+module.exports = addSubscription;
+
+},{"./store-observer":207}],205:[function(require,module,exports){
+"use strict";
+
+var addSubscription = require("./add-subscription");
+
+function selectTransactions(state) {
+  return state.transactions;
+}
+
+// subscribe to all transactions
+function addTransactionsSubscription(onStateChange) {
+  return function (dispatch) {
+    dispatch(addSubscription("transactions", "transactions", selectTransactions, onStateChange));
+  };
+}
+
+module.exports = addTransactionsSubscription;
+
+},{"./add-subscription":204}],206:[function(require,module,exports){
+"use strict";
+
+var removeStoreListener = require("./store-observer").removeStoreListener;
+
+function removeSubscription(id) {
+  return function (dispatch, getState) {
+    var subscription = getState().subscriptions[id];
+    if (subscription && subscription.unsubscribeToken != null) {
+      removeStoreListener(subscription.unsubscribeToken);
+    }
+    dispatch({ type: "REMOVE_SUBSCRIPTION", id: id });
+  };
+}
+
+module.exports = removeSubscription;
+
+},{"./store-observer":207}],207:[function(require,module,exports){
+"use strict";
+
+var assign = require("lodash.assign");
+var immutableDelete = require("immutable-delete");
+var isFunction = require("../utils/is-function");
+
+var initialCount = 1;
+
+var count = initialCount;
+var unsubscribeFunctions = {};
+
+function addStoreListener(select, onStateChange) {
+  return function (dispatch, getState, subscribe) {
+    var prevState, currentState = select(getState());
+    function handleStateChange() {
+      var nextState = select(getState());
+      if (nextState !== currentState) {
+        prevState = assign({}, currentState);
+        currentState = nextState;
+        onStateChange(currentState, prevState);
+      }
+    }
+    if (isFunction(subscribe)) {
+      unsubscribeFunctions[count] = subscribe(handleStateChange);
+    }
+    handleStateChange();
+    return count++;
+  };
+}
+
+function removeStoreListener(id) {
+  if (isFunction(unsubscribeFunctions[id])) unsubscribeFunctions[id]();
+  unsubscribeFunctions = immutableDelete(unsubscribeFunctions, id);
+}
+
+function removeAllStoreListeners() {
+  Object.keys(unsubscribeFunctions).map(removeStoreListener);
+  count = initialCount;
+}
+
+module.exports.addStoreListener = addStoreListener;
+module.exports.removeStoreListener = removeStoreListener;
+module.exports.removeAllStoreListeners = removeAllStoreListeners;
+
+},{"../utils/is-function":232,"immutable-delete":58,"lodash.assign":72}],208:[function(require,module,exports){
 "use strict";
 
 var clone = require("clone");
@@ -38514,7 +41349,7 @@ function callContractFunction(payload, callback, wrapper, aux) {
 
 module.exports = callContractFunction;
 
-},{"../decode-response/convert-response-to-returns-type":159,"../decode-response/handle-rpc-error":160,"../errors/codes":166,"../errors/rpc-error":169,"../transact/call-or-send-transaction":208,"../utils/is-function":239,"clone":16}],208:[function(require,module,exports){
+},{"../decode-response/convert-response-to-returns-type":162,"../decode-response/handle-rpc-error":163,"../errors/codes":169,"../errors/rpc-error":172,"../transact/call-or-send-transaction":209,"../utils/is-function":232,"clone":18}],209:[function(require,module,exports){
 "use strict";
 
 var eth = require("../wrappers/eth");
@@ -38549,106 +41384,15 @@ function callOrSendTransaction(payload, callback) {
 
 module.exports = callOrSendTransaction;
 
-},{"../encode-request/package-request":164,"../errors/codes":166,"../utils/is-function":239,"../wrappers/eth":256}],209:[function(require,module,exports){
-"use strict";
-
-var checkConfirmations = require("../transact/check-confirmations");
-var waitForNextPoll = require("../transact/wait-for-next-poll");
-var isFunction = require("../utils/is-function");
-
-function checkBlockHash(tx, numConfirmations, callback) {
-  return function (dispatch, getState) {
-    var txHash, debug, transactions, state = getState();
-    debug = state.debug;
-    transactions = state.transactions;
-    txHash = tx.hash;
-    if (!transactions[txHash]) {
-      dispatch({ type: "ADD_TRANSACTION", transaction: { hash: txHash, tx: tx } });
-    }
-    dispatch({ type: "INCREMENT_TRANSACTION_COUNT", hash: txHash });
-    if (debug.tx) console.log("checkBlockHash:", tx.blockHash);
-    if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
-      if (!numConfirmations) {
-        dispatch({ type: "TRANSACTION_MINED", hash: txHash });
-        dispatch({ type: "CLEAR_NOTIFICATION", hash: txHash });
-        if (!isFunction(callback)) return tx;
-        return callback(null, tx);
-      }
-      return dispatch(checkConfirmations(tx, numConfirmations, callback));
-    }
-    return dispatch(waitForNextPoll(tx, callback));
-  };
-}
-
-module.exports = checkBlockHash;
-
-},{"../transact/check-confirmations":210,"../transact/wait-for-next-poll":223,"../utils/is-function":239}],210:[function(require,module,exports){
-"use strict";
-
-var eth = require("../wrappers/eth");
-var completeTx = require("../transact/complete-tx");
-var waitForNextPoll = require("../transact/wait-for-next-poll");
-
-function checkConfirmations(tx, numConfirmations, callback) {
-  return function (dispatch, getState) {
-    var minedBlockNumber = parseInt(tx.blockNumber, 16);
-    dispatch(eth.blockNumber(function (currentBlockNumber) {
-      if (getState().debug.tx) {
-        console.log("confirmations:", parseInt(currentBlockNumber, 16) - minedBlockNumber);
-      }
-      if (parseInt(currentBlockNumber, 16) - minedBlockNumber >= numConfirmations) {
-        dispatch(completeTx(tx, callback));
-      } else {
-        dispatch(waitForNextPoll(tx, callback));
-      }
-    }));
-  };
-}
-
-module.exports = checkConfirmations;
-
-},{"../transact/complete-tx":211,"../transact/wait-for-next-poll":223,"../wrappers/eth":256}],211:[function(require,module,exports){
-"use strict";
-
-var isFunction = require("../utils/is-function");
-
-function completeTx(tx, callback) {
-  return function (dispatch) {
-    dispatch({ type: "TRANSACTION_CONFIRMED", hash: tx.hash });
-    dispatch({ type: "CLEAR_NOTIFICATION", hash: tx.hash });
-    if (!isFunction(callback)) return tx;
-    callback(null, tx);
-  };
-}
-
-module.exports = completeTx;
-
-},{"../utils/is-function":239}],212:[function(require,module,exports){
+},{"../encode-request/package-request":167,"../errors/codes":169,"../utils/is-function":232,"../wrappers/eth":248}],210:[function(require,module,exports){
 "use strict";
 
 var BigNumber = require("bignumber.js");
 var eth = require("../wrappers/eth");
-var isFunction = require("../utils/is-function");
-var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
 
 function getLoggedReturnValue(txHash, callback) {
   return function (dispatch, getState) {
-    var receipt, log;
-    if (!isFunction(callback)) {
-      receipt = dispatch(eth.getTransactionReceipt(txHash));
-      if (!receipt || !receipt.logs || !receipt.logs.length) {
-        throw new RPCError(errors.NULL_CALL_RETURN);
-      }
-      log = receipt.logs[receipt.logs.length - 1];
-      if (!log || log.data === null || log.data === undefined) {
-        throw new RPCError(errors.NULL_CALL_RETURN);
-      }
-      return {
-        returnValue: log.data,
-        gasUsed: new BigNumber(receipt.gasUsed, 16)
-      };
-    }
     dispatch(eth.getTransactionReceipt(txHash, function (receipt) {
       var log;
       if (getState().debug.tx) console.log("got receipt:", receipt);
@@ -38669,40 +41413,7 @@ function getLoggedReturnValue(txHash, callback) {
 
 module.exports = getLoggedReturnValue;
 
-},{"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"../wrappers/eth":256,"bignumber.js":4}],213:[function(require,module,exports){
-"use strict";
-
-var checkBlockHash = require("./check-block-hash");
-var txNotify = require("./tx-notify");
-var isFunction = require("../utils/is-function");
-
-// poll the network until the transaction is included in a block
-// (i.e., has a non-null blockHash field)
-function pollForTxConfirmation(txHash, numConfirmations, callback) {
-  return function (dispatch) {
-    var tx, minedTx;
-    if (!isFunction(callback)) {
-      tx = dispatch(txNotify(txHash));
-      if (tx === null) return null;
-      minedTx = dispatch(checkBlockHash(tx, numConfirmations));
-      if (minedTx !== null) return minedTx;
-      return dispatch(pollForTxConfirmation(txHash, numConfirmations));
-    }
-    dispatch(txNotify(txHash, function (err, tx) {
-      if (err) return callback(err);
-      if (tx === null) return callback(null, null);
-      dispatch(checkBlockHash(tx, numConfirmations, function (err, minedTx) {
-        if (err) return callback(err);
-        if (minedTx !== null) return callback(null, minedTx);
-        dispatch(pollForTxConfirmation(txHash, numConfirmations, callback));
-      }));
-    }));
-  };
-}
-
-module.exports = pollForTxConfirmation;
-
-},{"../utils/is-function":239,"./check-block-hash":209,"./tx-notify":218}],214:[function(require,module,exports){
+},{"../errors/codes":169,"../wrappers/eth":248,"bignumber.js":6}],211:[function(require,module,exports){
 "use strict";
 
 var updateTx = require("./update-tx");
@@ -38721,7 +41432,7 @@ function reprocessTransactions() {
 
 module.exports = reprocessTransactions;
 
-},{"./update-tx":221}],215:[function(require,module,exports){
+},{"./update-tx":216}],212:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -38765,180 +41476,54 @@ function transactAsync(payload, callReturn, onSent, onSuccess, onFailed) {
 
 module.exports = transactAsync;
 
-},{"../errors/codes":166,"../transact/call-or-send-transaction":208,"../transact/verify-tx-submitted":222,"augur-abi":2}],216:[function(require,module,exports){
-"use strict";
-
-var abi = require("augur-abi");
-var BigNumber = require("bignumber.js");
-var eth = require("../wrappers/eth");
-var callOrSendTransaction = require("../transact/call-or-send-transaction");
-var verifyTxSubmitted = require("../transact/verify-tx-submitted");
-var pollForTxConfirmation = require("../transact/poll-for-tx-confirmation");
-var getLoggedReturnValue = require("../transact/get-logged-return-value");
-var callContractFunction = require("../transact/call-contract-function");
-var transact = require("../transact/transact");
-var handleRPCError = require("../decode-response/handle-rpc-error");
-var convertResponseToReturnsType = require("../decode-response/convert-response-to-returns-type");
-var RPCError = require("../errors/rpc-error");
-var errors = require("../errors/codes");
-var constants = require("../constants");
-
-/**
- * synchronous transact: block until the transaction is confirmed or fails
- * (don't use this in the browser or you will be a sad panda)
- */
-function transactSync(payload) {
-  return function (dispatch, getState) {
-    var callReturn, returns, txHash, tx, receipt, log, e, debug;
-    debug = getState().debug;
-    if (payload.mutable || payload.returns === "null") {
-      callReturn = null;
-    } else {
-      callReturn = dispatch(callContractFunction(payload));
-      if (debug.tx) console.log("callReturn:", callReturn);
-      if (callReturn === undefined || callReturn === null) {
-        throw new RPCError(errors.NULL_CALL_RETURN);
-      } else if (callReturn.error === "0x") {
-        callReturn = null;
-      } else if (callReturn.error) {
-        throw new RPCError(callReturn);
-      }
-    }
-    payload.send = true;
-    returns = payload.returns;
-    delete payload.returns;
-    txHash = dispatch((payload.invoke || callOrSendTransaction)(payload));
-    if (debug.tx) console.log("txHash:", txHash);
-    if (!txHash && !payload.mutable && payload.returns !== "null") {
-      throw new RPCError(errors.NULL_RESPONSE);
-    } else if (txHash && txHash.error) {
-      throw new RPCError(txHash);
-    }
-    payload.returns = returns;
-    txHash = abi.format_int256(txHash);
-    dispatch(verifyTxSubmitted(payload, txHash, callReturn));
-    tx = dispatch(pollForTxConfirmation(txHash, null));
-    if (tx === null) {
-      payload.tries = (payload.tries) ? payload.tries + 1 : 1;
-      if (payload.tries > constants.TX_RETRY_MAX) {
-        throw new RPCError(errors.TRANSACTION_RETRY_MAX_EXCEEDED);
-      }
-      return dispatch(transact(payload));
-    }
-    tx.timestamp = parseInt(eth.getBlock(tx.blockNumber, false).timestamp, 16);
-    if (!payload.mutable) {
-      tx.callReturn = callReturn;
-      receipt = eth.getTransactionReceipt(txHash);
-      if (debug.tx) console.log("got receipt:", receipt);
-      if (receipt && receipt.gasUsed) {
-        tx.gasFees = abi.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(tx.gasPrice, 16)), "string");
-      }
-      return tx;
-    }
-
-    // if mutable return value, then lookup logged return value in transaction
-    // receipt (after confirmation)
-    log = dispatch(getLoggedReturnValue(txHash));
-    e = handleRPCError(payload.method, payload.returns, log.returnValue);
-    if (e && e.error) {
-      e.gasFees = abi.unfix(log.gasUsed.times(new BigNumber(tx.gasPrice, 16)), "string");
-      if (e.error !== errors.NULL_CALL_RETURN.error) {
-        throw new RPCError(e);
-      }
-      callReturn = dispatch(callContractFunction(payload));
-      throw new RPCError(handleRPCError(payload.method, payload.returns, callReturn));
-    }
-    tx.callReturn = convertResponseToReturnsType(payload.returns, log.returnValue);
-    tx.gasFees = abi.unfix(log.gasUsed.times(new BigNumber(tx.gasPrice, 16)), "string");
-    return tx;
-  };
-}
-
-module.exports = transactSync;
-
-},{"../constants":157,"../decode-response/convert-response-to-returns-type":159,"../decode-response/handle-rpc-error":160,"../errors/codes":166,"../errors/rpc-error":169,"../transact/call-contract-function":207,"../transact/call-or-send-transaction":208,"../transact/get-logged-return-value":212,"../transact/poll-for-tx-confirmation":213,"../transact/transact":217,"../transact/verify-tx-submitted":222,"../wrappers/eth":256,"augur-abi":2,"bignumber.js":4}],217:[function(require,module,exports){
+},{"../errors/codes":169,"../transact/call-or-send-transaction":209,"../transact/verify-tx-submitted":217,"augur-abi":2}],213:[function(require,module,exports){
 /**
  * Send-call-confirm callback sequence
  */
 
 "use strict";
 
+var sha3 = require("../utils/sha3");
 var transactAsync = require("../transact/transact-async");
-var transactSync = require("../transact/transact-sync");
 var callContractFunction = require("../transact/call-contract-function");
-var wrapTransactionRelayCallback = require("../transaction-relay/wrap-transaction-relay-callback");
 var isFunction = require("../utils/is-function");
 var noop = require("../utils/noop");
 var errors = require("../errors/codes");
 
 function transact(payload, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
-    var cb, debug, transactionRelay, state = getState();
-    debug = state.debug;
-    transactionRelay = state.transactionRelay;
+    var onSentCallback, onSuccessCallback, onFailedCallback, debug;
+    debug = getState().debug;
     if (debug.tx) console.log("payload transact:", payload);
-    payload.send = false;
-
-    // synchronous / blocking transact sequence
-    if (!isFunction(onSent)) return dispatch(transactSync(payload));
-
-    // asynchronous / non-blocking transact sequence
-    cb = (isFunction(transactionRelay)) ? {
-      sent: dispatch(wrapTransactionRelayCallback("sent", payload, onSent)),
-      success: dispatch(wrapTransactionRelayCallback("success", payload, onSuccess)),
-      failed: dispatch(wrapTransactionRelayCallback("failed", payload, onFailed))
-    } : {
-      sent: onSent,
-      success: (isFunction(onSuccess)) ? onSuccess : noop,
-      failed: (isFunction(onFailed)) ? onFailed : noop
+    onSentCallback = onSent;
+    onSuccessCallback = (isFunction(onSuccess)) ? onSuccess : noop;
+    onFailedCallback = function (response) {
+      // notify subscribers of failed transaction
+      dispatch({
+        type: "TRANSACTION_FAILED",
+        hash: (response && response.hash) || sha3(JSON.stringify(payload))
+      });
+      if (isFunction(onFailed)) onFailed(response);
     };
+    payload.send = false;
     if (payload.mutable || payload.returns === "null") {
-      return dispatch(transactAsync(payload, null, cb.sent, cb.success, cb.failed));
+      return dispatch(transactAsync(payload, null, onSentCallback, onSuccessCallback, onFailedCallback));
     }
     dispatch(callContractFunction(payload, function (callReturn) {
       if (debug.tx) console.log("callReturn:", callReturn);
-      if (callReturn === undefined || callReturn === null) {
-        return cb.failed(errors.NULL_CALL_RETURN);
+      if (callReturn == null) {
+        return onFailedCallback(errors.NULL_CALL_RETURN);
       } else if (callReturn.error) {
-        return cb.failed(callReturn);
+        return onFailedCallback(callReturn);
       }
-      dispatch(transactAsync(payload, callReturn, cb.sent, cb.success, cb.failed));
+      dispatch(transactAsync(payload, callReturn, onSentCallback, onSuccessCallback, onFailedCallback));
     }));
   };
 }
 
 module.exports = transact;
 
-},{"../errors/codes":166,"../transact/call-contract-function":207,"../transact/transact-async":215,"../transact/transact-sync":216,"../transaction-relay/wrap-transaction-relay-callback":228,"../utils/is-function":239,"../utils/noop":245}],218:[function(require,module,exports){
-"use strict";
-
-var eth_getTransaction = require("../wrappers/eth").getTransaction;
-var isFunction = require("../utils/is-function");
-
-function txNotify(txHash, callback) {
-  return function (dispatch, getState) {
-    var tx, debug;
-    debug = getState().debug;
-    if (!isFunction(callback)) {
-      tx = eth_getTransaction(txHash);
-      if (tx) return tx;
-      dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
-      dispatch({ type: "TRANSACTION_RESUBMITTED", hash: txHash });
-      return null;
-    }
-    eth_getTransaction(txHash, function (tx) {
-      if (tx) return callback(null, tx);
-      dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
-      if (debug.broadcast) console.log(" *** Re-submitting transaction:", txHash);
-      dispatch({ type: "TRANSACTION_RESUBMITTED", hash: txHash });
-      return callback(null, null);
-    });
-  };
-}
-
-module.exports = txNotify;
-
-},{"../utils/is-function":239,"../wrappers/eth":256}],219:[function(require,module,exports){
+},{"../errors/codes":169,"../transact/call-contract-function":208,"../transact/transact-async":212,"../utils/is-function":232,"../utils/noop":238,"../utils/sha3":239}],214:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -39055,7 +41640,7 @@ function updateMinedTx(txHash) {
 
 module.exports = updateMinedTx;
 
-},{"../constants":157,"../decode-response/convert-response-to-returns-type":159,"../decode-response/handle-rpc-error":160,"../errors/codes":166,"../transact/call-contract-function":207,"../transact/get-logged-return-value":212,"../utils/is-function":239,"../wrappers/eth":256,"augur-abi":2,"bignumber.js":4}],220:[function(require,module,exports){
+},{"../constants":160,"../decode-response/convert-response-to-returns-type":162,"../decode-response/handle-rpc-error":163,"../errors/codes":169,"../transact/call-contract-function":208,"../transact/get-logged-return-value":210,"../utils/is-function":232,"../wrappers/eth":248,"augur-abi":2,"bignumber.js":6}],215:[function(require,module,exports){
 "use strict";
 
 var clone = require("clone");
@@ -39125,7 +41710,8 @@ function updatePendingTx(txHash) {
             dispatch(updateMinedTx(txHash));
           } else {
             dispatch(eth.blockNumber(null, function (blockNumber) {
-              dispatch({ type: "SET_CURRENT_BLOCK", block: { number: parseInt(blockNumber, 16) } });
+              // dispatch({ type: "SET_CURRENT_BLOCK", block: { number: parseInt(blockNumber, 16) } });
+              dispatch({ type: "SET_CURRENT_BLOCK", data: { number: blockNumber } });
               dispatch({
                 type: "SET_TRANSACTION_CONFIRMATIONS",
                 hash: txHash,
@@ -39144,7 +41730,7 @@ function updatePendingTx(txHash) {
 
 module.exports = updatePendingTx;
 
-},{"../constants":157,"../errors/codes":166,"../transact/transact":217,"../transact/update-mined-tx":219,"../utils/is-function":239,"../wrappers/eth":256,"clone":16}],221:[function(require,module,exports){
+},{"../constants":160,"../errors/codes":169,"../transact/transact":213,"../transact/update-mined-tx":214,"../utils/is-function":232,"../wrappers/eth":248,"clone":18}],216:[function(require,module,exports){
 "use strict";
 
 var updateMinedTx = require("../transact/update-mined-tx");
@@ -39176,7 +41762,7 @@ function updateTx(txHash) {
 
 module.exports.default = updateTx;
 
-},{"../transact/update-mined-tx":219,"../transact/update-pending-tx":220}],222:[function(require,module,exports){
+},{"../transact/update-mined-tx":214,"../transact/update-pending-tx":215}],217:[function(require,module,exports){
 "use strict";
 
 var updateTx = require("../transact/update-tx");
@@ -39231,47 +41817,7 @@ function verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFai
 
 module.exports = verifyTxSubmitted;
 
-},{"../errors/codes":166,"../errors/rpc-error":169,"../transact/update-tx":221,"../utils/is-function":239}],223:[function(require,module,exports){
-"use strict";
-
-var isFunction = require("../utils/is-function");
-var wait = require("../utils/wait");
-var errors = require("../errors/codes");
-var RPCError = require("../errors/rpc-error");
-var constants = require("../constants");
-
-function waitForNextPoll(tx, callback) {
-  return function (dispatch, getState) {
-    var storedTransaction = getState().transactions[tx.hash];
-    if (storedTransaction.count >= constants.TX_POLL_MAX) {
-      dispatch({ type: "TRANSACTION_UNCONFIRMED", hash: tx.hash });
-      if (!isFunction(callback)) {
-        throw new RPCError(errors.TRANSACTION_NOT_CONFIRMED);
-      }
-      return callback(errors.TRANSACTION_NOT_CONFIRMED);
-    }
-    if (!isFunction(callback)) {
-      wait(constants.TX_POLL_INTERVAL);
-      if (storedTransaction.status === "pending" || storedTransaction.status === "mined") {
-        return null;
-      }
-    } else {
-      dispatch({
-        type: "ADD_NOTIFICATION",
-        hash: tx.hash,
-        notification: setTimeout(function () {
-          if (storedTransaction.status === "pending" || storedTransaction.status === "mined") {
-            callback(null, null);
-          }
-        }, constants.TX_POLL_INTERVAL)
-      });
-    }
-  };
-}
-
-module.exports = waitForNextPoll;
-
-},{"../constants":157,"../errors/codes":166,"../errors/rpc-error":169,"../utils/is-function":239,"../utils/wait":247}],224:[function(require,module,exports){
+},{"../errors/codes":169,"../errors/rpc-error":172,"../transact/update-tx":216,"../utils/is-function":232}],218:[function(require,module,exports){
 "use strict";
 
 function excludeFromTransactionRelay(method) {
@@ -39291,7 +41837,7 @@ function excludeFromTransactionRelay(method) {
 
 module.exports = excludeFromTransactionRelay;
 
-},{}],225:[function(require,module,exports){
+},{}],219:[function(require,module,exports){
 "use strict";
 
 function includeInTransactionRelay(method) {
@@ -39311,53 +41857,50 @@ function includeInTransactionRelay(method) {
 
 module.exports = includeInTransactionRelay;
 
-},{}],226:[function(require,module,exports){
+},{}],220:[function(require,module,exports){
 "use strict";
 
-function registerTransactionRelay(relay) {
-  return function (dispatch) {
-    dispatch({ type: "SET_TRANSACTION_RELAY", relay: relay });
+var addTransactionsSubscription = require("../subscriptions/add-transactions-subscription");
+
+function registerTransactionRelay(transactionRelay) {
+  return function (dispatch, getState) {
+    dispatch(addTransactionsSubscription(function (transactions, oldTransactions) {
+      var noRelay = getState().noRelay;
+      Object.keys(transactions).map(function (hash) {
+        var payload;
+        if (transactions[hash] !== oldTransactions[hash]) {
+          payload = transactions[hash].payload;
+          if (payload.method && !noRelay[payload.method]) {
+            transactionRelay({
+              hash: hash,
+              type: payload.label || payload.method,
+              status: transactions[hash].status,
+              data: payload,
+              response: transactions[hash].tx
+            });
+          }
+        }
+      });
+    }));
   };
 }
 
 module.exports = registerTransactionRelay;
 
-},{}],227:[function(require,module,exports){
+},{"../subscriptions/add-transactions-subscription":205}],221:[function(require,module,exports){
 "use strict";
+
+var removeSubscription = require("../subscriptions/remove-subscription");
 
 function unregisterTransactionRelay() {
   return function (dispatch) {
-    dispatch({ type: "CLEAR_TRANSACTION_RELAY" });
+    dispatch(removeSubscription("transactions"));
   };
 }
 
 module.exports = unregisterTransactionRelay;
 
-},{}],228:[function(require,module,exports){
-"use strict";
-
-var isFunction = require("../utils/is-function");
-
-function wrapTransactionRelayCallback(status, payload, callback) {
-  return function (dispatch, getState) {
-    var state = getState();
-    return function (response) {
-      if (isFunction(callback)) callback(response);
-      if (payload.method && !state.noRelay[payload.method]) {
-        state.transactionRelay({
-          type: payload.label || payload.method,
-          status: status,
-          data: payload,
-          response: response
-        });
-      }
-    };
-  };
-}
-
-module.exports = wrapTransactionRelayCallback;
-
-},{"../utils/is-function":239}],229:[function(require,module,exports){
+},{"../subscriptions/remove-subscription":206}],222:[function(require,module,exports){
 "use strict";
 
 /**
@@ -39533,7 +42076,7 @@ function reconnect(abstractTransport) {
 
 module.exports = AbstractTransport;
 
-},{}],230:[function(require,module,exports){
+},{}],223:[function(require,module,exports){
 "use strict";
 
 var isUndefined = require("../../utils/is-undefined");
@@ -39589,7 +42132,7 @@ function checkIfComplete(transporter, resultAggregator, onCompleteCallback) {
 
 module.exports = checkIfComplete;
 
-},{"../../utils/is-not-null":241,"../../utils/is-null":242,"../../utils/is-undefined":244}],231:[function(require,module,exports){
+},{"../../utils/is-not-null":234,"../../utils/is-null":235,"../../utils/is-undefined":237}],224:[function(require,module,exports){
 "use strict";
 
 var isNotNull = require("../../utils/is-not-null");
@@ -39624,7 +42167,7 @@ function chooseTransport(internalState, requirements) {
 
 module.exports = chooseTransport;
 
-},{"../../utils/is-not-null":241}],232:[function(require,module,exports){
+},{"../../utils/is-not-null":234}],225:[function(require,module,exports){
 "use strict";
 
 var AbstractTransport = require("./abstract-transport.js");
@@ -39674,9 +42217,9 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       if (error.code === "ECONNREFUSED") error.retryable = true;
       if (error.code === "ETIMEDOUT") error.retryable = true;
       errorCallback(error);
-    }    else if (response.statusCode === 200) {
+    } else if (response.statusCode === 200) {
       this.messageHandler(null, body);
-    }    else {
+    } else {
       error = new Error("Unexpected status code.");
       error.code = response.statusCode;
       error.address = this.address;
@@ -39687,7 +42230,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
 
 module.exports = HttpTransport;
 
-},{"../platform/request.js":173,"./abstract-transport.js":229}],233:[function(require,module,exports){
+},{"../platform/request.js":177,"./abstract-transport.js":222}],226:[function(require,module,exports){
 "use strict";
 
 var net = require("net");
@@ -39748,7 +42291,7 @@ IpcTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
 
 module.exports = IpcTransport;
 
-},{"./abstract-transport.js":229,"net":11,"oboe":84}],234:[function(require,module,exports){
+},{"./abstract-transport.js":222,"net":13,"oboe":88}],227:[function(require,module,exports){
 "use strict";
 
 var AbstractTransport = require("./abstract-transport.js");
@@ -39799,7 +42342,7 @@ SyncTransport.prototype.submitRpcRequest = function (/*rpcObject, errorCallback*
 
 module.exports = SyncTransport;
 
-},{"../platform/sync-request.js":174,"./abstract-transport.js":229,"./http-transport.js":232}],235:[function(require,module,exports){
+},{"../platform/sync-request.js":178,"./abstract-transport.js":222,"./http-transport.js":225}],228:[function(require,module,exports){
 "use strict";
 
 var HttpTransport = require("./http-transport");
@@ -39957,7 +42500,7 @@ Transporter.prototype.removeReconnectListener = function (token) {
 
 module.exports = Transporter;
 
-},{"../utils/create-array-with-default-value":238,"./helpers/check-if-complete":230,"./helpers/choose-transport":231,"./http-transport":232,"./ipc-transport":233,"./sync-transport":234,"./web3-transport":236,"./ws-transport":237}],236:[function(require,module,exports){
+},{"../utils/create-array-with-default-value":231,"./helpers/check-if-complete":223,"./helpers/choose-transport":224,"./http-transport":225,"./ipc-transport":226,"./sync-transport":227,"./web3-transport":229,"./ws-transport":230}],229:[function(require,module,exports){
 "use strict";
 
 var AbstractTransport = require("./abstract-transport.js");
@@ -39989,7 +42532,7 @@ Web3Transport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
 
 module.exports = Web3Transport;
 
-},{"./abstract-transport.js":229}],237:[function(require,module,exports){
+},{"./abstract-transport.js":222}],230:[function(require,module,exports){
 "use strict";
 
 var AbstractTransport = require("./abstract-transport");
@@ -40039,7 +42582,7 @@ WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
 
 module.exports = WsTransport;
 
-},{"../platform/web-socket-client":175,"./abstract-transport":229}],238:[function(require,module,exports){
+},{"../platform/web-socket-client":179,"./abstract-transport":222}],231:[function(require,module,exports){
 "use strict";
 
 var createArrayWithDefaultValue = function (size, defaultValue) {
@@ -40050,7 +42593,7 @@ var createArrayWithDefaultValue = function (size, defaultValue) {
 
 module.exports = createArrayWithDefaultValue;
 
-},{}],239:[function(require,module,exports){
+},{}],232:[function(require,module,exports){
 "use strict";
 
 var isFunction = function (f) {
@@ -40059,7 +42602,7 @@ var isFunction = function (f) {
 
 module.exports = isFunction;
 
-},{}],240:[function(require,module,exports){
+},{}],233:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -40075,7 +42618,7 @@ module.exports = function (str) {
   return false;
 };
 
-},{"augur-abi":2}],241:[function(require,module,exports){
+},{"augur-abi":2}],234:[function(require,module,exports){
 "use strict";
 
 var isNotNull = function (value) {
@@ -40084,7 +42627,7 @@ var isNotNull = function (value) {
 
 module.exports = isNotNull;
 
-},{}],242:[function(require,module,exports){
+},{}],235:[function(require,module,exports){
 "use strict";
 
 var isNull = function (value) {
@@ -40093,7 +42636,7 @@ var isNull = function (value) {
 
 module.exports = isNull;
 
-},{}],243:[function(require,module,exports){
+},{}],236:[function(require,module,exports){
 "use strict";
 
 function isObject(item) {
@@ -40102,7 +42645,7 @@ function isObject(item) {
 
 module.exports = isObject;
 
-},{}],244:[function(require,module,exports){
+},{}],237:[function(require,module,exports){
 "use strict";
 
 var isUndefined = function (value) {
@@ -40111,14 +42654,14 @@ var isUndefined = function (value) {
 
 module.exports = isUndefined;
 
-},{}],245:[function(require,module,exports){
+},{}],238:[function(require,module,exports){
 "use strict";
 
 var noop = function () { };
 
 module.exports = noop;
 
-},{}],246:[function(require,module,exports){
+},{}],239:[function(require,module,exports){
 (function (Buffer){
 "use strict";
 
@@ -40141,18 +42684,7 @@ module.exports = function (data, encoding, callback) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"../utils/is-function":239,"augur-abi":2,"buffer":14,"keccak/js":64}],247:[function(require,module,exports){
-"use strict";
-
-var wait = function (delay) {
-  var until = new Date().getTime() + delay;
-  while (new Date().getTime() < until) {} // eslint-disable-line no-empty
-  return;
-};
-
-module.exports = wait;
-
-},{}],248:[function(require,module,exports){
+},{"../utils/is-function":232,"augur-abi":2,"buffer":16,"keccak/js":65}],240:[function(require,module,exports){
 "use strict";
 
 var validateAddress = function (address) {
@@ -40177,7 +42709,7 @@ var validateAddress = function (address) {
 
 module.exports = validateAddress;
 
-},{}],249:[function(require,module,exports){
+},{}],241:[function(require,module,exports){
 "use strict";
 
 var validateNumber = require("./validate-number");
@@ -40197,7 +42729,7 @@ var validateAndDefaultBlockNumber = function (blockNumber) {
 
 module.exports = validateAndDefaultBlockNumber;
 
-},{"./validate-number":252}],250:[function(require,module,exports){
+},{"./validate-number":244}],242:[function(require,module,exports){
 "use strict";
 
 var ErrorWithData = require("../errors").ErrorWithData;
@@ -40215,7 +42747,7 @@ function validateBlock(block) {
 
 module.exports = validateBlock;
 
-},{"../errors":168}],251:[function(require,module,exports){
+},{"../errors":171}],243:[function(require,module,exports){
 "use strict";
 
 function validateConfiguration(configuration) {
@@ -40232,11 +42764,12 @@ function validateConfiguration(configuration) {
   } else if (configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) {
     configuration.errorHandler(new Error("configuration.ipcAddresses must contain only strings."));
   }
+  return configuration;
 }
 
 module.exports = validateConfiguration;
 
-},{}],252:[function(require,module,exports){
+},{}],244:[function(require,module,exports){
 "use strict";
 
 var validateNumber = function (number, parameterName) {
@@ -40250,7 +42783,7 @@ var validateNumber = function (number, parameterName) {
 
 module.exports = validateNumber;
 
-},{}],253:[function(require,module,exports){
+},{}],245:[function(require,module,exports){
 "use strict";
 
 var validateAddress = require("./validate-address");
@@ -40276,7 +42809,7 @@ var validateTransaction = function (transaction) {
 
 module.exports = validateTransaction;
 
-},{"./validate-address":248,"./validate-number":252}],254:[function(require,module,exports){
+},{"./validate-address":240,"./validate-number":244}],246:[function(require,module,exports){
 "use strict";
 
 function bindDispatchToMethod(dispatch, method) {
@@ -40287,7 +42820,7 @@ function bindDispatchToMethod(dispatch, method) {
 
 module.exports = bindDispatchToMethod;
 
-},{}],255:[function(require,module,exports){
+},{}],247:[function(require,module,exports){
 "use strict";
 
 var bindDispatchToMethod = require("./bind-dispatch-to-method");
@@ -40301,7 +42834,7 @@ function bindDispatch(dispatch, namespace) {
 
 module.exports = bindDispatch;
 
-},{"./bind-dispatch-to-method":254}],256:[function(require,module,exports){
+},{"./bind-dispatch-to-method":246}],248:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
@@ -40355,7 +42888,7 @@ module.exports = {
   unsubscribe: makeWrapper("eth_unsubscribe")
 };
 
-},{"./make-wrapper":259}],257:[function(require,module,exports){
+},{"./make-wrapper":251}],249:[function(require,module,exports){
 "use strict";
 
 var eth_gasPrice = require("./eth").gasPrice;
@@ -40373,7 +42906,7 @@ function getGasPrice() {
 
 module.exports = getGasPrice;
 
-},{"../utils/is-hex":240,"./eth":256}],258:[function(require,module,exports){
+},{"../utils/is-hex":233,"./eth":248}],250:[function(require,module,exports){
 "use strict";
 
 var eth_sign = require("../wrappers/eth").sign;
@@ -40405,7 +42938,7 @@ function isUnlocked(account, callback) {
 
 module.exports = isUnlocked;
 
-},{"../utils/is-function":239,"../wrappers/eth":256}],259:[function(require,module,exports){
+},{"../utils/is-function":232,"../wrappers/eth":248}],251:[function(require,module,exports){
 "use strict";
 
 var raw = require("./raw");
@@ -40424,7 +42957,7 @@ function makeWrapper(command) {
 
 module.exports = makeWrapper;
 
-},{"../utils/is-function":239,"./raw":264}],260:[function(require,module,exports){
+},{"../utils/is-function":232,"./raw":256}],252:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
@@ -40434,7 +42967,7 @@ module.exports = {
   stop: makeWrapper("miner_stop")
 };
 
-},{"./make-wrapper":259}],261:[function(require,module,exports){
+},{"./make-wrapper":251}],253:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
@@ -40445,7 +42978,7 @@ module.exports = {
   peerCount: makeWrapper("net_peerCount")
 };
 
-},{"./make-wrapper":259}],262:[function(require,module,exports){
+},{"./make-wrapper":251}],254:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
@@ -40456,7 +42989,7 @@ module.exports = {
   lockAccount: makeWrapper("personal_lockAccount")
 };
 
-},{"./make-wrapper":259}],263:[function(require,module,exports){
+},{"./make-wrapper":251}],255:[function(require,module,exports){
 "use strict";
 
 var eth = require("./eth");
@@ -40476,7 +43009,7 @@ function publish(compiled, callback) {
 
 module.exports = publish;
 
-},{"../utils/is-function":239,"./eth":256}],264:[function(require,module,exports){
+},{"../utils/is-function":232,"./eth":248}],256:[function(require,module,exports){
 "use strict";
 
 var submitRequestToBlockchain = require("../rpc/submit-request-to-blockchain");
@@ -40484,13 +43017,15 @@ var makeRequestPayload = require("../encode-request/make-request-payload");
 var isFunction = require("../utils/is-function");
 
 function raw(command, params, callback) {
-  var transportRequirements = (isFunction(callback)) ? "ANY" : "SYNC";
-  return submitRequestToBlockchain(makeRequestPayload(command, params, null), transportRequirements, callback);
+  return function (dispatch) {
+    var transportRequirements = (isFunction(callback)) ? "ANY" : "SYNC";
+    return dispatch(submitRequestToBlockchain(makeRequestPayload(command, params, null), transportRequirements, callback));
+  };
 }
 
 module.exports = raw;
 
-},{"../encode-request/make-request-payload":163,"../rpc/submit-request-to-blockchain":205,"../utils/is-function":239}],265:[function(require,module,exports){
+},{"../encode-request/make-request-payload":166,"../rpc/submit-request-to-blockchain":201,"../utils/is-function":232}],257:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -40509,7 +43044,7 @@ function resendRawTransaction(transaction, privateKey, gasPrice, gasLimit, callb
 
 module.exports = resendRawTransaction;
 
-},{"../raw-transactions/sign-raw-transaction":182,"../wrappers/eth":256,"augur-abi":2,"clone":16}],266:[function(require,module,exports){
+},{"../raw-transactions/sign-raw-transaction":186,"../wrappers/eth":248,"augur-abi":2,"clone":18}],258:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -40527,7 +43062,7 @@ function resendTransaction(transaction, gasPrice, gasLimit, callback) {
 
 module.exports = resendTransaction;
 
-},{"../wrappers/eth":256,"augur-abi":2,"clone":16}],267:[function(require,module,exports){
+},{"../wrappers/eth":248,"augur-abi":2,"clone":18}],259:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -40555,7 +43090,7 @@ function sendEther(to, value, from, onSent, onSuccess, onFailed) {
 
 module.exports = sendEther;
 
-},{"../transact/transact":217,"augur-abi":2}],268:[function(require,module,exports){
+},{"../transact/transact":213,"augur-abi":2}],260:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
@@ -40573,7 +43108,7 @@ module.exports = {
   getMessages: makeWrapper("shh_getMessages")
 };
 
-},{"./make-wrapper":259}],269:[function(require,module,exports){
+},{"./make-wrapper":251}],261:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
@@ -40584,7 +43119,7 @@ module.exports = {
   status: makeWrapper("txpool_status")
 };
 
-},{"./make-wrapper":259}],270:[function(require,module,exports){
+},{"./make-wrapper":251}],262:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
@@ -40599,4 +43134,4 @@ module.exports = {
   clientVersion: makeWrapper("web3_clientVersion")
 };
 
-},{"../utils/sha3":246,"./make-wrapper":259}]},{},[170]);
+},{"../utils/sha3":239,"./make-wrapper":251}]},{},[173]);

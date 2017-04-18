@@ -3,6 +3,7 @@
 var checkConfirmations = require("../transact/check-confirmations");
 var waitForNextPoll = require("../transact/wait-for-next-poll");
 var isFunction = require("../utils/is-function");
+var internalState = require("../internal-state");
 
 function checkBlockHash(tx, numConfirmations, callback) {
   return function (dispatch, getState) {
@@ -18,7 +19,7 @@ function checkBlockHash(tx, numConfirmations, callback) {
     if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
       if (!numConfirmations) {
         dispatch({ type: "TRANSACTION_MINED", hash: txHash });
-        dispatch({ type: "CLEAR_NOTIFICATION", hash: txHash });
+        clearTimeout(internalState.get("notifications" + txHash));
         if (!isFunction(callback)) return tx;
         return callback(null, tx);
       }

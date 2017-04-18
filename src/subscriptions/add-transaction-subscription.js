@@ -11,7 +11,7 @@ function selectTransaction(hash) {
 // subscribe to a single transaction
 function addTransactionSubscription(hash, onStateChange) {
   return function (dispatch) {
-    dispatch(addSubscription(hash, selectTransaction(hash), onStateChange));
+    dispatch(addSubscription(hash, "transactions", selectTransaction(hash), onStateChange));
   };
 }
 

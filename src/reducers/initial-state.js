@@ -1,7 +1,5 @@
 "use strict";
 
-var noop = require("../utils/noop");
-
 module.exports.debug = {
   connect: false,
   tx: false,
@@ -9,29 +7,18 @@ module.exports.debug = {
   nonce: false,
   sync: false
 };
-
 module.exports.configuration = {
   httpAddresses: [],
   wsAddresses: [],
   ipcAddresses: [],
   connectionTimeout: 3000,
   pollingIntervalMilliseconds: 30000,
-  blockRetention: 100,
-  errorHandler: null
+  blockRetention: 100
 };
 module.exports.currentBlock = null;
 module.exports.highestNonce = -1;
 module.exports.gasPrice = 20000000000;
 module.exports.noRelay = {};
 module.exports.networkID = null;
-module.exports.notifications = {};
 module.exports.transactions = {};
-
-module.exports.transporter = null;
-module.exports.blockNotifier = null;
-module.exports.blockAndLogStreamer = null;
-module.exports.outstandingRequests = {};
 module.exports.subscriptions = {};
-module.exports.newBlockTimer = null;
-module.exports.shimMessageHandlerObject = {};
-module.exports.shimMessageHandler = noop;

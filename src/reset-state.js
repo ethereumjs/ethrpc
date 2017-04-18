@@ -1,43 +1,55 @@
 "use strict";
 
-var removeAllStoreListeners = require("./store-observer").removeAllStoreListeners;
-var isFunction = require("./utils/is-function");
+var blockchainMessageHandler = require("./rpc/blockchain-message-handler");
+var removeAllStoreListeners = require("./subscriptions/store-observer").removeAllStoreListeners;
+var clearTransactions = require("./clear-transactions");
+var isObject = require("./utils/is-object");
+var internalState = require("./internal-state");
 
-/**
- * Resets the Redux store to its initial state.
- */
 function resetState() {
   return function (dispatch, getState) {
-    var blockNotifier, debug, state = getState();
-    blockNotifier = state.blockNotifier;
-    debug = state.debug;
+    var messageHandlerObject, blockNotifier, notifications, debug = getState().debug;
+    dispatch(clearTransactions());
 
     // stop any pending timers
-    dispatch({ type: "CLEAR_NEW_BLOCK_TIMER" });
-
-    // reset configuration to defaults
-    dispatch({ type: "RESET_CONFIGURATION" });
+    clearInterval(internalState.get("newBlockIntervalTimeoutId"));
 
     // destroy the old BlockNotifier so it doesn't try to reconnect or continue polling
-    if (blockNotifier && isFunction(blockNotifier.destroy)) blockNotifier.destroy();
+    blockNotifier = internalState.get("blockNotifier");
+    if (blockNotifier && blockNotifier.destroy) blockNotifier.destroy();
 
-    // redirect any not-yet-received responses to /dev/null
-    dispatch({
-      type: "REDIRECT_SHIM_MESSAGE_HANDLER",
-      redirect: function () { return dispatch({ type: "DEV_NULL" }); }
-    });
+    notifications = internalState.get("notifications");
+    if (isObject(notifications)) {
+      Object.keys(notifications).map(function (hash) {
+        if (notifications[hash]) clearTimeout(notifications[hash]);
+      });
+    }
 
     removeAllStoreListeners();
-    dispatch({ type: "REMOVE_ALL_SUBSCRIPTIONS" });
+
+    // redirect any not-yet-received responses to /dev/null
+    internalState.set("shimMessageHandlerObject.realMessageHandler", function () { return dispatch({ type: "DEV_NULL" }); });
+    messageHandlerObject = { realMessageHandler: blockchainMessageHandler };
+
+    // reset state to defaults
+    internalState.setState({
+      transporter: null,
+      blockNotifier: null,
+      blockAndLogStreamer: null,
+      outstandingRequests: {},
+      subscriptions: {},
+      newBlockIntervalTimeoutId: null,
+      outOfBandErrorHandler: null,
+      shimMessageHandlerObject: messageHandlerObject,
+      // by binding this function to `shimMessageHandlerObject`, its `this` value will
+      // be a pointer to an object that we can mutate before replacing when reset
+      shimMessageHandler: function (error, jso) {
+        dispatch(this.realMessageHandler(error, jso));
+      }.bind(messageHandlerObject)
+    });
 
     // reset state to defaults
     dispatch({ type: "RESET_STATE" });
-    dispatch({
-      type: "SET_SHIM_MESSAGE_HANDLER",
-      messageHandler: function (err, jso) {
-        dispatch(this.realMessageHandler(err, jso));
-      }.bind(getState().shimMessageHandlerObject)
-    });
 
     // restore debugging options
     dispatch({ type: "SET_DEBUG_OPTIONS", options: debug });

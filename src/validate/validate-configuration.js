@@ -14,6 +14,7 @@ function validateConfiguration(configuration) {
   } else if (configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) {
     configuration.errorHandler(new Error("configuration.ipcAddresses must contain only strings."));
   }
+  return configuration;
 }
 
 module.exports = validateConfiguration;

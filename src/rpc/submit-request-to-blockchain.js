@@ -2,6 +2,7 @@
 
 var stripReturnsTypeAndInvocation = require("../encode-request/strip-returns-type-and-invocation");
 var isFunction = require("../utils/is-function");
+var internalState = require("../internal-state");
 
 /**
  * Used internally.  Submits a remote procedure call to the blockchain.
@@ -13,10 +14,9 @@ var isFunction = require("../utils/is-function");
  */
 function submitRequestToBlockchain(jso, transportRequirements, callback) {
   return function (dispatch, getState) {
-    var state, debug, transporter, syncErrorOrResult, expectedReturnTypes;
+    var state, debug, syncErrorOrResult, expectedReturnTypes;
     state = getState();
     debug = state.debug;
-    transporter = state.transporter;
 
     if (transportRequirements === "SYNC") {
       callback = function (error, result) {
@@ -38,20 +38,16 @@ function submitRequestToBlockchain(jso, transportRequirements, callback) {
 
     // FIXME: return types shouldn't be embedded into the RPC JSO
     expectedReturnTypes = stripReturnsTypeAndInvocation(jso);
-    dispatch({
-      type: "ADD_OUTSTANDING_REQUEST",
-      id: jso.id,
-      request: {
-        jso: jso,
-        expectedReturnTypes: expectedReturnTypes,
-        callback: callback
-      }
+    internalState.set("outstandingRequests." + jso.id, {
+      jso: jso,
+      expectedReturnTypes: expectedReturnTypes,
+      callback: callback
     });
 
-    transporter.blockchainRpc(jso, transportRequirements, debug.broadcast);
+    internalState.get("transporter").blockchainRpc(jso, transportRequirements, debug.broadcast);
 
     if (transportRequirements === "SYNC") {
-      if (typeof getState().outstandingRequests[jso.id] !== "undefined") {
+      if (typeof internalState.get("outstandingRequests." + jso.id) !== "undefined") {
         return new Error("SYNC request didn't receive messageHandler call before returning.");
       }
       return syncErrorOrResult;

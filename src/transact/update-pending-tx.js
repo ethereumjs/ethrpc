@@ -67,7 +67,8 @@ function updatePendingTx(txHash) {
             dispatch(updateMinedTx(txHash));
           } else {
             dispatch(eth.blockNumber(null, function (blockNumber) {
-              dispatch({ type: "SET_CURRENT_BLOCK", block: { number: parseInt(blockNumber, 16) } });
+              // dispatch({ type: "SET_CURRENT_BLOCK", block: { number: parseInt(blockNumber, 16) } });
+              dispatch({ type: "SET_CURRENT_BLOCK", data: { number: blockNumber } });
               dispatch({
                 type: "SET_TRANSACTION_CONFIRMATIONS",
                 hash: txHash,

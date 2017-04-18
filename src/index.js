@@ -7,7 +7,6 @@
 
 var BigNumber = require("bignumber.js");
 
-var getBlockAndLogStreamer = require("./block-management/get-block-and-log-streamer");
 var ensureLatestBlock = require("./block-management/ensure-latest-block");
 var waitForNextBlocks = require("./block-management/wait-for-next-blocks");
 
@@ -59,10 +58,9 @@ var connect = require("./connect");
 var store = require("./store");
 var dispatch = store.dispatch;
 
-BigNumber.config({
-  MODULO_MODE: BigNumber.EUCLID,
-  ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN
-});
+var internalState = require("./internal-state");
+
+BigNumber.config({ MODULO_MODE: BigNumber.EUCLID, ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN });
 
 module.exports = {
 
@@ -77,8 +75,10 @@ module.exports = {
 
   setDebugOptions: function (debugOptions) { return dispatch(setDebugOptions(debugOptions)); },
 
-  connect: function (configuration, initialConnectCallback) { return dispatch(connect(configuration, initialConnectCallback)); },
-  getBlockAndLogStreamer: function () { return dispatch(getBlockAndLogStreamer()); },
+  connect: function (configuration, initialConnectCallback) {
+    return dispatch(connect(configuration, initialConnectCallback));
+  },
+  getBlockAndLogStreamer: function () { return internalState.get("blockAndLogStreamer"); },
   clear: function () { return dispatch(clearTransactions()); },
   resetState: function () { return dispatch(resetState()); },
 

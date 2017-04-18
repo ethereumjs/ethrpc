@@ -47,9 +47,9 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       if (error.code === "ECONNREFUSED") error.retryable = true;
       if (error.code === "ETIMEDOUT") error.retryable = true;
       errorCallback(error);
-    }    else if (response.statusCode === 200) {
+    } else if (response.statusCode === 200) {
       this.messageHandler(null, body);
-    }    else {
+    } else {
       error = new Error("Unexpected status code.");
       error.code = response.statusCode;
       error.address = this.address;

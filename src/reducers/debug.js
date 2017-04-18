@@ -1,14 +1,7 @@
 "use strict";
 
 var assign = require("lodash.assign");
-
-var initialState = {
-  connect: false,
-  tx: false,
-  broadcast: false,
-  nonce: false,
-  sync: false
-};
+var initialState = require("./initial-state").debug;
 
 module.exports = function (debug, action) {
   if (typeof debug === "undefined") {

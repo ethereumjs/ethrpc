@@ -1,5 +1,6 @@
 "use strict";
 
+var assign = require("lodash.assign");
 var immutableDelete = require("immutable-delete");
 var isFunction = require("../utils/is-function");
 
@@ -10,23 +11,24 @@ var unsubscribeFunctions = {};
 
 function addStoreListener(select, onStateChange) {
   return function (dispatch, getState, subscribe) {
-    var currentState;
+    var prevState, currentState = select(getState());
     function handleStateChange() {
       var nextState = select(getState());
       if (nextState !== currentState) {
-        onStateChange(nextState, currentState);
+        prevState = assign({}, currentState);
         currentState = nextState;
+        onStateChange(currentState, prevState);
       }
     }
-    if (isFunction(subscribe)) unsubscribeFunctions[count] = subscribe(handleStateChange);
+    if (isFunction(subscribe)) {
+      unsubscribeFunctions[count] = subscribe(handleStateChange);
+    }
     handleStateChange();
-    console.log("unsubscribeFunctions:", unsubscribeFunctions);
     return count++;
   };
 }
 
 function removeStoreListener(id) {
-  console.log("removing listener:", id, unsubscribeFunctions[id]);
   if (isFunction(unsubscribeFunctions[id])) unsubscribeFunctions[id]();
   unsubscribeFunctions = immutableDelete(unsubscribeFunctions, id);
 }

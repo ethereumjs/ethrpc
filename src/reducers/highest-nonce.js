@@ -1,6 +1,6 @@
 "use strict";
 
-var initialState = -1;
+var initialState = require("./initial-state").highestNonce;
 
 module.exports = function (highestNonce, action) {
   if (typeof highestNonce === "undefined") {

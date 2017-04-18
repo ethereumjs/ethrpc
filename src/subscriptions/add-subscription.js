@@ -1,13 +1,14 @@
 "use strict";
 
-var addStoreListener = require("../store-observer").addStoreListener;
+var addStoreListener = require("./store-observer").addStoreListener;
 
-function addSubscription(id, select, callback) {
+function addSubscription(id, reaction, select, onStateChange) {
   return function (dispatch) {
     dispatch({
       type: "ADD_SUBSCRIPTION",
       id: id,
-      unsubscribeToken: dispatch(addStoreListener(select, callback))
+      reaction: reaction,
+      unsubscribeToken: dispatch(addStoreListener(select, onStateChange))
     });
   };
 }

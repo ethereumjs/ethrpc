@@ -1,6 +1,6 @@
 "use strict";
 
-var initialState = null;
+var initialState = require("./initial-state").networkID;
 
 module.exports = function (networkID, action) {
   if (typeof networkID === "undefined") {

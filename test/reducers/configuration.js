@@ -21,8 +21,7 @@ describe("reducers/configuration", function () {
         ipcAddresses: [],
         connectionTimeout: 3000,
         pollingIntervalMilliseconds: 30000,
-        blockRetention: 100,
-        errorHandler: null
+        blockRetention: 100
       },
       action: {
         type: "SET_CONFIGURATION",
@@ -30,8 +29,7 @@ describe("reducers/configuration", function () {
           httpAddresses: ["https://eth3.augur.net"],
           wsAddresses: ["wss://ws.augur.net"],
           ipcAddresses: [],
-          blockRetention: 10,
-          errorHandler: noop
+          blockRetention: 10
         }
       },
       assertions: function (state) {
@@ -41,8 +39,7 @@ describe("reducers/configuration", function () {
           ipcAddresses: [],
           connectionTimeout: 3000,
           pollingIntervalMilliseconds: 30000,
-          blockRetention: 10,
-          errorHandler: noop
+          blockRetention: 10
         });
       }
     });
@@ -54,8 +51,7 @@ describe("reducers/configuration", function () {
         ipcAddresses: [],
         connectionTimeout: 3000,
         pollingIntervalMilliseconds: 30000,
-        blockRetention: 100,
-        errorHandler: null
+        blockRetention: 100
       },
       action: {
         type: "SET_CONFIGURATION",
@@ -64,7 +60,6 @@ describe("reducers/configuration", function () {
           wsAddresses: ["wss://ws.augur.net"],
           ipcAddresses: [],
           blockRetention: 10,
-          errorHandler: noop,
           cruft: "crufty!"
         }
       },
@@ -75,8 +70,7 @@ describe("reducers/configuration", function () {
           ipcAddresses: [],
           connectionTimeout: 3000,
           pollingIntervalMilliseconds: 30000,
-          blockRetention: 10,
-          errorHandler: noop
+          blockRetention: 10
         });
       }
     });
@@ -90,8 +84,7 @@ describe("reducers/configuration", function () {
         ipcAddresses: [],
         connectionTimeout: 10000,
         pollingIntervalMilliseconds: 30000,
-        blockRetention: 10,
-        errorHandler: noop
+        blockRetention: 10
       },
       action: {
         type: "RESET_CONFIGURATION"
@@ -103,8 +96,7 @@ describe("reducers/configuration", function () {
           ipcAddresses: [],
           connectionTimeout: 3000,
           pollingIntervalMilliseconds: 30000,
-          blockRetention: 100,
-          errorHandler: null
+          blockRetention: 100
         });
       }
     });

@@ -4,6 +4,7 @@ var parseEthereumResponse = require("../decode-response/parse-ethereum-response"
 var isObject = require("../utils/is-object");
 var ErrorWithData = require("../errors").ErrorWithData;
 var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
+var internalState = require("../internal-state");
 
 /**
  * Used internally.  Processes a response from the blockchain by looking up the
@@ -11,26 +12,32 @@ var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
  */
 function blockchainMessageHandler(error, jso) {
   return function (dispatch, getState) {
-    var subscriptionHandler, responseHandler, errorHandler, state, configuration;
-    state = getState();
-    configuration = state.configuration;
+    var outOfBandErrorHandler, subscriptionHandler, responseHandler, errorHandler, subscriptions, state = getState();
+    subscriptions = state.subscriptions;
+    outOfBandErrorHandler = internalState.get("outOfBandErrorHandler");
 
     if (error !== null) {
-      return configuration.errorHandler(error);
+      return outOfBandErrorHandler(error);
     }
     if (typeof jso !== "object") {
-      return configuration.errorHandler(new ErrorWithData("Unexpectedly received a message from the transport that was not an object.", jso));
+      return outOfBandErrorHandler(new ErrorWithData("Unexpectedly received a message from the transport that was not an object.", jso));
     }
 
     subscriptionHandler = function () {
+      var subscription;
       if (jso.method !== "eth_subscription") {
-        return configuration.errorHandler(new ErrorWithData("Received an RPC request that wasn't an `eth_subscription`.", jso));
+        return outOfBandErrorHandler(new ErrorWithData("Received an RPC request that wasn't an `eth_subscription`.", jso));
       }
       if (typeof jso.params.subscription !== "string") {
-        return configuration.errorHandler(new ErrorWithData("Received an `eth_subscription` request without a subscription ID.", jso));
+        return outOfBandErrorHandler(new ErrorWithData("Received an `eth_subscription` request without a subscription ID.", jso));
       }
       if (jso.params.result === null || jso.params.result === undefined) {
-        return configuration.errorHandler(new ErrorWithData("Received an `eth_subscription` request without a result.", jso));
+        return outOfBandErrorHandler(new ErrorWithData("Received an `eth_subscription` request without a result.", jso));
+      }
+      subscription = subscriptions[jso.params.subscription];
+      if (subscription != null) {
+        // console.log("REACTION:", subscription.reaction, jso);
+        dispatch({ type: subscription.reaction, data: jso });
       }
     };
 
@@ -39,10 +46,10 @@ function blockchainMessageHandler(error, jso) {
       if (typeof jso.id !== "number") {
         return errorHandler(new ErrorWithData("Received a message from the blockchain that didn't have a valid id.", jso));
       }
-      outstandingRequest = getState().outstandingRequests[jso.id];
-      dispatch({ type: "REMOVE_OUTSTANDING_REQUEST", id: jso.id });
+      outstandingRequest = internalState.get("outstandingRequests." + jso.id);
+      internalState.unset("outstandingRequests." + jso.id);
       if (!isObject(outstandingRequest)) {
-        return configuration.errorHandler(new ErrorWithData("Unable to locate original request for blockchain response.", jso));
+        return outOfBandErrorHandler(new ErrorWithData("Unable to locate original request for blockchain response.", jso));
       }
 
       // FIXME: outstandingRequest.callback should be function(Error,object) not function(Error|object)
@@ -54,7 +61,7 @@ function blockchainMessageHandler(error, jso) {
       if (jso.id !== null && jso.id !== undefined) {
         return responseHandler(jso);
       }
-      configuration.errorHandler(new ErrorWithCodeAndData(jso.error.message, jso.error.code, jso.error.data));
+      outOfBandErrorHandler(new ErrorWithCodeAndData(jso.error.message, jso.error.code, jso.error.data));
     };
 
     // depending on the type of message it is (request, response, error, invalid) we will handle it differently
@@ -65,7 +72,7 @@ function blockchainMessageHandler(error, jso) {
     } else if (jso.error !== undefined) {
       errorHandler();
     } else {
-      configuration.errorHandler(new ErrorWithData("Received an invalid JSON-RPC message.", jso));
+      outOfBandErrorHandler(new ErrorWithData("Received an invalid JSON-RPC message.", jso));
     }
   };
 }

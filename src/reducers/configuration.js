@@ -1,17 +1,7 @@
 "use strict";
 
-var validateConfiguration = require("../validate/validate-configuration");
 var isFunction = require("../utils/is-function");
-
-var initialState = {
-  httpAddresses: [],
-  wsAddresses: [],
-  ipcAddresses: [],
-  connectionTimeout: 3000,
-  pollingIntervalMilliseconds: 30000,
-  blockRetention: 100,
-  errorHandler: null
-};
+var initialState = require("./initial-state").configuration;
 
 module.exports = function (configuration, action) {
   var updatedConfiguration;
@@ -21,16 +11,13 @@ module.exports = function (configuration, action) {
   switch (action.type) {
     case "SET_CONFIGURATION":
       updatedConfiguration = Object.keys(configuration).reduce(function (p, key) {
-        p[key] = (action.configuration[key] != null) ? action.configuration[key] : configuration[key];
+        if (action.configuration[key] != null && !isFunction(action.configuration[key])) {
+          p[key] = action.configuration[key];
+        } else {
+          p[key] = configuration[key];
+        }
         return p;
       }, {});
-
-      // use default error handler (console.error) if not set
-      if (!isFunction(updatedConfiguration.errorHandler)) {
-        updatedConfiguration.errorHandler = function (err) { console.error(err); };
-      }
-
-      validateConfiguration(updatedConfiguration);
       return updatedConfiguration;
     case "RESET_CONFIGURATION":
       return initialState;

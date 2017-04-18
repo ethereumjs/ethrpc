@@ -3,8 +3,7 @@
 var assign = require("lodash.assign");
 var immutableDelete = require("immutable-delete");
 var isObject = require("../utils/is-object");
-
-var initialState = {};
+var initialState = require("./initial-state").transactions;
 
 module.exports = function (transactions, action) {
   var newTransaction, payload;

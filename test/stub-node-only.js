@@ -48,6 +48,18 @@ describe("tests that only work against stub server", function () {
           });
         });
 
+        it("starts connected > uses connection", function (done) {
+          stubRpcServer.addResponder(function (request) {
+            if (request.method === "net_version") return "apple";
+          });
+          helpers.rpcConnect(transportType, transportAddress, function () {
+            rpc.version(function (errorOrVersion) {
+              assert.strictEqual(errorOrVersion, "apple");
+              done();
+            });
+          });
+        });
+
         it("starts connected > uses connection > loses connection > reconnects > uses connection", function (done) {
           stubRpcServer.addResponder(function (request) {
             if (request.method === "net_version") return "apple";
@@ -1218,7 +1230,9 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can subscribe to new logs", function (done) {
-          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
+          server.addResponder(function (jso) {
+            if (jso.method === "eth_getLogs") return [{}];
+          });
           var called = false;
           rpc.getBlockAndLogStreamer().addLogFilter({});
           rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { done(); });
@@ -1251,8 +1265,15 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can remove log filter", function (done) {
-          server.addResponder(function (jso) { if (jso.method == "eth_getLogs") done(new Error("should not be called")); });
-          var token = rpc.getBlockAndLogStreamer().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
+          server.addResponder(function (jso) {
+            if (jso.method == "eth_getLogs") {
+              done(new Error("should not be called"));
+            }
+          });
+          var token = rpc.getBlockAndLogStreamer().addLogFilter({
+            address: "0xbadf00d",
+            topics: ["0xdeadbeef"]
+          });
           rpc.getBlockAndLogStreamer().removeLogFilter(token);
           rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) {
             done(new Error("should not be called"));
@@ -1263,7 +1284,7 @@ describe("tests that only work against stub server", function () {
     });
   }
 
-  // tests("IPC", (os.type() === "Windows_NT") ? "\\\\.\\pipe\\TestRPC" : "testrpc.ipc");
+  tests("IPC", (os.type() === "Windows_NT") ? "\\\\.\\pipe\\TestRPC" : "testrpc.ipc");
   tests("WS", "ws://localhost:1337");
   tests("HTTP", "http://localhost:1337");
 });

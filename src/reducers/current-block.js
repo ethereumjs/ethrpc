@@ -1,8 +1,7 @@
 "use strict";
 
 var clone = require("clone");
-
-var initialState = null;
+var initialState = require("./initial-state").currentBlock;
 
 module.exports = function (currentBlock, action) {
   if (typeof currentBlock === "undefined") {
@@ -10,7 +9,7 @@ module.exports = function (currentBlock, action) {
   }
   switch (action.type) {
     case "SET_CURRENT_BLOCK":
-      return clone(action.block);
+      return clone(action.data);
     case "CLEAR_CURRENT_BLOCK":
       return initialState;
     default:

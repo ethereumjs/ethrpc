@@ -17,28 +17,28 @@ describe("reducers/current-block", function () {
       state: null,
       action: {
         type: "SET_CURRENT_BLOCK",
-        block: { number: 7 }
+        data: { number: "0x7" }
       },
       assertions: function (state) {
-        assert.deepEqual(state, { number: 7 });
+        assert.deepEqual(state, { number: "0x7" });
       }
     });
     test({
       description: "Change the current block",
-      state: { number: 7 },
+      state: { number: "0x7" },
       action: {
         type: "SET_CURRENT_BLOCK",
-        block: { number: 8 }
+        data: { number: "0x8" }
       },
       assertions: function (state) {
-        assert.deepEqual(state, { number: 8 });
+        assert.deepEqual(state, { number: "0x8" });
       }
     });
   });
   describe("CLEAR_CURRENT_BLOCK", function () {
     test({
       description: "Remove the current block",
-      state: { number: 7 },
+      state: { number: "0x7" },
       action: {
         type: "CLEAR_CURRENT_BLOCK"
       },

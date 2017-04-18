@@ -1,8 +1,7 @@
 "use strict";
 
 var assign = require("lodash.assign");
-
-var initialState = {};
+var initialState = require("./initial-state").notifications;
 
 module.exports = function (notifications, action) {
   var newNotification;

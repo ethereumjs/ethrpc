@@ -6,10 +6,11 @@ var removeSubscription = require("../subscriptions/remove-subscription");
 var errorSplittingWrapper = require("../errors/error-splitting-wrapper");
 var noop = require("../utils/noop");
 
-var newHeadsSubscription;
+var nextToken = 1;
+var subscriptionMapping = {};
 
-function createTransportAdapter() {
-  return function (dispatch, getState) {
+function createTransportAdapter(transporter) {
+  return function (dispatch) {
     return {
       getLatestBlock: function (callback) {
         dispatch(eth.getBlockByNumber(["latest", false], errorSplittingWrapper(callback)));
@@ -21,32 +22,37 @@ function createTransportAdapter() {
         dispatch(eth.getLogs(filters, errorSplittingWrapper(callback)));
       },
       subscribeToReconnects: function (onReconnect) {
-        return dispatch(addReconnectListener(onReconnect));
+        return transporter.addReconnectListener(onReconnect);
       },
       unsubscribeFromReconnects: function (token) {
-        dispatch(removeReconnectListener(token));
+        transporter.removeReconnectListener(token);
       },
       subscribeToNewHeads: function (onNewHead, onSubscriptionError) {
-        newHeadsSubscription = null;
+        var token = (nextToken++).toString();
+        subscriptionMapping[token] = null;
         dispatch(eth.subscribe(["newHeads", {}], function (subscriptionID) {
           if (!subscriptionID || subscriptionID.error) {
             return onSubscriptionError(subscriptionID);
           }
           // if the caller already unsubscribed by the time this callback is
           // called, we need to unsubscribe from the remote
-          if (newHeadsSubscription === undefined) {
+          if (subscriptionMapping[token] === undefined) {
             dispatch(eth.unsubscribe(subscriptionID, noop));
           } else {
-            newHeadsSubscription = subscriptionID;
+            subscriptionMapping[token] = subscriptionID;
             dispatch(addNewHeadsSubscription(subscriptionID, onNewHead));
           }
         }));
-        return subscriptionID;
+        return "1";
       },
-      unsubscribeFromNewHeads: function (subscriptionID) {
-        newHeadsSubscription = undefined;
-        dispatch(removeSubscription(subscriptionID));
-        dispatch(eth.unsubscribe(subscriptionID, noop));
+      unsubscribeFromNewHeads: function (token) {
+        var subscriptionID;
+        if (token) {
+          subscriptionID = subscriptionMapping[token];
+          delete subscriptionMapping[token];
+          dispatch(removeSubscription(subscriptionID));
+          dispatch(eth.unsubscribe(subscriptionID, noop));
+        }
       }
     };
   };

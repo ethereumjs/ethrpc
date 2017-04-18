@@ -2,6 +2,7 @@
 
 var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
 var BlockNotifier = require("../block-management/block-notifier");
+var internalState = require("../internal-state");
 
 /**
  * Used internally.  Instantiates a new BlockAndLogStreamer backed by ethrpc and BlockNotifier.
@@ -38,21 +39,20 @@ var BlockNotifier = require("../block-management/block-notifier");
  * @param {Transport} transport
  */
 function createBlockAndLogStreamer(configuration, transport) {
-  return function (dispatch) {
-    var reconcileWithErrorLogging, blockNotifier, blockAndLogStreamer;
-    blockNotifier = new BlockNotifier(transport, configuration.pollingIntervalMilliseconds);
-    dispatch({ type: "SET_BLOCK_NOTIFIER", blockNotifier: blockNotifier });
-    blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, {
-      blockRetention: configuration.blockRetention
-    });
-    dispatch({ type: "SET_BLOCK_AND_LOG_STREAMER", blockAndLogStreamer: blockAndLogStreamer });
-    reconcileWithErrorLogging = function (block) {
-      blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (error) {
-        if (error) console.error(error);
-      });
-    };
-    dispatch({ type: "ADD_BLOCK_NOTIFIER_SUBSCRIPTION", subscription: reconcileWithErrorLogging });
-  };
+  var blockNotifier = new BlockNotifier({
+    getLatestBlock: transport.getLatestBlock,
+    subscribeToReconnects: transport.subscribeToReconnects,
+    unsubscribeFromReconnects: transport.unsubscribeFromReconnects,
+    subscribeToNewHeads: transport.subscribeToNewHeads,
+    unsubscribeFromNewHeads: transport.unsubscribeFromNewHeads
+  }, configuration.pollingIntervalMilliseconds);
+  var blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, {
+    blockRetention: configuration.blockRetention
+  });
+  blockNotifier.subscribe(function (block) {
+    blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
+  });
+  internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
 }
 
 module.exports = createBlockAndLogStreamer;
