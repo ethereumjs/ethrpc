@@ -43,7 +43,7 @@ function createTransportAdapter(transporter) {
             dispatch(addNewHeadsSubscription(subscriptionID, onNewHead));
           }
         }));
-        return "1";
+        return token;
       },
       unsubscribeFromNewHeads: function (token) {
         var subscriptionID;

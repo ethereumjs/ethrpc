@@ -16124,7 +16124,13 @@ module.exports = function () {
 }).call(this,require("buffer").Buffer)
 },{"buffer":16,"ethereum-common/params.json":39,"ethereumjs-util":45}],45:[function(require,module,exports){
 (function (Buffer){
-var _typeof11 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof12 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof11 = typeof Symbol === "function" && _typeof12(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof12(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof12(obj);
+};
 
 var _typeof10 = typeof Symbol === "function" && _typeof11(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof11(obj);
@@ -39020,7 +39026,7 @@ function createTransportAdapter(transporter) {
             dispatch(addNewHeadsSubscription(subscriptionID, onNewHead));
           }
         }));
-        return "1";
+        return token;
       },
       unsubscribeFromNewHeads: function (token) {
         var subscriptionID;
