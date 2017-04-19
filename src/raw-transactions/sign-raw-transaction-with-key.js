@@ -1,7 +1,5 @@
 "use strict";
 
-var Transaction = require("ethereumjs-tx");
-var signRawTransactionWithKey = require("./sign-raw-transaction-with-key");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
 var isFunction = require("../utils/is-function");
@@ -13,8 +11,8 @@ var isFunction = require("../utils/is-function");
  * @param {function=} callback Callback function (optional).
  * @return {string} Signed and serialized raw transaction.
  */
-function signTransactionWithKey(rawTransaction, privateKey, callback) {
-  var serialized, rawTransaction = new Transaction(packaged);
+function signRawTransactionWithKey(rawTransaction, privateKey, callback) {
+  var serialized;
   rawTransaction.sign(privateKey);
   if (!rawTransaction.validate()) {
     if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_INVALID);
@@ -24,3 +22,5 @@ function signTransactionWithKey(rawTransaction, privateKey, callback) {
   if (!isFunction(callback)) return serialized;
   callback(null, serialized);
 }
+
+module.exports = signRawTransactionWithKey;

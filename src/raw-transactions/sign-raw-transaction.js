@@ -2,8 +2,7 @@
 
 var Transaction = require("ethereumjs-tx");
 var signRawTransactionWithKey = require("./sign-raw-transaction-with-key");
-var RPCError = require("../errors/rpc-error");
-var errors = require("../errors/codes");
+var isFunction = require("../utils/is-function");
 
 /**
  * Sign the transaction using either a private key or a signing function.
@@ -15,10 +14,10 @@ var errors = require("../errors/codes");
 function signRawTransaction(packaged, privateKeyOrSigner, callback) {
   var transaction;
   try {
-    transaction = new EthTx(packaged);
+    transaction = new Transaction(packaged);
     return (isFunction(privateKeyOrSigner))
       ? privateKeyOrSigner(transaction, callback)
-      : signTransactionWithKey(transaction, privateKeyOrSigner, callback);
+      : signRawTransactionWithKey(transaction, privateKeyOrSigner, callback);
   } catch (error) {
     return callback(error);
   }
