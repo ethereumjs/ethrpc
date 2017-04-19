@@ -16,7 +16,7 @@ var errors = require("../errors/codes");
  * @param {function=} callback Callback function (optional).
  * @return {string|void} Signed transaction.
  */
-function packageAndSignRawTransaction(payload, address, privateKey, callback) {
+function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, callback) {
   return function (dispatch, getState) {
     var packaged, state;
     state = getState();
@@ -24,7 +24,7 @@ function packageAndSignRawTransaction(payload, address, privateKey, callback) {
       if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_FAILED);
       return callback(errors.TRANSACTION_FAILED);
     }
-    if (!address || !privateKey) {
+    if (!address || !privateKeyOrSigner) {
       if (!isFunction(callback)) throw new RPCError(errors.NOT_LOGGED_IN);
       return callback(errors.NOT_LOGGED_IN);
     }
@@ -34,20 +34,19 @@ function packageAndSignRawTransaction(payload, address, privateKey, callback) {
       console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
     }
     if (!isFunction(callback)) {
+      if (isFunction(privateKeyOrSigner)) {
+        throw new Error("Cannot do synchronous signing with a signer function.");
+      }
       packaged = dispatch(setRawTransactionGasPrice(packaged));
       packaged = dispatch(setRawTransactionNonce(packaged, address));
-      return signRawTransaction(packaged, privateKey);
+      return signRawTransaction(packaged, privateKeyOrSigner);
     }
     dispatch(setRawTransactionGasPrice(packaged, function (packaged) {
       if (packaged.error) return callback(packaged);
       dispatch(setRawTransactionNonce(packaged, address, function (packaged) {
-        var signedRawTransaction;
-        try {
-          signedRawTransaction = signRawTransaction(packaged, privateKey);
-        } catch (exc) {
-          signedRawTransaction = exc;
-        }
-        callback(signedRawTransaction);
+        signRawTransaction(packaged, privateKeyOrSigner, function (err, result) {
+          callback(err || result);
+        });
       }));
     }));
   };
