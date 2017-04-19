@@ -3,10 +3,6 @@
 "use strict";
 
 var assert = require("chai").assert;
-var clone = require("clone");
-var abi = require("augur-abi");
-var errors = require("../../src/errors/codes");
-var RPCError = require("../../src/errors/rpc-error");
 var isFunction = require("../../src/utils/is-function");
 var proxyquire = require("proxyquire").noPreserveCache();
 var mockStore = require("../mock-store");
@@ -17,13 +13,13 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
       var store = mockStore(t.state || {});
       var setRawTransactionNonce = proxyquire("../../src/raw-transactions/set-raw-transaction-nonce.js", {
         "./verify-raw-transaction-nonce": function (nonce) {
-          return function (dispatch) {
+          return function () {
             return nonce;
           };
         },
         "../wrappers/eth": {
           getTransactionCount: function (params, callback) {
-            return function (dispatch) {
+            return function () {
               if (!isFunction(callback)) return t.blockchain.transactionCount;
               callback(t.blockchain.transactionCount);
             };

@@ -3,8 +3,6 @@
 "use strict";
 
 var assert = require("chai").assert;
-var clone = require("clone");
-var abi = require("augur-abi");
 var errors = require("../../src/errors/codes");
 var RPCError = require("../../src/errors/rpc-error");
 var proxyquire = require("proxyquire").noPreserveCache();
@@ -46,7 +44,8 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     },
     stub: {
       packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
-        return function (dispatch) {
+        return function () {
+          var signedRawTransaction;
           assert.deepEqual(payload, {
             method: "addMarketToBranch",
             returns: "int256",
@@ -57,15 +56,16 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
           });
           assert.strictEqual(address, "0x0000000000000000000000000000000000000b0b");
           assert.strictEqual(privateKey.toString("hex"), "1111111111111111111111111111111111111111111111111111111111111111");
-          var signedRawTransaction = "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1";
+          signedRawTransaction = "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1";
           if (!callback) return signedRawTransaction;
           callback(signedRawTransaction);
         };
       },
       sendRawTransaction: function (signedRawTransaction, callback) {
-        return function (dispatch) {
+        return function () {
+          var txhash;
           assert.strictEqual(signedRawTransaction, "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1");
-          var txhash = "0x00000000000000000000000000000000000000000000000000000000deadbeef";
+          txhash = "0x00000000000000000000000000000000000000000000000000000000deadbeef";
           if (!callback) return txhash;
           callback(txhash);
         };
@@ -91,7 +91,8 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     },
     stub: {
       packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
-        return function (dispatch) {
+        return function () {
+          var err;
           assert.deepEqual(payload, {
             method: "addMarketToBranch",
             returns: "int256",
@@ -102,13 +103,13 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
           });
           assert.strictEqual(address, "0x0000000000000000000000000000000000000b0b");
           assert.strictEqual(privateKey.toString("hex"), "1111111111111111111111111111111111111111111111111111111111111111");
-          var err = errors.TRANSACTION_FAILED;
+          err = errors.TRANSACTION_FAILED;
           if (!callback) throw new RPCError(err);
           callback(err);
         };
       },
-      sendRawTransaction: function (signedRawTransaction, callback) {
-        return function (dispatch) {
+      sendRawTransaction: function () {
+        return function () {
           assert.fail();
         };
       }
@@ -134,7 +135,8 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     },
     stub: {
       packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
-        return function (dispatch) {
+        return function () {
+          var err;
           assert.deepEqual(payload, {
             method: "addMarketToBranch",
             returns: "int256",
@@ -145,13 +147,13 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
           });
           assert.strictEqual(address, "0x0000000000000000000000000000000000000b0b");
           assert.strictEqual(privateKey.toString("hex"), "1111111111111111111111111111111111111111111111111111111111111111");
-          var err = errors.NOT_LOGGED_IN;
+          err = errors.NOT_LOGGED_IN;
           if (!callback) throw new RPCError(err);
           callback(err);
         };
       },
-      sendRawTransaction: function (signedRawTransaction, callback) {
-        return function (dispatch) {
+      sendRawTransaction: function () {
+        return function () {
           assert.fail();
         };
       }
@@ -177,7 +179,8 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     },
     stub: {
       packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
-        return function (dispatch) {
+        return function () {
+          var signedRawTransaction;
           assert.deepEqual(payload, {
             method: "addMarketToBranch",
             returns: "int256",
@@ -188,15 +191,16 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
           });
           assert.strictEqual(address, "0x0000000000000000000000000000000000000b0b");
           assert.strictEqual(privateKey.toString("hex"), "1111111111111111111111111111111111111111111111111111111111111111");
-          var signedRawTransaction = "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1";
+          signedRawTransaction = "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1";
           if (!callback) return signedRawTransaction;
           callback(signedRawTransaction);
         };
       },
       sendRawTransaction: function (signedRawTransaction, callback) {
-        return function (dispatch) {
+        return function () {
+          var err;
           assert.strictEqual(signedRawTransaction, "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1");
-          var err = errors.RAW_TRANSACTION_ERROR;
+          err = errors.RAW_TRANSACTION_ERROR;
           if (!callback) throw new RPCError(err);
           callback(err);
         };
@@ -223,7 +227,8 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     },
     stub: {
       packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
-        return function (dispatch) {
+        return function () {
+          var signedRawTransaction;
           assert.deepEqual(payload, {
             method: "addMarketToBranch",
             returns: "int256",
@@ -234,15 +239,16 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
           });
           assert.strictEqual(address, "0x0000000000000000000000000000000000000b0b");
           assert.strictEqual(privateKey.toString("hex"), "1111111111111111111111111111111111111111111111111111111111111111");
-          var signedRawTransaction = "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1";
+          signedRawTransaction = "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1";
           if (!callback) return signedRawTransaction;
           callback(signedRawTransaction);
         };
       },
       sendRawTransaction: function (signedRawTransaction, callback) {
-        return function (dispatch) {
+        return function () {
+          var err;
           assert.strictEqual(signedRawTransaction, "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1");
-          var err = {error: -32603, message: "rlp encoding error"};
+          err = {error: -32603, message: "rlp encoding error"};
           if (!callback) return err;
           callback(err);
         };
@@ -270,7 +276,8 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     stub: {
       isRetry: false,
       packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
-        return function (dispatch) {
+        return function () {
+          var signedRawTransaction;
           assert.deepEqual(payload, {
             method: "addMarketToBranch",
             returns: "int256",
@@ -281,17 +288,18 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
           });
           assert.strictEqual(address, "0x0000000000000000000000000000000000000b0b");
           assert.strictEqual(privateKey.toString("hex"), "1111111111111111111111111111111111111111111111111111111111111111");
-          var signedRawTransaction = "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1";
+          signedRawTransaction = "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1";
           if (!callback) return signedRawTransaction;
           callback(signedRawTransaction);
         };
       },
       sendRawTransaction: function (signedRawTransaction, callback) {
-        return function (dispatch) {
+        return function () {
+          var err;
           assert.strictEqual(signedRawTransaction, "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1");
           if (this.isRetry === false) {
             this.isRetry = true;
-            var err = {error: -32000, message: "Nonce too low"};
+            err = {error: -32000, message: "Nonce too low"};
             if (!callback) return err;
             callback(err);
           }

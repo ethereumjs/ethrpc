@@ -3,8 +3,6 @@
 "use strict";
 
 var assert = require("chai").assert;
-var clone = require("clone");
-var abi = require("augur-abi");
 var mockStore = require("../mock-store");
 var handleRawTransactionError = require("../../src/raw-transactions/handle-raw-transaction-error");
 

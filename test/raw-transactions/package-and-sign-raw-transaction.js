@@ -3,10 +3,6 @@
 "use strict";
 
 var assert = require("chai").assert;
-var clone = require("clone");
-var abi = require("augur-abi");
-var errors = require("../../src/errors/codes");
-var RPCError = require("../../src/errors/rpc-error");
 var isFunction = require("../../src/utils/is-function");
 var proxyquire = require("proxyquire").noPreserveCache();
 var mockStore = require("../mock-store");
@@ -17,20 +13,20 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
       var store = mockStore(t.state || {});
       var packageAndSignRawTransaction = proxyquire("../../src/raw-transactions/package-and-sign-raw-transaction.js", {
         "./set-raw-transaction-gas-price": function (packaged, callback) {
-          return function (dispatch, getState) {
+          return function () {
             packaged.gasPrice = t.blockchain.gasPrice;
             if (!isFunction(callback)) return packaged;
             callback(packaged);
           };
         },
         "./set-raw-transaction-nonce": function (packaged, address, callback) {
-          return function (dispatch, getState) {
+          return function () {
             packaged.nonce = parseInt(t.blockchain.transactionCount, 16);
             if (!isFunction(callback)) return packaged;
             callback(packaged);
-          }
+          };
         },
-        "./sign-raw-transaction": function (packaged, privateKey) {
+        "./sign-raw-transaction": function (packaged/*, privateKey*/) {
           return packaged;
         }
       });

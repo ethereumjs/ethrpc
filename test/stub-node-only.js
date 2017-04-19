@@ -11,6 +11,17 @@ var rpc = require("../src");
 var ErrorWithCode = require("../src/errors").ErrorWithCode;
 var constants = require("../src/constants");
 
+function createReasonableTransactPayload() {
+  return {
+    label: "My Transaction",
+    method: "myTransaction",
+    returns: "uint256",
+    signature: [],
+    from: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+    to: "0xdeadbabedeadbabedeadbabedeadbabedeadbabe"
+  };
+}
+
 describe("tests that only work against stub server", function () {
   function tests(transportType, transportAddress) {
     describe(transportType, function () {
@@ -40,8 +51,9 @@ describe("tests that only work against stub server", function () {
         });
 
         it("returns failure to initial RPC call", function (done) {
+          var configuration;
           stubRpcServer.addResponder(function (jso) { return new Error("apple"); });
-          var configuration = helpers.getRpcConfiguration(transportType, transportAddress);
+          configuration = helpers.getRpcConfiguration(transportType, transportAddress);
           rpc.connect(configuration, function (error) {
             assert.isNotNull(error);
             done();
@@ -80,19 +92,19 @@ describe("tests that only work against stub server", function () {
 
         // NOTE: this test is brittle on Linux.  see: https://github.com/nodejs/node/issues/11973
         it("starts connected > uses connection > loses connection > uses connection > reconnects > uses connection (brittle)", function (done) {
-          stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple" });
+          stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
           helpers.rpcConnect(transportType, transportAddress, function () {
             rpc.version(function (errorOrVersion) {
               assert.strictEqual(errorOrVersion, "apple");
               stubRpcServer.destroy(function () {
                 var doneCount = 0;
-                function maybeDone() { if (++doneCount == 2) done(); }
+                function maybeDone() { if (++doneCount === 2) done(); }
                 rpc.version(function (errorOrVersion) {
                   assert.strictEqual(errorOrVersion, "banana");
                   maybeDone();
                 });
                 stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
-                stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "banana" });
+                stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "banana"; });
                 rpc.version(function (errorOrVersion) {
                   assert.strictEqual(errorOrVersion, "banana");
                   maybeDone();
@@ -316,43 +328,43 @@ describe("tests that only work against stub server", function () {
 
         it("getBlockByHash", function (done) {
           var expectedBlock = {
-            difficulty: '0xd60a0c8',
-            extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
-            gasLimit: '0x47e7c4',
-            gasUsed: '0x5208',
-            hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-            logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-            miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
-            mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
-            nonce: '0x4ea9835c2ac5857e',
-            number: '0x186a0',
-            parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
-            receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
-            sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
-            size: '0x4a7',
-            stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
-            timestamp: '0x5845709c',
-            totalDifficulty: '0xac18c72ebbc',
+            difficulty: "0xd60a0c8",
+            extraData: "0xd783010505846765746887676f312e372e33856c696e7578",
+            gasLimit: "0x47e7c4",
+            gasUsed: "0x5208",
+            hash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
+            logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            miner: "0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54",
+            mixHash: "0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe",
+            nonce: "0x4ea9835c2ac5857e",
+            number: "0x186a0",
+            parentHash: "0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6",
+            receiptsRoot: "0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8",
+            sha3Uncles: "0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08",
+            size: "0x4a7",
+            stateRoot: "0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad",
+            timestamp: "0x5845709c",
+            totalDifficulty: "0xac18c72ebbc",
             transactions:
             [{
-              blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-              blockNumber: '0x186a0',
-              from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
-              gas: '0x4cb26',
-              gasPrice: '0x4a817c800',
-              hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
-              input: '0x',
-              nonce: '0x39c6',
-              to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
-              transactionIndex: '0x0',
-              value: '0xde0b6b3a7640000',
-              v: '0x1c',
-              r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
-              s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
+              blockHash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
+              blockNumber: "0x186a0",
+              from: "0x687422eea2cb73b5d3e242ba5456b782919afc85",
+              gas: "0x4cb26",
+              gasPrice: "0x4a817c800",
+              hash: "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a",
+              input: "0x",
+              nonce: "0x39c6",
+              to: "0x787f88347aa3eefcc16e9e71c672138181bce266",
+              transactionIndex: "0x0",
+              value: "0xde0b6b3a7640000",
+              v: "0x1c",
+              r: "0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486",
+              s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196"
             }],
-            transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
-            uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
-          }
+            transactionsRoot: "0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64",
+            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"]
+          };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getBlockByHash"
               && jso.params.length === 2
@@ -369,27 +381,27 @@ describe("tests that only work against stub server", function () {
 
         it("getBlockByNumber", function (done) {
           var expectedBlock = {
-            difficulty: '0xd60a0c8',
-            extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
-            gasLimit: '0x47e7c4',
-            gasUsed: '0x5208',
-            hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-            logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-            miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
-            mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
-            nonce: '0x4ea9835c2ac5857e',
-            number: '0x186a0',
-            parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
-            receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
-            sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
-            size: '0x4a7',
-            stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
-            timestamp: '0x5845709c',
-            totalDifficulty: '0xac18c72ebbc',
-            transactions: ['0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a'],
-            transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
-            uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
-          }
+            difficulty: "0xd60a0c8",
+            extraData: "0xd783010505846765746887676f312e372e33856c696e7578",
+            gasLimit: "0x47e7c4",
+            gasUsed: "0x5208",
+            hash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
+            logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            miner: "0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54",
+            mixHash: "0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe",
+            nonce: "0x4ea9835c2ac5857e",
+            number: "0x186a0",
+            parentHash: "0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6",
+            receiptsRoot: "0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8",
+            sha3Uncles: "0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08",
+            size: "0x4a7",
+            stateRoot: "0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad",
+            timestamp: "0x5845709c",
+            totalDifficulty: "0xac18c72ebbc",
+            transactions: ["0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a"],
+            transactionsRoot: "0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64",
+            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"]
+          };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getBlockByNumber"
               && jso.params.length === 2
@@ -410,20 +422,20 @@ describe("tests that only work against stub server", function () {
 
         it("getTransactionByHash", function (done) {
           var expectedResult = {
-            blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-            blockNumber: '0x186a0',
-            from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
-            gas: '0x4cb26',
-            gasPrice: '0x4a817c800',
-            hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
-            input: '0x',
-            nonce: '0x39c6',
-            to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
-            transactionIndex: '0x0',
-            value: '0xde0b6b3a7640000',
-            v: '0x1c',
-            r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
-            s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
+            blockHash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
+            blockNumber: "0x186a0",
+            from: "0x687422eea2cb73b5d3e242ba5456b782919afc85",
+            gas: "0x4cb26",
+            gasPrice: "0x4a817c800",
+            hash: "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a",
+            input: "0x",
+            nonce: "0x39c6",
+            to: "0x787f88347aa3eefcc16e9e71c672138181bce266",
+            transactionIndex: "0x0",
+            value: "0xde0b6b3a7640000",
+            v: "0x1c",
+            r: "0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486",
+            s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196"
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getTransactionByHash"
@@ -552,17 +564,17 @@ describe("tests that only work against stub server", function () {
 
         it("getTransactionByHash", function (done) {
           var expectedTransaction = {
-            hash: '0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b',
-            nonce: '0x0',
-            blockHash: '0xbeab0aa2411b7ab17f30a99d3cb9c6ef2fc5426d6ad6fd9e2a26a6aed1d1055b',
-            blockNumber: '0x15df',
-            transactionIndex: '0x1',
-            from: '0x407d73d8a49eeb85d32cf465507dd71d507100c1',
-            to: '0x85h43d8a49eeb85d32cf465507dd71d507100c1',
-            value: '0x7f110',
-            gas: '0x7f110',
-            gasPrice: '0x09184e72a000',
-            input: '0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360'
+            hash: "0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b",
+            nonce: "0x0",
+            blockHash: "0xbeab0aa2411b7ab17f30a99d3cb9c6ef2fc5426d6ad6fd9e2a26a6aed1d1055b",
+            blockNumber: "0x15df",
+            transactionIndex: "0x1",
+            from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1",
+            to: "0x85h43d8a49eeb85d32cf465507dd71d507100c1",
+            value: "0x7f110",
+            gas: "0x7f110",
+            gasPrice: "0x09184e72a000",
+            input: "0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360"
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getTransactionByHash"
@@ -611,18 +623,18 @@ describe("tests that only work against stub server", function () {
 
         it("getTransactionReceipt", function (done) {
           var expectedResult = {
-            blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-            blockNumber: '0x186a0',
+            blockHash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
+            blockNumber: "0x186a0",
             contractAddress: null,
-            cumulativeGasUsed: '0x5208',
-            from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
-            gasUsed: '0x5208',
+            cumulativeGasUsed: "0x5208",
+            from: "0x687422eea2cb73b5d3e242ba5456b782919afc85",
+            gasUsed: "0x5208",
             logs: [],
-            logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-            root: '0xc569ec33d9119c828b96d7bcdcebbd6d810722e6675e8f399339b263978a09de',
-            to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
-            transactionHash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
-            transactionIndex: '0x0'
+            logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            root: "0xc569ec33d9119c828b96d7bcdcebbd6d810722e6675e8f399339b263978a09de",
+            to: "0x787f88347aa3eefcc16e9e71c672138181bce266",
+            transactionHash: "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a",
+            transactionIndex: "0x0"
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getTransactionReceipt"
@@ -639,42 +651,42 @@ describe("tests that only work against stub server", function () {
 
         it("getUncleByBlockHashAndIndex", function (done) {
           var expectedResult = {
-            difficulty: '0xd60a0c8',
-            extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
-            gasLimit: '0x47e7c4',
-            gasUsed: '0x5208',
-            hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-            logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-            miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
-            mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
-            nonce: '0x4ea9835c2ac5857e',
-            number: '0x186a0',
-            parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
-            receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
-            sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
-            size: '0x4a7',
-            stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
-            timestamp: '0x5845709c',
-            totalDifficulty: '0xac18c72ebbc',
+            difficulty: "0xd60a0c8",
+            extraData: "0xd783010505846765746887676f312e372e33856c696e7578",
+            gasLimit: "0x47e7c4",
+            gasUsed: "0x5208",
+            hash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
+            logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            miner: "0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54",
+            mixHash: "0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe",
+            nonce: "0x4ea9835c2ac5857e",
+            number: "0x186a0",
+            parentHash: "0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6",
+            receiptsRoot: "0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8",
+            sha3Uncles: "0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08",
+            size: "0x4a7",
+            stateRoot: "0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad",
+            timestamp: "0x5845709c",
+            totalDifficulty: "0xac18c72ebbc",
             transactions:
             [{
-              blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-              blockNumber: '0x186a0',
-              from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
-              gas: '0x4cb26',
-              gasPrice: '0x4a817c800',
-              hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
-              input: '0x',
-              nonce: '0x39c6',
-              to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
-              transactionIndex: '0x0',
-              value: '0xde0b6b3a7640000',
-              v: '0x1c',
-              r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
-              s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
+              blockHash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
+              blockNumber: "0x186a0",
+              from: "0x687422eea2cb73b5d3e242ba5456b782919afc85",
+              gas: "0x4cb26",
+              gasPrice: "0x4a817c800",
+              hash: "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a",
+              input: "0x",
+              nonce: "0x39c6",
+              to: "0x787f88347aa3eefcc16e9e71c672138181bce266",
+              transactionIndex: "0x0",
+              value: "0xde0b6b3a7640000",
+              v: "0x1c",
+              r: "0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486",
+              s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196"
             }],
-            transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
-            uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
+            transactionsRoot: "0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64",
+            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"]
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getUncleByBlockHashAndIndex"
@@ -692,42 +704,42 @@ describe("tests that only work against stub server", function () {
 
         it("getUncleByBlockNumberAndIndex", function (done) {
           var expectedResult = {
-            difficulty: '0xd60a0c8',
-            extraData: '0xd783010505846765746887676f312e372e33856c696e7578',
-            gasLimit: '0x47e7c4',
-            gasUsed: '0x5208',
-            hash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-            logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-            miner: '0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54',
-            mixHash: '0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe',
-            nonce: '0x4ea9835c2ac5857e',
-            number: '0x186a0',
-            parentHash: '0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6',
-            receiptsRoot: '0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8',
-            sha3Uncles: '0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08',
-            size: '0x4a7',
-            stateRoot: '0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad',
-            timestamp: '0x5845709c',
-            totalDifficulty: '0xac18c72ebbc',
+            difficulty: "0xd60a0c8",
+            extraData: "0xd783010505846765746887676f312e372e33856c696e7578",
+            gasLimit: "0x47e7c4",
+            gasUsed: "0x5208",
+            hash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
+            logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            miner: "0xd490af05bf82ef6c6ba034b22d18c39b5d52cc54",
+            mixHash: "0x36950956217410542fd06b88e474e6df2765d1d9eacc608fa55b834eca84a1fe",
+            nonce: "0x4ea9835c2ac5857e",
+            number: "0x186a0",
+            parentHash: "0x8e535b16f5664fa509585626277e454c63ef4aeb402de0c41d9a364be69517e6",
+            receiptsRoot: "0x4a4ca005b44989d4d4285970c830e61f6ee2b98d16b12b10277bb10232cde8f8",
+            sha3Uncles: "0x9ae8bc973d19b0784e7b47340fad13edadc841b7fcf17894c002407c10befc08",
+            size: "0x4a7",
+            stateRoot: "0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad",
+            timestamp: "0x5845709c",
+            totalDifficulty: "0xac18c72ebbc",
             transactions:
             [{
-              blockHash: '0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918',
-              blockNumber: '0x186a0',
-              from: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
-              gas: '0x4cb26',
-              gasPrice: '0x4a817c800',
-              hash: '0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a',
-              input: '0x',
-              nonce: '0x39c6',
-              to: '0x787f88347aa3eefcc16e9e71c672138181bce266',
-              transactionIndex: '0x0',
-              value: '0xde0b6b3a7640000',
-              v: '0x1c',
-              r: '0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486',
-              s: '0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196'
+              blockHash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
+              blockNumber: "0x186a0",
+              from: "0x687422eea2cb73b5d3e242ba5456b782919afc85",
+              gas: "0x4cb26",
+              gasPrice: "0x4a817c800",
+              hash: "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a",
+              input: "0x",
+              nonce: "0x39c6",
+              to: "0x787f88347aa3eefcc16e9e71c672138181bce266",
+              transactionIndex: "0x0",
+              value: "0xde0b6b3a7640000",
+              v: "0x1c",
+              r: "0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486",
+              s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196"
             }],
-            transactionsRoot: '0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64',
-            uncles: ['0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120']
+            transactionsRoot: "0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64",
+            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"]
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getUncleByBlockNumberAndIndex"
@@ -927,7 +939,7 @@ describe("tests that only work against stub server", function () {
               value: "0x7f110",
               gas: "0x7f110",
               gasPrice: "0x09184e72a000",
-              input: "0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360",
+              input: "0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360"
             }
           };
           server.addExpectation(function (jso) {
@@ -949,7 +961,7 @@ describe("tests that only work against stub server", function () {
             gasPrice: 10000000000000,
             value: 520464,
             data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
-            nonce: 35,
+            nonce: 35
           }, function (resultOrError) {
             assert.deepEqual(resultOrError, expectedResult);
             server.assertExpectations();
@@ -1096,14 +1108,14 @@ describe("tests that only work against stub server", function () {
         });
 
         it("callContractFunction no parameters", function (done) {
-          var expectedObject = {}
+          var expectedObject = {};
           var payload = {
             method: "getBranches",
             label: "Get Branches",
             returns: "hash[]",
             from: "0x00bae5113ee9f252cceb0001205b88fad175461a",
             to: "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
-            params: [],
+            params: []
           };
           function callback(wrappedResultOrError) {
             assert.strictEqual(wrappedResultOrError.resultOrError[0], "0x1");
@@ -1124,12 +1136,12 @@ describe("tests that only work against stub server", function () {
               && jso.params[0].gas === "0x2fd618"
               && jso.params[0].gasPrice === undefined
               && jso.params[0].value === undefined
-              && jso.params[0].data === "0x" + ethereumjsAbi.methodID("getBranches", []).toString('hex')
+              && jso.params[0].data === "0x" + ethereumjsAbi.methodID("getBranches", []).toString("hex")
               && jso.params[1] === "latest";
           });
           server.addResponder(function (jso) {
             if (jso.method === "eth_call") {
-              return "0x" + ethereumjsAbi.rawEncode(['uint256[]'], [[1, 100, 100000]]).toString('hex');
+              return "0x" + ethereumjsAbi.rawEncode(["uint256[]"], [[1, 100, 100000]]).toString("hex");
             }
           });
           rpc.callContractFunction(payload, callback, wrapper, expectedObject);
@@ -1195,8 +1207,8 @@ describe("tests that only work against stub server", function () {
         });
 
         it("waitForNextBlocks", function (done) {
-          constants.BLOCK_POLL_INTERVAL = 1;
           var currentBlock = 5;
+          constants.BLOCK_POLL_INTERVAL = 1;
           server.addExpectations(3, function (jso) { return jso.method === "eth_blockNumber"; });
           server.addResponder(function (jso) { if (jso.method === "eth_blockNumber") return "0x" + (currentBlock++).toString(16); });
           rpc.waitForNextBlocks(2, null, function (resultOrError) {
@@ -1208,14 +1220,14 @@ describe("tests that only work against stub server", function () {
         });
 
         it("callOrSendTransaction", function (done) {
-          var expectedResults = "0x" + ethereumjsAbi.rawEncode(['uint256[]'], [[1, 100, 100000]]).toString('hex');
+          var expectedResults = "0x" + ethereumjsAbi.rawEncode(["uint256[]"], [[1, 100, 100000]]).toString("hex");
           var payload = {
             method: "getBranches",
             label: "Get Branches",
             returns: "hash[]",
             from: "0x00bae5113ee9f252cceb0001205b88fad175461a",
             to: "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
-            params: [],
+            params: []
           };
           server.addResponder(function (jso) { if (jso.method === "eth_call") return expectedResults; });
           rpc.callOrSendTransaction(payload, function (resultOrError) {
@@ -1230,16 +1242,16 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can subscribe to new logs", function (done) {
+          var called = false;
           server.addResponder(function (jso) {
             if (jso.method === "eth_getLogs") return [{}];
           });
-          var called = false;
           rpc.getBlockAndLogStreamer().addLogFilter({});
           rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { done(); });
         });
 
         it("can supply a log filter", function (done) {
-          server.addResponder(function (jso) { if (jso.method == "eth_getLogs") return [{}]; });
+          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
           server.addExpectation(function (jso) {
             return jso.method === "eth_getLogs"
               && jso.params.length === 1
@@ -1257,20 +1269,22 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can unsubscribe from log filter", function (done) {
+          var called, token;
           server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
-          var called = false;
-          var token = rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { called = true; });
+          called = false;
+          token = rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { called = true; });
           rpc.getBlockAndLogStreamer().unsubscribeFromOnLogAdded(token);
-          rpc.getBlockAndLogStreamer().subscribeToOnBlockAdded(function (block) { done(called ? new Error("log handler was called") : undefined); })
+          rpc.getBlockAndLogStreamer().subscribeToOnBlockAdded(function (block) { done(called ? new Error("log handler was called") : undefined); });
         });
 
         it("can remove log filter", function (done) {
+          var token;
           server.addResponder(function (jso) {
-            if (jso.method == "eth_getLogs") {
+            if (jso.method === "eth_getLogs") {
               done(new Error("should not be called"));
             }
           });
-          var token = rpc.getBlockAndLogStreamer().addLogFilter({
+          token = rpc.getBlockAndLogStreamer().addLogFilter({
             address: "0xbadf00d",
             topics: ["0xdeadbeef"]
           });
@@ -1288,14 +1302,3 @@ describe("tests that only work against stub server", function () {
   tests("WS", "ws://localhost:1337");
   tests("HTTP", "http://localhost:1337");
 });
-
-function createReasonableTransactPayload() {
-  return {
-    label: "My Transaction",
-    method: "myTransaction",
-    returns: "uint256",
-    signature: [],
-    from: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-    to: "0xdeadbabedeadbabedeadbabedeadbabedeadbabe",
-  }
-}

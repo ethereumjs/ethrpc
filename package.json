@@ -6,8 +6,8 @@
   "license": "MIT",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha test/",
-    "lint": "eslint src",
+    "test": "mocha",
+    "lint": "eslint src && eslint test",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/",
     "link": "npm link augur-contracts"
   },

@@ -5,8 +5,6 @@
 var assert = require("chai").assert;
 var sha3 = require("../../src/utils/sha3");
 
-"use strict";
-
 describe("utils/sha3", function () {
   var test = function (t) {
     it(t.description, function (done) {

@@ -1,3 +1,7 @@
+/* eslint-env mocha */
+
+"use strict";
+
 var assert = require("chai").assert;
 var Notifier = require("../../src/block-management/notifier");
 
@@ -12,7 +16,7 @@ describe("block-management/notifier", function () {
     notifier.notifySubscribers();
   });
 
-  it("works with single parameter notifications", function(done) {
+  it("works with single parameter notifications", function (done) {
     var notifier = new Notifier();
     notifier.subscribe(function (a, b) {
       assert.strictEqual(a, "apple");
@@ -22,7 +26,7 @@ describe("block-management/notifier", function () {
     notifier.notifySubscribers("apple");
   });
 
-  it("works with multiple parameter notifications", function(done) {
+  it("works with multiple parameter notifications", function (done) {
     var notifier = new Notifier();
     notifier.subscribe(function (a, b, c) {
       assert.strictEqual(a, "apple");
@@ -41,12 +45,12 @@ describe("block-management/notifier", function () {
     notifier.notifySubscribers("apple", "banana");
   });
 
-  it ("notifies multiple times", function (done) {
+  it("notifies multiple times", function (done) {
     var notifier = new Notifier();
     var notifiersContacted = 0;
-    notifier.subscribe(function() {
+    notifier.subscribe(function () {
       ++notifiersContacted;
-      if (notifiersContacted == 2) done();
+      if (notifiersContacted === 2) done();
     });
     notifier.notifySubscribers();
     notifier.notifySubscribers();
@@ -57,7 +61,7 @@ describe("block-management/notifier", function () {
     var notifiersContacted = 0;
     function onNotification() {
       ++notifiersContacted;
-      if (notifiersContacted == 2) done();
+      if (notifiersContacted === 2) done();
     }
     notifier.subscribe(onNotification);
     notifier.subscribe(onNotification);

@@ -6,24 +6,25 @@ var rpc = require("../src");
 
 module.exports.getIpcAddress = function () {
   return process.env.ETHRPC_TEST_IPC_ADDRESS || ((os.type() === "Windows_NT") ? "\\\\.\\pipe\\TestRPC" : "testrpc.ipc");
-}
+};
 
 module.exports.getWsAddress = function () {
   return process.env.ETHRPC_TEST_WS_ADRESS || "ws://localhost:1337";
-}
+};
 
 module.exports.getHttpAddress = function () {
   return process.env.ETHRPC_TEST_HTTP_ADDRESS || "http://localhost:1337";
-}
+};
 
 module.exports.rpcConnect = function (transportType, transportAddress, callback) {
+  var configuration;
   function assertingCallback(error) {
     assert.isNull(error, (error || {}).message);
     callback();
   }
-  var configuration = this.getRpcConfiguration(transportType, transportAddress);
+  configuration = this.getRpcConfiguration(transportType, transportAddress);
   rpc.connect(configuration, assertingCallback);
-}
+};
 
 module.exports.getRpcConfiguration = function (transportType, transportAddress) {
   function errorHandler(error) {
@@ -31,7 +32,7 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
   }
 
   switch (transportType) {
-    case 'IPC':
+    case "IPC":
       return {
         ipcAddresses: [transportAddress],
         wsAddresses: [],
@@ -40,7 +41,7 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         blockRetention: 5,
         errorHandler: errorHandler
       };
-    case 'WS':
+    case "WS":
       return {
         ipcAddresses: [],
         wsAddresses: [transportAddress],
@@ -49,7 +50,7 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         blockRetention: 5,
         errorHandler: errorHandler
       };
-    case 'HTTP':
+    case "HTTP":
       return {
         ipcAddresses: [],
         wsAddresses: [],
@@ -61,4 +62,4 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
     default:
       assert.false(true, "Unknown transportType: " + transportType);
   }
-}
+};

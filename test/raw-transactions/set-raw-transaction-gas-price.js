@@ -3,10 +3,6 @@
 "use strict";
 
 var assert = require("chai").assert;
-var clone = require("clone");
-var abi = require("augur-abi");
-var errors = require("../../src/errors/codes");
-var RPCError = require("../../src/errors/rpc-error");
 var isFunction = require("../../src/utils/is-function");
 var proxyquire = require("proxyquire").noPreserveCache();
 var mockStore = require("../mock-store");
@@ -18,7 +14,7 @@ describe("raw-transactions/set-raw-transaction-gas-price", function () {
       var setRawTransactionGasPrice = proxyquire("../../src/raw-transactions/set-raw-transaction-gas-price.js", {
         "../wrappers/eth": {
           gasPrice: function (params, callback) {
-            return function (dispatch) {
+            return function () {
               if (!isFunction(callback)) return t.blockchain.gasPrice;
               callback(t.blockchain.gasPrice);
             };

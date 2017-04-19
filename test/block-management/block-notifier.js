@@ -1,3 +1,7 @@
+/* eslint-env mocha */
+
+"use strict";
+
 var assert = require("chai").assert;
 var BlockNotifier = require("../../src/block-management/block-notifier");
 var MockTransport = require("./mock-transport");
@@ -15,9 +19,9 @@ describe("block-management/block-notifier", function () {
 
   // disabled due to a bug in geth that requires us to fetch the block on subscription notification
   // it("uses subscriptions when available", function (done) {
+  //   var pushing = false;
   //   blockNotifier = new BlockNotifier(mockTransport, 1);
   //   mockTransport.getLatestBlock = assertingCallback;
-  //   var pushing = false;
   //   blockNotifier.subscribe(function (block) {
   //     assert.isTrue(pushing);
   //     assert.deepEqual(block, mockTransport.getCurrentBlock());
@@ -42,9 +46,9 @@ describe("block-management/block-notifier", function () {
   });
 
   it("falls back to polling if re-subscribing after reconnect fails", function (done) {
+    var token, wasCalled = false;
     blockNotifier = new BlockNotifier(mockTransport, 1);
-    var wasCalled = false;
-    var token = blockNotifier.subscribe(function (block) {
+    token = blockNotifier.subscribe(function (block) {
       if (wasCalled) assert.isFalse(true, "should have only been called once");
       wasCalled = true;
       assert.deepEqual(block, mockTransport.getCurrentBlock());

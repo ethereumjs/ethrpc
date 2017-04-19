@@ -1,3 +1,7 @@
+/* eslint-env mocha */
+
+"use strict";
+
 var assert = require("chai").assert;
 var MockTransport = require("./mock-transport");
 var SubscribingBlockNotifier = require("../../src/block-management/subscribing-block-notifier");
@@ -26,15 +30,17 @@ describe("block-management/subscribing-block-notifier", function () {
   });
 
   it("calls error callback on new heads subscription failure", function (done) {
-    mockTransport.subscribeToNewHeads = function (_, subscriptionFailureCallback) { subscriptionFailureCallback(); }
-    var subscribingBlockNotifier = new SubscribingBlockNotifier(mockTransport, function () {
+    var subscribingBlockNotifier;
+    mockTransport.subscribeToNewHeads = function (_, subscriptionFailureCallback) { subscriptionFailureCallback(); };
+    subscribingBlockNotifier = new SubscribingBlockNotifier(mockTransport, function () {
       done();
     });
   });
 
   it("calls error callback on reconnect subscription failure", function (done) {
-    mockTransport.subscribeToReconnects = function (_, subscriptionFailureCallback) { subscriptionFailureCallback(); }
-    var subscribingBlockNotifier = new SubscribingBlockNotifier(mockTransport, function () {
+    var subscribingBlockNotifier;
+    mockTransport.subscribeToReconnects = function (_, subscriptionFailureCallback) { subscriptionFailureCallback(); };
+    subscribingBlockNotifier = new SubscribingBlockNotifier(mockTransport, function () {
       done();
     });
   });
