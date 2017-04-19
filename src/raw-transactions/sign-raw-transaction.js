@@ -6,9 +6,10 @@ var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
 
 /**
- * Sign the transaction using the private key.
+ * Sign the transaction using either a private key or a signing function.
  * @param {Object} packaged Unsigned transaction.
- * @param {buffer} privateKey The sender's plaintext private key.
+ * @param {buffer|function} privateKeyOrSigner Sender's plaintext private key or signing function.
+ * @param {function=} callback Callback function (optional).
  * @return {string} Signed and serialized raw transaction.
  */
 function signRawTransaction(packaged, privateKeyOrSigner, callback) {
@@ -19,7 +20,7 @@ function signRawTransaction(packaged, privateKeyOrSigner, callback) {
       ? privateKeyOrSigner(transaction, callback)
       : signTransactionWithKey(transaction, privateKeyOrSigner, callback);
   } catch (error) {
-    return callback(error, undefined);
+    return callback(error);
   }
 }
 

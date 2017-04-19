@@ -12,7 +12,7 @@ var errors = require("../errors/codes");
  * Package and sign a raw transaction.
  * @param {Object} payload Static API data with "params" and "from" set.
  * @param {string} address The sender's Ethereum address.
- * @param {buffer} privateKey The sender's plaintext private key.
+ * @param {buffer|function} privateKeyOrSigner Sender's plaintext private key or signing function.
  * @param {function=} callback Callback function (optional).
  * @return {string|void} Signed transaction.
  */
