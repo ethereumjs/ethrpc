@@ -23,7 +23,6 @@ var net_ = require("./wrappers/net");
 var web3 = require("./wrappers/web3");
 var personal = require("./wrappers/personal");
 var shh = require("./wrappers/shh");
-var txpool = require("./wrappers/txpool");
 var miner = require("./wrappers/miner");
 var sendEther = require("./wrappers/send-ether");
 var publish = require("./wrappers/publish");
@@ -76,7 +75,6 @@ var createEthrpc = function (store) {
     eth: bindDispatch(dispatch, eth),
     net: bindDispatch(dispatch, net_),
     web3: bindDispatch(dispatch, web3),
-    txpool: bindDispatch(dispatch, txpool),
     shh: bindDispatch(dispatch, shh),
     miner: bindDispatch(dispatch, miner),
     personal: bindDispatch(dispatch, personal),

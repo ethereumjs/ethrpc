@@ -16170,7 +16170,19 @@ module.exports = function () {
 }).call(this,require("buffer").Buffer)
 },{"buffer":14,"ethereum-common/params.json":37,"ethereumjs-util":45}],45:[function(require,module,exports){
 (function (Buffer){
-var _typeof4 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof6 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof5 = typeof Symbol === "function" && _typeof6(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof6(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof6(obj);
+};
+
+var _typeof4 = typeof Symbol === "function" && _typeof5(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof5(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof5(obj);
+};
 
 var _typeof3 = typeof Symbol === "function" && _typeof4(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof4(obj);
@@ -39381,7 +39393,6 @@ var net_ = require("./wrappers/net");
 var web3 = require("./wrappers/web3");
 var personal = require("./wrappers/personal");
 var shh = require("./wrappers/shh");
-var txpool = require("./wrappers/txpool");
 var miner = require("./wrappers/miner");
 var sendEther = require("./wrappers/send-ether");
 var publish = require("./wrappers/publish");
@@ -39434,7 +39445,6 @@ var createEthrpc = function (store) {
     eth: bindDispatch(dispatch, eth),
     net: bindDispatch(dispatch, net_),
     web3: bindDispatch(dispatch, web3),
-    txpool: bindDispatch(dispatch, txpool),
     shh: bindDispatch(dispatch, shh),
     miner: bindDispatch(dispatch, miner),
     personal: bindDispatch(dispatch, personal),
@@ -39578,7 +39588,7 @@ var createEthrpc = function (store) {
 
 module.exports = createEthrpc;
 
-},{"./block-management/ensure-latest-block":151,"./block-management/wait-for-next-blocks":157,"./clear-transactions":158,"./connect":159,"./debug/set-debug-options":162,"./encode-request/package-request":168,"./errors/codes":170,"./internal-state":176,"./raw-transactions/package-and-sign-raw-transaction":182,"./raw-transactions/package-and-submit-raw-transaction":183,"./raw-transactions/package-raw-transaction":184,"./raw-transactions/sign-raw-transaction":188,"./reset-state":201,"./transact/call-contract-function":210,"./transact/call-or-send-transaction":211,"./transact/transact":215,"./transaction-relay/exclude-from-transaction-relay":220,"./transaction-relay/include-in-transaction-relay":221,"./transaction-relay/register-transaction-relay":222,"./transaction-relay/unregister-transaction-relay":223,"./utils/is-function":234,"./utils/sha3":241,"./validate/validate-and-default-block-number":243,"./validate/validate-transaction":247,"./wrappers/bind-dispatch":249,"./wrappers/eth":250,"./wrappers/is-unlocked":252,"./wrappers/miner":254,"./wrappers/net":255,"./wrappers/personal":256,"./wrappers/publish":257,"./wrappers/raw":258,"./wrappers/resend-raw-transaction":259,"./wrappers/resend-transaction":260,"./wrappers/send-ether":261,"./wrappers/shh":262,"./wrappers/txpool":263,"./wrappers/web3":264}],162:[function(require,module,exports){
+},{"./block-management/ensure-latest-block":151,"./block-management/wait-for-next-blocks":157,"./clear-transactions":158,"./connect":159,"./debug/set-debug-options":162,"./encode-request/package-request":168,"./errors/codes":170,"./internal-state":176,"./raw-transactions/package-and-sign-raw-transaction":182,"./raw-transactions/package-and-submit-raw-transaction":183,"./raw-transactions/package-raw-transaction":184,"./raw-transactions/sign-raw-transaction":188,"./reset-state":201,"./transact/call-contract-function":210,"./transact/call-or-send-transaction":211,"./transact/transact":215,"./transaction-relay/exclude-from-transaction-relay":220,"./transaction-relay/include-in-transaction-relay":221,"./transaction-relay/register-transaction-relay":222,"./transaction-relay/unregister-transaction-relay":223,"./utils/is-function":234,"./utils/sha3":241,"./validate/validate-and-default-block-number":243,"./validate/validate-transaction":247,"./wrappers/bind-dispatch":249,"./wrappers/eth":250,"./wrappers/is-unlocked":252,"./wrappers/miner":254,"./wrappers/net":255,"./wrappers/personal":256,"./wrappers/publish":257,"./wrappers/raw":258,"./wrappers/resend-raw-transaction":259,"./wrappers/resend-transaction":260,"./wrappers/send-ether":261,"./wrappers/shh":262,"./wrappers/web3":263}],162:[function(require,module,exports){
 "use strict";
 
 module.exports = function (debugOptions) {
@@ -43129,17 +43139,6 @@ module.exports = {
 };
 
 },{"./make-wrapper":253}],263:[function(require,module,exports){
-"use strict";
-
-var makeWrapper = require("./make-wrapper");
-
-module.exports = {
-  content: makeWrapper("txpool_content"),
-  inspect: makeWrapper("txpool_inspect"),
-  status: makeWrapper("txpool_status")
-};
-
-},{"./make-wrapper":253}],264:[function(require,module,exports){
 "use strict";
 
 var makeWrapper = require("./make-wrapper");
