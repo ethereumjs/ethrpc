@@ -16124,7 +16124,19 @@ module.exports = function () {
 }).call(this,require("buffer").Buffer)
 },{"buffer":16,"ethereum-common/params.json":39,"ethereumjs-util":45}],45:[function(require,module,exports){
 (function (Buffer){
-var _typeof15 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof17 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof16 = typeof Symbol === "function" && _typeof17(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof17(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof17(obj);
+};
+
+var _typeof15 = typeof Symbol === "function" && _typeof16(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof16(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof16(obj);
+};
 
 var _typeof14 = typeof Symbol === "function" && _typeof15(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof15(obj);
@@ -39272,6 +39284,7 @@ module.exports = clearTransactions;
 var net_version = require("./wrappers/net").version;
 var getGasPrice = require("./wrappers/get-gas-price");
 var Transporter = require("./transport/transporter");
+var ensureLatestBlock = require("./block-management/ensure-latest-block");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
 var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var onNewBlock = require("./block-management/on-new-block");
@@ -39279,6 +39292,7 @@ var validateConfiguration = require("./validate/validate-configuration");
 var resetState = require("./reset-state");
 var ErrorWithData = require("./errors").ErrorWithData;
 var isFunction = require("./utils/is-function");
+var noop = require("./utils/noop");
 var internalState = require("./internal-state");
 
 /**
@@ -39334,6 +39348,7 @@ function connect(configuration, initialConnectCallback) {
         }, dispatch(createTransportAdapter(transporter)), internalState.get("outOfBandErrorHandler"));
         internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) { dispatch(onNewBlock(block)); });
         dispatch(getGasPrice());
+        dispatch(ensureLatestBlock(noop));
         initialConnectCallback(null);
       }));
     });
@@ -39342,7 +39357,7 @@ function connect(configuration, initialConnectCallback) {
 
 module.exports = connect;
 
-},{"./block-management/create-block-and-log-streamer":150,"./block-management/ethrpc-transport-adapter":152,"./block-management/on-new-block":154,"./errors":172,"./internal-state":176,"./reset-state":200,"./transport/transporter":229,"./utils/is-function":233,"./validate/validate-configuration":244,"./wrappers/get-gas-price":250,"./wrappers/net":254}],160:[function(require,module,exports){
+},{"./block-management/create-block-and-log-streamer":150,"./block-management/ensure-latest-block":151,"./block-management/ethrpc-transport-adapter":152,"./block-management/on-new-block":154,"./errors":172,"./internal-state":176,"./reset-state":200,"./transport/transporter":229,"./utils/is-function":233,"./utils/noop":239,"./validate/validate-configuration":244,"./wrappers/get-gas-price":250,"./wrappers/net":254}],160:[function(require,module,exports){
 "use strict";
 
 var BigNumber = require("bignumber.js");

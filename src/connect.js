@@ -3,6 +3,7 @@
 var net_version = require("./wrappers/net").version;
 var getGasPrice = require("./wrappers/get-gas-price");
 var Transporter = require("./transport/transporter");
+var ensureLatestBlock = require("./block-management/ensure-latest-block");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
 var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var onNewBlock = require("./block-management/on-new-block");
@@ -10,6 +11,7 @@ var validateConfiguration = require("./validate/validate-configuration");
 var resetState = require("./reset-state");
 var ErrorWithData = require("./errors").ErrorWithData;
 var isFunction = require("./utils/is-function");
+var noop = require("./utils/noop");
 var internalState = require("./internal-state");
 
 /**
@@ -65,6 +67,7 @@ function connect(configuration, initialConnectCallback) {
         }, dispatch(createTransportAdapter(transporter)), internalState.get("outOfBandErrorHandler"));
         internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) { dispatch(onNewBlock(block)); });
         dispatch(getGasPrice());
+        dispatch(ensureLatestBlock(noop));
         initialConnectCallback(null);
       }));
     });
