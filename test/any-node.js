@@ -1,10 +1,11 @@
-"use strict";
+/* eslint-env mocha */
 
-var helpers = require("./helpers.js");
-var rpc = require("../src/index.js");
+"use strict";
 
 var assert = require("chai").assert;
 var StubServer = require("ethereumjs-stub-rpc-server");
+var helpers = require("./helpers");
+var rpc = require("../src");
 
 describe("tests that work against any node (test or live)", function () {
   function tests(transportType, transportAddress) {
@@ -17,10 +18,9 @@ describe("tests that work against any node (test or live)", function () {
       afterEach(function (done) {
         server.destroy(done);
       });
-
       describe("version", function () {
         it("returns a version string", function (done) {
-          rpc.version(function (version, error) {
+          rpc.version(function (version) {
             assert.strictEqual(typeof version, "string");
             done();
           });

@@ -1,13 +1,14 @@
 "use strict";
 
-var Notifier = require("./notifier.js");
-var validateBlock = require("./validate-block.js");
+var Notifier = require("./notifier");
+var validateBlock = require("../validate/validate-block");
 
 function SubscribingBlockNotifier(transport, onUnrecoverableSubscriptionFailure) {
+  var reconnectToken, subscriptionToken, onNewHeadsSubscriptionError, onNewHead, setupSubscriptions, onReconnectsSubscriptionError, onReconnect;
   Notifier.call(this);
 
-  var reconnectToken = null;
-  var subscriptionToken = null;
+  reconnectToken = null;
+  subscriptionToken = null;
 
   this.destroy = function () {
     this.unsubscribeAll();
@@ -15,12 +16,12 @@ function SubscribingBlockNotifier(transport, onUnrecoverableSubscriptionFailure)
     if (subscriptionToken) transport.unsubscribeFromNewHeads(subscriptionToken);
   }.bind(this);
 
-  var onNewHeadsSubscriptionError = function () {
+  onNewHeadsSubscriptionError = function () {
     this.destroy();
     onUnrecoverableSubscriptionFailure();
   }.bind(this);
 
-  var onNewHead = function (/*blockHeader*/) {
+  onNewHead = function (/*blockHeader*/) {
     // unfortunately we have to fetch the new block until https://github.com/ethereum/go-ethereum/issues/13858 is fixed
     transport.getLatestBlock(function (error, newBlock) {
       validateBlock(newBlock);
@@ -28,18 +29,18 @@ function SubscribingBlockNotifier(transport, onUnrecoverableSubscriptionFailure)
     }.bind(this));
   }.bind(this);
 
-  var setupSubscriptions = function () {
+  setupSubscriptions = function () {
     subscriptionToken = transport.subscribeToNewHeads(onNewHead, onNewHeadsSubscriptionError);
-  }.bind(this);
+  };
 
-  var onReconnectsSubscriptionError = function () {
+  onReconnectsSubscriptionError = function () {
     this.destroy();
     onUnrecoverableSubscriptionFailure();
   }.bind(this);
 
-  var onReconnect = function () {
+  onReconnect = function () {
     setupSubscriptions();
-  }.bind(this);
+  };
 
   reconnectToken = transport.subscribeToReconnects(onReconnect, onReconnectsSubscriptionError);
   setupSubscriptions();

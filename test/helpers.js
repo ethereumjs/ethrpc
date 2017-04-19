@@ -1,9 +1,8 @@
 "use strict";
 
-var rpc = require("../src/index.js");
-
 var assert = require("chai").assert;
 var os = require("os");
+var rpc = require("../src");
 
 module.exports.getIpcAddress = function () {
   return process.env.ETHRPC_TEST_IPC_ADDRESS || ((os.type() === "Windows_NT") ? "\\\\.\\pipe\\TestRPC" : "testrpc.ipc");
@@ -39,7 +38,7 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         httpAddresses: [],
         pollingIntervalMilliseconds: 1,
         blockRetention: 5,
-        errorHandler: errorHandler,
+        errorHandler: errorHandler
       };
     case 'WS':
       return {
@@ -48,7 +47,7 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         httpAddresses: [],
         pollingIntervalMilliseconds: 1,
         blockRetention: 5,
-        errorHandler: errorHandler,
+        errorHandler: errorHandler
       };
     case 'HTTP':
       return {
@@ -57,7 +56,7 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         httpAddresses: [transportAddress],
         pollingIntervalMilliseconds: 1,
         blockRetention: 5,
-        errorHandler: errorHandler,
+        errorHandler: errorHandler
       };
     default:
       assert.false(true, "Unknown transportType: " + transportType);

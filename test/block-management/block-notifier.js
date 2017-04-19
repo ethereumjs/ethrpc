@@ -1,8 +1,8 @@
 var assert = require("chai").assert;
-var BlockNotifier = require("../../src/block-management/block-notifier.js");
-var MockTransport = require("./mock-transport.js");
+var BlockNotifier = require("../../src/block-management/block-notifier");
+var MockTransport = require("./mock-transport");
 
-describe("BlockNotifier", function () {
+describe("block-management/block-notifier", function () {
   var assertingCallback = function () { assert.isFalse(true, "should not have been called"); };
   var mockTransport;
   var blockNotifier;

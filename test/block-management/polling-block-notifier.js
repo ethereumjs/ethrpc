@@ -1,8 +1,8 @@
 var assert = require("chai").assert;
-var MockTransport = require("./mock-transport.js");
-var PollingBlockNotifier = require("../../src/block-management/polling-block-notifier.js");
+var MockTransport = require("./mock-transport");
+var PollingBlockNotifier = require("../../src/block-management/polling-block-notifier");
 
-describe("PollingBlockNotifier", function () {
+describe("block-management/polling-block-notifier", function () {
   var mockTransport;
   beforeEach(function () {
     mockTransport = new MockTransport();

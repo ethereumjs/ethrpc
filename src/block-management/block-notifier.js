@@ -5,9 +5,10 @@ var PollingBlockNotifier = require("./polling-block-notifier.js");
 var SubscribingBlockNotifier = require("./subscribing-block-notifier.js");
 
 function BlockNotifier(transport, pollingIntervalMilliseconds) {
+  var blockNotifier;
   Notifier.call(this);
 
-  var blockNotifier = new SubscribingBlockNotifier(transport, function () {
+  blockNotifier = new SubscribingBlockNotifier(transport, function () {
     blockNotifier.destroy();
     blockNotifier = new PollingBlockNotifier(transport, pollingIntervalMilliseconds);
     blockNotifier.subscribe(this.notifySubscribers);

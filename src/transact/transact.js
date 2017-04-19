@@ -1,0 +1,45 @@
+/**
+ * Send-call-confirm callback sequence
+ */
+
+"use strict";
+
+var sha3 = require("../utils/sha3");
+var transactAsync = require("../transact/transact-async");
+var callContractFunction = require("../transact/call-contract-function");
+var isFunction = require("../utils/is-function");
+var noop = require("../utils/noop");
+var errors = require("../errors/codes");
+
+function transact(payload, onSent, onSuccess, onFailed) {
+  return function (dispatch, getState) {
+    var onSentCallback, onSuccessCallback, onFailedCallback, debug;
+    debug = getState().debug;
+    if (debug.tx) console.log("payload transact:", payload);
+    onSentCallback = onSent;
+    onSuccessCallback = (isFunction(onSuccess)) ? onSuccess : noop;
+    onFailedCallback = function (response) {
+      // notify subscribers of failed transaction
+      dispatch({
+        type: "TRANSACTION_FAILED",
+        hash: (response && response.hash) || sha3(JSON.stringify(payload))
+      });
+      if (isFunction(onFailed)) onFailed(response);
+    };
+    payload.send = false;
+    if (payload.mutable || payload.returns === "null") {
+      return dispatch(transactAsync(payload, null, onSentCallback, onSuccessCallback, onFailedCallback));
+    }
+    dispatch(callContractFunction(payload, function (callReturn) {
+      if (debug.tx) console.log("callReturn:", callReturn);
+      if (callReturn == null) {
+        return onFailedCallback(errors.NULL_CALL_RETURN);
+      } else if (callReturn.error) {
+        return onFailedCallback(callReturn);
+      }
+      dispatch(transactAsync(payload, callReturn, onSentCallback, onSuccessCallback, onFailedCallback));
+    }));
+  };
+}
+
+module.exports = transact;

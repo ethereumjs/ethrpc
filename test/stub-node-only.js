@@ -1,13 +1,15 @@
-"use strict";
+/* eslint-env mocha */
 
-var helpers = require("./helpers.js");
-var rpc = require("../src/index.js");
-var StubServer = require("ethereumjs-stub-rpc-server");
-var ErrorWithCode = require("../src/errors.js").ErrorWithCode;
+"use strict";
 
 var assert = require("chai").assert;
 var ethereumjsAbi = require("ethereumjs-abi");
 var os = require("os");
+var StubServer = require("ethereumjs-stub-rpc-server");
+var helpers = require("./helpers");
+var rpc = require("../src");
+var ErrorWithCode = require("../src/errors").ErrorWithCode;
+var constants = require("../src/constants");
 
 describe("tests that only work against stub server", function () {
   function tests(transportType, transportAddress) {
@@ -25,9 +27,14 @@ describe("tests that only work against stub server", function () {
         });
 
         it("has no addresses", function (done) {
-          rpc.connect({ httpAddresses: [], wsAddresses: [], ipcAddresses: [], errorHandler: function (error) { assert.fail(error); } }, function (error) {
+          rpc.connect({
+            httpAddresses: [],
+            wsAddresses: [],
+            ipcAddresses: [],
+            errorHandler: function (error) { assert.fail(error); }
+          }, function (error) {
             assert.isNotNull(error);
-            assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any tranpsort (MetaMask, HTTP, WS, IPC).");
+            assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any tranpsort (Web3, HTTP, WS, IPC).");
             done();
           });
         });
@@ -41,9 +48,22 @@ describe("tests that only work against stub server", function () {
           });
         });
 
+        it("starts connected > uses connection", function (done) {
+          stubRpcServer.addResponder(function (request) {
+            if (request.method === "net_version") return "apple";
+          });
+          helpers.rpcConnect(transportType, transportAddress, function () {
+            rpc.version(function (errorOrVersion) {
+              assert.strictEqual(errorOrVersion, "apple");
+              done();
+            });
+          });
+        });
+
         it("starts connected > uses connection > loses connection > reconnects > uses connection", function (done) {
-          this.timeout(4000);
-          stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple" });
+          stubRpcServer.addResponder(function (request) {
+            if (request.method === "net_version") return "apple";
+          });
           helpers.rpcConnect(transportType, transportAddress, function () {
             rpc.version(function (errorOrVersion) {
               assert.strictEqual(errorOrVersion, "apple");
@@ -60,7 +80,6 @@ describe("tests that only work against stub server", function () {
 
         // NOTE: this test is brittle on Linux.  see: https://github.com/nodejs/node/issues/11973
         it("starts connected > uses connection > loses connection > uses connection > reconnects > uses connection (brittle)", function (done) {
-          this.timeout(6000);
           stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple" });
           helpers.rpcConnect(transportType, transportAddress, function () {
             rpc.version(function (errorOrVersion) {
@@ -129,8 +148,8 @@ describe("tests that only work against stub server", function () {
 
         it("sha3", function (done) {
           // sha3 is optimized to do the hash locally rather than on the ethereum node, so we don't need any setup
-          assert.strictEqual(rpc.sha3("0x68656c6c6f20776f726c64", true), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
-          assert.strictEqual(rpc.sha3("hello world", false), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
+          assert.strictEqual(rpc.sha3("0x68656c6c6f20776f726c64", "hex"), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
+          assert.strictEqual(rpc.sha3("hello world", "utf8"), "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad");
           done();
         });
       });
@@ -261,6 +280,16 @@ describe("tests that only work against stub server", function () {
         });
 
         it("gasPrice", function (done) {
+          server.addExpectation(function (jso) { return jso.method === "eth_gasPrice"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_gasPrice") return "0x9184e72a000"; });
+          rpc.gasPrice(function (resultOrError) {
+            assert.strictEqual(resultOrError, "0x9184e72a000");
+            server.assertExpectations();
+            done();
+          });
+        });
+
+        it("getGasPrice", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_gasPrice"; });
           server.addResponder(function (jso) { if (jso.method === "eth_gasPrice") return "0x9184e72a000"; });
           rpc.getGasPrice(function (resultOrError) {
@@ -950,7 +979,11 @@ describe("tests that only work against stub server", function () {
 
         it("syncing (true)", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_syncing"; });
-          server.addResponder(function (jso) { if (jso.method === "eth_syncing") return { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" }; });
+          server.addResponder(function (jso) {
+            if (jso.method === "eth_syncing") {
+              return { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" };
+            }
+          });
           rpc.syncing(function (resultOrError) {
             assert.deepEqual(resultOrError, { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" });
             server.assertExpectations();
@@ -1013,11 +1046,14 @@ describe("tests that only work against stub server", function () {
         it("newIdentity", function (done) {
           var expectedResult = "0xc931d93e97ab07fe42d923478ba2465f283f440fd6cabea4dd7a2c807108f651b7135d1d6ca9007d5b68aa497e4619ac10aa3b27726e1863c1fd9b570d99bbaf";
           server.addExpectation(function (jso) {
-            return jso.method === "shh_newIdentity"
-              && jso.params.length === 0;
+            return jso.method === "shh_newIdentity" && jso.params.length === 0;
           });
-          server.addResponder(function (jso) { if (jso.method === "shh_newIdentity") return expectedResult; });
-          rpc.shh("newIdentity", [], function (resultOrError) {
+          server.addResponder(function (jso) {
+            if (jso.method === "shh_newIdentity") {
+              return expectedResult;
+            }
+          });
+          rpc.shh.newIdentity(function (resultOrError) {
             assert.deepEqual(resultOrError, expectedResult);
             server.assertExpectations();
             done();
@@ -1059,7 +1095,7 @@ describe("tests that only work against stub server", function () {
           clearInterval(interval);
         });
 
-        it("fire no parameters", function (done) {
+        it("callContractFunction no parameters", function (done) {
           var expectedObject = {}
           var payload = {
             method: "getBranches",
@@ -1092,9 +1128,11 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === "latest";
           });
           server.addResponder(function (jso) {
-            if (jso.method === "eth_call") return "0x" + ethereumjsAbi.rawEncode(['uint256[]'], [[1, 100, 100000]]).toString('hex');
+            if (jso.method === "eth_call") {
+              return "0x" + ethereumjsAbi.rawEncode(['uint256[]'], [[1, 100, 100000]]).toString('hex');
+            }
           });
-          rpc.fire(payload, callback, wrapper, expectedObject);
+          rpc.callContractFunction(payload, callback, wrapper, expectedObject);
         });
 
         it("transact pool not accepting", function (done) {
@@ -1124,48 +1162,52 @@ describe("tests that only work against stub server", function () {
         it("ensureLatestBlock", function (done) {
           clearInterval(interval);
           helpers.rpcConnect(transportType, transportAddress, function () {
-            assert.isNull(rpc.block);
+            assert.isNull(rpc.store.getState().currentBlock);
             rpc.ensureLatestBlock(function (error) {
-              assert.isNotNull(rpc.block);
+              assert.isNotNull(rpc.store.getState().currentBlock);
               done();
             });
           });
         });
 
-        // CONSIDER: removing this test as it is testing an internal implementation detail
-        it("unlocked (locked)", function (done) {
-          server.addResponder(function (jso) { if (jso.method === "eth_sign") return new ErrorWithCode("account is locked", -32000); });
-          rpc.unlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
+        it("isUnlocked (locked)", function (done) {
+          server.addResponder(function (jso) {
+            if (jso.method === "eth_sign") {
+              return new ErrorWithCode("account is locked", -32000);
+            }
+          });
+          rpc.isUnlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
             assert.strictEqual(resultOrError, false);
             done();
           });
         });
 
-        // CONSIDER: removing this test as it is testing an internal implementation detail
-        it("unlocked (unlocked)", function (done) {
-          server.addResponder(function (jso) { if (jso.method === "eth_sign") return "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"; });
-          rpc.unlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
+        it("isUnlocked (unlocked)", function (done) {
+          server.addResponder(function (jso) {
+            if (jso.method === "eth_sign") {
+              return "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b";
+            }
+          });
+          rpc.isUnlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
             assert.strictEqual(resultOrError, true);
             done();
           });
         });
 
-        // CONSIDER: removing this test as it is testing an internal implementation detail
-        it("fastForward", function (done) {
-          rpc.BLOCK_POLL_INTERVAL = 1;
+        it("waitForNextBlocks", function (done) {
+          constants.BLOCK_POLL_INTERVAL = 1;
           var currentBlock = 5;
           server.addExpectations(3, function (jso) { return jso.method === "eth_blockNumber"; });
           server.addResponder(function (jso) { if (jso.method === "eth_blockNumber") return "0x" + (currentBlock++).toString(16); });
-          rpc.fastforward(2, null, function (resultOrError) {
+          rpc.waitForNextBlocks(2, null, function (resultOrError) {
             assert.strictEqual(resultOrError, 7);
             server.assertExpectations();
-            rpc.BLOCK_POLL_INTERVAL = 30000;
+            constants.BLOCK_POLL_INTERVAL = 30000;
             done();
           });
         });
 
-        // CONSIDER: removing this test as it is testing an internal implementation detail
-        it("invoke", function (done) {
+        it("callOrSendTransaction", function (done) {
           var expectedResults = "0x" + ethereumjsAbi.rawEncode(['uint256[]'], [[1, 100, 100000]]).toString('hex');
           var payload = {
             method: "getBranches",
@@ -1176,7 +1218,7 @@ describe("tests that only work against stub server", function () {
             params: [],
           };
           server.addResponder(function (jso) { if (jso.method === "eth_call") return expectedResults; });
-          rpc.invoke(payload, function (resultOrError) {
+          rpc.callOrSendTransaction(payload, function (resultOrError) {
             assert.strictEqual(resultOrError, expectedResults);
             done();
           });
@@ -1188,7 +1230,9 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can subscribe to new logs", function (done) {
-          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
+          server.addResponder(function (jso) {
+            if (jso.method === "eth_getLogs") return [{}];
+          });
           var called = false;
           rpc.getBlockAndLogStreamer().addLogFilter({});
           rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { done(); });
@@ -1221,8 +1265,15 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can remove log filter", function (done) {
-          server.addResponder(function (jso) { if (jso.method == "eth_getLogs") done(new Error("should not be called")); });
-          var token = rpc.getBlockAndLogStreamer().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
+          server.addResponder(function (jso) {
+            if (jso.method == "eth_getLogs") {
+              done(new Error("should not be called"));
+            }
+          });
+          var token = rpc.getBlockAndLogStreamer().addLogFilter({
+            address: "0xbadf00d",
+            topics: ["0xdeadbeef"]
+          });
           rpc.getBlockAndLogStreamer().removeLogFilter(token);
           rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) {
             done(new Error("should not be called"));
