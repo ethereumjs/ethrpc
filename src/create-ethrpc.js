@@ -1,5 +1,8 @@
 "use strict";
 
+var createStore = require("redux").createStore;
+var thunkSubscribeEnhancer = require("redux-thunk-subscribe");
+
 var ensureLatestBlock = require("./block-management/ensure-latest-block");
 var waitForNextBlocks = require("./block-management/wait-for-next-blocks");
 var packageAndSubmitRawTransaction = require("./raw-transactions/package-and-submit-raw-transaction");
@@ -40,7 +43,8 @@ var resetState = require("./reset-state");
 var connect = require("./connect");
 var internalState = require("./internal-state");
 
-var createEthrpc = function (store) {
+var createEthrpc = function (reducer) {
+  var store = createStore(reducer, thunkSubscribeEnhancer);
   var dispatch = store.dispatch;
   return {
     store: store,
