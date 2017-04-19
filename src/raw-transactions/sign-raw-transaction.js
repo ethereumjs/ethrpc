@@ -1,6 +1,5 @@
 "use strict";
 
-var Transaction = require("ethereumjs-tx");
 var signRawTransactionWithKey = require("./sign-raw-transaction-with-key");
 var isFunction = require("../utils/is-function");
 
@@ -12,13 +11,12 @@ var isFunction = require("../utils/is-function");
  * @return {string} Signed and serialized raw transaction.
  */
 function signRawTransaction(packaged, privateKeyOrSigner, callback) {
-  var transaction;
   try {
-    transaction = new Transaction(packaged);
     return (isFunction(privateKeyOrSigner))
-      ? privateKeyOrSigner(transaction, callback)
-      : signRawTransactionWithKey(transaction, privateKeyOrSigner, callback);
+      ? privateKeyOrSigner(packaged, callback)
+      : signRawTransactionWithKey(packaged, privateKeyOrSigner, callback);
   } catch (error) {
+    if (!isFunction(callback)) throw error;
     return callback(error);
   }
 }

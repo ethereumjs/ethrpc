@@ -6,14 +6,14 @@ var assert = require("chai").assert;
 var abi = require("augur-abi");
 var errors = require("../../src/errors/codes");
 var RPCError = require("../../src/errors/rpc-error");
-var signRawTransaction = require("../../src/raw-transactions/sign-raw-transaction");
+var signRawTransactionWithKey = require("../../src/raw-transactions/sign-raw-transaction-with-key");
 
-describe("raw-transactions/sign-raw-transaction", function () {
+describe("raw-transactions/sign-raw-transaction-with-key", function () {
   var test = function (t) {
     it(t.description, function () {
       var signedRawTransaction;
       try {
-        signedRawTransaction = signRawTransaction(t.params.packaged, t.params.privateKey);
+        signedRawTransaction = signRawTransactionWithKey(t.params.packaged, t.params.privateKey);
       } catch (exc) {
         signedRawTransaction = exc;
       }
