@@ -1250,8 +1250,18 @@ module.exports = {
    * @param {buffer} privateKey The sender's plaintext private key.
    * @return {string} Signed and serialized raw transaction.
    */
-  signRawTransaction: function (packaged, privateKey) {
-    var rawTransaction = new EthTx(packaged);
+  signRawTransaction: function (packaged, privateKeyOrSigner, callback) {
+    try {
+      var transaction = new EthTx(packaged);
+      return (isFunction(privateKeyOrSigner))
+        ? privateKeyOrSigner(transaction, callback)
+        : this.signTransactionWithKey(transaction, privateKeyOrSigner, callback);
+    } catch (error) {
+      return callback(error, undefined);
+    }
+  },
+
+  signTransactionWithKey: function (rawTransaction, privateKey) {
     rawTransaction.sign(privateKey);
     if (this.debug.tx || this.debug.broadcast) {
       console.log("raw nonce:    0x" + rawTransaction.nonce.toString("hex"));
@@ -1376,13 +1386,13 @@ module.exports = {
    * @param {function=} callback Callback function (optional).
    * @return {string|void} Signed transaction.
    */
-  packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
+  packageAndSignRawTransaction: function (payload, address, privateKeyOrSigner, callback) {
     var packaged, self = this;
     if (!payload || payload.constructor !== Object) {
       if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_FAILED);
       return callback(errors.TRANSACTION_FAILED);
     }
-    if (!address || !privateKey) {
+    if (!address || !privateKeyOrSigner) {
       if (!isFunction(callback)) throw new RPCError(errors.NOT_LOGGED_IN);
       return callback(errors.NOT_LOGGED_IN);
     }
@@ -1392,21 +1402,15 @@ module.exports = {
       console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
     }
     if (!isFunction(callback)) {
-      return this.signRawTransaction(
-        this.setRawTransactionNonce(this.setRawTransactionGasPrice(packaged), address),
-        privateKey
-      );
+      if (isFunction(privateKeyOrSigner)) throw new Error("Cannot do a synchronous signing with a signer function.");
+      packaged = this.setRawTransactionGasPrice(packaged);
+      packaged = this.setRawTransactionNonce(packaged, address);
+      return this.signRawTransaction(packaged, privateKeyOrSigner);
     }
     this.setRawTransactionGasPrice(packaged, function (packaged) {
       if (packaged.error) return callback(packaged);
       self.setRawTransactionNonce(packaged, address, function (packaged) {
-        var signedRawTransaction;
-        try {
-          signedRawTransaction = self.signRawTransaction(packaged, privateKey);
-        } catch (exc) {
-          signedRawTransaction = exc;
-        }
-        callback(signedRawTransaction);
+        self.signRawTransaction(packaged, privateKeyOrSigner, function (error, result) { callback(error || result); });
       });
     });
   },
