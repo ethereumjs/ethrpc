@@ -1,5 +1,6 @@
 "use strict";
 
+var immutableDelete = require("immutable-delete");
 var signRawTransactionWithKey = require("./sign-raw-transaction-with-key");
 var isFunction = require("../utils/is-function");
 
@@ -13,7 +14,7 @@ var isFunction = require("../utils/is-function");
 function signRawTransaction(packaged, privateKeyOrSigner, callback) {
   try {
     return (isFunction(privateKeyOrSigner))
-      ? privateKeyOrSigner(packaged, callback)
+      ? privateKeyOrSigner(immutableDelete(packaged, "returns"), callback)
       : signRawTransactionWithKey(packaged, privateKeyOrSigner, callback);
   } catch (error) {
     if (!isFunction(callback)) throw error;

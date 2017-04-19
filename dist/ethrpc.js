@@ -16170,7 +16170,13 @@ module.exports = function () {
 }).call(this,require("buffer").Buffer)
 },{"buffer":14,"ethereum-common/params.json":37,"ethereumjs-util":45}],45:[function(require,module,exports){
 (function (Buffer){
-var _typeof3 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof4 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof3 = typeof Symbol === "function" && _typeof4(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof4(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof4(obj);
+};
 
 var _typeof2 = typeof Symbol === "function" && _typeof3(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof3(obj);
@@ -40598,6 +40604,7 @@ module.exports = signRawTransactionWithKey;
 },{"../errors/codes":170,"../errors/rpc-error":173,"../utils/is-function":234,"ethereumjs-tx":44}],188:[function(require,module,exports){
 "use strict";
 
+var immutableDelete = require("immutable-delete");
 var signRawTransactionWithKey = require("./sign-raw-transaction-with-key");
 var isFunction = require("../utils/is-function");
 
@@ -40611,7 +40618,7 @@ var isFunction = require("../utils/is-function");
 function signRawTransaction(packaged, privateKeyOrSigner, callback) {
   try {
     return (isFunction(privateKeyOrSigner))
-      ? privateKeyOrSigner(packaged, callback)
+      ? privateKeyOrSigner(immutableDelete(packaged, "returns"), callback)
       : signRawTransactionWithKey(packaged, privateKeyOrSigner, callback);
   } catch (error) {
     if (!isFunction(callback)) throw error;
@@ -40621,7 +40628,7 @@ function signRawTransaction(packaged, privateKeyOrSigner, callback) {
 
 module.exports = signRawTransaction;
 
-},{"../utils/is-function":234,"./sign-raw-transaction-with-key":187}],189:[function(require,module,exports){
+},{"../utils/is-function":234,"./sign-raw-transaction-with-key":187,"immutable-delete":58}],189:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
