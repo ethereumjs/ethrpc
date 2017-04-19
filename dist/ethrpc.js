@@ -16170,7 +16170,13 @@ module.exports = function () {
 }).call(this,require("buffer").Buffer)
 },{"buffer":14,"ethereum-common/params.json":37,"ethereumjs-util":45}],45:[function(require,module,exports){
 (function (Buffer){
-var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof3 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof2 = typeof Symbol === "function" && _typeof3(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof3(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof3(obj);
+};
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
@@ -39830,7 +39836,6 @@ var packageRequest = function (payload) {
     gas: tx.gas ? abi.hex(tx.gas) : constants.DEFAULT_GAS
   };
   if (tx.gasPrice) packaged.gasPrice = abi.hex(tx.gasPrice);
-  if (tx.timeout) packaged.timeout = abi.hex(tx.timeout);
   if (tx.value) packaged.value = abi.hex(tx.value);
   if (tx.returns) packaged.returns = tx.returns;
   if (tx.nonce) packaged.nonce = tx.nonce;
