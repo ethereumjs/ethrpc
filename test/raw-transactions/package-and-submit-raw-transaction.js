@@ -5,7 +5,7 @@
 var assert = require("chai").assert;
 var errors = require("../../src/errors/codes");
 var RPCError = require("../../src/errors/rpc-error");
-var proxyquire = require("proxyquire").noPreserveCache();
+var proxyquire = require("proxyquire");
 var mockStore = require("../mock-store");
 
 describe("raw-transaction/package-and-submit-raw-transaction", function () {

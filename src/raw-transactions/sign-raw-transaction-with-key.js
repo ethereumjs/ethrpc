@@ -1,5 +1,7 @@
 "use strict";
 
+require("buffer-v6-polyfill");
+
 var Transaction = require("ethereumjs-tx");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");

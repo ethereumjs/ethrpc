@@ -4,7 +4,7 @@
 
 var assert = require("chai").assert;
 var isFunction = require("../../src/utils/is-function");
-var proxyquire = require("proxyquire").noPreserveCache();
+var proxyquire = require("proxyquire");
 var mockStore = require("../mock-store");
 
 describe("raw-transactions/set-raw-transaction-gas-price", function () {
