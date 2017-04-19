@@ -49,7 +49,6 @@ var packageRequest = function (payload) {
     gas: tx.gas ? abi.hex(tx.gas) : constants.DEFAULT_GAS
   };
   if (tx.gasPrice) packaged.gasPrice = abi.hex(tx.gasPrice);
-  if (tx.timeout) packaged.timeout = abi.hex(tx.timeout);
   if (tx.value) packaged.value = abi.hex(tx.value);
   if (tx.returns) packaged.returns = tx.returns;
   if (tx.nonce) packaged.nonce = tx.nonce;
