@@ -10,8 +10,8 @@
     "lint": "eslint src && eslint test",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/",
     "link": "npm link augur-contracts",
-    "build": "browserify ./exports.js > ./dist/ethrpc.js && browserify ./exports.js | ./node_modules/uglify-js/bin/uglifyjs > ./dist/ethrpc.min.js",
-    "build:tests": "browserify -p proxyquire-universal ./test/reducers/*.js > ./test/browser/bundle.js"
+    "build": "browserify ./exports.js > ./dist/ethrpc.js && uglifyjs ./dist/ethrpc.js > ./dist/ethrpc.min.js",
+    "build:tests": "browserify ./test/reducers/*.js > ./test/browser/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -61,8 +61,6 @@
     "istanbul": "^0.3.18",
     "mocha": "3.2.0",
     "proxyquire": "^1.7.11",
-    "proxyquire-universal": "^1.0.8",
-    "proxyquireify": "^3.2.1",
     "redux-thunk": "^2.2.0",
     "uglify-js": "^2.4.24",
     "utf-8-validate": "^3.0.1",
