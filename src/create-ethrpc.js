@@ -61,6 +61,7 @@ var createEthrpc = function (reducer) {
     connect: function (configuration, initialConnectCallback) {
       return dispatch(connect(configuration, initialConnectCallback));
     },
+    getNetworkID: function () { return store.getState().networkID; },
     getBlockAndLogStreamer: function () { return internalState.get("blockAndLogStreamer"); },
     clear: function () { return dispatch(clearTransactions()); },
     resetState: function () { return dispatch(resetState()); },
