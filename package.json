@@ -7,7 +7,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "mocha test/*.js test/block-management test/raw-transactions test/reducers test/transport test/utils",
-    "lint": "eslint src && eslint test",
+    "lint": "eslint src && eslint test/*.js test/block-management test/raw-transactions test/reducers test/transport test/utils",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/",
     "link": "npm link augur-contracts",
     "build": "browserify ./exports.js > ./dist/ethrpc.js && uglifyjs ./dist/ethrpc.js > ./dist/ethrpc.min.js",
@@ -28,7 +28,7 @@
     "browser-request": "0.3.3",
     "clone": "1.0.2",
     "ethereumjs-blockstream": "2.0.4",
-    "ethereumjs-tx": "1.2.5",
+    "ethereumjs-tx": "http://github.com/tinybike/ethereumjs-tx",
     "immutable-delete": "1.0.1",
     "keccak": "1.2.0",
     "lodash.assign": "4.2.0",

@@ -5,3 +5,4 @@ coverage
 overflow
 data
 build
+test/browser/bundle.js
