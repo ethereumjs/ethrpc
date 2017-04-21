@@ -3,6 +3,7 @@
 var eth = require("../wrappers/eth");
 var packageRequest = require("../encode-request/package-request");
 var isFunction = require("../utils/is-function");
+var isObject = require("../utils/is-object");
 var errors = require("../errors/codes");
 
 /**
@@ -19,7 +20,7 @@ var errors = require("../errors/codes");
  */
 function callOrSendTransaction(payload, callback) {
   return function (dispatch) {
-    if (!payload || payload.constructor !== Object) {
+    if (!isObject(payload)) {
       if (!isFunction(callback)) return errors.TRANSACTION_FAILED;
       return callback(errors.TRANSACTION_FAILED);
     }

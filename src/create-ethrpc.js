@@ -62,16 +62,16 @@ var createEthrpc = function (reducer) {
     resetState: function () { return dispatch(resetState()); },
 
     // Redux store state-lookup wrappers
-    getNetworkID: function () { return store.getState().networkID; },
-    getCurrentBlock: function () { return store.getState().currentBlock; },
-    getGasPrice: function () { return store.getState().gasPrice; },
+    getBlockStream: function () { return internalState.get("blockAndLogStreamer"); },
     getConfiguration: function () { return store.getState().configuration; },
-    getTransactions: function () { return store.getState().transactions; },
-    getSubscriptions: function () { return store.getState().subscriptions; },
+    getCurrentBlock: function () { return store.getState().currentBlock; },
     getDebugOptions: function () { return store.getState().debug; },
-    getNoRelay: function () { return store.getState().noRelay; },
+    getGasPrice: function () { return store.getState().gasPrice; },
     getHighestNonce: function () { return store.getState().highestNonce; },
-    getBlockAndLogStreamer: function () { return internalState.get("blockAndLogStreamer"); },
+    getNetworkID: function () { return store.getState().networkID; },
+    getNoRelay: function () { return store.getState().noRelay; },
+    getSubscriptions: function () { return store.getState().subscriptions; },
+    getTransactions: function () { return store.getState().transactions; },
 
     registerTransactionRelay: function (relayer) { return dispatch(registerTransactionRelay(relayer)); },
     unregisterTransactionRelay: function (relayer) { return dispatch(unregisterTransactionRelay(relayer)); },
