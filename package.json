@@ -1,6 +1,6 @@
 {
   "name": "ethrpc",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Ethereum JSON RPC",
   "author": "The Augur Developers <team@augur.net>",
   "license": "MIT",
@@ -26,7 +26,6 @@
     "augur-abi": "1.2.0",
     "bignumber.js": "2.3.0",
     "browser-request": "0.3.3",
-    "buffer-v6-polyfill": "1.0.3",
     "clone": "1.0.2",
     "ethereumjs-blockstream": "2.0.4",
     "ethereumjs-tx": "1.2.5",

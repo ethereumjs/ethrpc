@@ -301,16 +301,6 @@ describe("tests that only work against stub server", function () {
           });
         });
 
-        it("getGasPrice", function (done) {
-          server.addExpectation(function (jso) { return jso.method === "eth_gasPrice"; });
-          server.addResponder(function (jso) { if (jso.method === "eth_gasPrice") return "0x9184e72a000"; });
-          rpc.getGasPrice(function (resultOrError) {
-            assert.strictEqual(resultOrError, "0x9184e72a000");
-            server.assertExpectations();
-            done();
-          });
-        });
-
         it("getBalance", function (done) {
           server.addExpectation(function (jso) {
             return jso.method === "eth_getBalance"
@@ -1174,9 +1164,9 @@ describe("tests that only work against stub server", function () {
         it("ensureLatestBlock", function (done) {
           clearInterval(interval);
           helpers.rpcConnect(transportType, transportAddress, function () {
-            assert.isNull(rpc.store.getState().currentBlock);
+            assert.isNull(rpc.getCurrentBlock());
             rpc.ensureLatestBlock(function (error) {
-              assert.isNotNull(rpc.store.getState().currentBlock);
+              assert.isNotNull(rpc.getCurrentBlock());
               done();
             });
           });

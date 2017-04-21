@@ -39671,7 +39671,6 @@ var createEthrpc = function (reducer) {
   var store = createStore(reducer, thunkSubscribeEnhancer);
   var dispatch = store.dispatch;
   return {
-    store: store,
     errors: errors,
 
     packageAndSubmitRawTransaction: packageAndSubmitRawTransaction,
@@ -39682,12 +39681,21 @@ var createEthrpc = function (reducer) {
 
     setDebugOptions: function (debugOptions) { return dispatch(setDebugOptions(debugOptions)); },
 
-    connect: function (configuration, initialConnectCallback) {
-      return dispatch(connect(configuration, initialConnectCallback));
-    },
-    getBlockAndLogStreamer: function () { return internalState.get("blockAndLogStreamer"); },
+    connect: function (configuration, callback) { return dispatch(connect(configuration, callback)); },
     clear: function () { return dispatch(clearTransactions()); },
     resetState: function () { return dispatch(resetState()); },
+
+    // Redux store state-lookup wrappers
+    getNetworkID: function () { return store.getState().networkID; },
+    getCurrentBlock: function () { return store.getState().currentBlock; },
+    getGasPrice: function () { return store.getState().gasPrice; },
+    getConfiguration: function () { return store.getState().configuration; },
+    getTransactions: function () { return store.getState().transactions; },
+    getSubscriptions: function () { return store.getState().subscriptions; },
+    getDebugOptions: function () { return store.getState().debug; },
+    getNoRelay: function () { return store.getState().noRelay; },
+    getHighestNonce: function () { return store.getState().highestNonce; },
+    getBlockAndLogStreamer: function () { return internalState.get("blockAndLogStreamer"); },
 
     registerTransactionRelay: function (relayer) { return dispatch(registerTransactionRelay(relayer)); },
     unregisterTransactionRelay: function (relayer) { return dispatch(unregisterTransactionRelay(relayer)); },
@@ -39737,7 +39745,6 @@ var createEthrpc = function (reducer) {
       return dispatch(eth.estimateGas([transaction, validateAndDefaultBlockNumber(blockNumber)], callback));
     },
     gasPrice: function (callback) { return dispatch(eth.gasPrice(null, callback)); },
-    getGasPrice: function (callback) { return this.gasPrice(callback); },
     getBalance: function (address, blockNumber, callback) {
       if (isFunction(blockNumber)) {
         callback = blockNumber;
