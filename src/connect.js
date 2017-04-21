@@ -1,7 +1,8 @@
 "use strict";
 
 var net_version = require("./wrappers/net").version;
-var getGasPrice = require("./wrappers/get-gas-price");
+var setGasPrice = require("./wrappers/set-gas-price");
+var setCoinbase = require("./wrappers/set-coinbase");
 var Transporter = require("./transport/transporter");
 var ensureLatestBlock = require("./block-management/ensure-latest-block");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
@@ -65,8 +66,11 @@ function connect(configuration, initialConnectCallback) {
           pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
           blockRetention: storedConfiguration.blockRetention
         }, dispatch(createTransportAdapter(transporter)), internalState.get("outOfBandErrorHandler"));
-        internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) { dispatch(onNewBlock(block)); });
-        dispatch(getGasPrice());
+        internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) {
+          dispatch(onNewBlock(block));
+        });
+        dispatch(setGasPrice());
+        dispatch(setCoinbase());
         dispatch(ensureLatestBlock(noop));
         initialConnectCallback(null);
       }));

@@ -22,3 +22,4 @@ module.exports.noRelay = {};
 module.exports.networkID = null;
 module.exports.transactions = {};
 module.exports.subscriptions = {};
+module.exports.coinbase = null;
