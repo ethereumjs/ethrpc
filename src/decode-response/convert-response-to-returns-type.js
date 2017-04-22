@@ -30,6 +30,8 @@ var convertResponseToReturnsType = function (returnsType, response) {
     return null;
   } else if (returnsType === "address" || returnsType === "address[]") {
     return abi.format_address(convertedResponse);
+  } else if (returnsType === "int256" || returnsType === "int256[]") {
+    return abi.format_int256(convertedResponse);
   }
   return convertedResponse;
 };
