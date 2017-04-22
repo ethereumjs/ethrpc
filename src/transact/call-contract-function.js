@@ -20,11 +20,11 @@ var errors = require("../errors/codes");
  * @property {?string[]} params
  *
  * @param {FirePayload} payload
- * @param {function(object):void} callback - called with the result, possibly run through `wrapper` if applicable
- * @param {function(object,object):void} wrapper - a function to transform the result before it is passed to `callback`.  first parameter is result, second is `aux`
- * @param {object} aux - an optional parameter passed to `wrapper` (second parameter)
+ * @param {function(object):void} callback - called with the result, possibly run through `callbackWrapper` if applicable
+ * @param {function(object,object):void} callbackWrapper - a function to transform the result before it is passed to `callback`.  first parameter is result, second is `extraArgument`
+ * @param {object} extraArgument - an optional parameter passed to `callbackWrapper` (second parameter)
  */
-function callContractFunction(payload, callback, wrapper, aux) {
+function callContractFunction(payload, callback, callbackWrapper, extraArgument) {
   return function (dispatch) {
     var tx, res, err, converted;
     tx = clone(payload);
@@ -36,7 +36,7 @@ function callContractFunction(payload, callback, wrapper, aux) {
       err = handleRPCError(tx.method, tx.returns, res);
       if (err && err.error) throw new RPCError(err);
       converted = convertResponseToReturnsType(tx.returns, res);
-      if (isFunction(wrapper)) return wrapper(converted, aux);
+      if (isFunction(callbackWrapper)) return callbackWrapper(converted, extraArgument);
       return converted;
     }
     dispatch(callOrSendTransaction(tx, function (res) {
@@ -47,7 +47,7 @@ function callContractFunction(payload, callback, wrapper, aux) {
       err = handleRPCError(tx.method, tx.returns, res);
       if (err && err.error) return callback(err);
       converted = convertResponseToReturnsType(tx.returns, res);
-      if (isFunction(wrapper)) converted = wrapper(converted, aux);
+      if (isFunction(callbackWrapper)) converted = callbackWrapper(converted, extraArgument);
       return callback(converted);
     }));
   };

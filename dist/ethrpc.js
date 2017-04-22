@@ -39529,7 +39529,7 @@ var createEthrpc = function (reducer) {
 
     callOrSendTransaction: function (payload, callback) { return dispatch(callOrSendTransaction(payload, callback)); },
     callContractFunction: function (payload, callback, wrapper, aux) { return dispatch(callContractFunction(payload, callback, wrapper, aux)); },
-    transact: function (payload, onSent, onSuccess, onFailed) { return dispatch(transact(payload, onSent, onSuccess, onFailed)); }
+    transact: function (payload, privateKeyOrSigner, onSent, onSuccess, onFailed) { return dispatch(transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed)); }
   };
 };
 
@@ -39577,6 +39577,8 @@ var convertResponseToReturnsType = function (returnsType, response) {
     return null;
   } else if (returnsType === "address" || returnsType === "address[]") {
     return abi.format_address(convertedResponse);
+  } else if (returnsType === "int256" || returnsType === "int256[]") {
+    return abi.format_int256(convertedResponse);
   }
   return convertedResponse;
 };
@@ -41319,11 +41321,11 @@ var errors = require("../errors/codes");
  * @property {?string[]} params
  *
  * @param {FirePayload} payload
- * @param {function(object):void} callback - called with the result, possibly run through `wrapper` if applicable
- * @param {function(object,object):void} wrapper - a function to transform the result before it is passed to `callback`.  first parameter is result, second is `aux`
- * @param {object} aux - an optional parameter passed to `wrapper` (second parameter)
+ * @param {function(object):void} callback - called with the result, possibly run through `callbackWrapper` if applicable
+ * @param {function(object,object):void} callbackWrapper - a function to transform the result before it is passed to `callback`.  first parameter is result, second is `extraArgument`
+ * @param {object} extraArgument - an optional parameter passed to `callbackWrapper` (second parameter)
  */
-function callContractFunction(payload, callback, wrapper, aux) {
+function callContractFunction(payload, callback, callbackWrapper, extraArgument) {
   return function (dispatch) {
     var tx, res, err, converted;
     tx = clone(payload);
@@ -41335,7 +41337,7 @@ function callContractFunction(payload, callback, wrapper, aux) {
       err = handleRPCError(tx.method, tx.returns, res);
       if (err && err.error) throw new RPCError(err);
       converted = convertResponseToReturnsType(tx.returns, res);
-      if (isFunction(wrapper)) return wrapper(converted, aux);
+      if (isFunction(callbackWrapper)) return callbackWrapper(converted, extraArgument);
       return converted;
     }
     dispatch(callOrSendTransaction(tx, function (res) {
@@ -41346,7 +41348,7 @@ function callContractFunction(payload, callback, wrapper, aux) {
       err = handleRPCError(tx.method, tx.returns, res);
       if (err && err.error) return callback(err);
       converted = convertResponseToReturnsType(tx.returns, res);
-      if (isFunction(wrapper)) converted = wrapper(converted, aux);
+      if (isFunction(callbackWrapper)) converted = callbackWrapper(converted, extraArgument);
       return callback(converted);
     }));
   };
@@ -41444,6 +41446,8 @@ module.exports = reprocessTransactions;
 "use strict";
 
 var abi = require("augur-abi");
+var immutableDelete = require("immutable-delete");
+var packageAndSubmitRawTransaction = require("../raw-transactions/package-and-submit-raw-transaction");
 var callOrSendTransaction = require("../transact/call-or-send-transaction");
 var verifyTxSubmitted = require("../transact/verify-tx-submitted");
 var errors = require("../errors/codes");
@@ -41454,26 +41458,25 @@ var errors = require("../errors/codes");
  *  - call onSuccess when the transaction has REQUIRED_CONFIRMATIONS
  *  - call onFailed if the transaction fails
  */
-function transactAsync(payload, callReturn, onSent, onSuccess, onFailed) {
+function transactAsync(payload, callReturn, privateKeyOrSigner, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
-    var returns, state;
-    state = getState();
+    var invoke = (privateKeyOrSigner == null) ? callOrSendTransaction : function (payload, callback) {
+      return packageAndSubmitRawTransaction(payload, payload.from, privateKeyOrSigner, callback);
+    };
+    // var invoke = payload.invoke || callOrSendTransaction;
     payload.send = true;
-    returns = payload.returns;
-    delete payload.returns;
-    dispatch((payload.invoke || callOrSendTransaction)(payload, function (txHash) {
-      if (state.debug.tx) console.log("txHash:", txHash);
-      if (!txHash) return onFailed(errors.NULL_RESPONSE);
+    dispatch(invoke(immutableDelete(payload, "returns"), function (txHash) {
+      if (getState().debug.tx) console.log("txHash:", txHash);
+      if (txHash == null) return onFailed(errors.NULL_RESPONSE);
       if (txHash.error) return onFailed(txHash);
-      payload.returns = returns;
       txHash = abi.format_int256(txHash);
 
       // send the transaction hash and return value back
       // to the client, using the onSent callback
-      onSent({ hash: txHash, txHash: txHash, callReturn: callReturn });
+      onSent({ hash: txHash, callReturn: callReturn });
 
       dispatch(verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, function (err) {
-        if (err) {
+        if (err != null) {
           err.hash = txHash;
           return onFailed(err);
         }
@@ -41484,7 +41487,7 @@ function transactAsync(payload, callReturn, onSent, onSuccess, onFailed) {
 
 module.exports = transactAsync;
 
-},{"../errors/codes":171,"../transact/call-or-send-transaction":212,"../transact/verify-tx-submitted":220,"augur-abi":3}],216:[function(require,module,exports){
+},{"../errors/codes":171,"../raw-transactions/package-and-submit-raw-transaction":183,"../transact/call-or-send-transaction":212,"../transact/verify-tx-submitted":220,"augur-abi":3,"immutable-delete":59}],216:[function(require,module,exports){
 /**
  * Send-call-confirm callback sequence
  */
@@ -41494,15 +41497,17 @@ module.exports = transactAsync;
 var sha3 = require("../utils/sha3");
 var transactAsync = require("../transact/transact-async");
 var callContractFunction = require("../transact/call-contract-function");
+var callOrSendTransaction = require("../transact/call-or-send-transaction");
 var isFunction = require("../utils/is-function");
 var noop = require("../utils/noop");
 var errors = require("../errors/codes");
 
-function transact(payload, onSent, onSuccess, onFailed) {
+function transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
     var onSentCallback, onSuccessCallback, onFailedCallback, debug;
     debug = getState().debug;
     if (debug.tx) console.log("payload transact:", payload);
+    if (!isFunction(onSent)) return dispatch(callOrSendTransaction(payload));
     onSentCallback = onSent;
     onSuccessCallback = (isFunction(onSuccess)) ? onSuccess : noop;
     onFailedCallback = function (response) {
@@ -41515,7 +41520,7 @@ function transact(payload, onSent, onSuccess, onFailed) {
     };
     payload.send = false;
     if (payload.mutable || payload.returns === "null") {
-      return dispatch(transactAsync(payload, null, onSentCallback, onSuccessCallback, onFailedCallback));
+      return dispatch(transactAsync(payload, null, privateKeyOrSigner, onSentCallback, onSuccessCallback, onFailedCallback));
     }
     dispatch(callContractFunction(payload, function (callReturn) {
       if (debug.tx) console.log("callReturn:", callReturn);
@@ -41524,14 +41529,14 @@ function transact(payload, onSent, onSuccess, onFailed) {
       } else if (callReturn.error) {
         return onFailedCallback(callReturn);
       }
-      dispatch(transactAsync(payload, callReturn, onSentCallback, onSuccessCallback, onFailedCallback));
+      dispatch(transactAsync(payload, callReturn, privateKeyOrSigner, onSentCallback, onSuccessCallback, onFailedCallback));
     }));
   };
 }
 
 module.exports = transact;
 
-},{"../errors/codes":171,"../transact/call-contract-function":211,"../transact/transact-async":215,"../utils/is-function":235,"../utils/noop":241,"../utils/sha3":242}],217:[function(require,module,exports){
+},{"../errors/codes":171,"../transact/call-contract-function":211,"../transact/call-or-send-transaction":212,"../transact/transact-async":215,"../utils/is-function":235,"../utils/noop":241,"../utils/sha3":242}],217:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");

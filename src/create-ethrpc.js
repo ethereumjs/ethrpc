@@ -223,7 +223,7 @@ var createEthrpc = function (reducer) {
 
     callOrSendTransaction: function (payload, callback) { return dispatch(callOrSendTransaction(payload, callback)); },
     callContractFunction: function (payload, callback, wrapper, aux) { return dispatch(callContractFunction(payload, callback, wrapper, aux)); },
-    transact: function (payload, onSent, onSuccess, onFailed) { return dispatch(transact(payload, onSent, onSuccess, onFailed)); }
+    transact: function (payload, privateKeyOrSigner, onSent, onSuccess, onFailed) { return dispatch(transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed)); }
   };
 };
 
