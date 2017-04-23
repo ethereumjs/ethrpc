@@ -39348,12 +39348,14 @@ var clearTransactions = require("./clear-transactions");
 var resetState = require("./reset-state");
 var connect = require("./connect");
 var internalState = require("./internal-state");
+var constants = require("./constants");
 
 var createEthrpc = function (reducer) {
   var store = createStore(reducer, thunkSubscribeEnhancer);
   var dispatch = store.dispatch;
   return {
     errors: errors,
+    constants: constants,
 
     packageAndSubmitRawTransaction: packageAndSubmitRawTransaction,
     packageAndSignRawTransaction: packageAndSignRawTransaction,
@@ -39535,7 +39537,7 @@ var createEthrpc = function (reducer) {
 
 module.exports = createEthrpc;
 
-},{"./block-management/ensure-latest-block":152,"./block-management/wait-for-next-blocks":158,"./clear-transactions":159,"./connect":160,"./debug/set-debug-options":163,"./encode-request/package-request":169,"./errors/codes":171,"./internal-state":176,"./raw-transactions/package-and-sign-raw-transaction":182,"./raw-transactions/package-and-submit-raw-transaction":183,"./raw-transactions/package-raw-transaction":184,"./raw-transactions/sign-raw-transaction":188,"./reset-state":203,"./transact/call-contract-function":211,"./transact/call-or-send-transaction":212,"./transact/transact":216,"./transaction-relay/exclude-from-transaction-relay":221,"./transaction-relay/include-in-transaction-relay":222,"./transaction-relay/register-transaction-relay":223,"./transaction-relay/unregister-transaction-relay":224,"./utils/is-function":235,"./utils/sha3":242,"./validate/validate-and-default-block-number":244,"./validate/validate-transaction":248,"./wrappers/bind-dispatch":250,"./wrappers/eth":251,"./wrappers/is-unlocked":252,"./wrappers/miner":254,"./wrappers/net":255,"./wrappers/personal":256,"./wrappers/publish":257,"./wrappers/raw":258,"./wrappers/resend-raw-transaction":259,"./wrappers/resend-transaction":260,"./wrappers/send-ether":261,"./wrappers/shh":264,"./wrappers/web3":265,"redux":110,"redux-thunk-subscribe":104}],163:[function(require,module,exports){
+},{"./block-management/ensure-latest-block":152,"./block-management/wait-for-next-blocks":158,"./clear-transactions":159,"./connect":160,"./constants":161,"./debug/set-debug-options":163,"./encode-request/package-request":169,"./errors/codes":171,"./internal-state":176,"./raw-transactions/package-and-sign-raw-transaction":182,"./raw-transactions/package-and-submit-raw-transaction":183,"./raw-transactions/package-raw-transaction":184,"./raw-transactions/sign-raw-transaction":188,"./reset-state":203,"./transact/call-contract-function":211,"./transact/call-or-send-transaction":212,"./transact/transact":216,"./transaction-relay/exclude-from-transaction-relay":221,"./transaction-relay/include-in-transaction-relay":222,"./transaction-relay/register-transaction-relay":223,"./transaction-relay/unregister-transaction-relay":224,"./utils/is-function":235,"./utils/sha3":242,"./validate/validate-and-default-block-number":244,"./validate/validate-transaction":248,"./wrappers/bind-dispatch":250,"./wrappers/eth":251,"./wrappers/is-unlocked":252,"./wrappers/miner":254,"./wrappers/net":255,"./wrappers/personal":256,"./wrappers/publish":257,"./wrappers/raw":258,"./wrappers/resend-raw-transaction":259,"./wrappers/resend-transaction":260,"./wrappers/send-ether":261,"./wrappers/shh":264,"./wrappers/web3":265,"redux":110,"redux-thunk-subscribe":104}],163:[function(require,module,exports){
 "use strict";
 
 module.exports = function (debugOptions) {

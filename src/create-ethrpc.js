@@ -42,12 +42,14 @@ var clearTransactions = require("./clear-transactions");
 var resetState = require("./reset-state");
 var connect = require("./connect");
 var internalState = require("./internal-state");
+var constants = require("./constants");
 
 var createEthrpc = function (reducer) {
   var store = createStore(reducer, thunkSubscribeEnhancer);
   var dispatch = store.dispatch;
   return {
     errors: errors,
+    constants: constants,
 
     packageAndSubmitRawTransaction: packageAndSubmitRawTransaction,
     packageAndSignRawTransaction: packageAndSignRawTransaction,
