@@ -9,7 +9,9 @@ var packageAndSubmitRawTransaction = require("./raw-transactions/package-and-sub
 var packageAndSignRawTransaction = require("./raw-transactions/package-and-sign-raw-transaction");
 var packageRawTransaction = require("./raw-transactions/package-raw-transaction");
 var signRawTransaction = require("./raw-transactions/sign-raw-transaction");
+var signRawTransactionWithKey = require("./raw-transactions/sign-raw-transaction-with-key");
 var packageRequest = require("./encode-request/package-request");
+var handleRPCError = require("./decode-response/handle-rpc-error");
 var validateAndDefaultBlockNumber = require("./validate/validate-and-default-block-number");
 var validateTransaction = require("./validate/validate-transaction");
 var registerTransactionRelay = require("./transaction-relay/register-transaction-relay");
@@ -50,12 +52,6 @@ var createEthrpc = function (reducer) {
   return {
     errors: errors,
     constants: constants,
-
-    packageAndSubmitRawTransaction: packageAndSubmitRawTransaction,
-    packageAndSignRawTransaction: packageAndSignRawTransaction,
-    signRawTransaction: signRawTransaction,
-    packageRawTransaction: packageRawTransaction,
-    packageRequest: packageRequest,
 
     setDebugOptions: function (debugOptions) { return dispatch(setDebugOptions(debugOptions)); },
 
@@ -215,6 +211,18 @@ var createEthrpc = function (reducer) {
      * Convenience wrappers *
      ************************/
 
+    signRawTransaction: signRawTransaction,
+    signRawTransactionWithKey: signRawTransactionWithKey,
+    packageRawTransaction: packageRawTransaction,
+    packageRequest: packageRequest,
+    packageAndSubmitRawTransaction: function (payload, address, privateKeyOrSigner, callback) {
+      return dispatch(packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, callback));
+    },
+    packageAndSignRawTransaction: function (payload, address, privateKeyOrSigner, callback) {
+      return dispatch(packageAndSignRawTransaction(payload, address, privateKeyOrSigner, callback));
+    },
+
+    handleRPCError: handleRPCError,
     sendEther: function (to, value, from, onSent, onSuccess, onFailed) { return dispatch(sendEther(to, value, from, onSent, onSuccess, onFailed)); },
     publish: function (compiled, callback) { return dispatch(publish(compiled, callback)); },
     ensureLatestBlock: function (callback) { return dispatch(ensureLatestBlock(callback)); },

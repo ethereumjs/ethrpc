@@ -60,10 +60,10 @@ rpc.eth.blockNumber();
 
 ### Block and Log Notifications
 
-If you want to subscribe to new blocks or new logs you can get access to a [`BlockAndLogStreamer`](https://github.com/ethereumjs/ethereumjs-blockstream) via:
+If you want to subscribe to new blocks or new logs you can get access to a [block and log streamer](https://github.com/ethereumjs/ethereumjs-blockstream) via:
 
 ```javascript
-var blockAndLogStreamer = rpc.getBlockAndLogStreamer();
+var blockStream = rpc.getBlockStream();
 ```
 
 With that, you can then subscribe to new blocks, subscribe to new logs, add log filters (by default you will receive no logs) and subscribe to be notified when blocks/logs are removed as well.
@@ -71,19 +71,19 @@ With that, you can then subscribe to new blocks, subscribe to new logs, add log 
 ```javascript
 var onBlock = function (block) { /* block party! */ };
 var onLog = function (log) { /* log party... */ };
-var onBlockAddedSubscriptionToken = blockAndLogStreamer.subscribeToOnBlockAdded(onBlock);
-var onLogAddedSubscriptionToken = blockAndLogStreamer.subscribeToOnLogAdded(onLog);
-var onBlockRemovedSubscriptionToken = blockAndLogStreamer.subscribeToOnBlockRemoved(onBlock);
-var onLogRemovedSubscriptionToken = blockAndLogStreamer.subscribeToOnLogRemoved(onLog);
-var logFilterToken = blockAndLogStreamer.addLogFilter({
+var onBlockAddedSubscriptionToken = blockStream.subscribeToOnBlockAdded(onBlock);
+var onLogAddedSubscriptionToken = blockStream.subscribeToOnLogAdded(onLog);
+var onBlockRemovedSubscriptionToken = blockStream.subscribeToOnBlockRemoved(onBlock);
+var onLogRemovedSubscriptionToken = blockStream.subscribeToOnLogRemoved(onLog);
+var logFilterToken = blockStream.addLogFilter({
   address: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
   topics: ["0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbaadf00d"]
 });
-blockAndLogStreamer.unsubscribeFromOnBlockAdded(onBlockAddedSubscriptionToken);
-blockAndLogStreamer.unsubscribeFromOnBlockRemoved(onBlockRemovedSubscriptionToken);
-blockAndLogStreamer.unsubscribeFromOnLogAdded(onLogAddedSubscriptionToken);
-blockAndLogStreamer.unsubscribeFromOnLogRemoved(onLogRemovedSubscriptionToken);
-blockAndLogStreamer.removeLogFilter(logFilterToken);
+blockStream.unsubscribeFromOnBlockAdded(onBlockAddedSubscriptionToken);
+blockStream.unsubscribeFromOnBlockRemoved(onBlockRemovedSubscriptionToken);
+blockStream.unsubscribeFromOnLogAdded(onLogAddedSubscriptionToken);
+blockStream.unsubscribeFromOnLogRemoved(onLogRemovedSubscriptionToken);
+blockStream.removeLogFilter(logFilterToken);
 ```
 
 ### Contract upload and download

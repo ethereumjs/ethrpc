@@ -1228,7 +1228,7 @@ describe("tests that only work against stub server", function () {
 
         it("can subscribe to new blocks", function (done) {
           var called = false;
-          rpc.getBlockAndLogStreamer().subscribeToOnBlockAdded(function (block) { done(); });
+          rpc.getBlockStream().subscribeToOnBlockAdded(function (block) { done(); });
         });
 
         it("can subscribe to new logs", function (done) {
@@ -1236,8 +1236,8 @@ describe("tests that only work against stub server", function () {
           server.addResponder(function (jso) {
             if (jso.method === "eth_getLogs") return [{}];
           });
-          rpc.getBlockAndLogStreamer().addLogFilter({});
-          rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { done(); });
+          rpc.getBlockStream().addLogFilter({});
+          rpc.getBlockStream().subscribeToOnLogAdded(function (logs) { done(); });
         });
 
         it("can supply a log filter", function (done) {
@@ -1251,8 +1251,8 @@ describe("tests that only work against stub server", function () {
               && jso.params[0].topics.length === 1
               && jso.params[0].topics[0] === "0xdeadbeef";
           });
-          rpc.getBlockAndLogStreamer().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
-          rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) {
+          rpc.getBlockStream().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
+          rpc.getBlockStream().subscribeToOnLogAdded(function (logs) {
             server.assertExpectations();
             done();
           });
@@ -1262,9 +1262,9 @@ describe("tests that only work against stub server", function () {
           var called, token;
           server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
           called = false;
-          token = rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) { called = true; });
-          rpc.getBlockAndLogStreamer().unsubscribeFromOnLogAdded(token);
-          rpc.getBlockAndLogStreamer().subscribeToOnBlockAdded(function (block) { done(called ? new Error("log handler was called") : undefined); });
+          token = rpc.getBlockStream().subscribeToOnLogAdded(function (logs) { called = true; });
+          rpc.getBlockStream().unsubscribeFromOnLogAdded(token);
+          rpc.getBlockStream().subscribeToOnBlockAdded(function (block) { done(called ? new Error("log handler was called") : undefined); });
         });
 
         it("can remove log filter", function (done) {
@@ -1274,12 +1274,12 @@ describe("tests that only work against stub server", function () {
               done(new Error("should not be called"));
             }
           });
-          token = rpc.getBlockAndLogStreamer().addLogFilter({
+          token = rpc.getBlockStream().addLogFilter({
             address: "0xbadf00d",
             topics: ["0xdeadbeef"]
           });
-          rpc.getBlockAndLogStreamer().removeLogFilter(token);
-          rpc.getBlockAndLogStreamer().subscribeToOnLogAdded(function (logs) {
+          rpc.getBlockStream().removeLogFilter(token);
+          rpc.getBlockStream().subscribeToOnLogAdded(function (logs) {
             done(new Error("should not be called"));
           });
           setTimeout(done, 10);
