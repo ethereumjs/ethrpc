@@ -3,14 +3,15 @@
 var abi = require("augur-abi");
 var clone = require("clone");
 var eth = require("../wrappers/eth");
-var signRawTransaction = require("../raw-transactions/sign-raw-transaction");
+var signRawTransactionWithKey = require("../raw-transactions/sign-raw-transaction-with-key");
 
 function resendRawTransaction(transaction, privateKey, gasPrice, gasLimit, callback) {
   return function (dispatch) {
     var newTransaction = clone(transaction);
     if (gasPrice) newTransaction.gasPrice = abi.hex(gasPrice);
     if (gasLimit) newTransaction.gasLimit = abi.hex(gasLimit);
-    return dispatch(eth.sendRawTransaction(signRawTransaction(newTransaction, privateKey), callback));
+    var signedTransaction = signRawTransactionWithKey(newTransaction, privateKey);
+    return dispatch(eth.sendRawTransaction(signedTransaction, callback));
   };
 }
 
