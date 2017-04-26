@@ -22,8 +22,8 @@ function packageRawTransaction(payload, address, networkID, currentBlock) {
   } else {
     packaged.gasLimit = constants.DEFAULT_GAS;
   }
-  if (networkID && parseInt(networkID, 10) < 109) {
-    packaged.chainId = parseInt(networkID, 10);
+  if (networkID && abi.number(networkID) > 0 && abi.number(networkID) < 109) {
+    packaged.chainId = abi.number(networkID);
   }
   if (payload.gasPrice && abi.number(payload.gasPrice) > 0) {
     packaged.gasPrice = abi.hex(payload.gasPrice);
