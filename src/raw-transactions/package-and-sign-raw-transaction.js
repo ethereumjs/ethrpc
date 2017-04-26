@@ -29,7 +29,6 @@ function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, call
       return callback(errors.NOT_LOGGED_IN);
     }
     packaged = packageRawTransaction(payload, address, state.currentBlock, state.networkID);
-    if (payload.gasPrice) packaged.gasPrice = payload.gasPrice;
     if (state.debug.broadcast) {
       console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
     }
