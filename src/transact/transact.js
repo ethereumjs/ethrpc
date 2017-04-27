@@ -14,8 +14,7 @@ var errors = require("../errors/codes");
 
 function transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
-    var onSentCallback, onSuccessCallback, onFailedCallback, debug;
-    debug = getState().debug;
+    var onSentCallback, onSuccessCallback, onFailedCallback, debug = getState().debug;
     if (debug.tx) console.log("payload transact:", payload);
     if (!isFunction(onSent)) return dispatch(callOrSendTransaction(payload));
     onSentCallback = onSent;

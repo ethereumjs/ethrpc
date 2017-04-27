@@ -10,7 +10,7 @@ function registerTransactionRelay(transactionRelay) {
         var payload;
         if (transactions[hash] !== oldTransactions[hash]) {
           payload = transactions[hash].payload;
-          if (payload.method && !noRelay[payload.method]) {
+          if (payload && payload.method && !noRelay[payload.method]) {
             transactionRelay({
               hash: hash,
               type: payload.label || payload.method,

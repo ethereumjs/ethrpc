@@ -2,10 +2,11 @@
 
 var abi = require("augur-abi");
 var transact = require("../transact/transact");
+var isObject = require("../utils/is-object");
 
 function sendEther(to, value, from, onSent, onSuccess, onFailed) {
   return function (dispatch) {
-    if (to && to.constructor === Object) {
+    if (isObject(to)) {
       value = to.value;
       from = to.from;
       onSent = to.onSent;
@@ -19,7 +20,7 @@ function sendEther(to, value, from, onSent, onSuccess, onFailed) {
       value: abi.fix(value, "hex"),
       returns: "null",
       gas: "0xcf08"
-    }, onSent, onSuccess, onFailed));
+    }, null, onSent, onSuccess, onFailed));
   };
 }
 

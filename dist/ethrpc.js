@@ -41514,8 +41514,7 @@ var errors = require("../errors/codes");
 
 function transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
-    var onSentCallback, onSuccessCallback, onFailedCallback, debug;
-    debug = getState().debug;
+    var onSentCallback, onSuccessCallback, onFailedCallback, debug = getState().debug;
     if (debug.tx) console.log("payload transact:", payload);
     if (!isFunction(onSent)) return dispatch(callOrSendTransaction(payload));
     onSentCallback = onSent;
@@ -41895,7 +41894,7 @@ function registerTransactionRelay(transactionRelay) {
         var payload;
         if (transactions[hash] !== oldTransactions[hash]) {
           payload = transactions[hash].payload;
-          if (payload.method && !noRelay[payload.method]) {
+          if (payload && payload.method && !noRelay[payload.method]) {
             transactionRelay({
               hash: hash,
               type: payload.label || payload.method,
@@ -43074,10 +43073,11 @@ module.exports = resendTransaction;
 
 var abi = require("augur-abi");
 var transact = require("../transact/transact");
+var isObject = require("../utils/is-object");
 
 function sendEther(to, value, from, onSent, onSuccess, onFailed) {
   return function (dispatch) {
-    if (to && to.constructor === Object) {
+    if (isObject(to)) {
       value = to.value;
       from = to.from;
       onSent = to.onSent;
@@ -43091,13 +43091,13 @@ function sendEther(to, value, from, onSent, onSuccess, onFailed) {
       value: abi.fix(value, "hex"),
       returns: "null",
       gas: "0xcf08"
-    }, onSent, onSuccess, onFailed));
+    }, null, onSent, onSuccess, onFailed));
   };
 }
 
 module.exports = sendEther;
 
-},{"../transact/transact":216,"augur-abi":3}],262:[function(require,module,exports){
+},{"../transact/transact":216,"../utils/is-object":239,"augur-abi":3}],262:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
