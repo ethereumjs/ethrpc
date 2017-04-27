@@ -387,7 +387,7 @@ module.exports = {
 
   debug: false,
 
-  version: "1.2.0",
+  version: "1.2.1",
 
   constants: {
     ONE: new BigNumber(10).toPower(new BigNumber(18)),
@@ -677,6 +677,7 @@ module.exports = {
 
   format_int256: function (s) {
     if (s === undefined || s === null || s === "0x") return s;
+    if (Array.isArray(s)) return s.map(this.format_int256.bind(this));
     if (Buffer.isBuffer(s)) s = s.toString("hex");
     if (s.constructor !== String) s = s.toString(16);
     if (s.slice(0, 1) === "-") s = this.unfork(s);
@@ -919,79 +920,6 @@ module.exports = {
     }
     if (prefix) s = this.prefix_hex(s);
     return s;
-  },
-
-  encode_prefix: function (funcname, signature) {
-    signature = signature || "";
-    var summary = funcname + "(";
-    for (var i = 0, len = signature.length; i < len; ++i) {
-      switch (signature[i]) {
-        case 's':
-          summary += "bytes";
-          break;
-        case 'b':
-          summary += "bytes";
-          var j = 1;
-          while (this.is_numeric(signature[i+j])) {
-            summary += signature[i+j].toString();
-            j++;
-          }
-          i += j;
-          break;
-        case 'i':
-          summary += "int256";
-          break;
-        case 'a':
-          summary += "int256[]";
-          break;
-        default:
-          summary += "weird";
-      }
-      if (i !== len - 1) summary += ",";
-    }
-    var prefix = keccak_256(summary + ")").slice(0, 8);
-    while (prefix.slice(0, 1) === '0') {
-      prefix = prefix.slice(1);
-    }
-    return this.pad_left(prefix, 8, true);
-  },
-
-  parse_signature: function (signature) {
-    var types = [];
-    for (var i = 0, len = signature.length; i < len; ++i) {
-      if (this.is_numeric(signature[i])) {
-        types[types.length - 1] += signature[i].toString();
-      } else {
-        if (signature[i] === 's') {
-          types.push("bytes");
-        } else if (signature[i] === 'b') {
-          types.push("bytes");
-        } else if (signature[i] === 'a') {
-          types.push("int256[]");
-        } else {
-          types.push("int256");
-        }
-      }
-    }
-    return types;
-  },
-
-  parse_params: function (params) {
-    if (params !== undefined && params !== null && params !== [] && params !== "") {
-      if (params.constructor === String) {
-        if (params.slice(0,1) === "[" && params.slice(-1) === "]") {
-          params = JSON.parse(params);
-        }
-        if (params.constructor === String) {
-          params = [params];
-        }
-      } else if (params.constructor === Number) {
-        params = [params];
-      }
-    } else {
-      params = [];
-    }
-    return params;
   },
 
   encode_int: function (value) {
