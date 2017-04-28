@@ -39,7 +39,7 @@ function updatePendingTx(txHash) {
           dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
           storedTransaction = getState().transactions[txHash];
           if (getState().debug.tx) console.log("resubmitting tx:", storedTransaction.hash);
-          dispatch(transact(storedTransaction.payload, storedTransaction.onSent, storedTransaction.onSuccess, storedTransaction.onFailed));
+          dispatch(transact(storedTransaction.payload, storedTransaction.signer, storedTransaction.onSent, storedTransaction.onSuccess, storedTransaction.onFailed));
         }
 
       // non-null transaction: transaction still alive and kicking!
@@ -56,7 +56,7 @@ function updatePendingTx(txHash) {
               }
             }
           });
-          dispatch({ type: "TRANSACTION_MINED", hash: txHash });
+          dispatch({ type: "TRANSACTION_SEALED", hash: txHash });
           currentBlock = getState().currentBlock;
           if (currentBlock && currentBlock.number != null) {
             dispatch({

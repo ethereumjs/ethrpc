@@ -18,7 +18,6 @@ function transactAsync(payload, callReturn, privateKeyOrSigner, onSent, onSucces
     var invoke = (privateKeyOrSigner == null) ? callOrSendTransaction : function (payload, callback) {
       return packageAndSubmitRawTransaction(payload, payload.from, privateKeyOrSigner, callback);
     };
-    // var invoke = payload.invoke || callOrSendTransaction;
     payload.send = true;
     dispatch(invoke(immutableDelete(payload, "returns"), function (txHash) {
       if (getState().debug.tx) console.log("txHash:", txHash);
@@ -30,7 +29,7 @@ function transactAsync(payload, callReturn, privateKeyOrSigner, onSent, onSucces
       // to the client, using the onSent callback
       onSent({ hash: txHash, callReturn: callReturn });
 
-      dispatch(verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, function (err) {
+      dispatch(verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, onSent, onSuccess, onFailed, function (err) {
         if (err != null) {
           err.hash = txHash;
           return onFailed(err);

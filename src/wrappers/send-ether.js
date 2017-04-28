@@ -4,6 +4,7 @@ var abi = require("augur-abi");
 var transact = require("../transact/transact");
 var isObject = require("../utils/is-object");
 
+// TODO remove flexible function signature
 function sendEther(to, value, from, onSent, onSuccess, onFailed) {
   return function (dispatch) {
     if (isObject(to)) {

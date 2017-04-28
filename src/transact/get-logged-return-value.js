@@ -15,7 +15,7 @@ function getLoggedReturnValue(txHash, callback) {
         return callback(errors.NULL_CALL_RETURN);
       }
       log = receipt.logs[receipt.logs.length - 1];
-      if (!log || log.data === null || log.data === undefined) {
+      if (!log || log.data == null) {
         return callback(errors.NULL_CALL_RETURN);
       }
       callback(null, {

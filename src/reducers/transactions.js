@@ -37,9 +37,9 @@ module.exports = function (transactions, action) {
       newTransaction = {};
       newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "failed" });
       return assign({}, transactions, newTransaction);
-    case "TRANSACTION_MINED":
+    case "TRANSACTION_SEALED":
       newTransaction = {};
-      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "mined" });
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "sealed" });
       return assign({}, transactions, newTransaction);
     case "TRANSACTION_RESUBMITTED":
       newTransaction = {};

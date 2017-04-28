@@ -1147,7 +1147,7 @@ describe("tests that only work against stub server", function () {
           }
           server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x12"; });
           server.addResponder(function (jso) { if (jso.method === "eth_getTransactionByHash") return null; });
-          rpc.transact(createReasonableTransactPayload(), onSent, onSuccess, onFailure);
+          rpc.transact(createReasonableTransactPayload(), null, onSent, onSuccess, onFailure);
         });
 
         it("transact", function (done) {
@@ -1157,8 +1157,10 @@ describe("tests that only work against stub server", function () {
             done();
           }
           function onFailure(error) { assert.isFalse(true, "onFailure should not have been called."); }
-          server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x12"; });
-          rpc.transact(createReasonableTransactPayload(), onSent, onSuccess, onFailure);
+          server.addResponder(function (jso) {
+            if (jso.method === "eth_call") return "0x12";
+          });
+          rpc.transact(createReasonableTransactPayload(), null, onSent, onSuccess, onFailure);
         });
 
         it("ensureLatestBlock", function (done) {

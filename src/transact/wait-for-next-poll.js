@@ -16,7 +16,7 @@ function waitForNextPoll(tx, callback) {
       type: "ADD_NOTIFICATION",
       hash: tx.hash,
       notification: setTimeout(function () {
-        if (storedTransaction.status === "pending" || storedTransaction.status === "mined") {
+        if (storedTransaction.status === "pending" || storedTransaction.status === "sealed") {
           callback(null, null);
         }
       }, constants.TX_POLL_INTERVAL)
