@@ -1,5 +1,6 @@
 "use strict";
 
+var abi = require("augur-abi");
 var Transaction = require("ethereumjs-tx");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
@@ -14,12 +15,16 @@ var isFunction = require("../utils/is-function");
  */
 function signRawTransactionWithKey(packaged, privateKey, callback) {
   var serialized, rawTransaction = new Transaction(packaged);
-  rawTransaction.sign(privateKey);
+  if (!Buffer.isBuffer(privateKey)) {
+    rawTransaction.sign(Buffer.from(privateKey));
+  } else {
+    rawTransaction.sign(privateKey);
+  }
   if (!rawTransaction.validate()) {
     if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_INVALID);
     callback(errors.TRANSACTION_INVALID);
   }
-  serialized = rawTransaction.serialize().toString("hex");
+  serialized = abi.prefix_hex(rawTransaction.serialize().toString("hex"));
   if (!isFunction(callback)) return serialized;
   callback(null, serialized);
 }

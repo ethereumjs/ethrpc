@@ -18,7 +18,7 @@ function checkBlockHash(tx, numConfirmations, callback) {
     if (debug.tx) console.log("checkBlockHash:", tx.blockHash);
     if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {
       if (!numConfirmations) {
-        dispatch({ type: "TRANSACTION_MINED", hash: txHash });
+        dispatch({ type: "TRANSACTION_SEALED", hash: txHash });
         clearTimeout(internalState.get("notifications" + txHash));
         if (!isFunction(callback)) return tx;
         return callback(null, tx);

@@ -16,7 +16,7 @@ function updateTx(txHash) {
           dispatch({ type: "LOCK_TRANSACTION", hash: txHash });
           dispatch(updatePendingTx(txHash));
           break;
-        case "mined":
+        case "sealed":
           dispatch({ type: "LOCK_TRANSACTION", hash: txHash });
           dispatch(updateMinedTx(txHash));
           break;
