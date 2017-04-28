@@ -39,7 +39,7 @@ function updateMinedTx(txHash) {
             dispatch({
               type: "UPDATE_TRANSACTION",
               hash: txHash,
-              data: { tx: { callReturn: transaction.callReturn } }
+              data: { tx: { callReturn: transaction.tx.callReturn } }
             });
             dispatch(eth.getTransactionReceipt(txHash, function (receipt) {
               if (debug.tx) console.log("got receipt:", receipt);
