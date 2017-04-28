@@ -307,7 +307,7 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "mined"
+          status: "sealed"
         }
       },
       action: {
@@ -324,7 +324,7 @@ describe("reducers/transactions", function () {
       }
     });
   });
-  describe("TRANSACTION_MINED", function () {
+  describe("TRANSACTION_SEALED", function () {
     test({
       description: "Set transaction status to 'mined'",
       state: {
@@ -334,14 +334,14 @@ describe("reducers/transactions", function () {
         }
       },
       action: {
-        type: "TRANSACTION_MINED",
+        type: "TRANSACTION_SEALED",
         hash: "0xdeadbeef"
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
-            status: "mined"
+            status: "sealed"
           }
         });
       }
@@ -353,7 +353,7 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "mined"
+          status: "sealed"
         }
       },
       action: {
@@ -376,7 +376,7 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "mined"
+          status: "sealed"
         }
       },
       action: {
@@ -538,7 +538,7 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "mined"
+          status: "sealed"
         },
         "0xf00dbeef": {
           hash: "0xf00dbeef",
@@ -563,7 +563,7 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "mined"
+          status: "sealed"
         }
       },
       action: {
@@ -581,7 +581,7 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "mined"
+          status: "sealed"
         },
         "0xf00dbeef": {
           hash: "0xf00dbeef",

@@ -387,7 +387,7 @@ module.exports = {
 
   debug: false,
 
-  version: "1.2.0",
+  version: "1.2.1",
 
   constants: {
     ONE: new BigNumber(10).toPower(new BigNumber(18)),
@@ -677,6 +677,7 @@ module.exports = {
 
   format_int256: function (s) {
     if (s === undefined || s === null || s === "0x") return s;
+    if (Array.isArray(s)) return s.map(this.format_int256.bind(this));
     if (Buffer.isBuffer(s)) s = s.toString("hex");
     if (s.constructor !== String) s = s.toString(16);
     if (s.slice(0, 1) === "-") s = this.unfork(s);
@@ -919,79 +920,6 @@ module.exports = {
     }
     if (prefix) s = this.prefix_hex(s);
     return s;
-  },
-
-  encode_prefix: function (funcname, signature) {
-    signature = signature || "";
-    var summary = funcname + "(";
-    for (var i = 0, len = signature.length; i < len; ++i) {
-      switch (signature[i]) {
-        case 's':
-          summary += "bytes";
-          break;
-        case 'b':
-          summary += "bytes";
-          var j = 1;
-          while (this.is_numeric(signature[i+j])) {
-            summary += signature[i+j].toString();
-            j++;
-          }
-          i += j;
-          break;
-        case 'i':
-          summary += "int256";
-          break;
-        case 'a':
-          summary += "int256[]";
-          break;
-        default:
-          summary += "weird";
-      }
-      if (i !== len - 1) summary += ",";
-    }
-    var prefix = keccak_256(summary + ")").slice(0, 8);
-    while (prefix.slice(0, 1) === '0') {
-      prefix = prefix.slice(1);
-    }
-    return this.pad_left(prefix, 8, true);
-  },
-
-  parse_signature: function (signature) {
-    var types = [];
-    for (var i = 0, len = signature.length; i < len; ++i) {
-      if (this.is_numeric(signature[i])) {
-        types[types.length - 1] += signature[i].toString();
-      } else {
-        if (signature[i] === 's') {
-          types.push("bytes");
-        } else if (signature[i] === 'b') {
-          types.push("bytes");
-        } else if (signature[i] === 'a') {
-          types.push("int256[]");
-        } else {
-          types.push("int256");
-        }
-      }
-    }
-    return types;
-  },
-
-  parse_params: function (params) {
-    if (params !== undefined && params !== null && params !== [] && params !== "") {
-      if (params.constructor === String) {
-        if (params.slice(0,1) === "[" && params.slice(-1) === "]") {
-          params = JSON.parse(params);
-        }
-        if (params.constructor === String) {
-          params = [params];
-        }
-      } else if (params.constructor === Number) {
-        params = [params];
-      }
-    } else {
-      params = [];
-    }
-    return params;
   },
 
   encode_int: function (value) {
@@ -40540,8 +40468,10 @@ function setRawTransactionNonce(packaged, address, callback) {
 module.exports = setRawTransactionNonce;
 
 },{"../utils/is-function":235,"../wrappers/eth":251,"./verify-raw-transaction-nonce":189}],187:[function(require,module,exports){
+(function (Buffer){
 "use strict";
 
+var abi = require("augur-abi");
 var Transaction = require("ethereumjs-tx");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
@@ -40556,19 +40486,24 @@ var isFunction = require("../utils/is-function");
  */
 function signRawTransactionWithKey(packaged, privateKey, callback) {
   var serialized, rawTransaction = new Transaction(packaged);
-  rawTransaction.sign(privateKey);
+  if (!Buffer.isBuffer(privateKey)) {
+    rawTransaction.sign(Buffer.from(privateKey));
+  } else {
+    rawTransaction.sign(privateKey);
+  }
   if (!rawTransaction.validate()) {
     if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_INVALID);
     callback(errors.TRANSACTION_INVALID);
   }
-  serialized = rawTransaction.serialize().toString("hex");
+  serialized = abi.prefix_hex(rawTransaction.serialize().toString("hex"));
   if (!isFunction(callback)) return serialized;
   callback(null, serialized);
 }
 
 module.exports = signRawTransactionWithKey;
 
-},{"../errors/codes":171,"../errors/rpc-error":174,"../utils/is-function":235,"ethereumjs-tx":45}],188:[function(require,module,exports){
+}).call(this,require("buffer").Buffer)
+},{"../errors/codes":171,"../errors/rpc-error":174,"../utils/is-function":235,"augur-abi":3,"buffer":17,"ethereumjs-tx":45}],188:[function(require,module,exports){
 "use strict";
 
 var immutableDelete = require("immutable-delete");
@@ -40946,9 +40881,9 @@ module.exports = function (transactions, action) {
       newTransaction = {};
       newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "failed" });
       return assign({}, transactions, newTransaction);
-    case "TRANSACTION_MINED":
+    case "TRANSACTION_SEALED":
       newTransaction = {};
-      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "mined" });
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "sealed" });
       return assign({}, transactions, newTransaction);
     case "TRANSACTION_RESUBMITTED":
       newTransaction = {};
@@ -41420,7 +41355,7 @@ function getLoggedReturnValue(txHash, callback) {
         return callback(errors.NULL_CALL_RETURN);
       }
       log = receipt.logs[receipt.logs.length - 1];
-      if (!log || log.data === null || log.data === undefined) {
+      if (!log || log.data == null) {
         return callback(errors.NULL_CALL_RETURN);
       }
       callback(null, {
@@ -41473,7 +41408,6 @@ function transactAsync(payload, callReturn, privateKeyOrSigner, onSent, onSucces
     var invoke = (privateKeyOrSigner == null) ? callOrSendTransaction : function (payload, callback) {
       return packageAndSubmitRawTransaction(payload, payload.from, privateKeyOrSigner, callback);
     };
-    // var invoke = payload.invoke || callOrSendTransaction;
     payload.send = true;
     dispatch(invoke(immutableDelete(payload, "returns"), function (txHash) {
       if (getState().debug.tx) console.log("txHash:", txHash);
@@ -41485,7 +41419,7 @@ function transactAsync(payload, callReturn, privateKeyOrSigner, onSent, onSucces
       // to the client, using the onSent callback
       onSent({ hash: txHash, callReturn: callReturn });
 
-      dispatch(verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, function (err) {
+      dispatch(verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, onSent, onSuccess, onFailed, function (err) {
         if (err != null) {
           err.hash = txHash;
           return onFailed(err);
@@ -41514,8 +41448,7 @@ var errors = require("../errors/codes");
 
 function transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
-    var onSentCallback, onSuccessCallback, onFailedCallback, debug;
-    debug = getState().debug;
+    var onSentCallback, onSuccessCallback, onFailedCallback, debug = getState().debug;
     if (debug.tx) console.log("payload transact:", payload);
     if (!isFunction(onSent)) return dispatch(callOrSendTransaction(payload));
     onSentCallback = onSent;
@@ -41588,7 +41521,7 @@ function updateMinedTx(txHash) {
             dispatch({
               type: "UPDATE_TRANSACTION",
               hash: txHash,
-              data: { tx: { callReturn: transaction.callReturn } }
+              data: { tx: { callReturn: transaction.tx.callReturn } }
             });
             dispatch(eth.getTransactionReceipt(txHash, function (receipt) {
               if (debug.tx) console.log("got receipt:", receipt);
@@ -41707,7 +41640,7 @@ function updatePendingTx(txHash) {
           dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
           storedTransaction = getState().transactions[txHash];
           if (getState().debug.tx) console.log("resubmitting tx:", storedTransaction.hash);
-          dispatch(transact(storedTransaction.payload, storedTransaction.onSent, storedTransaction.onSuccess, storedTransaction.onFailed));
+          dispatch(transact(storedTransaction.payload, storedTransaction.signer, storedTransaction.onSent, storedTransaction.onSuccess, storedTransaction.onFailed));
         }
 
       // non-null transaction: transaction still alive and kicking!
@@ -41724,7 +41657,7 @@ function updatePendingTx(txHash) {
               }
             }
           });
-          dispatch({ type: "TRANSACTION_MINED", hash: txHash });
+          dispatch({ type: "TRANSACTION_SEALED", hash: txHash });
           currentBlock = getState().currentBlock;
           if (currentBlock && currentBlock.number != null) {
             dispatch({
@@ -41774,7 +41707,7 @@ function updateTx(txHash) {
           dispatch({ type: "LOCK_TRANSACTION", hash: txHash });
           dispatch(updatePendingTx(txHash));
           break;
-        case "mined":
+        case "sealed":
           dispatch({ type: "LOCK_TRANSACTION", hash: txHash });
           dispatch(updateMinedTx(txHash));
           break;
@@ -41795,48 +41728,30 @@ var RPCError = require("../errors/rpc-error");
 var isFunction = require("../utils/is-function");
 var errors = require("../errors/codes");
 
-function verifyTxSubmitted(payload, txHash, callReturn, onSent, onSuccess, onFailed, callback) {
+function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, onSent, onSuccess, onFailed, callback) {
   return function (dispatch, getState) {
-    if (!isFunction(callback)) {
-      if (!payload || ((!payload.mutable && payload.returns !== "null") && (txHash === null || txHash === undefined))) {
-        throw new RPCError(errors.TRANSACTION_FAILED);
-      }
-      if (getState().transactions[txHash]) {
-        throw new RPCError(errors.DUPLICATE_TRANSACTION);
-      }
-      dispatch({
-        type: "ADD_TRANSACTION",
-        transaction: {
-          hash: txHash,
-          payload: payload,
-          callReturn: callReturn,
-          count: 0,
-          status: "pending"
-        }
-      });
-    } else {
-      if (!payload || txHash === null || txHash === undefined) {
-        return callback(errors.TRANSACTION_FAILED);
-      }
-      if (getState().transactions[txHash]) {
-        return callback(errors.DUPLICATE_TRANSACTION);
-      }
-      dispatch({
-        type: "ADD_TRANSACTION",
-        transaction: {
-          hash: txHash,
-          payload: payload,
-          callReturn: callReturn,
-          onSent: onSent,
-          onSuccess: onSuccess,
-          onFailed: onFailed,
-          count: 0,
-          status: "pending"
-        }
-      });
-      dispatch(updateTx.default(txHash));
-      callback(null);
+    if (!payload || txHash == null) {
+      return callback(errors.TRANSACTION_FAILED);
     }
+    if (getState().transactions[txHash]) {
+      return callback(errors.DUPLICATE_TRANSACTION);
+    }
+    dispatch({
+      type: "ADD_TRANSACTION",
+      transaction: {
+        hash: txHash,
+        payload: payload,
+        tx: { callReturn: callReturn },
+        signer: privateKeyOrSigner,
+        onSent: onSent,
+        onSuccess: onSuccess,
+        onFailed: onFailed,
+        count: 0,
+        status: "pending"
+      }
+    });
+    dispatch(updateTx.default(txHash));
+    callback(null);
   };
 }
 
@@ -41894,8 +41809,9 @@ function registerTransactionRelay(transactionRelay) {
       Object.keys(transactions).map(function (hash) {
         var payload;
         if (transactions[hash] !== oldTransactions[hash]) {
+          // console.log("tx changed:", hash, transactions[hash]);
           payload = transactions[hash].payload;
-          if (payload.method && !noRelay[payload.method]) {
+          if (payload && payload.method && !noRelay[payload.method]) {
             transactionRelay({
               hash: hash,
               type: payload.label || payload.method,
@@ -43074,10 +42990,12 @@ module.exports = resendTransaction;
 
 var abi = require("augur-abi");
 var transact = require("../transact/transact");
+var isObject = require("../utils/is-object");
 
+// TODO remove flexible function signature
 function sendEther(to, value, from, onSent, onSuccess, onFailed) {
   return function (dispatch) {
-    if (to && to.constructor === Object) {
+    if (isObject(to)) {
       value = to.value;
       from = to.from;
       onSent = to.onSent;
@@ -43091,13 +43009,13 @@ function sendEther(to, value, from, onSent, onSuccess, onFailed) {
       value: abi.fix(value, "hex"),
       returns: "null",
       gas: "0xcf08"
-    }, onSent, onSuccess, onFailed));
+    }, null, onSent, onSuccess, onFailed));
   };
 }
 
 module.exports = sendEther;
 
-},{"../transact/transact":216,"augur-abi":3}],262:[function(require,module,exports){
+},{"../transact/transact":216,"../utils/is-object":239,"augur-abi":3}],262:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
