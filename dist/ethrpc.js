@@ -39296,6 +39296,7 @@ var createEthrpc = function (reducer) {
     // Redux store state-lookup wrappers
     getBlockStream: function () { return internalState.get("blockAndLogStreamer"); },
     getConfiguration: function () { return store.getState().configuration; },
+    getCoinbase: function () { return store.getState().coinbase; },
     getCurrentBlock: function () { return store.getState().currentBlock; },
     getDebugOptions: function () { return store.getState().debug; },
     getGasPrice: function () { return store.getState().gasPrice; },
