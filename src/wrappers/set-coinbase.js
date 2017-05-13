@@ -2,7 +2,6 @@
 
 var abi = require("augur-abi");
 var eth_coinbase = require("./eth").coinbase;
-var isHex = require("../utils/is-hex");
 
 function setCoinbase() {
   return function (dispatch) {
