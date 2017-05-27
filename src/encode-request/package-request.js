@@ -45,7 +45,7 @@ var packageRequest = function (payload) {
   packaged = {
     from: tx.from,
     to: tx.to,
-    data: abi.encode(tx),
+    data: (tx.data) ? abi.prefix_hex(tx.data) : abi.encode(tx),
     gas: tx.gas ? abi.hex(tx.gas) : constants.DEFAULT_GAS
   };
   if (tx.gasPrice) packaged.gasPrice = abi.hex(tx.gasPrice);

@@ -38,7 +38,7 @@ function updatePendingTx(txHash) {
           dispatch({ type: "TRANSACTION_RESUBMITTED", hash: txHash });
           dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
           storedTransaction = getState().transactions[txHash];
-          if (getState().debug.tx) console.log("resubmitting tx:", storedTransaction.hash);
+          if (getState().debug.tx) console.log("resubmitting tx:", txHash);
           dispatch(transact(storedTransaction.payload, storedTransaction.signer, storedTransaction.onSent, storedTransaction.onSuccess, storedTransaction.onFailed));
         }
 
