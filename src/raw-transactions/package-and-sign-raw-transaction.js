@@ -28,7 +28,7 @@ function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, call
       if (!isFunction(callback)) throw new RPCError(errors.NOT_LOGGED_IN);
       return callback(errors.NOT_LOGGED_IN);
     }
-    packaged = packageRawTransaction(payload, address, state.currentBlock, state.networkID);
+    packaged = packageRawTransaction(payload, address, state.networkID, state.currentBlock);
     if (state.debug.broadcast) {
       console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
     }
