@@ -11,6 +11,7 @@ module.exports.configuration = {
   httpAddresses: [],
   wsAddresses: [],
   ipcAddresses: [],
+  networkID: null,
   connectionTimeout: 3000,
   pollingIntervalMilliseconds: 30000,
   blockRetention: 100

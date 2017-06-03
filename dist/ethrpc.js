@@ -948,7 +948,525 @@ module.exports = {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"bignumber.js":5,"buffer":15,"ethereumjs-abi":39,"js-sha3":66}],4:[function(require,module,exports){
+},{"bignumber.js":7,"buffer":17,"ethereumjs-abi":4,"js-sha3":66}],4:[function(require,module,exports){
+module.exports = require('./lib/index.js')
+
+},{"./lib/index.js":5}],5:[function(require,module,exports){
+(function (Buffer){
+const utils = require('ethereumjs-util')
+const BN = require('bn.js')
+
+var ABI = function () {
+}
+
+// Convert from short to canonical names
+// FIXME: optimise or make this nicer?
+function elementaryName (name) {
+  if (name.startsWith('int[')) {
+    return 'int256' + name.slice(4)
+  } else if (name === 'int') {
+    return 'int256'
+  } else if (name.startsWith('uint[')) {
+    return 'uint256' + name.slice(4)
+  } else if (name === 'uint') {
+    return 'uint256'
+  } else if (name.startsWith('real[')) {
+    return 'real128x128' + name.slice(4)
+  } else if (name === 'real') {
+    return 'real128x128'
+  } else if (name.startsWith('ureal[')) {
+    return 'ureal128x128' + name.slice(4)
+  } else if (name === 'ureal') {
+    return 'ureal128x128'
+  }
+  return name
+}
+
+ABI.eventID = function (name, types) {
+  // FIXME: use node.js util.format?
+  var sig = name + '(' + types.map(elementaryName).join(',') + ')'
+  return utils.sha3(new Buffer(sig))
+}
+
+ABI.methodID = function (name, types) {
+  return ABI.eventID(name, types).slice(0, 4)
+}
+
+// Parse N from type<N>
+function parseTypeN (type) {
+  return parseInt(/^\D+(\d+)$/.exec(type)[1], 10)
+}
+
+// Parse N,M from type<N>x<M>
+// function parseTypeNxM (type) {
+//   var tmp = /^\D+(\d+)x(\d+)$/.exec(type)
+//   return [ parseInt(tmp[1], 10), parseInt(tmp[2], 10) ]
+// }
+
+// Parse N from type[<N>]
+function parseTypeArray (type) {
+  var tmp = /^\w+\[(\d*)\]$/.exec(type)[1]
+  if (tmp.length === 0) {
+    return 0
+  } else {
+    return parseInt(tmp, 10)
+  }
+}
+
+function parseNumber (arg) {
+  var type = typeof arg
+  if (type === 'string') {
+    if (utils.isHexPrefixed(arg)) {
+      return new BN(utils.stripHexPrefix(arg), 16)
+    } else {
+      return new BN(arg, 10)
+    }
+  } else if (type === 'number') {
+    return new BN(arg)
+  } else if (arg.toArray) {
+    // assume this is a BN for the moment, replace with BN.isBN soon
+    return arg
+  } else {
+    throw new Error('Argument is not a number')
+  }
+}
+
+// someMethod(bytes,uint)
+// someMethod(bytes,uint):(boolean)
+function parseSignature (sig) {
+  var tmp = /^(\w+)\((.+)\)$/.exec(sig)
+  if (tmp.length !== 3) {
+    throw new Error('Invalid method signature')
+  }
+
+  var args = /^(.+)\):\((.+)$/.exec(tmp[2])
+
+  if (args !== null && args.length === 3) {
+    return {
+      method: tmp[1],
+      args: args[1].split(','),
+      retargs: args[2].split(',')
+    }
+  } else {
+    return {
+      method: tmp[1],
+      args: tmp[2].split(',')
+    }
+  }
+}
+
+// Encodes a single item (can be dynamic array)
+// @returns: Buffer
+function encodeSingle (type, arg) {
+  var size, num, ret, i
+
+  if (type === 'address') {
+    return encodeSingle('uint160', parseNumber(arg))
+  } else if (type === 'bool') {
+    return encodeSingle('uint8', arg ? 1 : 0)
+  } else if (type === 'string') {
+    return encodeSingle('bytes', new Buffer(arg, 'utf8'))
+  } else if (type.match(/\w+\[\d+\]/)) {
+    // this part handles fixed-length arrays ([2])
+    // NOTE: we catch here all calls to arrays, that simplifies the rest
+    if (typeof arg.length === 'undefined') {
+      throw new Error('Not an array?')
+    }
+
+    size = parseTypeArray(type)
+    if ((size !== 0) && (arg.length > size)) {
+      throw new Error('Elements exceed array size: ' + size)
+    }
+
+    type = type.slice(0, type.indexOf('['))
+
+    ret = []
+    for (i in arg) {
+      ret.push(encodeSingle(type, arg[i]))
+    }
+
+    return Buffer.concat(ret)
+  } else if (type.match(/\w+\[\]/)) {
+    // this part handles variable length ([])
+    // NOTE: we catch here all calls to arrays, that simplifies the rest
+    if (typeof arg.length === 'undefined') {
+      throw new Error('Not an array?')
+    }
+
+    type = type.slice(0, type.indexOf('['))
+
+    ret = [ encodeSingle('uint256', arg.length) ]
+    for (i in arg) {
+      ret.push(encodeSingle(type, arg[i]))
+    }
+
+    return Buffer.concat(ret)
+  } else if (type === 'bytes') {
+    arg = new Buffer(arg)
+    return Buffer.concat([ encodeSingle('uint256', arg.length), arg, utils.zeros(32 - (arg.length % 32)) ])
+  } else if (type.startsWith('bytes')) {
+    size = parseTypeN(type)
+    if (size < 1 || size > 32) {
+      throw new Error('Invalid bytes<N> width: ' + size)
+    }
+
+    return utils.setLengthRight(arg, 32)
+  } else if (type.startsWith('uint')) {
+    size = parseTypeN(type)
+    if ((size % 8) || (size < 8) || (size > 256)) {
+      throw new Error('Invalid uint<N> width: ' + size)
+    }
+
+    num = parseNumber(arg)
+    if (num.bitLength() > size) {
+      throw new Error('Supplied uint exceeds width: ' + size + ' vs ' + num.bitLength())
+    }
+
+    return num.toArrayLike(Buffer, 'be', 32)
+  } else if (type.startsWith('int')) {
+    size = parseTypeN(type)
+    if ((size % 8) || (size < 8) || (size > 256)) {
+      throw new Error('Invalid int<N> width: ' + size)
+    }
+
+    num = parseNumber(arg)
+    if (num.bitLength() > size) {
+      throw new Error('Supplied int exceeds width: ' + size + ' vs ' + num.bitLength())
+    }
+
+    return num.toTwos(256).toArrayLike(Buffer, 'be', 32)
+  }
+  // FIXME: support ureal<N>x<M> and real<N>x<M>
+
+  throw new Error('Unsupported or invalid type: ' + type)
+}
+
+// Decodes a single item (can be dynamic array)
+// @returns: array
+// FIXME: this method will need a lot of attention at checking limits and validation
+function decodeSingle (type, arg) {
+  var size, num, ret, i
+
+  if (type === 'address') {
+    return decodeSingle('uint160', arg)
+  } else if (type === 'bool') {
+    return decodeSingle('uint8', arg).toString() === new BN(1).toString()
+  } else if (type === 'string') {
+    return new Buffer(decodeSingle('bytes', arg), 'utf8').toString()
+  } else if (type.match(/\w+\[\d+\]/)) {
+    // this part handles fixed-length arrays ([2])
+    // NOTE: we catch here all calls to arrays, that simplifies the rest
+    size = parseTypeArray(type)
+    type = type.slice(0, type.indexOf('['))
+
+    ret = []
+    for (i = 0; i < size; i++) {
+      ret.push(decodeSingle(type, arg.slice(i * 32)))
+    }
+
+    return ret
+  } else if (type.match(/\w+\[\]/)) {
+    // this part handles variable length ([])
+    // NOTE: we catch here all calls to arrays, that simplifies the rest
+    type = type.slice(0, type.indexOf('['))
+    var count = decodeSingle('uint256', arg.slice(0, 32)).toNumber()
+
+    ret = []
+    for (i = 1; i < count + 1; i++) {
+      ret.push(decodeSingle(type, arg.slice(i * 32)))
+    }
+
+    return ret
+  } else if (type === 'bytes') {
+    size = decodeSingle('uint256', arg.slice(0, 32)).toNumber()
+    return arg.slice(32, 32 + size)
+  } else if (type.startsWith('bytes')) {
+    size = parseTypeN(type)
+    if (size < 1 || size > 32) {
+      throw new Error('Invalid bytes<N> width: ' + size)
+    }
+
+    return arg.slice(0, size)
+  } else if (type.startsWith('uint')) {
+    size = parseTypeN(type)
+    if ((size % 8) || (size < 8) || (size > 256)) {
+      throw new Error('Invalid uint<N> width: ' + size)
+    }
+
+    num = new BN(arg.slice(0, 32), 16, 'be')
+    if (num.bitLength() > size) {
+      throw new Error('Decoded int exceeds width: ' + size + ' vs ' + num.bitLength())
+    }
+
+    return num
+  } else if (type.startsWith('int')) {
+    size = parseTypeN(type)
+    if ((size % 8) || (size < 8) || (size > 256)) {
+      throw new Error('Invalid uint<N> width: ' + size)
+    }
+
+    num = new BN(arg.slice(0, 32), 16, 'be').fromTwos(256)
+    if (num.bitLength() > size) {
+      throw new Error('Decoded uint exceeds width: ' + size + ' vs ' + num.bitLength())
+    }
+
+    return num
+  }
+  // FIXME: support ureal<N>x<M> and real<N>x<M>
+
+  throw new Error('Unsupported or invalid type: ' + type)
+}
+
+// Is a type dynamic?
+function isDynamic (type) {
+  // FIXME: handle all types? I don't think anything is missing now
+  return (type === 'string') || (type === 'bytes') || type.match(/\w+\[\]/)
+}
+
+// Encode a method/event with arguments
+// @types an array of string type names
+// @args  an array of the appropriate values
+ABI.rawEncode = function (types, values) {
+  var output = []
+  var data = []
+
+  var headLength = 32 * types.length
+
+  for (var i in types) {
+    var type = elementaryName(types[i])
+    var value = values[i]
+    var cur = encodeSingle(type, value)
+
+    // Use the head/tail method for storing dynamic data
+    if (isDynamic(type)) {
+      output.push(encodeSingle('uint256', headLength))
+      data.push(cur)
+      headLength += cur.length
+    } else {
+      output.push(cur)
+    }
+  }
+
+  return Buffer.concat(output.concat(data))
+}
+
+ABI.rawDecode = function (types, data) {
+  var ret = []
+
+  data = new Buffer(data)
+
+  var offset = 0
+  for (var i in types) {
+    var type = elementaryName(types[i])
+    var cur = data.slice(offset, offset + 32)
+
+    if (isDynamic(type)) {
+      var dataOffset = decodeSingle('uint256', cur).toNumber()
+      // We will read at least 32 bytes
+      if (dataOffset > (data.length - 32)) {
+        throw new Error('Invalid offset: ' + dataOffset)
+      }
+
+      cur = data.slice(dataOffset)
+    } else if (type.match(/\w+\[\d+\]/)) {
+      var count = parseTypeArray(type)
+      if (count > 1) {
+        cur = data.slice(offset, offset + (count * 32))
+      }
+    }
+
+    ret.push(decodeSingle(type, cur))
+    offset += 32
+  }
+
+  return ret
+}
+
+ABI.simpleEncode = function (method) {
+  var args = Array.prototype.slice.call(arguments).slice(1)
+  var sig = parseSignature(method)
+
+  // FIXME: validate/convert arguments
+  if (args.length !== sig.args.length) {
+    throw new Error('Argument count mismatch')
+  }
+
+  return Buffer.concat([ ABI.methodID(sig.method, sig.args), ABI.rawEncode(sig.args, args) ])
+}
+
+ABI.simpleDecode = function (method, data) {
+  var sig = parseSignature(method)
+
+  // FIXME: validate/convert arguments
+  if (!sig.retargs) {
+    throw new Error('No return values in method')
+  }
+
+  return ABI.rawDecode(sig.retargs, data)
+}
+
+function stringify (type, value) {
+  if (type.startsWith('address') || type.startsWith('bytes')) {
+    return '0x' + value.toString('hex')
+  } else {
+    return value.toString()
+  }
+}
+
+ABI.stringify = function (types, values) {
+  var ret = []
+
+  for (var i in types) {
+    var type = types[i]
+    var value = values[i]
+
+    // if it is an array type, concat the items
+    if (/^[^\[]+\[.*\]$/.test(type)) {
+      value = value.map(function (item) {
+        return stringify(type, item)
+      }).join(', ')
+    } else {
+      value = stringify(type, value)
+    }
+
+    ret.push(value)
+  }
+
+  return ret
+}
+
+ABI.solidityPack = function (types, values) {
+  if (types.length !== values.length) {
+    throw new Error('Number of types are not matching the values')
+  }
+
+  var size, num
+  var ret = []
+
+  for (var i = 0; i < types.length; i++) {
+    var type = elementaryName(types[i])
+    var value = values[i]
+
+    if (type === 'bytes') {
+      ret.push(value)
+    } else if (type === 'string') {
+      ret.push(new Buffer(value, 'utf8'))
+    } else if (type === 'bool') {
+      ret.push(new Buffer(value ? '01' : '00', 'hex'))
+    } else if (type === 'address') {
+      ret.push(utils.setLengthLeft(value, 20))
+    } else if (type.startsWith('bytes')) {
+      size = parseTypeN(type)
+      if (size < 1 || size > 32) {
+        throw new Error('Invalid bytes<N> width: ' + size)
+      }
+
+      return utils.setLengthRight(value, size)
+    } else if (type.startsWith('uint')) {
+      size = parseTypeN(type)
+      if ((size % 8) || (size < 8) || (size > 256)) {
+        throw new Error('Invalid uint<N> width: ' + size)
+      }
+
+      num = parseNumber(value)
+      if (num.bitLength() > size) {
+        throw new Error('Supplied uint exceeds width: ' + size + ' vs ' + num.bitLength())
+      }
+
+      ret.push(num.toArrayLike(Buffer, 'be', size / 8))
+    } else if (type.startsWith('int')) {
+      size = parseTypeN(type)
+      if ((size % 8) || (size < 8) || (size > 256)) {
+        throw new Error('Invalid int<N> width: ' + size)
+      }
+
+      num = parseNumber(value)
+      if (num.bitLength() > size) {
+        throw new Error('Supplied int exceeds width: ' + size + ' vs ' + num.bitLength())
+      }
+
+      ret.push(num.toTwos(size).toArrayLike(Buffer, 'be', size / 8))
+    } else {
+      // FIXME: support all other types
+      throw new Error('Unsupported or invalid type: ' + type)
+    }
+  }
+
+  return Buffer.concat(ret)
+}
+
+ABI.soliditySHA3 = function (types, values) {
+  return utils.sha3(ABI.solidityPack(types, values))
+}
+
+ABI.soliditySHA256 = function (types, values) {
+  return utils.sha256(ABI.solidityPack(types, values))
+}
+
+ABI.solidityRIPEMD160 = function (types, values) {
+  return utils.ripemd160(ABI.solidityPack(types, values), true)
+}
+
+// Serpent's users are familiar with this encoding
+// - s: string
+// - b: bytes
+// - b<N>: bytes<N>
+// - i: int256
+// - a: int256[]
+
+function isNumeric (c) {
+  // FIXME: is this correct? Seems to work
+  return (c >= '0') && (c <= '9')
+}
+
+// For a "documentation" refer to https://github.com/ethereum/serpent/blob/develop/preprocess.cpp
+ABI.fromSerpent = function (sig) {
+  var ret = []
+  for (var i = 0; i < sig.length; i++) {
+    var type = sig[i]
+    if (type === 's' || type === 'b') {
+      var tmp = 'bytes'
+      var j = i + 1
+      while ((j < sig.length) && isNumeric(sig[j])) {
+        tmp += sig[j] - '0'
+        j++
+      }
+      i = j - 1
+      ret.push(tmp)
+    } else if (type === 'i') {
+      ret.push('int256')
+    } else if (type === 'a') {
+      ret.push('int256[]')
+    } else {
+      throw new Error('Unsupported or invalid type: ' + type)
+    }
+  }
+  return ret
+}
+
+ABI.toSerpent = function (types) {
+  var ret = []
+  for (var i = 0; i < types.length; i++) {
+    var type = types[i]
+    if (type === 'bytes' || type === 'string') {
+      ret.push('s')
+    } else if (type.startsWith('bytes')) {
+      ret.push('b' + parseTypeN(type))
+    } else if (type === 'int256') {
+      ret.push('i')
+    } else if (type === 'int256[]') {
+      ret.push('a')
+    } else {
+      throw new Error('Unsupported or invalid type: ' + type)
+    }
+  }
+  return ret.join('')
+}
+
+module.exports = ABI
+
+}).call(this,require("buffer").Buffer)
+},{"bn.js":9,"buffer":17,"ethereumjs-util":47}],6:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -1074,7 +1592,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*! bignumber.js v2.3.0 https://github.com/MikeMcl/bignumber.js/LICENCE */
 
 ;(function (globalObj) {
@@ -3809,7 +4327,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     }
 })(this);
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 // Reference https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki
 // Format: 0x30 [total-length] 0x02 [R-length] [R] 0x02 [S-length] [S]
 // NOTE: SIGHASH byte ignored AND restricted, truncate before use
@@ -3924,7 +4442,7 @@ module.exports = {
   encode: encode
 }
 
-},{"safe-buffer":115}],7:[function(require,module,exports){
+},{"safe-buffer":115}],9:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -7353,7 +7871,7 @@ module.exports = {
   };
 })(typeof module === 'undefined' || module, this);
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var r;
 
 module.exports = function rand(len) {
@@ -7420,7 +7938,7 @@ if (typeof self === 'object') {
   }
 }
 
-},{"crypto":10}],9:[function(require,module,exports){
+},{"crypto":12}],11:[function(require,module,exports){
 // Browser Request
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -7916,9 +8434,9 @@ function b64_enc (data) {
 }));
 //UMD FOOTER END
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 (function (Buffer){
 const Sha3 = require('js-sha3')
 
@@ -7956,9 +8474,9 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":15,"js-sha3":66}],12:[function(require,module,exports){
-arguments[4][10][0].apply(exports,arguments)
-},{"dup":10}],13:[function(require,module,exports){
+},{"buffer":17,"js-sha3":66}],14:[function(require,module,exports){
+arguments[4][12][0].apply(exports,arguments)
+},{"dup":12}],15:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8181,7 +8699,7 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":15}],14:[function(require,module,exports){
+},{"buffer":17}],16:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -8293,7 +8811,7 @@ exports.allocUnsafeSlow = function allocUnsafeSlow(size) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"buffer":15}],15:[function(require,module,exports){
+},{"buffer":17}],17:[function(require,module,exports){
 (function (global){
 /*!
  * The buffer module from node.js, for the browser.
@@ -9845,7 +10363,7 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":4,"ieee754":59,"isarray":65}],16:[function(require,module,exports){
+},{"base64-js":6,"ieee754":59,"isarray":65}],18:[function(require,module,exports){
 (function (Buffer){
 var Transform = require('stream').Transform
 var inherits = require('inherits')
@@ -9939,7 +10457,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":15,"inherits":62,"stream":130,"string_decoder":13}],17:[function(require,module,exports){
+},{"buffer":17,"inherits":62,"stream":130,"string_decoder":15}],19:[function(require,module,exports){
 (function (Buffer){
 var clone = (function() {
 'use strict';
@@ -10103,7 +10621,7 @@ if (typeof module === 'object' && module.exports) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":15}],18:[function(require,module,exports){
+},{"buffer":17}],20:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -10214,7 +10732,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":63}],19:[function(require,module,exports){
+},{"../../is-buffer/index.js":63}],21:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var inherits = require('inherits')
@@ -10270,7 +10788,7 @@ module.exports = function createHash (alg) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./md5":21,"buffer":15,"cipher-base":16,"inherits":62,"ripemd160":113,"sha.js":123}],20:[function(require,module,exports){
+},{"./md5":23,"buffer":17,"cipher-base":18,"inherits":62,"ripemd160":113,"sha.js":123}],22:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var intSize = 4
@@ -10304,7 +10822,7 @@ module.exports = function hash (buf, fn) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":15}],21:[function(require,module,exports){
+},{"buffer":17}],23:[function(require,module,exports){
 'use strict'
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
@@ -10457,7 +10975,7 @@ module.exports = function md5 (buf) {
   return makeHash(buf, core_md5)
 }
 
-},{"./make-hash":20}],22:[function(require,module,exports){
+},{"./make-hash":22}],24:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -10472,7 +10990,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":37,"./elliptic/curve":25,"./elliptic/curves":28,"./elliptic/ec":29,"./elliptic/eddsa":32,"./elliptic/utils":36,"brorand":8}],23:[function(require,module,exports){
+},{"../package.json":39,"./elliptic/curve":27,"./elliptic/curves":30,"./elliptic/ec":31,"./elliptic/eddsa":34,"./elliptic/utils":38,"brorand":10}],25:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -10849,7 +11367,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../../elliptic":22,"bn.js":7}],24:[function(require,module,exports){
+},{"../../elliptic":24,"bn.js":9}],26:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -11284,7 +11802,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../../elliptic":22,"../curve":25,"bn.js":7,"inherits":62}],25:[function(require,module,exports){
+},{"../../elliptic":24,"../curve":27,"bn.js":9,"inherits":62}],27:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -11294,7 +11812,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":23,"./edwards":24,"./mont":26,"./short":27}],26:[function(require,module,exports){
+},{"./base":25,"./edwards":26,"./mont":28,"./short":29}],28:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -11476,7 +11994,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../../elliptic":22,"../curve":25,"bn.js":7,"inherits":62}],27:[function(require,module,exports){
+},{"../../elliptic":24,"../curve":27,"bn.js":9,"inherits":62}],29:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -12416,7 +12934,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../../elliptic":22,"../curve":25,"bn.js":7,"inherits":62}],28:[function(require,module,exports){
+},{"../../elliptic":24,"../curve":27,"bn.js":9,"inherits":62}],30:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -12623,7 +13141,7 @@ defineCurve('secp256k1', {
   ]
 });
 
-},{"../elliptic":22,"./precomputed/secp256k1":35,"hash.js":51}],29:[function(require,module,exports){
+},{"../elliptic":24,"./precomputed/secp256k1":37,"hash.js":51}],31:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -12865,7 +13383,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../../elliptic":22,"./key":30,"./signature":31,"bn.js":7,"hmac-drbg":57}],30:[function(require,module,exports){
+},{"../../elliptic":24,"./key":32,"./signature":33,"bn.js":9,"hmac-drbg":57}],32:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -12986,7 +13504,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"../../elliptic":22,"bn.js":7}],31:[function(require,module,exports){
+},{"../../elliptic":24,"bn.js":9}],33:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -13123,7 +13641,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../../elliptic":22,"bn.js":7}],32:[function(require,module,exports){
+},{"../../elliptic":24,"bn.js":9}],34:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -13243,7 +13761,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../../elliptic":22,"./key":33,"./signature":34,"hash.js":51}],33:[function(require,module,exports){
+},{"../../elliptic":24,"./key":35,"./signature":36,"hash.js":51}],35:[function(require,module,exports){
 'use strict';
 
 var elliptic = require('../../elliptic');
@@ -13341,7 +13859,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../../elliptic":22}],34:[function(require,module,exports){
+},{"../../elliptic":24}],36:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -13409,7 +13927,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../../elliptic":22,"bn.js":7}],35:[function(require,module,exports){
+},{"../../elliptic":24,"bn.js":9}],37:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -14191,7 +14709,7 @@ module.exports = {
   }
 };
 
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -14313,7 +14831,7 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":7,"minimalistic-assert":88,"minimalistic-crypto-utils":89}],37:[function(require,module,exports){
+},{"bn.js":9,"minimalistic-assert":88,"minimalistic-crypto-utils":89}],39:[function(require,module,exports){
 module.exports={
   "_args": [
     [
@@ -14438,7 +14956,7 @@ module.exports={
   "version": "6.4.0"
 }
 
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 module.exports={
   "genesisGasLimit": {
     "v": 5000,
@@ -14675,571 +15193,7 @@ module.exports={
   }
 }
 
-},{}],39:[function(require,module,exports){
-module.exports = require('./lib/index.js')
-
-},{"./lib/index.js":40}],40:[function(require,module,exports){
-(function (Buffer){
-const utils = require('ethereumjs-util')
-const BN = require('bn.js')
-
-var ABI = function () {
-}
-
-// Convert from short to canonical names
-// FIXME: optimise or make this nicer?
-function elementaryName (name) {
-  if (name.startsWith('int[')) {
-    return 'int256' + name.slice(3)
-  } else if (name === 'int') {
-    return 'int256'
-  } else if (name.startsWith('uint[')) {
-    return 'uint256' + name.slice(4)
-  } else if (name === 'uint') {
-    return 'uint256'
-  } else if (name.startsWith('fixed[')) {
-    return 'fixed128x128' + name.slice(5)
-  } else if (name === 'fixed') {
-    return 'fixed128x128'
-  } else if (name.startsWith('ufixed[')) {
-    return 'ufixed128x128' + name.slice(6)
-  } else if (name === 'ufixed') {
-    return 'ufixed128x128'
-  }
-  return name
-}
-
-ABI.eventID = function (name, types) {
-  // FIXME: use node.js util.format?
-  var sig = name + '(' + types.map(elementaryName).join(',') + ')'
-  return utils.sha3(new Buffer(sig))
-}
-
-ABI.methodID = function (name, types) {
-  return ABI.eventID(name, types).slice(0, 4)
-}
-
-// Parse N from type<N>
-function parseTypeN (type) {
-  return parseInt(/^\D+(\d+)$/.exec(type)[1], 10)
-}
-
-// Parse N,M from type<N>x<M>
-function parseTypeNxM (type) {
-  var tmp = /^\D+(\d+)x(\d+)$/.exec(type)
-  return [ parseInt(tmp[1], 10), parseInt(tmp[2], 10) ]
-}
-
-// Parse N from type[<N>]
-function parseTypeArray (type) {
-  var tmp = /^\w+\[(\d*)\]$/.exec(type)[1]
-  if (tmp.length === 0) {
-    return 0
-  } else {
-    return parseInt(tmp, 10)
-  }
-}
-
-function parseNumber (arg) {
-  var type = typeof arg
-  if (type === 'string') {
-    if (utils.isHexPrefixed(arg)) {
-      return new BN(utils.stripHexPrefix(arg), 16)
-    } else {
-      return new BN(arg, 10)
-    }
-  } else if (type === 'number') {
-    return new BN(arg)
-  } else if (arg.toArray) {
-    // assume this is a BN for the moment, replace with BN.isBN soon
-    return arg
-  } else {
-    throw new Error('Argument is not a number')
-  }
-}
-
-// someMethod(bytes,uint)
-// someMethod(bytes,uint):(boolean)
-function parseSignature (sig) {
-  var tmp = /^(\w+)\((.+)\)$/.exec(sig)
-  if (tmp.length !== 3) {
-    throw new Error('Invalid method signature')
-  }
-
-  var args = /^(.+)\):\((.+)$/.exec(tmp[2])
-
-  if (args !== null && args.length === 3) {
-    return {
-      method: tmp[1],
-      args: args[1].split(','),
-      retargs: args[2].split(',')
-    }
-  } else {
-    return {
-      method: tmp[1],
-      args: tmp[2].split(',')
-    }
-  }
-}
-
-// Encodes a single item (can be dynamic array)
-// @returns: Buffer
-function encodeSingle (type, arg) {
-  var size, num, ret, i
-
-  if (type === 'address') {
-    return encodeSingle('uint160', parseNumber(arg))
-  } else if (type === 'bool') {
-    return encodeSingle('uint8', arg ? 1 : 0)
-  } else if (type === 'string') {
-    return encodeSingle('bytes', new Buffer(arg, 'utf8'))
-  } else if (type.match(/\w+\[\d+\]/)) {
-    // this part handles fixed-length arrays ([2])
-    // NOTE: we catch here all calls to arrays, that simplifies the rest
-    if (typeof arg.length === 'undefined') {
-      throw new Error('Not an array?')
-    }
-
-    size = parseTypeArray(type)
-    if ((size !== 0) && (arg.length > size)) {
-      throw new Error('Elements exceed array size: ' + size)
-    }
-
-    type = type.slice(0, type.indexOf('['))
-
-    ret = []
-    for (i in arg) {
-      ret.push(encodeSingle(type, arg[i]))
-    }
-
-    return Buffer.concat(ret)
-  } else if (type.match(/\w+\[\]/)) {
-    // this part handles variable length ([])
-    // NOTE: we catch here all calls to arrays, that simplifies the rest
-    if (typeof arg.length === 'undefined') {
-      throw new Error('Not an array?')
-    }
-
-    type = type.slice(0, type.indexOf('['))
-
-    ret = [ encodeSingle('uint256', arg.length) ]
-    for (i in arg) {
-      ret.push(encodeSingle(type, arg[i]))
-    }
-
-    return Buffer.concat(ret)
-  } else if (type === 'bytes') {
-    arg = new Buffer(arg)
-
-    ret = Buffer.concat([ encodeSingle('uint256', arg.length), arg ])
-
-    if ((arg.length % 32) !== 0) {
-      ret = Buffer.concat([ ret, utils.zeros(32 - (arg.length % 32)) ])
-    }
-
-    return ret
-  } else if (type.startsWith('bytes')) {
-    size = parseTypeN(type)
-    if (size < 1 || size > 32) {
-      throw new Error('Invalid bytes<N> width: ' + size)
-    }
-
-    return utils.setLengthRight(arg, 32)
-  } else if (type.startsWith('uint')) {
-    size = parseTypeN(type)
-    if ((size % 8) || (size < 8) || (size > 256)) {
-      throw new Error('Invalid uint<N> width: ' + size)
-    }
-
-    num = parseNumber(arg)
-    if (num.bitLength() > size) {
-      throw new Error('Supplied uint exceeds width: ' + size + ' vs ' + num.bitLength())
-    }
-
-    if (num < 0) {
-      throw new Error('Supplied uint is negative')
-    }
-
-    return num.toArrayLike(Buffer, 'be', 32)
-  } else if (type.startsWith('int')) {
-    size = parseTypeN(type)
-    if ((size % 8) || (size < 8) || (size > 256)) {
-      throw new Error('Invalid int<N> width: ' + size)
-    }
-
-    num = parseNumber(arg)
-    if (num.bitLength() > size) {
-      throw new Error('Supplied int exceeds width: ' + size + ' vs ' + num.bitLength())
-    }
-
-    return num.toTwos(256).toArrayLike(Buffer, 'be', 32)
-  } else if (type.startsWith('ufixed')) {
-    size = parseTypeNxM(type)
-
-    num = parseNumber(arg)
-
-    if (num < 0) {
-      throw new Error('Supplied ufixed is negative')
-    }
-
-    return encodeSingle('uint256', num.mul(new BN(2).pow(new BN(size[1]))))
-  } else if (type.startsWith('fixed')) {
-    size = parseTypeNxM(type)
-
-    return encodeSingle('int256', parseNumber(arg).mul(new BN(2).pow(new BN(size[1]))))
-  }
-
-  throw new Error('Unsupported or invalid type: ' + type)
-}
-
-// Decodes a single item (can be dynamic array)
-// @returns: array
-// FIXME: this method will need a lot of attention at checking limits and validation
-function decodeSingle (type, arg) {
-  var size, num, ret, i
-
-  if (type === 'address') {
-    return decodeSingle('uint160', arg)
-  } else if (type === 'bool') {
-    return decodeSingle('uint8', arg).toString() === new BN(1).toString()
-  } else if (type === 'string') {
-    return new Buffer(decodeSingle('bytes', arg), 'utf8').toString()
-  } else if (type.match(/\w+\[\d+\]/)) {
-    // this part handles fixed-length arrays ([2])
-    // NOTE: we catch here all calls to arrays, that simplifies the rest
-    size = parseTypeArray(type)
-    type = type.slice(0, type.indexOf('['))
-
-    ret = []
-    for (i = 0; i < size; i++) {
-      ret.push(decodeSingle(type, arg.slice(i * 32)))
-    }
-
-    return ret
-  } else if (type.match(/\w+\[\]/)) {
-    // this part handles variable length ([])
-    // NOTE: we catch here all calls to arrays, that simplifies the rest
-    type = type.slice(0, type.indexOf('['))
-    var count = decodeSingle('uint256', arg.slice(0, 32)).toNumber()
-
-    ret = []
-    for (i = 1; i < count + 1; i++) {
-      ret.push(decodeSingle(type, arg.slice(i * 32)))
-    }
-
-    return ret
-  } else if (type === 'bytes') {
-    size = decodeSingle('uint256', arg.slice(0, 32)).toNumber()
-    return arg.slice(32, 32 + size)
-  } else if (type.startsWith('bytes')) {
-    size = parseTypeN(type)
-    if (size < 1 || size > 32) {
-      throw new Error('Invalid bytes<N> width: ' + size)
-    }
-
-    return arg.slice(0, size)
-  } else if (type.startsWith('uint')) {
-    size = parseTypeN(type)
-    if ((size % 8) || (size < 8) || (size > 256)) {
-      throw new Error('Invalid uint<N> width: ' + size)
-    }
-
-    num = new BN(arg.slice(0, 32), 16, 'be')
-    if (num.bitLength() > size) {
-      throw new Error('Decoded int exceeds width: ' + size + ' vs ' + num.bitLength())
-    }
-
-    return num
-  } else if (type.startsWith('int')) {
-    size = parseTypeN(type)
-    if ((size % 8) || (size < 8) || (size > 256)) {
-      throw new Error('Invalid uint<N> width: ' + size)
-    }
-
-    num = new BN(arg.slice(0, 32), 16, 'be').fromTwos(256)
-    if (num.bitLength() > size) {
-      throw new Error('Decoded uint exceeds width: ' + size + ' vs ' + num.bitLength())
-    }
-
-    return num
-  } else if (type.startsWith('ufixed')) {
-    size = parseTypeNxM(type)
-    size = new BN(2).pow(new BN(size[1]))
-
-    num = decodeSingle('uint256', arg)
-    if (!num.mod(size).isZero()) {
-      throw new Error('Decimals not supported yet')
-    }
-
-    return num.div(size)
-  } else if (type.startsWith('fixed')) {
-    size = parseTypeNxM(type)
-    size = new BN(2).pow(new BN(size[1]))
-
-    num = decodeSingle('int256', arg)
-    if (!num.mod(size).isZero()) {
-      throw new Error('Decimals not supported yet')
-    }
-
-    return num.div(size)
-  }
-
-  throw new Error('Unsupported or invalid type: ' + type)
-}
-
-// Is a type dynamic?
-function isDynamic (type) {
-  // FIXME: handle all types? I don't think anything is missing now
-  return (type === 'string') || (type === 'bytes') || type.match(/\w+\[\]/)
-}
-
-// Encode a method/event with arguments
-// @types an array of string type names
-// @args  an array of the appropriate values
-ABI.rawEncode = function (types, values) {
-  var output = []
-  var data = []
-
-  var headLength = 32 * types.length
-
-  for (var i in types) {
-    var type = elementaryName(types[i])
-    var value = values[i]
-    var cur = encodeSingle(type, value)
-
-    // Use the head/tail method for storing dynamic data
-    if (isDynamic(type)) {
-      output.push(encodeSingle('uint256', headLength))
-      data.push(cur)
-      headLength += cur.length
-    } else {
-      output.push(cur)
-    }
-  }
-
-  return Buffer.concat(output.concat(data))
-}
-
-ABI.rawDecode = function (types, data) {
-  var ret = []
-
-  data = new Buffer(data)
-
-  var offset = 0
-  for (var i in types) {
-    var type = elementaryName(types[i])
-    var cur = data.slice(offset, offset + 32)
-
-    if (isDynamic(type)) {
-      var dataOffset = decodeSingle('uint256', cur).toNumber()
-      // We will read at least 32 bytes
-      if (dataOffset > (data.length - 32)) {
-        throw new Error('Invalid offset: ' + dataOffset)
-      }
-
-      cur = data.slice(dataOffset)
-    } else if (type.match(/\w+\[\d+\]/)) {
-      var count = parseTypeArray(type)
-      if (count > 1) {
-        cur = data.slice(offset, offset + (count * 32))
-        offset += (count - 1) * 32
-      }
-    }
-
-    ret.push(decodeSingle(type, cur))
-    offset += 32
-  }
-
-  return ret
-}
-
-ABI.simpleEncode = function (method) {
-  var args = Array.prototype.slice.call(arguments).slice(1)
-  var sig = parseSignature(method)
-
-  // FIXME: validate/convert arguments
-  if (args.length !== sig.args.length) {
-    throw new Error('Argument count mismatch')
-  }
-
-  return Buffer.concat([ ABI.methodID(sig.method, sig.args), ABI.rawEncode(sig.args, args) ])
-}
-
-ABI.simpleDecode = function (method, data) {
-  var sig = parseSignature(method)
-
-  // FIXME: validate/convert arguments
-  if (!sig.retargs) {
-    throw new Error('No return values in method')
-  }
-
-  return ABI.rawDecode(sig.retargs, data)
-}
-
-function stringify (type, value) {
-  if (type.startsWith('address') || type.startsWith('bytes')) {
-    return '0x' + value.toString('hex')
-  } else {
-    return value.toString()
-  }
-}
-
-ABI.stringify = function (types, values) {
-  var ret = []
-
-  for (var i in types) {
-    var type = types[i]
-    var value = values[i]
-
-    // if it is an array type, concat the items
-    if (/^[^\[]+\[.*\]$/.test(type)) {
-      value = value.map(function (item) {
-        return stringify(type, item)
-      }).join(', ')
-    } else {
-      value = stringify(type, value)
-    }
-
-    ret.push(value)
-  }
-
-  return ret
-}
-
-ABI.solidityPack = function (types, values) {
-  if (types.length !== values.length) {
-    throw new Error('Number of types are not matching the values')
-  }
-
-  var size, num
-  var ret = []
-
-  for (var i = 0; i < types.length; i++) {
-    var type = elementaryName(types[i])
-    var value = values[i]
-
-    if (type === 'bytes') {
-      ret.push(value)
-    } else if (type === 'string') {
-      ret.push(new Buffer(value, 'utf8'))
-    } else if (type === 'bool') {
-      ret.push(new Buffer(value ? '01' : '00', 'hex'))
-    } else if (type === 'address') {
-      ret.push(utils.setLengthLeft(value, 20))
-    } else if (type.startsWith('bytes')) {
-      size = parseTypeN(type)
-      if (size < 1 || size > 32) {
-        throw new Error('Invalid bytes<N> width: ' + size)
-      }
-
-      return utils.setLengthRight(value, size)
-    } else if (type.startsWith('uint')) {
-      size = parseTypeN(type)
-      if ((size % 8) || (size < 8) || (size > 256)) {
-        throw new Error('Invalid uint<N> width: ' + size)
-      }
-
-      num = parseNumber(value)
-      if (num.bitLength() > size) {
-        throw new Error('Supplied uint exceeds width: ' + size + ' vs ' + num.bitLength())
-      }
-
-      ret.push(num.toArrayLike(Buffer, 'be', size / 8))
-    } else if (type.startsWith('int')) {
-      size = parseTypeN(type)
-      if ((size % 8) || (size < 8) || (size > 256)) {
-        throw new Error('Invalid int<N> width: ' + size)
-      }
-
-      num = parseNumber(value)
-      if (num.bitLength() > size) {
-        throw new Error('Supplied int exceeds width: ' + size + ' vs ' + num.bitLength())
-      }
-
-      ret.push(num.toTwos(size).toArrayLike(Buffer, 'be', size / 8))
-    } else {
-      // FIXME: support all other types
-      throw new Error('Unsupported or invalid type: ' + type)
-    }
-  }
-
-  return Buffer.concat(ret)
-}
-
-ABI.soliditySHA3 = function (types, values) {
-  return utils.sha3(ABI.solidityPack(types, values))
-}
-
-ABI.soliditySHA256 = function (types, values) {
-  return utils.sha256(ABI.solidityPack(types, values))
-}
-
-ABI.solidityRIPEMD160 = function (types, values) {
-  return utils.ripemd160(ABI.solidityPack(types, values), true)
-}
-
-// Serpent's users are familiar with this encoding
-// - s: string
-// - b: bytes
-// - b<N>: bytes<N>
-// - i: int256
-// - a: int256[]
-
-function isNumeric (c) {
-  // FIXME: is this correct? Seems to work
-  return (c >= '0') && (c <= '9')
-}
-
-// For a "documentation" refer to https://github.com/ethereum/serpent/blob/develop/preprocess.cpp
-ABI.fromSerpent = function (sig) {
-  var ret = []
-  for (var i = 0; i < sig.length; i++) {
-    var type = sig[i]
-    if (type === 's') {
-      ret.push('bytes')
-    } else if (type === 'b') {
-      var tmp = 'bytes'
-      var j = i + 1
-      while ((j < sig.length) && isNumeric(sig[j])) {
-        tmp += sig[j] - '0'
-        j++
-      }
-      i = j - 1
-      ret.push(tmp)
-    } else if (type === 'i') {
-      ret.push('int256')
-    } else if (type === 'a') {
-      ret.push('int256[]')
-    } else {
-      throw new Error('Unsupported or invalid type: ' + type)
-    }
-  }
-  return ret
-}
-
-ABI.toSerpent = function (types) {
-  var ret = []
-  for (var i = 0; i < types.length; i++) {
-    var type = types[i]
-    if (type === 'bytes') {
-      ret.push('s')
-    } else if (type.startsWith('bytes')) {
-      ret.push('b' + parseTypeN(type))
-    } else if (type === 'int256') {
-      ret.push('i')
-    } else if (type === 'int256[]') {
-      ret.push('a')
-    } else {
-      throw new Error('Unsupported or invalid type: ' + type)
-    }
-  }
-  return ret.join('')
-}
-
-module.exports = ABI
-
-}).call(this,require("buffer").Buffer)
-},{"bn.js":7,"buffer":15,"ethereumjs-util":47}],41:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -16133,7 +16087,7 @@ var Transaction = function () {
 module.exports = Transaction;
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":15,"ethereum-common/params.json":38,"ethereumjs-util":46}],46:[function(require,module,exports){
+},{"buffer":17,"ethereum-common/params.json":40,"ethereumjs-util":46}],46:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -16804,7 +16758,7 @@ exports.defineProperties = function (self, fields, data) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"assert":2,"bn.js":7,"buffer":15,"create-hash":19,"ethjs-util":48,"keccak":67,"rlp":114,"secp256k1":116}],47:[function(require,module,exports){
+},{"assert":2,"bn.js":9,"buffer":17,"create-hash":21,"ethjs-util":48,"keccak":67,"rlp":114,"secp256k1":116}],47:[function(require,module,exports){
 (function (Buffer){
 const SHA3 = require('keccakjs')
 const secp256k1 = require('secp256k1')
@@ -17509,7 +17463,7 @@ exports.defineProperties = function (self, fields, data) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"assert":2,"bn.js":7,"buffer":15,"create-hash":19,"keccakjs":73,"rlp":114,"secp256k1":116}],48:[function(require,module,exports){
+},{"assert":2,"bn.js":9,"buffer":17,"create-hash":21,"keccakjs":73,"rlp":114,"secp256k1":116}],48:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -17732,7 +17686,7 @@ module.exports = {
   isHexString: isHexString
 };
 }).call(this,require("buffer").Buffer)
-},{"buffer":15,"is-hex-prefixed":64,"strip-hex-prefix":132}],49:[function(require,module,exports){
+},{"buffer":17,"is-hex-prefixed":64,"strip-hex-prefix":132}],49:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -18122,7 +18076,7 @@ HashBase.prototype._digest = function () {
 module.exports = HashBase
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":15,"inherits":62,"stream":130}],51:[function(require,module,exports){
+},{"buffer":17,"inherits":62,"stream":130}],51:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -25123,7 +25077,7 @@ module.exports = function (KeccakState) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":15,"inherits":62,"stream":130}],70:[function(require,module,exports){
+},{"buffer":17,"inherits":62,"stream":130}],70:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var Transform = require('stream').Transform
@@ -25201,7 +25155,7 @@ module.exports = function (KeccakState) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":15,"inherits":62,"stream":130}],71:[function(require,module,exports){
+},{"buffer":17,"inherits":62,"stream":130}],71:[function(require,module,exports){
 'use strict'
 var P1600_ROUND_CONSTANTS = [1, 0, 32898, 0, 32906, 2147483648, 2147516416, 2147483648, 32907, 0, 2147483649, 0, 2147516545, 2147483648, 32777, 2147483648, 138, 0, 136, 0, 2147516425, 0, 2147483658, 0, 2147516555, 0, 139, 2147483648, 32905, 2147483648, 32771, 2147483648, 32770, 2147483648, 128, 2147483648, 32778, 0, 2147483658, 2147483648, 2147516545, 2147483648, 32896, 2147483648, 2147483649, 0, 2147516424, 2147483648]
 
@@ -25463,10 +25417,10 @@ Keccak.prototype.copy = function (dest) {
 module.exports = Keccak
 
 }).call(this,require("buffer").Buffer)
-},{"./keccak-state-unroll":71,"buffer":15}],73:[function(require,module,exports){
+},{"./keccak-state-unroll":71,"buffer":17}],73:[function(require,module,exports){
 module.exports = require('browserify-sha3').SHA3Hash
 
-},{"browserify-sha3":11}],74:[function(require,module,exports){
+},{"browserify-sha3":13}],74:[function(require,module,exports){
 /**
  * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -32385,7 +32339,7 @@ function forEach(xs, f) {
     f(xs[i], i);
   }
 }
-},{"./_stream_readable":96,"./_stream_writable":98,"core-util-is":18,"inherits":62,"process-nextick-args":91}],95:[function(require,module,exports){
+},{"./_stream_readable":96,"./_stream_writable":98,"core-util-is":20,"inherits":62,"process-nextick-args":91}],95:[function(require,module,exports){
 // a passthrough stream.
 // basically just the most minimal sort of Transform stream.
 // Every written chunk gets output as-is.
@@ -32412,7 +32366,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":97,"core-util-is":18,"inherits":62}],96:[function(require,module,exports){
+},{"./_stream_transform":97,"core-util-is":20,"inherits":62}],96:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -33350,7 +33304,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":94,"./internal/streams/BufferList":99,"./internal/streams/stream":100,"_process":92,"buffer":15,"buffer-shims":14,"core-util-is":18,"events":49,"inherits":62,"isarray":65,"process-nextick-args":91,"string_decoder/":131,"util":10}],97:[function(require,module,exports){
+},{"./_stream_duplex":94,"./internal/streams/BufferList":99,"./internal/streams/stream":100,"_process":92,"buffer":17,"buffer-shims":16,"core-util-is":20,"events":49,"inherits":62,"isarray":65,"process-nextick-args":91,"string_decoder/":131,"util":12}],97:[function(require,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -33533,7 +33487,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":94,"core-util-is":18,"inherits":62}],98:[function(require,module,exports){
+},{"./_stream_duplex":94,"core-util-is":20,"inherits":62}],98:[function(require,module,exports){
 (function (process){
 // A bit simpler than readable streams.
 // Implement an async ._write(chunk, encoding, cb), and it'll handle all
@@ -34080,7 +34034,7 @@ function CorkedRequest(state) {
   };
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":94,"./internal/streams/stream":100,"_process":92,"buffer":15,"buffer-shims":14,"core-util-is":18,"inherits":62,"process-nextick-args":91,"util-deprecate":143}],99:[function(require,module,exports){
+},{"./_stream_duplex":94,"./internal/streams/stream":100,"_process":92,"buffer":17,"buffer-shims":16,"core-util-is":20,"inherits":62,"process-nextick-args":91,"util-deprecate":143}],99:[function(require,module,exports){
 'use strict';
 
 var Buffer = require('buffer').Buffer;
@@ -34145,7 +34099,7 @@ BufferList.prototype.concat = function (n) {
   }
   return ret;
 };
-},{"buffer":15,"buffer-shims":14}],100:[function(require,module,exports){
+},{"buffer":17,"buffer-shims":16}],100:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
 },{"events":49}],101:[function(require,module,exports){
@@ -35117,7 +35071,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 module.exports = RIPEMD160
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":15,"hash-base":50,"inherits":62}],114:[function(require,module,exports){
+},{"buffer":17,"hash-base":50,"inherits":62}],114:[function(require,module,exports){
 (function (Buffer){
 const assert = require('assert')
 /**
@@ -35350,10 +35304,10 @@ function toBuffer (v) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"assert":2,"buffer":15}],115:[function(require,module,exports){
+},{"assert":2,"buffer":17}],115:[function(require,module,exports){
 module.exports = require('buffer')
 
-},{"buffer":15}],116:[function(require,module,exports){
+},{"buffer":17}],116:[function(require,module,exports){
 'use strict'
 module.exports = require('./lib')(require('./lib/elliptic'))
 
@@ -35606,7 +35560,7 @@ exports.signatureImportLax = function (sig) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bip66":6,"buffer":15}],119:[function(require,module,exports){
+},{"bip66":8,"buffer":17}],119:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 var createHash = require('create-hash')
@@ -35857,7 +35811,7 @@ exports.ecdhUnsafe = function (publicKey, privateKey, compressed) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"../messages.json":121,"bn.js":7,"buffer":15,"create-hash":19,"elliptic":22}],120:[function(require,module,exports){
+},{"../messages.json":121,"bn.js":9,"buffer":17,"create-hash":21,"elliptic":24}],120:[function(require,module,exports){
 'use strict'
 var assert = require('./assert')
 var der = require('./der')
@@ -36201,7 +36155,7 @@ Hash.prototype._update = function () {
 module.exports = Hash
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":15}],123:[function(require,module,exports){
+},{"buffer":17}],123:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -36315,7 +36269,7 @@ Sha.prototype._hash = function () {
 module.exports = Sha
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":122,"buffer":15,"inherits":62}],125:[function(require,module,exports){
+},{"./hash":122,"buffer":17,"inherits":62}],125:[function(require,module,exports){
 (function (Buffer){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
@@ -36417,7 +36371,7 @@ Sha1.prototype._hash = function () {
 module.exports = Sha1
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":122,"buffer":15,"inherits":62}],126:[function(require,module,exports){
+},{"./hash":122,"buffer":17,"inherits":62}],126:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -36473,7 +36427,7 @@ Sha224.prototype._hash = function () {
 module.exports = Sha224
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":122,"./sha256":127,"buffer":15,"inherits":62}],127:[function(require,module,exports){
+},{"./hash":122,"./sha256":127,"buffer":17,"inherits":62}],127:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -36611,7 +36565,7 @@ Sha256.prototype._hash = function () {
 module.exports = Sha256
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":122,"buffer":15,"inherits":62}],128:[function(require,module,exports){
+},{"./hash":122,"buffer":17,"inherits":62}],128:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
@@ -36671,7 +36625,7 @@ Sha384.prototype._hash = function () {
 module.exports = Sha384
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":122,"./sha512":129,"buffer":15,"inherits":62}],129:[function(require,module,exports){
+},{"./hash":122,"./sha512":129,"buffer":17,"inherits":62}],129:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var Hash = require('./hash')
@@ -36934,7 +36888,7 @@ Sha512.prototype._hash = function () {
 module.exports = Sha512
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":122,"buffer":15,"inherits":62}],130:[function(require,module,exports){
+},{"./hash":122,"buffer":17,"inherits":62}],130:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -39434,6 +39388,12 @@ function connect(configuration, initialConnectCallback) {
       // ensure we can do basic JSON-RPC over this connection
       dispatch(net_version(null, function (networkID) {
         if (networkID instanceof Error || networkID.error) return initialConnectCallback(networkID);
+
+        // If configuration.networkID is provided, verify that we're actually on that network
+        if (configuration.networkID && parseInt(networkID, 10) !== parseInt(configuration.networkID, 10)) {
+          return initialConnectCallback(networkID);
+        }
+
         dispatch({ type: "SET_NETWORK_ID", networkID: networkID });
         createBlockAndLogStreamer({
           pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
@@ -39483,7 +39443,7 @@ module.exports = {
 
 };
 
-},{"bignumber.js":5}],164:[function(require,module,exports){
+},{"bignumber.js":7}],164:[function(require,module,exports){
 "use strict";
 
 var createStore = require("redux").createStore;
@@ -39776,7 +39736,7 @@ var convertResponseToReturnsType = function (returnsType, response) {
 
 module.exports = convertResponseToReturnsType;
 
-},{"augur-abi":3,"clone":17}],167:[function(require,module,exports){
+},{"augur-abi":3,"clone":19}],167:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -39864,7 +39824,7 @@ var parseEthereumResponse = function (origResponse, returns, callback) {
 
 module.exports = parseEthereumResponse;
 
-},{"../errors/codes":173,"../errors/rpc-error":176,"../utils/is-function":237,"../utils/is-object":241,"clone":17}],169:[function(require,module,exports){
+},{"../errors/codes":173,"../errors/rpc-error":176,"../utils/is-function":237,"../utils/is-object":241,"clone":19}],169:[function(require,module,exports){
 "use strict";
 
 var isFunction = require("../utils/is-function");
@@ -40000,7 +39960,7 @@ var packageRequest = function (payload) {
 
 module.exports = packageRequest;
 
-},{"../constants":163,"../errors/codes":173,"../errors/rpc-error":176,"augur-abi":3,"clone":17}],172:[function(require,module,exports){
+},{"../constants":163,"../errors/codes":173,"../errors/rpc-error":176,"augur-abi":3,"clone":19}],172:[function(require,module,exports){
 "use strict";
 
 var stripReturnsTypeAndInvocation = function (tx) {
@@ -40459,7 +40419,7 @@ var isNodeJs = require("./is-node-js");
 
 module.exports = isNodeJs ? require("request") : require("browser-request");
 
-},{"./is-node-js":179,"browser-request":9,"request":10}],181:[function(require,module,exports){
+},{"./is-node-js":179,"browser-request":11,"request":12}],181:[function(require,module,exports){
 "use strict";
 
 var syncRequest = require("sync-request");
@@ -40478,7 +40438,7 @@ module.exports = function (method, uri, options) {
 var isNode = require("./is-node-js.js");
 if (isNode)  {module.exports = require("websocket").w3cwebsocket;} else	{module.exports = WebSocket;}
 
-},{"./is-node-js.js":179,"websocket":10}],183:[function(require,module,exports){
+},{"./is-node-js.js":179,"websocket":12}],183:[function(require,module,exports){
 "use strict";
 
 var errors = require("../errors/codes");
@@ -40755,7 +40715,7 @@ function signRawTransactionWithKey(packaged, privateKey, callback) {
 module.exports = signRawTransactionWithKey;
 
 }).call(this,require("buffer").Buffer)
-},{"../errors/codes":173,"../errors/rpc-error":176,"../utils/is-function":237,"augur-abi":3,"buffer":15,"ethereumjs-tx":45}],190:[function(require,module,exports){
+},{"../errors/codes":173,"../errors/rpc-error":176,"../utils/is-function":237,"augur-abi":3,"buffer":17,"ethereumjs-tx":45}],190:[function(require,module,exports){
 "use strict";
 
 var immutableDelete = require("immutable-delete");
@@ -40892,7 +40852,7 @@ module.exports = function (currentBlock, action) {
   }
 };
 
-},{"./initial-state":200,"clone":17}],196:[function(require,module,exports){
+},{"./initial-state":200,"clone":19}],196:[function(require,module,exports){
 "use strict";
 
 var assign = require("lodash.assign");
@@ -41004,6 +40964,7 @@ module.exports.configuration = {
   httpAddresses: [],
   wsAddresses: [],
   ipcAddresses: [],
+  networkID: null,
   connectionTimeout: 3000,
   pollingIntervalMilliseconds: 30000,
   blockRetention: 100
@@ -41553,7 +41514,7 @@ function callContractFunction(payload, callback, callbackWrapper, extraArgument)
 
 module.exports = callContractFunction;
 
-},{"../decode-response/convert-response-to-returns-type":166,"../decode-response/handle-rpc-error":167,"../errors/codes":173,"../errors/rpc-error":176,"../transact/call-or-send-transaction":214,"../utils/is-function":237,"clone":17}],214:[function(require,module,exports){
+},{"../decode-response/convert-response-to-returns-type":166,"../decode-response/handle-rpc-error":167,"../errors/codes":173,"../errors/rpc-error":176,"../transact/call-or-send-transaction":214,"../utils/is-function":237,"clone":19}],214:[function(require,module,exports){
 "use strict";
 
 var eth = require("../wrappers/eth");
@@ -41620,7 +41581,7 @@ function getLoggedReturnValue(txHash, callback) {
 
 module.exports = getLoggedReturnValue;
 
-},{"../errors/codes":173,"../wrappers/eth":253,"bignumber.js":5}],216:[function(require,module,exports){
+},{"../errors/codes":173,"../wrappers/eth":253,"bignumber.js":7}],216:[function(require,module,exports){
 "use strict";
 
 var updateTx = require("./update-tx");
@@ -41850,7 +41811,7 @@ function updateMinedTx(txHash) {
 
 module.exports = updateMinedTx;
 
-},{"../constants":163,"../decode-response/convert-response-to-returns-type":166,"../decode-response/handle-rpc-error":167,"../errors/codes":173,"../transact/call-contract-function":213,"../transact/get-logged-return-value":215,"../utils/is-function":237,"../wrappers/eth":253,"augur-abi":3,"bignumber.js":5}],220:[function(require,module,exports){
+},{"../constants":163,"../decode-response/convert-response-to-returns-type":166,"../decode-response/handle-rpc-error":167,"../errors/codes":173,"../transact/call-contract-function":213,"../transact/get-logged-return-value":215,"../utils/is-function":237,"../wrappers/eth":253,"augur-abi":3,"bignumber.js":7}],220:[function(require,module,exports){
 "use strict";
 
 var clone = require("clone");
@@ -41940,7 +41901,7 @@ function updatePendingTx(txHash) {
 
 module.exports = updatePendingTx;
 
-},{"../constants":163,"../errors/codes":173,"../transact/transact":218,"../transact/update-mined-tx":219,"../utils/is-function":237,"../wrappers/eth":253,"clone":17}],221:[function(require,module,exports){
+},{"../constants":163,"../errors/codes":173,"../transact/transact":218,"../transact/update-mined-tx":219,"../utils/is-function":237,"../wrappers/eth":253,"clone":19}],221:[function(require,module,exports){
 "use strict";
 
 var updateMinedTx = require("../transact/update-mined-tx");
@@ -42484,7 +42445,7 @@ IpcTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
 
 module.exports = IpcTransport;
 
-},{"./abstract-transport.js":227,"net":12,"oboe":90}],232:[function(require,module,exports){
+},{"./abstract-transport.js":227,"net":14,"oboe":90}],232:[function(require,module,exports){
 "use strict";
 
 var AbstractTransport = require("./abstract-transport.js");
@@ -42633,7 +42594,10 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
 
   // initiate connections to all provided addresses, as each completes it will check to see if everything is done
   web3Transport = new Web3Transport(messageHandler, function (error) {
-    resultAggregator.web3Transports[0] = (error !== null) ? null : web3Transport;
+    // only use web3 transport if we're on mainnet (1) or public testnet (3)
+    var networkID = parseInt(configuration.networkID, 10);
+    var isMainnetOrPublicTestnet = !isNaN(networkID) && (networkID === 1 || networkID === 3);
+    resultAggregator.web3Transports[0] = (error !== null || !isMainnetOrPublicTestnet) ? null : web3Transport;
     checkIfComplete(this, resultAggregator, callback);
   }.bind(this));
   configuration.ipcAddresses.forEach(function (ipcAddress, index) {
@@ -42877,7 +42841,7 @@ module.exports = function (data, encoding, callback) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"../utils/is-function":237,"augur-abi":3,"buffer":15,"keccak/js":67}],245:[function(require,module,exports){
+},{"../utils/is-function":237,"augur-abi":3,"buffer":17,"keccak/js":67}],245:[function(require,module,exports){
 "use strict";
 
 var validateAddress = function (address) {
@@ -43221,7 +43185,7 @@ function resendRawTransaction(transaction, privateKey, gasPrice, gasLimit, callb
 
 module.exports = resendRawTransaction;
 
-},{"../raw-transactions/sign-raw-transaction-with-key":189,"../wrappers/eth":253,"augur-abi":3,"clone":17}],262:[function(require,module,exports){
+},{"../raw-transactions/sign-raw-transaction-with-key":189,"../wrappers/eth":253,"augur-abi":3,"clone":19}],262:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");
@@ -43239,7 +43203,7 @@ function resendTransaction(transaction, gasPrice, gasLimit, callback) {
 
 module.exports = resendTransaction;
 
-},{"../wrappers/eth":253,"augur-abi":3,"clone":17}],263:[function(require,module,exports){
+},{"../wrappers/eth":253,"augur-abi":3,"clone":19}],263:[function(require,module,exports){
 "use strict";
 
 var abi = require("augur-abi");

@@ -61,6 +61,12 @@ function connect(configuration, initialConnectCallback) {
       // ensure we can do basic JSON-RPC over this connection
       dispatch(net_version(null, function (networkID) {
         if (networkID instanceof Error || networkID.error) return initialConnectCallback(networkID);
+
+        // If configuration.networkID is provided, verify that we're actually on that network
+        if (configuration.networkID && parseInt(networkID, 10) !== parseInt(configuration.networkID, 10)) {
+          return initialConnectCallback(networkID);
+        }
+
         dispatch({ type: "SET_NETWORK_ID", networkID: networkID });
         createBlockAndLogStreamer({
           pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,

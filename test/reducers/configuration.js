@@ -19,6 +19,7 @@ describe("reducers/configuration", function () {
         wsAddresses: [],
         ipcAddresses: [],
         connectionTimeout: 3000,
+        networkID: null,
         pollingIntervalMilliseconds: 30000,
         blockRetention: 100
       },
@@ -37,6 +38,7 @@ describe("reducers/configuration", function () {
           wsAddresses: ["wss://ws.augur.net"],
           ipcAddresses: [],
           connectionTimeout: 3000,
+          networkID: null,
           pollingIntervalMilliseconds: 30000,
           blockRetention: 10
         });
@@ -49,6 +51,7 @@ describe("reducers/configuration", function () {
         wsAddresses: [],
         ipcAddresses: [],
         connectionTimeout: 3000,
+        networkID: null,
         pollingIntervalMilliseconds: 30000,
         blockRetention: 100
       },
@@ -68,6 +71,7 @@ describe("reducers/configuration", function () {
           wsAddresses: ["wss://ws.augur.net"],
           ipcAddresses: [],
           connectionTimeout: 3000,
+          networkID: null,
           pollingIntervalMilliseconds: 30000,
           blockRetention: 10
         });
@@ -82,6 +86,7 @@ describe("reducers/configuration", function () {
         wsAddresses: ["wss://ws.augur.net"],
         ipcAddresses: [],
         connectionTimeout: 10000,
+        networkID: null,
         pollingIntervalMilliseconds: 30000,
         blockRetention: 10
       },
@@ -94,6 +99,7 @@ describe("reducers/configuration", function () {
           wsAddresses: [],
           ipcAddresses: [],
           connectionTimeout: 3000,
+          networkID: null,
           pollingIntervalMilliseconds: 30000,
           blockRetention: 100
         });

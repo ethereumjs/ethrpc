@@ -20,6 +20,7 @@ var connectionConfiguration = {
   httpAddresses: ["http://localhost:8545"], // optional, default empty array
   wsAddresses: [], // optional, default empty array
   ipcAddresses: [], // optional, default empty array
+  networkID: 3, // optional, used to verify connection to the intended network (blockchain)
   connectionTimeout: 3000, // optional, default 3000
   errorHandler: function (err) { /* out-of-band error */ }, // optional, used for errors that can't be correlated back to a request
 };
