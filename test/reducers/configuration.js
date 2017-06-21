@@ -85,7 +85,7 @@ describe("reducers/configuration", function () {
         httpAddresses: ["https://eth3.augur.net"],
         wsAddresses: ["wss://ws.augur.net"],
         ipcAddresses: [],
-        connectionTimeout: 10000,
+        connectionTimeout: 20000,
         networkID: null,
         pollingIntervalMilliseconds: 30000,
         blockRetention: 10
@@ -98,7 +98,7 @@ describe("reducers/configuration", function () {
           httpAddresses: [],
           wsAddresses: [],
           ipcAddresses: [],
-          connectionTimeout: 3000,
+          connectionTimeout: 10000,
           networkID: null,
           pollingIntervalMilliseconds: 30000,
           blockRetention: 100
