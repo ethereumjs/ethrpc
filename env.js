@@ -6,14 +6,17 @@ var configuration = {
   httpAddresses: ["http://127.0.0.1:8545"],
   wsAddresses: ["ws://127.0.0.1:8546"],
   ipcAddresses: [],
-  networkID: 10101,
   errorHandler: log
 };
 
 rpc.setDebugOptions({ connect: true });
 rpc.connect(configuration, function (err) {
   if (err) return console.error("ethrpc connection failed:", err);
-  global.COINBASE = rpc.eth.coinbase();
-  global.NETWORK_ID = rpc.net.version();
-  global.contracts = require("augur-contracts")[NETWORK_ID];
+  rpc.eth.coinbase(function (coinbase) {
+    global.COINBASE = coinbase;
+  });
+  rpc.net.version(function (networkID) {
+    global.NETWORK_ID = networkID;
+    global.contracts = require("augur-contracts")[NETWORK_ID];
+  });
 });
