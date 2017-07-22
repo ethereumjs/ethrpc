@@ -118,7 +118,7 @@ The `callOrSendTransaction` method executes a method in a contract already on th
 // The method called here doubles its input argument.
 var payload = {
   to: "0x5204f18c652d1c31c6a5968cb65e011915285a50",
-  method: "double",
+  name: "double",
   signature: ["int256"],
   params: ["0x5669"], // parameter value(s)
   send: false,
@@ -134,7 +134,7 @@ The transaction payload is structured as follows:
 Required:
 
 - to: `<contract address> (hexstring)`
-- method: `<function name> (string)`
+- name: `<function name> (string)`
 - signature: `<function signature, e.g. ["int256", "bytes", "int256[]"]> (array)`
 - params: `<parameters passed to the function>`
 

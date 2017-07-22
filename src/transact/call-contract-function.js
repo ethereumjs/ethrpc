@@ -12,8 +12,7 @@ var errors = require("../errors/codes");
  * Invoke a function from a contract on the blockchain.
  * @typedef FirePayload
  * @type {object}
- * @property {!string} method
- * @property {?string} label
+ * @property {!string} name
  * @property {!string} returns
  * @property {!string} from
  * @property {!string} to
@@ -33,7 +32,7 @@ function callContractFunction(payload, callback, callbackWrapper, extraArgument)
       if (res === undefined || res === null) {
         throw new RPCError(errors.NO_RESPONSE);
       }
-      err = handleRPCError(tx.method, tx.returns, res);
+      err = handleRPCError(tx.name, tx.returns, res);
       if (err && err.error) throw new RPCError(err);
       converted = convertResponseToReturnsType(tx.returns, res);
       if (isFunction(callbackWrapper)) return callbackWrapper(converted, extraArgument);
@@ -44,7 +43,7 @@ function callContractFunction(payload, callback, callbackWrapper, extraArgument)
       if (res === undefined || res === null) {
         return callback(errors.NO_RESPONSE);
       }
-      err = handleRPCError(tx.method, tx.returns, res);
+      err = handleRPCError(tx.name, tx.returns, res);
       if (err && err.error) return callback(err);
       converted = convertResponseToReturnsType(tx.returns, res);
       if (isFunction(callbackWrapper)) converted = callbackWrapper(converted, extraArgument);

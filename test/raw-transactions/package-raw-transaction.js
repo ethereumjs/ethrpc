@@ -15,7 +15,7 @@ describe("raw-transactions/package-raw-transaction", function () {
     description: "No gasLimit, no gasPrice",
     params: {
       payload: {
-        method: "addMarketToBranch",
+        name: "addMarketToBranch",
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],
@@ -44,7 +44,7 @@ describe("raw-transactions/package-raw-transaction", function () {
     description: "gasLimit, no gasPrice",
     params: {
       payload: {
-        method: "addMarketToBranch",
+        name: "addMarketToBranch",
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],
@@ -74,7 +74,7 @@ describe("raw-transactions/package-raw-transaction", function () {
     description: "gasLimit and gasPrice",
     params: {
       payload: {
-        method: "addMarketToBranch",
+        name: "addMarketToBranch",
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],

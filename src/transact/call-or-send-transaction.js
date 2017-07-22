@@ -11,7 +11,7 @@ var errors = require("../errors/codes");
  * {
  *   from: <sender's address> (address)
  *   to: <contract address> (address)
- *   method: <function name> (string)
+ *   name: <function name> (string)
  *   signature: <function signature, e.g. "iia"> (string)
  *   params: <parameters passed to the function> (optional)
  *   returns: <"number[]", "int", "BigNumber", or "string" (default)>

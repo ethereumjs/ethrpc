@@ -7,16 +7,16 @@ var encodePrimitive = abiEncode.encodePrimitive;
 var numRequests = 1;
 
 var makeRequestPayload = function (command, params, prefix) {
-  var payload, action;
+  var payload, method;
   if (prefix === "null" || prefix === null) {
-    action = command.toString();
+    method = command.toString();
   } else {
-    action = (prefix || "eth_") + command.toString();
+    method = (prefix || "eth_") + command.toString();
   }
   payload = {
     id: numRequests++,
     jsonrpc: "2.0",
-    method: action
+    method: method
   };
   if (params === undefined || params === null) params = [];
   payload.params = (Array.isArray(params)) ? encodeArray(params) : [encodePrimitive(params)];

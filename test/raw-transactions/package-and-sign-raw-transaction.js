@@ -38,7 +38,7 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
     description: "Without callback",
     params: {
       payload: {
-        method: "addMarketToBranch",
+        name: "addMarketToBranch",
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],
@@ -70,7 +70,7 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
     description: "With callback",
     params: {
       payload: {
-        method: "addMarketToBranch",
+        name: "addMarketToBranch",
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],

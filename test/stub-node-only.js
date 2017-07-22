@@ -13,8 +13,7 @@ var constants = require("../src/constants");
 
 function createReasonableTransactPayload() {
   return {
-    label: "My Transaction",
-    method: "myTransaction",
+    name: "myTransaction",
     returns: "uint256",
     signature: [],
     from: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
@@ -1100,8 +1099,7 @@ describe("tests that only work against stub server", function () {
         it("callContractFunction no parameters", function (done) {
           var expectedObject = {};
           var payload = {
-            method: "getBranches",
-            label: "Get Branches",
+            name: "getBranches",
             returns: "hash[]",
             from: "0x00bae5113ee9f252cceb0001205b88fad175461a",
             to: "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
@@ -1214,8 +1212,7 @@ describe("tests that only work against stub server", function () {
         it("callOrSendTransaction", function (done) {
           var expectedResults = "0x" + ethereumjsAbi.rawEncode(["uint256[]"], [[1, 100, 100000]]).toString("hex");
           var payload = {
-            method: "getBranches",
-            label: "Get Branches",
+            name: "getBranches",
             returns: "hash[]",
             from: "0x00bae5113ee9f252cceb0001205b88fad175461a",
             to: "0x482c57abdce592b39434e3f619ffc3db62ab6d01",

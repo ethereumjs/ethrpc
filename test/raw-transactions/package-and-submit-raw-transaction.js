@@ -32,7 +32,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     description: "Successful raw transaction submission",
     params: {
       payload: {
-        method: "addMarketToBranch",
+        name: "addMarketToBranch",
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],
@@ -47,7 +47,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         return function () {
           var signedRawTransaction;
           assert.deepEqual(payload, {
-            method: "addMarketToBranch",
+            name: "addMarketToBranch",
             returns: "int256",
             send: true,
             signature: ["int256", "int256"],
@@ -79,7 +79,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     description: "packageAndSendRawTransaction throws TRANSACTION_FAILED error",
     params: {
       payload: {
-        method: "addMarketToBranch",
+        name: "addMarketToBranch",
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],
@@ -94,7 +94,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         return function () {
           var err;
           assert.deepEqual(payload, {
-            method: "addMarketToBranch",
+            name: "addMarketToBranch",
             returns: "int256",
             send: true,
             signature: ["int256", "int256"],
@@ -123,7 +123,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     description: "packageAndSendRawTransaction throws NOT_LOGGED_IN error",
     params: {
       payload: {
-        method: "addMarketToBranch",
+        name: "addMarketToBranch",
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],
@@ -138,7 +138,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         return function () {
           var err;
           assert.deepEqual(payload, {
-            method: "addMarketToBranch",
+            name: "addMarketToBranch",
             returns: "int256",
             send: true,
             signature: ["int256", "int256"],
@@ -167,7 +167,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     description: "sendRawTransaction receives a null response",
     params: {
       payload: {
-        method: "addMarketToBranch",
+        name: "addMarketToBranch",
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],
@@ -182,7 +182,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         return function () {
           var signedRawTransaction;
           assert.deepEqual(payload, {
-            method: "addMarketToBranch",
+            name: "addMarketToBranch",
             returns: "int256",
             send: true,
             signature: ["int256", "int256"],
@@ -215,7 +215,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     description: "sendRawTransaction response is -32603: rlp encoding error",
     params: {
       payload: {
-        method: "addMarketToBranch",
+        name: "addMarketToBranch",
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],
@@ -230,7 +230,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         return function () {
           var signedRawTransaction;
           assert.deepEqual(payload, {
-            method: "addMarketToBranch",
+            name: "addMarketToBranch",
             returns: "int256",
             send: true,
             signature: ["int256", "int256"],
@@ -263,7 +263,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
     description: "sendRawTransaction response is -32000: Nonce too low",
     params: {
       payload: {
-        method: "addMarketToBranch",
+        name: "addMarketToBranch",
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],
@@ -279,7 +279,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         return function () {
           var signedRawTransaction;
           assert.deepEqual(payload, {
-            method: "addMarketToBranch",
+            name: "addMarketToBranch",
             returns: "int256",
             send: true,
             signature: ["int256", "int256"],
