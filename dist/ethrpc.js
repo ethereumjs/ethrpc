@@ -44253,11 +44253,14 @@ var errors = require("../errors/codes");
  * }
  */
 function callOrSendTransaction(payload, callback) {
-  return function (dispatch) {
+  return function (dispatch, getState) {
+    var packaged;
     if (!isObject(payload)) {
       if (!isFunction(callback)) return errors.TRANSACTION_FAILED;
       return callback(errors.TRANSACTION_FAILED);
     }
+    packaged = packageRequest(payload);
+    if (getState().debug.broadcast) console.log("packaged:", packaged);
     if (payload.send) {
       return dispatch(eth.sendTransaction(packageRequest(payload), callback));
     }
@@ -45849,23 +45852,24 @@ module.exports = {
 "use strict";
 
 var eth = require("./eth");
+var constants = require("../constants");
 var isFunction = require("../utils/is-function");
 
 // publish a new contract to the blockchain from the coinbase account
 function publish(compiled, callback) {
   return function (dispatch) {
     if (!isFunction(callback)) {
-      return dispatch(eth.sendTransaction({ from: eth.coinbase(), data: compiled }));
+      return dispatch(eth.sendTransaction({ from: dispatch(eth.coinbase()), data: compiled, gas: constants.DEFAULT_GAS }));
     }
-    eth.coinbase(function (coinbase) {
-      eth.sendTransaction({ from: coinbase, data: compiled }, callback);
-    });
+    dispatch(eth.coinbase(function (coinbase) {
+      dispatch(eth.sendTransaction({ from: coinbase, data: compiled, gas: constants.DEFAULT_GAS }, callback));
+    }));
   };
 }
 
 module.exports = publish;
 
-},{"../utils/is-function":279,"./eth":295}],302:[function(require,module,exports){
+},{"../constants":205,"../utils/is-function":279,"./eth":295}],302:[function(require,module,exports){
 "use strict";
 
 var submitRequestToBlockchain = require("../rpc/submit-request-to-blockchain");

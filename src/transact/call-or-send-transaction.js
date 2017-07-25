@@ -19,11 +19,14 @@ var errors = require("../errors/codes");
  * }
  */
 function callOrSendTransaction(payload, callback) {
-  return function (dispatch) {
+  return function (dispatch, getState) {
+    var packaged;
     if (!isObject(payload)) {
       if (!isFunction(callback)) return errors.TRANSACTION_FAILED;
       return callback(errors.TRANSACTION_FAILED);
     }
+    packaged = packageRequest(payload);
+    if (getState().debug.broadcast) console.log("packaged:", packaged);
     if (payload.send) {
       return dispatch(eth.sendTransaction(packageRequest(payload), callback));
     }
