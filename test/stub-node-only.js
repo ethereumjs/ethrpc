@@ -71,26 +71,25 @@ describe("tests that only work against stub server", function () {
           });
         });
 
-        it("starts connected > uses connection > loses connection > reconnects > uses connection", function (done) {
-          stubRpcServer.addResponder(function (request) {
-            if (request.method === "net_version") return "apple";
-          });
-          helpers.rpcConnect(transportType, transportAddress, function () {
-            rpc.version(function (errorOrVersion) {
-              assert.strictEqual(errorOrVersion, "apple");
-              stubRpcServer.destroy(function () {
-                stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
-                rpc.version(function (errorOrVersion) {
-                  assert.strictEqual(errorOrVersion, "default stub rpc server version");
-                  done();
+        // NOTE: these tests are brittle for IPC on Linux.  see: https://github.com/nodejs/node/issues/11973
+        if (transportType !== "IPC" || !process.env.CONTINUOUS_INTEGRATION) { // skip brittle IPC test for CI
+          it("starts connected > uses connection > loses connection > reconnects > uses connection", function (done) {
+            stubRpcServer.addResponder(function (request) {
+              if (request.method === "net_version") return "apple";
+            });
+            helpers.rpcConnect(transportType, transportAddress, function () {
+              rpc.version(function (errorOrVersion) {
+                assert.strictEqual(errorOrVersion, "apple");
+                stubRpcServer.destroy(function () {
+                  stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
+                  rpc.version(function (errorOrVersion) {
+                    assert.strictEqual(errorOrVersion, "default stub rpc server version");
+                    done();
+                  });
                 });
               });
             });
           });
-        });
-
-        // NOTE: this test is brittle on Linux.  see: https://github.com/nodejs/node/issues/11973
-        if (transportType !== "IPC" || !process.env.CONTINUOUS_INTEGRATION) { // skip brittle IPC test for CI
           it("starts connected > uses connection > loses connection > uses connection > reconnects > uses connection (brittle)", function (done) {
             stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
             helpers.rpcConnect(transportType, transportAddress, function () {
