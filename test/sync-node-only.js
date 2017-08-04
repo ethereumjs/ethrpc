@@ -8,7 +8,7 @@ var rpc = require("../src");
 describe("sync", function () {
   beforeEach(function () {
     rpc.connect({
-      httpAddresses: ["https://eth3.augur.net"],
+      httpAddresses: ["https://eth9000.augur.net"],
       wsAddresses: [],
       ipcAddresses: [],
       errorHandler: function (error) { throw error; }
