@@ -91,6 +91,7 @@ describe("tests that only work against stub server", function () {
 
         // NOTE: this test is brittle on Linux.  see: https://github.com/nodejs/node/issues/11973
         it("starts connected > uses connection > loses connection > uses connection > reconnects > uses connection (brittle)", function (done) {
+          if (transportType === "IPC" && process.env.CONTINUOUS_INTEGRATION) return done(); // skip brittle IPC test for CI
           stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
           helpers.rpcConnect(transportType, transportAddress, function () {
             rpc.version(function (errorOrVersion) {

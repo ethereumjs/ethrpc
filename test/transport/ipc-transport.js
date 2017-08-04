@@ -3,13 +3,16 @@
 "use strict";
 
 var assert = require("chai").assert;
+var os = require("os");
 var StubServer = require("ethereumjs-stub-rpc-server");
-var HttpTransport = require("../../src/transport/http-transport.js");
+var IpcTransport = require("../../src/transport/ipc-transport.js");
 
-describe("transport/http-transport", function () {
+var ipcAddress = (os.type() === "Windows_NT") ? "\\\\.\\pipe\\TestRPC" : "testrpc.ipc";
+
+describe("transport/ipc-transport", function () {
   var server;
   beforeEach(function (done) {
-    server = StubServer.createStubServer("HTTP", "http://localhost:1337");
+    server = StubServer.createStubServer("IPC", ipcAddress);
     done();
   });
   afterEach(function (done) {
@@ -17,30 +20,30 @@ describe("transport/http-transport", function () {
   });
 
   it("no node found", function (done) {
-    new HttpTransport("http://nowhere:1337", 100, function () { }, function (error, httpTransport) {
+    new IpcTransport("/not/a/real/path.ipc", 100, function () { }, function (error, ipcTransport) {
       assert.strictEqual(Object.getPrototypeOf(error), Error.prototype);
-      assert.isTrue(error.code === "ESOCKETTIMEDOUT" || error.code === "ETIMEDOUT" || error.code === "ENOTFOUND", (error || {}).message);
+      assert.isTrue(error.code === "ENOENT", (error || {}).message);
       done();
     });
   });
 
   it("node is connectable", function (done) {
-    new HttpTransport("http://localhost:1337", 100, function () { }, function (error, httpTransport) {
+    new IpcTransport(ipcAddress, 100, function () { }, function (error, ipcTransport) {
       assert.isNull(error);
       done();
     });
   });
 
   it("pumps queue on connect", function (done) {
-    var httpTransport;
+    var ipcTransport;
     var messageHandler = function (error, result) {
       assert.isNull(error);
       assert.deepEqual(result, { jsonrpc: "2.0", id: 0, result: "apple" });
       done();
     };
     server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    httpTransport = new HttpTransport("http://localhost:1337", 100, messageHandler, function (error, _) { });
-    httpTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
+    ipcTransport = new IpcTransport(ipcAddress, 100, messageHandler, function (error, _) { });
+    ipcTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
   });
 
   it("retries on transient server outage", function (done) {
@@ -50,10 +53,10 @@ describe("transport/http-transport", function () {
       done();
     };
     server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    new HttpTransport("http://localhost:1337", 100, messageHandler, function (error, httpTransport) {
+    new IpcTransport(ipcAddress, 100, messageHandler, function (error, ipcTransport) {
       server.destroy(function () {
-        httpTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
-        server = StubServer.createStubServer("HTTP", "http://localhost:1337");
+        ipcTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
+        server = StubServer.createStubServer("IPC", ipcAddress);
         server.addResponder(function (request) { if (request.method === "net_version") return "banana"; });
       });
     });
@@ -77,11 +80,11 @@ describe("transport/http-transport", function () {
       done();
     };
     server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    new HttpTransport("http://localhost:1337", 100, messageHandler, function (error, httpTransport) {
+    new IpcTransport(ipcAddress, 100, messageHandler, function (error, ipcTransport) {
       server.destroy(function () {
-        httpTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
-        httpTransport.submitWork({ id: 1, jsonrpc: "2.0", method: "net_version", params: [] });
-        server = StubServer.createStubServer("HTTP", "http://localhost:1337");
+        ipcTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
+        ipcTransport.submitWork({ id: 1, jsonrpc: "2.0", method: "net_version", params: [] });
+        server = StubServer.createStubServer("IPC", ipcAddress);
         server.addResponder(function (request) { if (request.method === "net_version") return "banana"; });
       });
     });

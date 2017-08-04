@@ -4,12 +4,12 @@
 
 var assert = require("chai").assert;
 var StubServer = require("ethereumjs-stub-rpc-server");
-var HttpTransport = require("../../src/transport/http-transport.js");
+var WsTransport = require("../../src/transport/ws-transport.js");
 
-describe("transport/http-transport", function () {
+describe("transport/ws-transport", function () {
   var server;
   beforeEach(function (done) {
-    server = StubServer.createStubServer("HTTP", "http://localhost:1337");
+    server = StubServer.createStubServer("WS", "ws://localhost:1337");
     done();
   });
   afterEach(function (done) {
@@ -17,30 +17,30 @@ describe("transport/http-transport", function () {
   });
 
   it("no node found", function (done) {
-    new HttpTransport("http://nowhere:1337", 100, function () { }, function (error, httpTransport) {
+    new WsTransport("ws://nowhere:1337", 100, function () { }, function (error, wsTransport) {
       assert.strictEqual(Object.getPrototypeOf(error), Error.prototype);
-      assert.isTrue(error.code === "ESOCKETTIMEDOUT" || error.code === "ETIMEDOUT" || error.code === "ENOTFOUND", (error || {}).message);
+      assert.strictEqual(error.message, "Web socket closed without opening, usually means failed connection.");
       done();
     });
   });
 
   it("node is connectable", function (done) {
-    new HttpTransport("http://localhost:1337", 100, function () { }, function (error, httpTransport) {
+    new WsTransport("ws://localhost:1337", 100, function () { }, function (error, wsTransport) {
       assert.isNull(error);
       done();
     });
   });
 
   it("pumps queue on connect", function (done) {
-    var httpTransport;
+    var wsTransport;
     var messageHandler = function (error, result) {
       assert.isNull(error);
       assert.deepEqual(result, { jsonrpc: "2.0", id: 0, result: "apple" });
       done();
     };
     server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    httpTransport = new HttpTransport("http://localhost:1337", 100, messageHandler, function (error, _) { });
-    httpTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
+    wsTransport = new WsTransport("ws://localhost:1337", 100, messageHandler, function (error, _) { });
+    wsTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
   });
 
   it("retries on transient server outage", function (done) {
@@ -50,10 +50,10 @@ describe("transport/http-transport", function () {
       done();
     };
     server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    new HttpTransport("http://localhost:1337", 100, messageHandler, function (error, httpTransport) {
+    new WsTransport("ws://localhost:1337", 100, messageHandler, function (error, wsTransport) {
       server.destroy(function () {
-        httpTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
-        server = StubServer.createStubServer("HTTP", "http://localhost:1337");
+        wsTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
+        server = StubServer.createStubServer("WS", "ws://localhost:1337");
         server.addResponder(function (request) { if (request.method === "net_version") return "banana"; });
       });
     });
@@ -77,11 +77,11 @@ describe("transport/http-transport", function () {
       done();
     };
     server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    new HttpTransport("http://localhost:1337", 100, messageHandler, function (error, httpTransport) {
+    new WsTransport("ws://localhost:1337", 100, messageHandler, function (error, wsTransport) {
       server.destroy(function () {
-        httpTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
-        httpTransport.submitWork({ id: 1, jsonrpc: "2.0", method: "net_version", params: [] });
-        server = StubServer.createStubServer("HTTP", "http://localhost:1337");
+        wsTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
+        wsTransport.submitWork({ id: 1, jsonrpc: "2.0", method: "net_version", params: [] });
+        server = StubServer.createStubServer("WS", "ws://localhost:1337");
         server.addResponder(function (request) { if (request.method === "net_version") return "banana"; });
       });
     });
