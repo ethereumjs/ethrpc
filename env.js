@@ -17,6 +17,5 @@ rpc.connect(configuration, function (err) {
   });
   rpc.net.version(function (networkID) {
     global.NETWORK_ID = networkID;
-    global.contracts = require("augur-contracts")[NETWORK_ID];
   });
 });
