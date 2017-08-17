@@ -9,12 +9,11 @@ function registerTransactionRelay(transactionRelay) {
       Object.keys(transactions).map(function (hash) {
         var payload;
         if (transactions[hash] !== oldTransactions[hash]) {
-          // console.log("tx changed:", hash, transactions[hash]);
           payload = transactions[hash].payload;
-          if (payload && payload.method && !noRelay[payload.method]) {
+          if (payload && payload.name && !noRelay[payload.name]) {
             transactionRelay({
               hash: hash,
-              type: payload.label || payload.method,
+              type: payload.label || payload.name,
               status: transactions[hash].status,
               data: payload,
               response: transactions[hash].tx
