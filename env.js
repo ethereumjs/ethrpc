@@ -1,4 +1,4 @@
-global.abi = require("augur-abi");
+global.speedomatic = require("speedomatic");
 global.rpc = require("./src");
 global.log = console.log;
 

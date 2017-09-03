@@ -1,6 +1,6 @@
 "use strict";
 
-var abi = require("augur-abi");
+var speedomatic = require("speedomatic");
 
 /**
  * Check whether a string is a valid hexadecimal number.
@@ -9,6 +9,6 @@ var abi = require("augur-abi");
  */
 module.exports = function (str) {
   if (typeof str !== "string") return false;
-  if (abi.strip_0x(str).match(/^[0-9a-f]+$/i)) return true;
+  if (speedomatic.strip0xPrefix(str).match(/^[0-9a-f]+$/i)) return true;
   return false;
 };

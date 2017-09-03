@@ -1,6 +1,6 @@
 {
   "name": "ethrpc",
-  "version": "4.2.2",
+  "version": "4.2.3",
   "description": "Ethereum JSON RPC",
   "author": "The Augur Developers <team@augur.net>",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "test": "mocha test/*.js test/block-management test/raw-transactions test/reducers test/transport test/utils",
     "lint": "eslint src && eslint test/*.js test/block-management test/raw-transactions test/reducers test/transport test/utils",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha test/",
-    "link": "npm link augur-contracts",
+    "link": "npm link augur-contracts && npm link speedomatic",
     "build": "browserify ./exports.js > ./dist/ethrpc.js && uglifyjs ./dist/ethrpc.js > ./dist/ethrpc.min.js",
     "build:tests": "browserify ./test/reducers/*.js > ./test/browser/bundle.js"
   },
@@ -23,10 +23,10 @@
   "homepage": "https://github.com/ethereumjs/ethrpc#readme",
   "dependencies": {
     "async": "1.5.2",
-    "augur-abi": "1.3.0",
     "bignumber.js": "2.3.0",
     "browser-request": "0.3.3",
     "clone": "1.0.2",
+    "ethereumjs-abi": "0.6.4",
     "ethereumjs-blockstream": "2.0.4",
     "ethereumjs-tx": "1.3.1",
     "immutable-delete": "1.0.1",
@@ -38,6 +38,7 @@
     "oboe": "2.1.3",
     "redux": "3.6.0",
     "redux-thunk-subscribe": "1.0.3",
+    "speedomatic": "2.0.0",
     "sync-request": "2.0.1",
     "uuid": "^3.0.1"
   },
@@ -54,7 +55,6 @@
     "chai": "^3.2.0",
     "coveralls": "^2.11.4",
     "eslint": "^3.17.1",
-    "ethereumjs-abi": "0.6.4",
     "ethereumjs-stub-rpc-server": "2.1.4",
     "istanbul": "^0.3.18",
     "mocha": "3.2.0",

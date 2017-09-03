@@ -40,7 +40,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68"
       },
       address: "0x0000000000000000000000000000000000000b0b",
-      privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex")
+      privateKey: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex")
     },
     stub: {
       packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
@@ -87,7 +87,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68"
       },
       address: "0x0000000000000000000000000000000000000b0b",
-      privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex")
+      privateKey: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex")
     },
     stub: {
       packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
@@ -131,7 +131,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68"
       },
       address: "0x0000000000000000000000000000000000000b0b",
-      privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex")
+      privateKey: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex")
     },
     stub: {
       packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
@@ -175,7 +175,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68"
       },
       address: "0x0000000000000000000000000000000000000b0b",
-      privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex")
+      privateKey: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex")
     },
     stub: {
       packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
@@ -223,7 +223,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68"
       },
       address: "0x0000000000000000000000000000000000000b0b",
-      privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex")
+      privateKey: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex")
     },
     stub: {
       packageAndSignRawTransaction: function (payload, address, privateKey, callback) {
@@ -271,7 +271,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68"
       },
       address: "0x0000000000000000000000000000000000000b0b",
-      privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex")
+      privateKey: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex")
     },
     stub: {
       isRetry: false,

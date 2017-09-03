@@ -1,6 +1,6 @@
 "use strict";
 
-var abi = require("augur-abi");
+var speedomatic = require("speedomatic");
 
 /**
  * Compare nonce to the maximum nonce seen so far.
@@ -16,7 +16,7 @@ function verifyRawTransactionNonce(nonce) {
     } else {
       dispatch({ type: "SET_HIGHEST_NONCE", nonce: nonce });
     }
-    return abi.hex(nonce);
+    return speedomatic.hex(nonce);
   };
 }
 

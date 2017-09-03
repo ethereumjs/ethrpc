@@ -1,6 +1,6 @@
 "use strict";
 
-var abi = require("augur-abi");
+var speedomatic = require("speedomatic");
 var BigNumber = require("bignumber.js");
 var eth = require("../wrappers/eth");
 var getLoggedReturnValue = require("../transact/get-logged-return-value");
@@ -49,7 +49,7 @@ function updateMinedTx(txHash) {
                   hash: txHash,
                   data: {
                     tx: {
-                      gasFees: abi.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(transaction.tx.gasPrice, 16)), "string")
+                      gasFees: speedomatic.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(transaction.tx.gasPrice, 16)), "string")
                     }
                   }
                 });
@@ -81,7 +81,7 @@ function updateMinedTx(txHash) {
                 e = handleRPCError(transaction.payload.method, transaction.payload.returns, log.returnValue);
                 if (debug.tx) console.log("handleRPCError:", e);
                 if (e && e.error) {
-                  e.gasFees = abi.unfix(log.gasUsed.times(new BigNumber(transaction.tx.gasPrice, 16)), "string");
+                  e.gasFees = speedomatic.unfix(log.gasUsed.times(new BigNumber(transaction.tx.gasPrice, 16)), "string");
                   dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
                   if (isFunction(transaction.onFailed)) {
                     e.hash = txHash;
@@ -94,7 +94,7 @@ function updateMinedTx(txHash) {
                     data: {
                       tx: {
                         callReturn: convertResponseToReturnsType(transaction.payload.returns, log.returnValue),
-                        gasFees: abi.unfix(log.gasUsed.times(new BigNumber(transaction.tx.gasPrice, 16)), "string")
+                        gasFees: speedomatic.unfix(log.gasUsed.times(new BigNumber(transaction.tx.gasPrice, 16)), "string")
                       }
                     }
                   });

@@ -1,6 +1,6 @@
 "use strict";
 
-var abi = require("augur-abi");
+var speedomatic = require("speedomatic");
 var immutableDelete = require("immutable-delete");
 var packageAndSubmitRawTransaction = require("../raw-transactions/package-and-submit-raw-transaction");
 var callOrSendTransaction = require("../transact/call-or-send-transaction");
@@ -23,7 +23,7 @@ function transactAsync(payload, callReturn, privateKeyOrSigner, onSent, onSucces
       if (getState().debug.tx) console.log("txHash:", txHash);
       if (txHash == null) return onFailed(errors.NULL_RESPONSE);
       if (txHash.error) return onFailed(txHash);
-      txHash = abi.format_int256(txHash);
+      txHash = speedomatic.formatInt256(txHash);
 
       // send the transaction hash and return value back
       // to the client, using the onSent callback

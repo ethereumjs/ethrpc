@@ -1,6 +1,6 @@
 "use strict";
 
-var abi = require("augur-abi");
+var speedomatic = require("speedomatic");
 var clone = require("clone");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
@@ -16,7 +16,7 @@ var packageRequest = function (payload) {
   tx = clone(payload);
   if (tx.params === undefined || tx.params === null) {
     tx.params = [];
-  } else if (tx.params.constructor !== Array) {
+  } else if (!Array.isArray(tx.params)) {
     tx.params = [tx.params];
   }
   numParams = tx.params.length;
@@ -27,29 +27,28 @@ var packageRequest = function (payload) {
     for (j = 0; j < numParams; ++j) {
       if (tx.params[j] !== undefined && tx.params[j] !== null && tx.signature[j]) {
         if (tx.params[j].constructor === Number) {
-          tx.params[j] = abi.prefix_hex(tx.params[j].toString(16));
+          tx.params[j] = speedomatic.prefixHex(tx.params[j].toString(16));
         }
         if (tx.signature[j] === "int256") {
-          tx.params[j] = abi.unfork(tx.params[j], true);
-        } else if (tx.signature[j] === "int256[]" &&
-          tx.params[j].constructor === Array && tx.params[j].length) {
+          tx.params[j] = speedomatic.unfork(tx.params[j], true);
+        } else if (tx.signature[j] === "int256[]" && Array.isArray(tx.params[j]) && tx.params[j].length) {
           for (k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
-            tx.params[j][k] = abi.unfork(tx.params[j][k], true);
+            tx.params[j][k] = speedomatic.unfork(tx.params[j][k], true);
           }
         }
       }
     }
   }
-  if (tx.to) tx.to = abi.format_address(tx.to);
-  if (tx.from) tx.from = abi.format_address(tx.from);
+  if (tx.to) tx.to = speedomatic.formatEthereumAddress(tx.to);
+  if (tx.from) tx.from = speedomatic.formatEthereumAddress(tx.from);
   packaged = {
     from: tx.from,
     to: tx.to,
-    data: (tx.data) ? abi.prefix_hex(tx.data) : abi.encode(tx),
-    gas: tx.gas ? abi.hex(tx.gas) : constants.DEFAULT_GAS
+    data: (tx.data) ? speedomatic.prefixHex(tx.data) : speedomatic.abiEncodeTransactionPayload(tx),
+    gas: tx.gas ? speedomatic.hex(tx.gas) : constants.DEFAULT_GAS
   };
-  if (tx.gasPrice) packaged.gasPrice = abi.hex(tx.gasPrice);
-  if (tx.value) packaged.value = abi.hex(tx.value);
+  if (tx.gasPrice) packaged.gasPrice = speedomatic.hex(tx.gasPrice);
+  if (tx.value) packaged.value = speedomatic.hex(tx.value);
   if (tx.returns) packaged.returns = tx.returns;
   if (tx.nonce) packaged.nonce = tx.nonce;
   return packaged;

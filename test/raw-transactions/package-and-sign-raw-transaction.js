@@ -46,7 +46,7 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68"
       },
       address: "0x0000000000000000000000000000000000000b0b",
-      privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex")
+      privateKey: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex")
     },
     blockchain: {
       gasPrice: "0x64",
@@ -78,7 +78,7 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68"
       },
       address: "0x0000000000000000000000000000000000000b0b",
-      privateKey: new Buffer("1111111111111111111111111111111111111111111111111111111111111111", "hex"),
+      privateKey: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex"),
       callback: function (output) {
         assert.deepEqual(output, {
           from: "0x0000000000000000000000000000000000000b0b",

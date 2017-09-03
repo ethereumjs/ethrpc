@@ -1,6 +1,6 @@
 "use strict";
 
-var abi = require("augur-abi");
+var speedomatic = require("speedomatic");
 var errors = require("../errors/codes");
 
 var handleRPCError = function (method, returns, response) {
@@ -19,7 +19,7 @@ var handleRPCError = function (method, returns, response) {
     if (errors[response]) {
       response = { error: response, message: errors[response] };
     } else if (returns !== "null" && returns !== "string" || (typeof response === "string" && response.slice(0, 2) === "0x")) {
-      responseNumber = abi.bignum(response, "string", true);
+      responseNumber = speedomatic.bignum(response, "string", true);
       if (responseNumber && errors[method] && errors[method][responseNumber]) {
         response = { error: responseNumber, message: errors[method][responseNumber] };
       }

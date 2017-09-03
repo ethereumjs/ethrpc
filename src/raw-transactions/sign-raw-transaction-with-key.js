@@ -1,6 +1,6 @@
 "use strict";
 
-var abi = require("augur-abi");
+var speedomatic = require("speedomatic");
 var Transaction = require("ethereumjs-tx");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
@@ -24,7 +24,7 @@ function signRawTransactionWithKey(packaged, privateKey, callback) {
     if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_INVALID);
     callback(errors.TRANSACTION_INVALID);
   }
-  serialized = abi.prefix_hex(rawTransaction.serialize().toString("hex"));
+  serialized = speedomatic.prefixHex(rawTransaction.serialize().toString("hex"));
   if (!isFunction(callback)) return serialized;
   callback(null, serialized);
 }

@@ -1,7 +1,8 @@
 "use strict";
 
-var abi = require("augur-abi");
 var clone = require("clone");
+var ethereumjsAbi = require("ethereumjs-abi");
+var speedomatic = require("speedomatic");
 
 var convertResponseToReturnsType = function (returnsType, response) {
   var convertedResponse;
@@ -11,27 +12,27 @@ var convertResponseToReturnsType = function (returnsType, response) {
   returnsType = returnsType.toLowerCase();
   convertedResponse = clone(response);
   if (returnsType && returnsType.slice(-2) === "[]") {
-    convertedResponse = abi.unroll_array(convertedResponse, returnsType);
+    convertedResponse = speedomatic.unrollArray(convertedResponse, returnsType);
     if (returnsType === "hash[]") {
-      convertedResponse = abi.hex(convertedResponse);
+      convertedResponse = speedomatic.hex(convertedResponse);
     }
     return convertedResponse;
   } else if (returnsType === "string") {
-    return abi.raw_decode_hex(convertedResponse);
+    return ethereumjsAbi.rawDecode(["string"], Buffer.from(speedomatic.strip0xPrefix(convertedResponse), "hex"))[0];
   } else if (returnsType === "number") {
-    return abi.string(convertedResponse, true);
+    return speedomatic.encodeNumberAsBase10String(convertedResponse, true);
   } else if (returnsType === "int") {
-    return abi.number(convertedResponse, true);
+    return speedomatic.encodeNumberAsJSNumber(convertedResponse, true);
   } else if (returnsType === "bignumber") {
-    return abi.bignum(convertedResponse, null, true);
+    return speedomatic.bignum(convertedResponse, null, true);
   } else if (returnsType === "unfix") {
-    return abi.unfix_signed(convertedResponse, "string");
+    return speedomatic.unfixSigned(convertedResponse, "string");
   } else if (returnsType === "null") {
     return null;
   } else if (returnsType === "address" || returnsType === "address[]") {
-    return abi.format_address(convertedResponse);
+    return speedomatic.formatEthereumAddress(convertedResponse);
   } else if (returnsType === "int256" || returnsType === "int256[]") {
-    return abi.format_int256(convertedResponse);
+    return speedomatic.formatInt256(convertedResponse);
   }
   return convertedResponse;
 };

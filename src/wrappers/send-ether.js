@@ -1,6 +1,6 @@
 "use strict";
 
-var abi = require("augur-abi");
+var speedomatic = require("speedomatic");
 var transact = require("../transact/transact");
 var isObject = require("../utils/is-object");
 
@@ -18,7 +18,7 @@ function sendEther(to, value, from, onSent, onSuccess, onFailed) {
     return dispatch(transact({
       from: from,
       to: to,
-      value: abi.fix(value, "hex"),
+      value: speedomatic.fix(value, "hex"),
       returns: "null",
       gas: "0xcf08"
     }, null, onSent, onSuccess, onFailed));

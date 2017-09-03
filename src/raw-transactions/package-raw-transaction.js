@@ -1,6 +1,6 @@
 "use strict";
 
-var abi = require("augur-abi");
+var speedomatic = require("speedomatic");
 var packageRequest = require("../encode-request/package-request");
 var constants = require("../constants");
 
@@ -16,17 +16,17 @@ function packageRawTransaction(payload, address, networkID, currentBlock) {
   packaged.nonce = payload.nonce || 0;
   packaged.value = payload.value || "0x0";
   if (payload.gasLimit) {
-    packaged.gasLimit = abi.hex(payload.gasLimit);
+    packaged.gasLimit = speedomatic.hex(payload.gasLimit);
   } else if (currentBlock && currentBlock.gasLimit) {
-    packaged.gasLimit = abi.hex(currentBlock.gasLimit);
+    packaged.gasLimit = speedomatic.hex(currentBlock.gasLimit);
   } else {
     packaged.gasLimit = constants.DEFAULT_GAS;
   }
-  if (networkID && abi.number(networkID) > 0 && abi.number(networkID) < 109) {
-    packaged.chainId = abi.number(networkID);
+  if (networkID && speedomatic.encodeNumberAsJSNumber(networkID) > 0 && speedomatic.encodeNumberAsJSNumber(networkID) < 109) {
+    packaged.chainId = speedomatic.encodeNumberAsJSNumber(networkID);
   }
-  if (payload.gasPrice && abi.number(payload.gasPrice) > 0) {
-    packaged.gasPrice = abi.hex(payload.gasPrice);
+  if (payload.gasPrice && speedomatic.encodeNumberAsJSNumber(payload.gasPrice) > 0) {
+    packaged.gasPrice = speedomatic.hex(payload.gasPrice);
   }
   return packaged;
 }
