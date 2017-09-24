@@ -1,5 +1,6 @@
 "use strict";
 
+var async = require("async");
 var net_version = require("./wrappers/net").version;
 var setGasPrice = require("./wrappers/set-gas-price");
 var setCoinbase = require("./wrappers/set-coinbase");
@@ -12,7 +13,6 @@ var validateConfiguration = require("./validate/validate-configuration");
 var resetState = require("./reset-state");
 var ErrorWithData = require("./errors").ErrorWithData;
 var isFunction = require("./utils/is-function");
-var noop = require("./utils/noop");
 var internalState = require("./internal-state");
 
 /**
@@ -75,10 +75,11 @@ function connect(configuration, initialConnectCallback) {
         internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) {
           dispatch(onNewBlock(block));
         });
-        dispatch(setGasPrice());
-        dispatch(setCoinbase());
-        dispatch(ensureLatestBlock(noop));
-        initialConnectCallback(null);
+        async.parallel([
+          function (next) { dispatch(ensureLatestBlock(function () { next(); })); },
+          function (next) { dispatch(setCoinbase(next)); },
+          function (next) { dispatch(setGasPrice(next)); }
+        ], initialConnectCallback);
       }));
     });
   };

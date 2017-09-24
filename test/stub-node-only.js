@@ -1165,11 +1165,8 @@ describe("tests that only work against stub server", function () {
         it("ensureLatestBlock", function (done) {
           clearInterval(interval);
           helpers.rpcConnect(transportType, transportAddress, function () {
-            assert.isNull(rpc.getCurrentBlock());
-            rpc.ensureLatestBlock(function (error) {
-              assert.isNotNull(rpc.getCurrentBlock());
-              done();
-            });
+            assert.isNotNull(rpc.getCurrentBlock());
+            done();
           });
         });
 

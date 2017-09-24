@@ -5,7 +5,7 @@ var eth_getBlockByNumber = require("../wrappers/eth").getBlockByNumber;
 var isFunction = require("../utils/is-function");
 
 /**
- * Ensures that `this.block` contains the latest block.
+ * Ensures that we have the latest block.
  */
 function ensureLatestBlock(callback) {
   return function (dispatch) {
