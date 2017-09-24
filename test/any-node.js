@@ -16,6 +16,7 @@ describe("tests that work against any node (test or live)", function () {
         helpers.rpcConnect(transportType, transportAddress, done);
       });
       afterEach(function (done) {
+        rpc.resetState();
         server.destroy(done);
       });
       describe("version", function () {
