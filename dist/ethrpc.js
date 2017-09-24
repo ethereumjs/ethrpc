@@ -44290,6 +44290,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
     timeout: this.timeout
   }, function (error, response, body) {
     if (error) {
+      if (error.code === "ECONNRESET") error.retryable = true;
       if (error.code === "ECONNREFUSED") error.retryable = true;
       if (error.code === "ETIMEDOUT") error.retryable = true;
       errorCallback(error);
