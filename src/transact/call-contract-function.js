@@ -1,8 +1,8 @@
 "use strict";
 
 var clone = require("clone");
+var speedomatic = require("speedomatic");
 var callOrSendTransaction = require("../transact/call-or-send-transaction");
-var convertResponseToReturnsType = require("../decode-response/convert-response-to-returns-type");
 var handleRPCError = require("../decode-response/handle-rpc-error");
 var isFunction = require("../utils/is-function");
 var RPCError = require("../errors/rpc-error");
@@ -25,27 +25,22 @@ var errors = require("../errors/codes");
  */
 function callContractFunction(payload, callback, callbackWrapper, extraArgument) {
   return function (dispatch) {
-    var tx, res, err, converted;
-    tx = clone(payload);
+    var tx = clone(payload);
     if (!isFunction(callback)) {
-      res = dispatch(callOrSendTransaction(tx));
-      if (res === undefined || res === null) {
-        throw new RPCError(errors.NO_RESPONSE);
-      }
-      err = handleRPCError(tx.name, tx.returns, res);
+      var res = dispatch(callOrSendTransaction(tx));
+      if (res == null) throw new RPCError(errors.NO_RESPONSE);
+      var err = handleRPCError(tx.name, tx.returns, res);
       if (err && err.error) throw new RPCError(err);
-      converted = convertResponseToReturnsType(tx.returns, res);
+      var converted = speedomatic.abiDecodeRpcResponse(tx.returns, res);
       if (isFunction(callbackWrapper)) return callbackWrapper(converted, extraArgument);
       return converted;
     }
     dispatch(callOrSendTransaction(tx, function (res) {
       var err, converted;
-      if (res === undefined || res === null) {
-        return callback(errors.NO_RESPONSE);
-      }
+      if (res == null) return callback(errors.NO_RESPONSE);
       err = handleRPCError(tx.name, tx.returns, res);
       if (err && err.error) return callback(err);
-      converted = convertResponseToReturnsType(tx.returns, res);
+      converted = speedomatic.abiDecodeRpcResponse(tx.returns, res);
       if (isFunction(callbackWrapper)) converted = callbackWrapper(converted, extraArgument);
       return callback(converted);
     }));

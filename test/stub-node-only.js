@@ -1152,7 +1152,7 @@ describe("tests that only work against stub server", function () {
         it("transact", function (done) {
           function onSent(result) { }
           function onSuccess(result) {
-            assert.strictEqual(result.callReturn, "0x12");
+            assert.strictEqual(result.callReturn, "18");
             done();
           }
           function onFailure(error) { assert.isFalse(true, "onFailure should not have been called."); }
