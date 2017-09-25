@@ -1101,7 +1101,7 @@ describe("tests that only work against stub server", function () {
           var expectedObject = {};
           var payload = {
             name: "getBranches",
-            returns: "hash[]",
+            returns: "bytes32[]",
             from: "0x00bae5113ee9f252cceb0001205b88fad175461a",
             to: "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
             params: []
@@ -1211,7 +1211,7 @@ describe("tests that only work against stub server", function () {
           var expectedResults = "0x" + ethereumjsAbi.rawEncode(["uint256[]"], [[1, 100, 100000]]).toString("hex");
           var payload = {
             name: "getBranches",
-            returns: "hash[]",
+            returns: "bytes32[]",
             from: "0x00bae5113ee9f252cceb0001205b88fad175461a",
             to: "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
             params: []

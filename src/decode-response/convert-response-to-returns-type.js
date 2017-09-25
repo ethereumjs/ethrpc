@@ -1,7 +1,6 @@
 "use strict";
 
 var clone = require("clone");
-var ethereumjsAbi = require("ethereumjs-abi");
 var speedomatic = require("speedomatic");
 
 var convertResponseToReturnsType = function (returnsType, response) {
@@ -13,18 +12,11 @@ var convertResponseToReturnsType = function (returnsType, response) {
   convertedResponse = clone(response);
   if (returnsType && returnsType.slice(-2) === "[]") {
     convertedResponse = speedomatic.unrollArray(convertedResponse, returnsType);
-    if (returnsType === "hash[]") {
-      convertedResponse = speedomatic.hex(convertedResponse);
-    }
-    return convertedResponse;
-  } else if (returnsType === "string") {
-    return ethereumjsAbi.rawDecode(["string"], Buffer.from(speedomatic.strip0xPrefix(convertedResponse), "hex"))[0];
+  }
+  if (returnsType === "string") {
+    return speedomatic.abiDecodeBytes(convertedResponse);
   } else if (returnsType === "number") {
     return speedomatic.encodeNumberAsBase10String(convertedResponse, true);
-  } else if (returnsType === "int") {
-    return speedomatic.encodeNumberAsJSNumber(convertedResponse, true);
-  } else if (returnsType === "bignumber") {
-    return speedomatic.bignum(convertedResponse, null, true);
   } else if (returnsType === "unfix") {
     return speedomatic.unfixSigned(convertedResponse, "string");
   } else if (returnsType === "null") {
@@ -33,6 +25,8 @@ var convertResponseToReturnsType = function (returnsType, response) {
     return speedomatic.formatEthereumAddress(convertedResponse);
   } else if (returnsType === "int256" || returnsType === "int256[]") {
     return speedomatic.formatInt256(convertedResponse);
+  } else if (returnsType === "bytes32" || returnsType === "bytes32[]") {
+    return speedomatic.hex(convertedResponse);
   }
   return convertedResponse;
 };
