@@ -48381,9 +48381,11 @@ WsTransport.prototype.connect = function (callback) {
     // https://www.w3.org/TR/websockets/#concept-websocket-close-fail
     messageHandler(new Error("Web socket error."), null);
   };
-  this.webSocketClient.onclose = function (err) {
-    console.error("websocket.onclose:", err);
-    callback(new Error("Web socket closed without opening, usually means failed connection."));
+  this.webSocketClient.onclose = function (event) {
+    if (event && event.code !== 1000) {
+      console.error("websocket.onclose:", event.code, event.reason);
+      callback(new Error("Web socket closed without opening, usually means failed connection."));
+    }
     callback = function () { };
   };
 };
