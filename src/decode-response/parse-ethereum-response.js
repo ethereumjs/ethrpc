@@ -9,7 +9,6 @@ var RPCError = require("../errors/rpc-error");
 var parseEthereumResponse = function (origResponse, returns, callback) {
   var results, len, err, i, response;
   response = clone(origResponse);
-  // console.log("[ethrpc] response:", response);
   if (response && typeof response === "string") {
     try {
       response = JSON.parse(response);

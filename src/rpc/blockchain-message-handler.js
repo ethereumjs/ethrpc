@@ -36,7 +36,6 @@ function blockchainMessageHandler(error, jso) {
       }
       subscription = subscriptions[jso.params.subscription];
       if (subscription != null) {
-        // console.log("REACTION:", subscription.reaction, jso);
         dispatch({ type: subscription.reaction, data: jso });
       }
     };

@@ -45496,7 +45496,6 @@ var RPCError = require("../errors/rpc-error");
 var parseEthereumResponse = function (origResponse, returns, callback) {
   var results, len, err, i, response;
   response = clone(origResponse);
-  // console.log("[ethrpc] response:", response);
   if (response && typeof response === "string") {
     try {
       response = JSON.parse(response);
@@ -46952,7 +46951,6 @@ function blockchainMessageHandler(error, jso) {
       }
       subscription = subscriptions[jso.params.subscription];
       if (subscription != null) {
-        // console.log("REACTION:", subscription.reaction, jso);
         dispatch({ type: subscription.reaction, data: jso });
       }
     };
@@ -48383,7 +48381,8 @@ WsTransport.prototype.connect = function (callback) {
     // https://www.w3.org/TR/websockets/#concept-websocket-close-fail
     messageHandler(new Error("Web socket error."), null);
   };
-  this.webSocketClient.onclose = function () {
+  this.webSocketClient.onclose = function (err) {
+    console.error("websocket.onclose:", err);
     callback(new Error("Web socket closed without opening, usually means failed connection."));
     callback = function () { };
   };
