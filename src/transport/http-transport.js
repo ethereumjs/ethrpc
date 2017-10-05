@@ -50,6 +50,12 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       errorCallback(error);
     } else if (response.statusCode === 200) {
       this.messageHandler(null, body);
+    } else if (response.statusCode === 405) { // to handle INFURA's 405 Method Not Allowed response
+      this.messageHandler(null, {
+        id: rpcObject.id,
+        jsonrpc: "2.0",
+        error: {"code": -32601, "message": "Method not found"}
+      });
     } else {
       error = new Error("Unexpected status code.");
       error.code = response.statusCode;
