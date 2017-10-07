@@ -13,37 +13,22 @@ var errors = require("../errors/codes");
  * @param {Object} payload Static API data with "params" and "from" set.
  * @param {string} address The sender's Ethereum address.
  * @param {buffer|function} privateKeyOrSigner Sender's plaintext private key or signing function.
- * @param {function=} callback Callback function (optional).
+ * @param {string} accountType One of "privateKey", "uPort", or "ledger".
+ * @param {function} callback Callback function.
  * @return {string|void} Signed transaction.
  */
-function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, callback) {
+function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, callback) {
   return function (dispatch, getState) {
-    var packaged, state;
-    state = getState();
-    if (!payload || payload.constructor !== Object) {
-      if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_FAILED);
-      return callback(errors.TRANSACTION_FAILED);
-    }
-    if (!address || !privateKeyOrSigner) {
-      if (!isFunction(callback)) throw new RPCError(errors.NOT_LOGGED_IN);
-      return callback(errors.NOT_LOGGED_IN);
-    }
+    var packaged, state = getState();
+    if (!payload || payload.constructor !== Object) return callback(errors.TRANSACTION_FAILED);
+    if (!address || !privateKeyOrSigner) return callback(errors.NOT_LOGGED_IN);
     packaged = packageRawTransaction(payload, address, state.networkID, state.currentBlock);
-    if (state.debug.broadcast) {
-      console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
-    }
-    if (!isFunction(callback)) {
-      if (isFunction(privateKeyOrSigner)) {
-        throw new Error("Cannot do synchronous signing with a signer function.");
-      }
-      packaged = dispatch(setRawTransactionGasPrice(packaged));
-      packaged = dispatch(setRawTransactionNonce(packaged, address));
-      return signRawTransaction(packaged, privateKeyOrSigner);
-    }
+    if (state.debug.broadcast) console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
     dispatch(setRawTransactionGasPrice(packaged, function (packaged) {
       if (packaged.error) return callback(packaged);
       dispatch(setRawTransactionNonce(packaged, address, function (packaged) {
-        signRawTransaction(packaged, privateKeyOrSigner, function (err, result) {
+        if (packaged.error) return callback(packaged);
+        signRawTransaction(packaged, privateKeyOrSigner, accountType, function (err, result) {
           callback(err || result);
         });
       }));

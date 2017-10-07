@@ -5,7 +5,7 @@ var RPCError = require("../errors/rpc-error");
 var isFunction = require("../utils/is-function");
 var errors = require("../errors/codes");
 
-function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, onSent, onSuccess, onFailed, callback) {
+function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed, callback) {
   return function (dispatch, getState) {
     if (!payload || txHash == null) {
       return callback(errors.TRANSACTION_FAILED);
@@ -19,7 +19,10 @@ function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, onSe
         hash: txHash,
         payload: payload,
         tx: { callReturn: callReturn },
-        signer: privateKeyOrSigner,
+        meta: {
+          signer: privateKeyOrSigner,
+          accountType: accountType
+        },
         onSent: onSent,
         onSuccess: onSuccess,
         onFailed: onFailed,

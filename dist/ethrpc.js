@@ -45146,6 +45146,13 @@ BigNumber.config({ MODULO_MODE: BigNumber.EUCLID, ROUNDING_MODE: BigNumber.ROUND
 
 module.exports = {
 
+  ACCOUNT_TYPES: {
+    U_PORT: "uPort",
+    LEDGER: "ledger",
+    PRIVATE_KEY: "privateKey",
+    UNLOCKED_ETHEREUM_NODE: "unlockedEthereumNode"
+  },
+
   // Number of required confirmations for transact sequence
   REQUIRED_CONFIRMATIONS: 0,
 
@@ -45386,11 +45393,11 @@ var createEthrpc = function (reducer) {
     signRawTransactionWithKey: signRawTransactionWithKey,
     packageRawTransaction: packageRawTransaction,
     packageRequest: packageRequest,
-    packageAndSubmitRawTransaction: function (payload, address, privateKeyOrSigner, callback) {
-      return dispatch(packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, callback));
+    packageAndSubmitRawTransaction: function (payload, address, privateKeyOrSigner, accountType, callback) {
+      return dispatch(packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, accountType, callback));
     },
-    packageAndSignRawTransaction: function (payload, address, privateKeyOrSigner, callback) {
-      return dispatch(packageAndSignRawTransaction(payload, address, privateKeyOrSigner, callback));
+    packageAndSignRawTransaction: function (payload, address, privateKeyOrSigner, accountType, callback) {
+      return dispatch(packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, callback));
     },
 
     handleRPCError: handleRPCError,
@@ -45404,7 +45411,7 @@ var createEthrpc = function (reducer) {
 
     callOrSendTransaction: function (payload, callback) { return dispatch(callOrSendTransaction(payload, callback)); },
     callContractFunction: function (payload, callback, wrapper, aux) { return dispatch(callContractFunction(payload, callback, wrapper, aux)); },
-    transact: function (payload, privateKeyOrSigner, onSent, onSuccess, onFailed) { return dispatch(transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed)); }
+    transact: function (payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) { return dispatch(transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed)); }
   };
 };
 
@@ -46159,37 +46166,22 @@ var errors = require("../errors/codes");
  * @param {Object} payload Static API data with "params" and "from" set.
  * @param {string} address The sender's Ethereum address.
  * @param {buffer|function} privateKeyOrSigner Sender's plaintext private key or signing function.
- * @param {function=} callback Callback function (optional).
+ * @param {string} accountType One of "privateKey", "uPort", or "ledger".
+ * @param {function} callback Callback function.
  * @return {string|void} Signed transaction.
  */
-function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, callback) {
+function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, callback) {
   return function (dispatch, getState) {
-    var packaged, state;
-    state = getState();
-    if (!payload || payload.constructor !== Object) {
-      if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_FAILED);
-      return callback(errors.TRANSACTION_FAILED);
-    }
-    if (!address || !privateKeyOrSigner) {
-      if (!isFunction(callback)) throw new RPCError(errors.NOT_LOGGED_IN);
-      return callback(errors.NOT_LOGGED_IN);
-    }
+    var packaged, state = getState();
+    if (!payload || payload.constructor !== Object) return callback(errors.TRANSACTION_FAILED);
+    if (!address || !privateKeyOrSigner) return callback(errors.NOT_LOGGED_IN);
     packaged = packageRawTransaction(payload, address, state.networkID, state.currentBlock);
-    if (state.debug.broadcast) {
-      console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
-    }
-    if (!isFunction(callback)) {
-      if (isFunction(privateKeyOrSigner)) {
-        throw new Error("Cannot do synchronous signing with a signer function.");
-      }
-      packaged = dispatch(setRawTransactionGasPrice(packaged));
-      packaged = dispatch(setRawTransactionNonce(packaged, address));
-      return signRawTransaction(packaged, privateKeyOrSigner);
-    }
+    if (state.debug.broadcast) console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
     dispatch(setRawTransactionGasPrice(packaged, function (packaged) {
       if (packaged.error) return callback(packaged);
       dispatch(setRawTransactionNonce(packaged, address, function (packaged) {
-        signRawTransaction(packaged, privateKeyOrSigner, function (err, result) {
+        if (packaged.error) return callback(packaged);
+        signRawTransaction(packaged, privateKeyOrSigner, accountType, function (err, result) {
           callback(err || result);
         });
       }));
@@ -46208,51 +46200,45 @@ var handleRawTransactionError = require("./handle-raw-transaction-error");
 var RPCError = require("../errors/rpc-error");
 var isFunction = require("../utils/is-function");
 var errors = require("../errors/codes");
+var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
 
 /**
  * Package, sign, and submit a raw transaction to Ethereum.
  * @param {Object} payload Static API data with "params" and "from" set.
  * @param {string} address The sender's Ethereum address.
- * @param {buffer} privateKey The sender's plaintext private key.
- * @param {function=} callback Callback function (optional).
+ * @param {buffer|function} privateKeyOrSigner Sender's plaintext private key or signing function.
+ * @param {string} accountType One of "privateKey", "uPort", or "ledger".
+ * @param {function} callback Callback function.
  * @return {string|void} Transaction hash (if successful).
  */
-function packageAndSubmitRawTransaction(payload, address, privateKey, callback) {
+function packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, accountType, callback) {
   return function (dispatch, getState) {
-    var debug, response, err;
-    debug = getState().debug;
-    if (!isFunction(callback)) {
-      response = dispatch(eth_sendRawTransaction(dispatch(packageAndSignRawTransaction(payload, address, privateKey))));
-      if (debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
-      if (!response) throw new RPCError(errors.RAW_TRANSACTION_ERROR);
-      if (response.error) {
-        err = dispatch(handleRawTransactionError(response));
-        if (err !== null) throw new RPCError(err);
-        return dispatch(packageAndSubmitRawTransaction(payload, address, privateKey));
-      }
-      return response;
-    }
-    dispatch(packageAndSignRawTransaction(payload, address, privateKey, function (signedRawTransaction) {
-      if (signedRawTransaction.error) return callback(signedRawTransaction);
-      dispatch(eth_sendRawTransaction(signedRawTransaction, function (response) {
+    dispatch(packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, function (signedRawTransaction) {
+      function handleRawTransactionResponse(response) {
         var err;
-        if (debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
+        if (getState().debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
         if (!response) return callback(errors.RAW_TRANSACTION_ERROR);
         if (response.error) {
           err = dispatch(handleRawTransactionError(response));
-          if (err !== null) return callback(err);
-          dispatch(packageAndSubmitRawTransaction(payload, address, privateKey, callback));
+          if (err != null) return callback(err);
+          dispatch(packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, accountType, callback));
         } else {
           callback(response);
         }
-      }));
+      }
+      if (signedRawTransaction.error) return callback(signedRawTransaction);
+      if (accountType === ACCOUNT_TYPES.U_PORT) { // signedRawTransaction is transaction hash for uPort
+        handleRawTransactionResponse(signedRawTransaction);
+      } else {
+        dispatch(eth_sendRawTransaction(signedRawTransaction, handleRawTransactionResponse));
+      }
     }));
   };
 }
 
 module.exports = packageAndSubmitRawTransaction;
 
-},{"../errors/codes":225,"../errors/rpc-error":228,"../utils/is-function":289,"../wrappers/eth":305,"./handle-raw-transaction-error":235,"./package-and-sign-raw-transaction":236}],238:[function(require,module,exports){
+},{"../constants":216,"../errors/codes":225,"../errors/rpc-error":228,"../utils/is-function":289,"../wrappers/eth":305,"./handle-raw-transaction-error":235,"./package-and-sign-raw-transaction":236}],238:[function(require,module,exports){
 "use strict";
 
 var speedomatic = require("speedomatic");
@@ -46402,19 +46388,29 @@ module.exports = signRawTransactionWithKey;
 var immutableDelete = require("immutable-delete");
 var signRawTransactionWithKey = require("./sign-raw-transaction-with-key");
 var isFunction = require("../utils/is-function");
+var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
 
 /**
  * Sign the transaction using either a private key or a signing function.
  * @param {Object} packaged Unsigned transaction.
  * @param {buffer|function} privateKeyOrSigner Sender's plaintext private key or signing function.
+ * @param {string} accountType One of "privateKey", "uPort", or "ledger".
  * @param {function=} callback Callback function (optional).
  * @return {string} Signed and serialized raw transaction.
  */
-function signRawTransaction(packaged, privateKeyOrSigner, callback) {
+function signRawTransaction(packaged, privateKeyOrSigner, accountType, callback) {
   try {
-    return (isFunction(privateKeyOrSigner))
-      ? privateKeyOrSigner(immutableDelete(packaged, "returns"), callback)
-      : signRawTransactionWithKey(packaged, privateKeyOrSigner, callback);
+    if (accountType === ACCOUNT_TYPES.PRIVATE_KEY) {
+      return signRawTransactionWithKey(packaged, privateKeyOrSigner, callback);
+    } else if (accountType === ACCOUNT_TYPES.LEDGER) {
+      privateKeyOrSigner(immutableDelete(packaged, "returns"), callback);
+    } else if (accountType === ACCOUNT_TYPES.U_PORT) {
+      privateKeyOrSigner(immutableDelete(packaged, "returns")).then(function (txHash) {
+        callback(null, txHash);
+      });
+    } else {
+      callback({ error: "unknown account type" });
+    }
   } catch (error) {
     if (!isFunction(callback)) throw error;
     return callback(error);
@@ -46423,7 +46419,7 @@ function signRawTransaction(packaged, privateKeyOrSigner, callback) {
 
 module.exports = signRawTransaction;
 
-},{"../utils/is-function":289,"./sign-raw-transaction-with-key":241,"immutable-delete":65}],243:[function(require,module,exports){
+},{"../constants":216,"../utils/is-function":289,"./sign-raw-transaction-with-key":241,"immutable-delete":65}],243:[function(require,module,exports){
 "use strict";
 
 var speedomatic = require("speedomatic");
@@ -47293,10 +47289,10 @@ var errors = require("../errors/codes");
  *  - call onSuccess when the transaction has REQUIRED_CONFIRMATIONS
  *  - call onFailed if the transaction fails
  */
-function transactAsync(payload, callReturn, privateKeyOrSigner, onSent, onSuccess, onFailed) {
+function transactAsync(payload, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
     var invoke = (privateKeyOrSigner == null) ? callOrSendTransaction : function (payload, callback) {
-      return packageAndSubmitRawTransaction(payload, payload.from, privateKeyOrSigner, callback);
+      return packageAndSubmitRawTransaction(payload, payload.from, privateKeyOrSigner, accountType, callback);
     };
     payload.send = true;
     dispatch(invoke(immutableDelete(payload, "returns"), function (txHash) {
@@ -47309,7 +47305,7 @@ function transactAsync(payload, callReturn, privateKeyOrSigner, onSent, onSucces
       // to the client, using the onSent callback
       onSent({ hash: txHash, callReturn: callReturn });
 
-      dispatch(verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, onSent, onSuccess, onFailed, function (err) {
+      dispatch(verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed, function (err) {
         if (err != null) {
           err.hash = txHash;
           return onFailed(err);
@@ -47336,7 +47332,7 @@ var isFunction = require("../utils/is-function");
 var noop = require("../utils/noop");
 var errors = require("../errors/codes");
 
-function transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed) {
+function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
     var onSentCallback, onSuccessCallback, onFailedCallback, debug = getState().debug;
     if (debug.tx) console.log("payload transact:", payload);
@@ -47353,7 +47349,7 @@ function transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed) {
     };
     payload.send = false;
     if (payload.mutable || payload.returns === "null") {
-      return dispatch(transactAsync(payload, null, privateKeyOrSigner, onSentCallback, onSuccessCallback, onFailedCallback));
+      return dispatch(transactAsync(payload, null, privateKeyOrSigner, accountType, onSentCallback, onSuccessCallback, onFailedCallback));
     }
     dispatch(callContractFunction(payload, function (callReturn) {
       if (debug.tx) console.log("callReturn:", callReturn);
@@ -47362,7 +47358,7 @@ function transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed) {
       } else if (callReturn.error) {
         return onFailedCallback(callReturn);
       }
-      dispatch(transactAsync(payload, callReturn, privateKeyOrSigner, onSentCallback, onSuccessCallback, onFailedCallback));
+      dispatch(transactAsync(payload, callReturn, privateKeyOrSigner, accountType, onSentCallback, onSuccessCallback, onFailedCallback));
     }));
   };
 }
@@ -47481,7 +47477,7 @@ function updatePendingTx(txHash) {
           dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
           storedTransaction = getState().transactions[txHash];
           if (getState().debug.tx) console.log("resubmitting tx:", txHash);
-          dispatch(transact(storedTransaction.payload, storedTransaction.signer, storedTransaction.onSent, storedTransaction.onSuccess, storedTransaction.onFailed));
+          dispatch(transact(storedTransaction.payload, (storedTransaction.meta || {}).signer, (storedTransaction.meta || {}).accountType, storedTransaction.onSent, storedTransaction.onSuccess, storedTransaction.onFailed));
         }
 
       // non-null transaction: transaction still alive and kicking!
@@ -47569,7 +47565,7 @@ var RPCError = require("../errors/rpc-error");
 var isFunction = require("../utils/is-function");
 var errors = require("../errors/codes");
 
-function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, onSent, onSuccess, onFailed, callback) {
+function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed, callback) {
   return function (dispatch, getState) {
     if (!payload || txHash == null) {
       return callback(errors.TRANSACTION_FAILED);
@@ -47583,7 +47579,10 @@ function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, onSe
         hash: txHash,
         payload: payload,
         tx: { callReturn: callReturn },
-        signer: privateKeyOrSigner,
+        meta: {
+          signer: privateKeyOrSigner,
+          accountType: accountType
+        },
         onSent: onSent,
         onSuccess: onSuccess,
         onFailed: onFailed,

@@ -12,7 +12,7 @@ var isFunction = require("../utils/is-function");
 var noop = require("../utils/noop");
 var errors = require("../errors/codes");
 
-function transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed) {
+function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
     var onSentCallback, onSuccessCallback, onFailedCallback, debug = getState().debug;
     if (debug.tx) console.log("payload transact:", payload);
@@ -29,7 +29,7 @@ function transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed) {
     };
     payload.send = false;
     if (payload.mutable || payload.returns === "null") {
-      return dispatch(transactAsync(payload, null, privateKeyOrSigner, onSentCallback, onSuccessCallback, onFailedCallback));
+      return dispatch(transactAsync(payload, null, privateKeyOrSigner, accountType, onSentCallback, onSuccessCallback, onFailedCallback));
     }
     dispatch(callContractFunction(payload, function (callReturn) {
       if (debug.tx) console.log("callReturn:", callReturn);
@@ -38,7 +38,7 @@ function transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed) {
       } else if (callReturn.error) {
         return onFailedCallback(callReturn);
       }
-      dispatch(transactAsync(payload, callReturn, privateKeyOrSigner, onSentCallback, onSuccessCallback, onFailedCallback));
+      dispatch(transactAsync(payload, callReturn, privateKeyOrSigner, accountType, onSentCallback, onSuccessCallback, onFailedCallback));
     }));
   };
 }

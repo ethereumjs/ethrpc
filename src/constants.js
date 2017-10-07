@@ -6,6 +6,13 @@ BigNumber.config({ MODULO_MODE: BigNumber.EUCLID, ROUNDING_MODE: BigNumber.ROUND
 
 module.exports = {
 
+  ACCOUNT_TYPES: {
+    U_PORT: "uPort",
+    LEDGER: "ledger",
+    PRIVATE_KEY: "privateKey",
+    UNLOCKED_ETHEREUM_NODE: "unlockedEthereumNode"
+  },
+
   // Number of required confirmations for transact sequence
   REQUIRED_CONFIRMATIONS: 0,
 

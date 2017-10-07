@@ -13,10 +13,10 @@ var errors = require("../errors/codes");
  *  - call onSuccess when the transaction has REQUIRED_CONFIRMATIONS
  *  - call onFailed if the transaction fails
  */
-function transactAsync(payload, callReturn, privateKeyOrSigner, onSent, onSuccess, onFailed) {
+function transactAsync(payload, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
     var invoke = (privateKeyOrSigner == null) ? callOrSendTransaction : function (payload, callback) {
-      return packageAndSubmitRawTransaction(payload, payload.from, privateKeyOrSigner, callback);
+      return packageAndSubmitRawTransaction(payload, payload.from, privateKeyOrSigner, accountType, callback);
     };
     payload.send = true;
     dispatch(invoke(immutableDelete(payload, "returns"), function (txHash) {
@@ -29,7 +29,7 @@ function transactAsync(payload, callReturn, privateKeyOrSigner, onSent, onSucces
       // to the client, using the onSent callback
       onSent({ hash: txHash, callReturn: callReturn });
 
-      dispatch(verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, onSent, onSuccess, onFailed, function (err) {
+      dispatch(verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed, function (err) {
         if (err != null) {
           err.hash = txHash;
           return onFailed(err);

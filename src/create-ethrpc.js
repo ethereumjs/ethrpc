@@ -216,11 +216,11 @@ var createEthrpc = function (reducer) {
     signRawTransactionWithKey: signRawTransactionWithKey,
     packageRawTransaction: packageRawTransaction,
     packageRequest: packageRequest,
-    packageAndSubmitRawTransaction: function (payload, address, privateKeyOrSigner, callback) {
-      return dispatch(packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, callback));
+    packageAndSubmitRawTransaction: function (payload, address, privateKeyOrSigner, accountType, callback) {
+      return dispatch(packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, accountType, callback));
     },
-    packageAndSignRawTransaction: function (payload, address, privateKeyOrSigner, callback) {
-      return dispatch(packageAndSignRawTransaction(payload, address, privateKeyOrSigner, callback));
+    packageAndSignRawTransaction: function (payload, address, privateKeyOrSigner, accountType, callback) {
+      return dispatch(packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, callback));
     },
 
     handleRPCError: handleRPCError,
@@ -234,7 +234,7 @@ var createEthrpc = function (reducer) {
 
     callOrSendTransaction: function (payload, callback) { return dispatch(callOrSendTransaction(payload, callback)); },
     callContractFunction: function (payload, callback, wrapper, aux) { return dispatch(callContractFunction(payload, callback, wrapper, aux)); },
-    transact: function (payload, privateKeyOrSigner, onSent, onSuccess, onFailed) { return dispatch(transact(payload, privateKeyOrSigner, onSent, onSuccess, onFailed)); }
+    transact: function (payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) { return dispatch(transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed)); }
   };
 };
 
