@@ -208,6 +208,8 @@ var createEthrpc = function (reducer) {
     uninstallFilter: function (filter, callback) { return dispatch(eth.uninstallFilter([filter], callback)); },
     unsubscribe: function (label, callback) { return dispatch(eth.unsubscribe([label], callback)); },
 
+    WsTransport: require("./transport/ws-transport"),
+
     /************************
      * Convenience wrappers *
      ************************/

@@ -45385,6 +45385,8 @@ var createEthrpc = function (reducer) {
     uninstallFilter: function (filter, callback) { return dispatch(eth.uninstallFilter([filter], callback)); },
     unsubscribe: function (label, callback) { return dispatch(eth.unsubscribe([label], callback)); },
 
+    WsTransport: require("./transport/ws-transport"),
+
     /************************
      * Convenience wrappers *
      ************************/
@@ -45417,7 +45419,7 @@ var createEthrpc = function (reducer) {
 
 module.exports = createEthrpc;
 
-},{"./block-management/ensure-latest-block":207,"./block-management/wait-for-next-blocks":213,"./clear-transactions":214,"./connect":215,"./constants":216,"./debug/set-debug-options":218,"./decode-response/handle-rpc-error":219,"./encode-request/package-request":223,"./errors/codes":225,"./internal-state":230,"./raw-transactions/package-and-sign-raw-transaction":236,"./raw-transactions/package-and-submit-raw-transaction":237,"./raw-transactions/package-raw-transaction":238,"./raw-transactions/sign-raw-transaction":242,"./raw-transactions/sign-raw-transaction-with-key":241,"./reset-state":257,"./transact/call-contract-function":265,"./transact/call-or-send-transaction":266,"./transact/transact":270,"./transaction-relay/exclude-from-transaction-relay":275,"./transaction-relay/include-in-transaction-relay":276,"./transaction-relay/register-transaction-relay":277,"./transaction-relay/unregister-transaction-relay":278,"./utils/is-function":289,"./utils/sha3":296,"./validate/validate-and-default-block-number":298,"./validate/validate-transaction":302,"./wrappers/bind-dispatch":304,"./wrappers/eth":305,"./wrappers/is-unlocked":306,"./wrappers/miner":308,"./wrappers/net":309,"./wrappers/personal":310,"./wrappers/publish":311,"./wrappers/raw":312,"./wrappers/resend-raw-transaction":313,"./wrappers/resend-transaction":314,"./wrappers/send-ether":315,"./wrappers/shh":318,"./wrappers/web3":319,"redux":118,"redux-thunk-subscribe":112}],218:[function(require,module,exports){
+},{"./block-management/ensure-latest-block":207,"./block-management/wait-for-next-blocks":213,"./clear-transactions":214,"./connect":215,"./constants":216,"./debug/set-debug-options":218,"./decode-response/handle-rpc-error":219,"./encode-request/package-request":223,"./errors/codes":225,"./internal-state":230,"./raw-transactions/package-and-sign-raw-transaction":236,"./raw-transactions/package-and-submit-raw-transaction":237,"./raw-transactions/package-raw-transaction":238,"./raw-transactions/sign-raw-transaction":242,"./raw-transactions/sign-raw-transaction-with-key":241,"./reset-state":257,"./transact/call-contract-function":265,"./transact/call-or-send-transaction":266,"./transact/transact":270,"./transaction-relay/exclude-from-transaction-relay":275,"./transaction-relay/include-in-transaction-relay":276,"./transaction-relay/register-transaction-relay":277,"./transaction-relay/unregister-transaction-relay":278,"./transport/ws-transport":287,"./utils/is-function":289,"./utils/sha3":296,"./validate/validate-and-default-block-number":298,"./validate/validate-transaction":302,"./wrappers/bind-dispatch":304,"./wrappers/eth":305,"./wrappers/is-unlocked":306,"./wrappers/miner":308,"./wrappers/net":309,"./wrappers/personal":310,"./wrappers/publish":311,"./wrappers/raw":312,"./wrappers/resend-raw-transaction":313,"./wrappers/resend-transaction":314,"./wrappers/send-ether":315,"./wrappers/shh":318,"./wrappers/web3":319,"redux":118,"redux-thunk-subscribe":112}],218:[function(require,module,exports){
 "use strict";
 
 module.exports = function (debugOptions) {
