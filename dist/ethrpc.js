@@ -48000,6 +48000,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       if (error.code === "ECONNREFUSED") error.retryable = true;
       if (error.code === "ETIMEDOUT") error.retryable = true;
       if (error.code === "EAI_AGAIN") error.retryable = true;
+      if (error.code === "ENOTFOUND") error.retryable = true;
       errorCallback(error);
     } else if (response.statusCode === 200) {
       this.messageHandler(null, body);
