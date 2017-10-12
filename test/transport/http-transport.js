@@ -19,7 +19,8 @@ describe("transport/http-transport", function () {
   it("no node found", function (done) {
     new HttpTransport("http://nowhere:1337", 100, function () { }, function (error, httpTransport) {
       assert.strictEqual(Object.getPrototypeOf(error), Error.prototype);
-      assert.isTrue(error.code === "ESOCKETTIMEDOUT" || error.code === "ETIMEDOUT" || error.code === "ENOTFOUND", (error || {}).message);
+      assert.oneOf(error.code, ["ESOCKETTIMEDOUT", "ETIMEDOUT", "ENOTFOUND", "EAI_AGAIN"], (error ||{}).message);
+      // assert.isTrue(error.code === "ESOCKETTIMEDOUT" || error.code === "ETIMEDOUT" || error.code === "ENOTFOUND", (error || {}).message);
       done();
     });
   });
