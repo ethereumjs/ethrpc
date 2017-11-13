@@ -52,7 +52,7 @@ function blockchainMessageHandler(error, jso) {
       }
 
       // FIXME: outstandingRequest.callback should be function(Error,object) not function(Error|object)
-      parseEthereumResponse(jso, outstandingRequest.expectedReturnTypes, outstandingRequest.callback);
+      parseEthereumResponse(jso, outstandingRequest.callback);
     };
 
     errorHandler = function () {

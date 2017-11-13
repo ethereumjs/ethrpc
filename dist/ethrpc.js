@@ -38051,7 +38051,9 @@ module.exports = abiDecodeData;
 var abiDecodeData = require("./abi-decode-data");
 
 function abiDecodeRpcResponse(responseType, abiEncodedRpcResponse) {
-  return abiDecodeData([{type: responseType}], abiEncodedRpcResponse)[0];
+  var decodedRpcResponse = abiDecodeData([{type: responseType}], abiEncodedRpcResponse)[0];
+  if (responseType === "bool") return Boolean(decodedRpcResponse);
+  return decodedRpcResponse;
 }
 
 module.exports = abiDecodeRpcResponse;
@@ -38507,7 +38509,7 @@ var BigNumber = require("bignumber.js");
 BigNumber.config({MODULO_MODE: BigNumber.EUCLID, ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN});
 
 module.exports = {
-  version: "2.0.3",
+  version: "2.0.4",
   constants: require("./constants"),
   unrollArray: require("./unroll-array"),
   byteArrayToUtf8String: require("./byte-array-to-utf8-string"),
@@ -41735,19 +41737,8 @@ var isObject = require("../utils/is-object");
 var errors = require("../errors/codes");
 var RPCError = require("../errors/rpc-error");
 
-var parseEthereumResponse = function (origResponse, returns, callback) {
-  var results, len, err, i, response;
-  response = clone(origResponse);
-  if (response && typeof response === "string") {
-    try {
-      response = JSON.parse(response);
-    } catch (e) {
-      err = e;
-      if (e && e.name === "SyntaxError") err = errors.INVALID_RESPONSE;
-      if (isFunction(callback)) return callback(err);
-      throw new RPCError(err);
-    }
-  }
+function parseEthereumResponse(origResponse, callback) {
+  var results, len, err, i, response = clone(origResponse);
   if (isObject(response)) {
     if (response.error) {
       response = { error: response.error.code, message: response.error.message };
@@ -41775,8 +41766,10 @@ var parseEthereumResponse = function (origResponse, returns, callback) {
     err.bubble = response;
     if (isFunction(callback)) return callback(err);
     throw new RPCError(err);
+  } else {
+    throw new RPCError(JSON.stringify(response));
   }
-};
+}
 
 module.exports = parseEthereumResponse;
 
@@ -43198,7 +43191,7 @@ function blockchainMessageHandler(error, jso) {
       }
 
       // FIXME: outstandingRequest.callback should be function(Error,object) not function(Error|object)
-      parseEthereumResponse(jso, outstandingRequest.expectedReturnTypes, outstandingRequest.callback);
+      parseEthereumResponse(jso, outstandingRequest.callback);
     };
 
     errorHandler = function () {

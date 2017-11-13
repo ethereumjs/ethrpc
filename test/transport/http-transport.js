@@ -20,7 +20,6 @@ describe("transport/http-transport", function () {
     new HttpTransport("http://nowhere:1337", 100, function () { }, function (error, httpTransport) {
       assert.strictEqual(Object.getPrototypeOf(error), Error.prototype);
       assert.oneOf(error.code, ["ESOCKETTIMEDOUT", "ETIMEDOUT", "ENOTFOUND", "EAI_AGAIN"], (error ||{}).message);
-      // assert.isTrue(error.code === "ESOCKETTIMEDOUT" || error.code === "ETIMEDOUT" || error.code === "ENOTFOUND", (error || {}).message);
       done();
     });
   });

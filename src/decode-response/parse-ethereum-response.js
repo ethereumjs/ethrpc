@@ -6,19 +6,8 @@ var isObject = require("../utils/is-object");
 var errors = require("../errors/codes");
 var RPCError = require("../errors/rpc-error");
 
-var parseEthereumResponse = function (origResponse, returns, callback) {
-  var results, len, err, i, response;
-  response = clone(origResponse);
-  if (response && typeof response === "string") {
-    try {
-      response = JSON.parse(response);
-    } catch (e) {
-      err = e;
-      if (e && e.name === "SyntaxError") err = errors.INVALID_RESPONSE;
-      if (isFunction(callback)) return callback(err);
-      throw new RPCError(err);
-    }
-  }
+function parseEthereumResponse(origResponse, callback) {
+  var results, len, err, i, response = clone(origResponse);
   if (isObject(response)) {
     if (response.error) {
       response = { error: response.error.code, message: response.error.message };
@@ -46,7 +35,9 @@ var parseEthereumResponse = function (origResponse, returns, callback) {
     err.bubble = response;
     if (isFunction(callback)) return callback(err);
     throw new RPCError(err);
+  } else {
+    throw new RPCError(JSON.stringify(response));
   }
-};
+}
 
 module.exports = parseEthereumResponse;
