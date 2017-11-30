@@ -3,6 +3,7 @@
 var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
 var BlockNotifier = require("../block-management/block-notifier");
 var internalState = require("../internal-state");
+var eth_getBlockByNumber = require("../wrappers/eth").getBlockByNumber;
 
 /**
  * Used internally.  Instantiates a new BlockAndLogStreamer backed by ethrpc and BlockNotifier.
@@ -49,10 +50,24 @@ function createBlockAndLogStreamer(configuration, transport) {
   var blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, {
     blockRetention: configuration.blockRetention
   });
-  blockNotifier.subscribe(function (block) {
-    blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
-  });
-  internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
+
+  function subscribeToBlockNotifier() {
+    blockNotifier.subscribe(function (block) {
+      blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
+    });
+    internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
+  }
+
+  if (typeof configuration.startingBlockNumber != "undefined") {
+    var block = eth_getBlockByNumber([configuration.startingBlockNumber, false]);
+    blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function(err) {
+      if(err) return console.error(err);
+
+      subscribeToBlockNotifier();
+    });
+  } else {
+    subscribeToBlockNotifier();
+  }
 }
 
 module.exports = createBlockAndLogStreamer;
