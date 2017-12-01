@@ -43,6 +43,7 @@ var errors = require("./errors/codes");
 var clearTransactions = require("./clear-transactions");
 var resetState = require("./reset-state");
 var connect = require("./connect");
+var startBlockStream = require("./start-block-stream.js");
 var internalState = require("./internal-state");
 var constants = require("./constants");
 
@@ -56,6 +57,7 @@ var createEthrpc = function (reducer) {
     setDebugOptions: function (debugOptions) { return dispatch(setDebugOptions(debugOptions)); },
 
     connect: function (configuration, callback) { return dispatch(connect(configuration, callback)); },
+    startBlockStream: function (startingBlockNumber) { return dispatch(startBlockStream(startingBlockNumber)); },
     clear: function () { return dispatch(clearTransactions()); },
     resetState: function () { return dispatch(resetState()); },
 
