@@ -59,16 +59,16 @@ function createBlockAndLogStreamer(configuration, transport) {
       });
     }
 
-    if (typeof configuration.startingBlockNumber != "undefined") {
+    if (typeof configuration.startingBlockNumber !== "undefined") {
       var block = dispatch(eth_getBlockByNumber([configuration.startingBlockNumber, false]));
-      blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function(err) {
-        if(err) return console.error(err);
+      blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) {
+        if (err) return console.error(err);
         subscribeToBlockNotifier();
       });
     } else {
       subscribeToBlockNotifier();
     }
-  }
+  };
 }
 
 module.exports = createBlockAndLogStreamer;

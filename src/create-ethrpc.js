@@ -57,7 +57,7 @@ var createEthrpc = function (reducer) {
     setDebugOptions: function (debugOptions) { return dispatch(setDebugOptions(debugOptions)); },
 
     connect: function (configuration, callback) { return dispatch(connect(configuration, callback)); },
-    startBlockStream: function(startingBlockNumber) { return dispatch(startBlockStream(startingBlockNumber)); },
+    startBlockStream: function (startingBlockNumber) { return dispatch(startBlockStream(startingBlockNumber)); },
     clear: function () { return dispatch(clearTransactions()); },
     resetState: function () { return dispatch(resetState()); },
 

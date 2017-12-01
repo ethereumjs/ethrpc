@@ -5,8 +5,8 @@ var createTransportAdapter = require("./block-management/ethrpc-transport-adapte
 var onNewBlock = require("./block-management/on-new-block");
 var internalState = require("./internal-state");
 
-module.exports = function(startingBlockNumber) {
-  return function(dispatch, getState) {
+module.exports = function (startingBlockNumber) {
+  return function (dispatch, getState) {
     var storedConfiguration = getState().configuration;
     dispatch(createBlockAndLogStreamer({
       pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
@@ -16,5 +16,5 @@ module.exports = function(startingBlockNumber) {
     internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) {
       dispatch(onNewBlock(block));
     });
-  }
-}
+  };
+};
