@@ -88,6 +88,7 @@ describe("reducers/configuration", function () {
         connectionTimeout: 20000,
         networkID: null,
         pollingIntervalMilliseconds: 30000,
+        startBlockStreamOnConnect: true,
         blockRetention: 10
       },
       action: {
