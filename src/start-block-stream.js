@@ -5,12 +5,12 @@ var internalState = require("./internal-state");
 
 module.exports = function(startingBlockNumber) {
   return function(dispatch, getState) {
-    var storedConfiguration = getState().storedConfiguration;
-    createBlockAndLogStreamer({
+    var storedConfiguration = getState().configuration;
+    dispatch(createBlockAndLogStreamer({
       pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
       blockRetention: storedConfiguration.blockRetention,
       startingBlockNumber: startingBlockNumber
-    }, dispatch(createTransportAdapter(transporter)), internalState.get("outOfBandErrorHandler"));
+    }, dispatch(createTransportAdapter(internalState.get("transporter"))), internalState.get("outOfBandErrorHandler")));
     internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) {
       dispatch(onNewBlock(block));
     });

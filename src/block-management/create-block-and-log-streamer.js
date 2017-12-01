@@ -40,33 +40,34 @@ var eth_getBlockByNumber = require("../wrappers/eth").getBlockByNumber;
  * @param {Transport} transport
  */
 function createBlockAndLogStreamer(configuration, transport) {
-  var blockNotifier = new BlockNotifier({
-    getLatestBlock: transport.getLatestBlock,
-    subscribeToReconnects: transport.subscribeToReconnects,
-    unsubscribeFromReconnects: transport.unsubscribeFromReconnects,
-    subscribeToNewHeads: transport.subscribeToNewHeads,
-    unsubscribeFromNewHeads: transport.unsubscribeFromNewHeads
-  }, configuration.pollingIntervalMilliseconds);
-  var blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, {
-    blockRetention: configuration.blockRetention
-  });
-
-  function subscribeToBlockNotifier() {
-    blockNotifier.subscribe(function (block) {
-      blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
+  return function (dispatch, getState) {
+    var blockNotifier = new BlockNotifier({
+      getLatestBlock: transport.getLatestBlock,
+      subscribeToReconnects: transport.subscribeToReconnects,
+      unsubscribeFromReconnects: transport.unsubscribeFromReconnects,
+      subscribeToNewHeads: transport.subscribeToNewHeads,
+      unsubscribeFromNewHeads: transport.unsubscribeFromNewHeads
+    }, configuration.pollingIntervalMilliseconds);
+    var blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, {
+      blockRetention: configuration.blockRetention
     });
+
     internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
-  }
+    function subscribeToBlockNotifier() {
+      blockNotifier.subscribe(function (block) {
+        blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
+      });
+    }
 
-  if (typeof configuration.startingBlockNumber != "undefined") {
-    var block = eth_getBlockByNumber([configuration.startingBlockNumber, false]);
-    blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function(err) {
-      if(err) return console.error(err);
-
+    if (typeof configuration.startingBlockNumber != "undefined") {
+      var block = dispatch(eth_getBlockByNumber([configuration.startingBlockNumber, false]));
+      blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function(err) {
+        if(err) return console.error(err);
+        subscribeToBlockNotifier();
+      });
+    } else {
       subscribeToBlockNotifier();
-    });
-  } else {
-    subscribeToBlockNotifier();
+    }
   }
 }
 
