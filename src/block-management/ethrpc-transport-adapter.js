@@ -12,9 +12,6 @@ var subscriptionMapping = {};
 function createTransportAdapter(transporter) {
   return function (dispatch) {
     return {
-      getBlockByNumber: function (callback) {
-        dispatch(eth.getBlockByNumber(["latest", false], errorSplittingWrapper(callback)));
-      },
       getLatestBlock: function (callback) {
         dispatch(eth.getBlockByNumber(["latest", false], errorSplittingWrapper(callback)));
       },
