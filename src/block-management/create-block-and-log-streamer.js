@@ -3,6 +3,7 @@
 var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
 var BlockNotifier = require("../block-management/block-notifier");
 var internalState = require("../internal-state");
+var eth_getBlockByNumber = require("../wrappers/eth").getBlockByNumber;
 
 /**
  * Used internally.  Instantiates a new BlockAndLogStreamer backed by ethrpc and BlockNotifier.
@@ -39,20 +40,35 @@ var internalState = require("../internal-state");
  * @param {Transport} transport
  */
 function createBlockAndLogStreamer(configuration, transport) {
-  var blockNotifier = new BlockNotifier({
-    getLatestBlock: transport.getLatestBlock,
-    subscribeToReconnects: transport.subscribeToReconnects,
-    unsubscribeFromReconnects: transport.unsubscribeFromReconnects,
-    subscribeToNewHeads: transport.subscribeToNewHeads,
-    unsubscribeFromNewHeads: transport.unsubscribeFromNewHeads
-  }, configuration.pollingIntervalMilliseconds);
-  var blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, {
-    blockRetention: configuration.blockRetention
-  });
-  blockNotifier.subscribe(function (block) {
-    blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
-  });
-  internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
+  return function (dispatch, getState) {
+    var blockNotifier = new BlockNotifier({
+      getLatestBlock: transport.getLatestBlock,
+      subscribeToReconnects: transport.subscribeToReconnects,
+      unsubscribeFromReconnects: transport.unsubscribeFromReconnects,
+      subscribeToNewHeads: transport.subscribeToNewHeads,
+      unsubscribeFromNewHeads: transport.unsubscribeFromNewHeads
+    }, configuration.pollingIntervalMilliseconds);
+    var blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, {
+      blockRetention: configuration.blockRetention
+    });
+
+    internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
+    function subscribeToBlockNotifier() {
+      blockNotifier.subscribe(function (block) {
+        blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
+      });
+    }
+
+    if (typeof configuration.startingBlockNumber !== "undefined") {
+      var block = dispatch(eth_getBlockByNumber([configuration.startingBlockNumber, false]));
+      blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) {
+        if (err) return console.error(err);
+        subscribeToBlockNotifier();
+      });
+    } else {
+      subscribeToBlockNotifier();
+    }
+  };
 }
 
 module.exports = createBlockAndLogStreamer;

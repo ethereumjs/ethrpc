@@ -14,7 +14,8 @@ module.exports.configuration = {
   networkID: null,
   connectionTimeout: 10000,
   pollingIntervalMilliseconds: 30000,
-  blockRetention: 100
+  blockRetention: 100,
+  startBlockStreamOnConnect: true
 };
 module.exports.currentBlock = null;
 module.exports.highestNonce = -1;

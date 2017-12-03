@@ -7,6 +7,7 @@ var setCoinbase = require("./wrappers/set-coinbase");
 var Transporter = require("./transport/transporter");
 var ensureLatestBlock = require("./block-management/ensure-latest-block");
 var createBlockAndLogStreamer = require("./block-management/create-block-and-log-streamer");
+var startBlockStream = require("./start-block-stream");
 var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
 var onNewBlock = require("./block-management/on-new-block");
 var validateConfiguration = require("./validate/validate-configuration");
@@ -68,13 +69,7 @@ function connect(configuration, initialConnectCallback) {
         }
 
         dispatch({ type: "SET_NETWORK_ID", networkID: networkID });
-        createBlockAndLogStreamer({
-          pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
-          blockRetention: storedConfiguration.blockRetention
-        }, dispatch(createTransportAdapter(transporter)), internalState.get("outOfBandErrorHandler"));
-        internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) {
-          dispatch(onNewBlock(block));
-        });
+        if (storedConfiguration.startBlockStreamOnConnect) dispatch(startBlockStream());
         async.parallel([
           function (next) { dispatch(ensureLatestBlock(function () { next(); })); },
           function (next) { dispatch(setCoinbase(next)); },
