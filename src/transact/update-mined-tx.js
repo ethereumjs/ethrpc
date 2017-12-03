@@ -40,8 +40,9 @@ function updateMinedTx(txHash) {
             data: { tx: { callReturn: transaction.tx.callReturn } }
           });
           dispatch(eth.getTransactionReceipt(txHash, function (receipt) {
-            if (debug.tx) console.log("got receipt:", receipt);
-            if (receipt && receipt.gasUsed) {
+            if (debug.tx) console.log("[ethrpc] got receipt:", receipt);
+            if (!receipt) return console.error("[ethrpc] receipt not found for", txHash);
+            if (receipt.gasUsed) {
               dispatch({
                 type: "UPDATE_TRANSACTION",
                 hash: txHash,
@@ -53,7 +54,19 @@ function updateMinedTx(txHash) {
               });
             }
             dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
-            transaction.onSuccess(getState().transactions[txHash].tx);
+            if (receipt.status != null) {
+              if (parseInt(receipt.status, 16) === 0) {
+                if (isFunction(transaction.onFailed)) {
+                  transaction.onFailed(getState().transactions[txHash].tx);
+                } else {
+                  console.error("[ethrpc] transaction failed:", getState().transactions[txHash].tx);
+                }
+              } else if (parseInt(receipt.status, 16) === 1) {
+                transaction.onSuccess(getState().transactions[txHash].tx);
+              }
+            } else {
+              transaction.onSuccess(getState().transactions[txHash].tx);
+            }
           }));
         }));
       } else {
