@@ -38079,7 +38079,7 @@ var rawEncode = require("ethereumjs-abi").rawEncode;
 var removeTrailingZeros = require("./remove-trailing-zeros");
 
 // convert bytes to ABI format
-function abiEncodeBytes(bytesToEncode, toArray, isPadded) {
+function abiEncodeBytes(bytesToEncode, isPadded) {
   var abiEncodedBytes = rawEncode(["bytes"], [bytesToEncode]).toString("hex");
   if (isPadded) return abiEncodedBytes;
   return removeTrailingZeros(abiEncodedBytes).slice(128);
@@ -38509,7 +38509,7 @@ var BigNumber = require("bignumber.js");
 BigNumber.config({MODULO_MODE: BigNumber.EUCLID, ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN});
 
 module.exports = {
-  version: "2.0.4",
+  version: "2.1.0",
   constants: require("./constants"),
   unrollArray: require("./unroll-array"),
   byteArrayToUtf8String: require("./byte-array-to-utf8-string"),
@@ -38784,9 +38784,9 @@ function unfork(forked, prefix) {
       if (prefix) unforked = prefixHex(unforked);
       return unforked;
     }
-    throw new Error("abi.unfork failed (bad input): " + JSON.stringify(forked));
+    throw new Error("speedomatic.unfork failed (bad input): " + JSON.stringify(forked));
   }
-  throw new Error("abi.unfork failed (bad input): " + JSON.stringify(forked));
+  throw new Error("speedomatic.unfork failed (bad input): " + JSON.stringify(forked));
 }
 
 module.exports = unfork;
