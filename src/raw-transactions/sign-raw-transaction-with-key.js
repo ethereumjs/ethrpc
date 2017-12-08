@@ -20,9 +20,11 @@ function signRawTransactionWithKey(packaged, privateKey, callback) {
   } else {
     rawTransaction.sign(privateKey);
   }
+  
   if (!rawTransaction.validate()) {
     if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_INVALID);
     callback(errors.TRANSACTION_INVALID);
+    return;
   }
   serialized = speedomatic.prefixHex(rawTransaction.serialize().toString("hex"));
   if (!isFunction(callback)) return serialized;
