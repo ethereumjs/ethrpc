@@ -55,7 +55,7 @@
     "coveralls": "2.11.3",
     "eslint": "3.17.1",
     "ethereumjs-stub-rpc-server": "2.1.4",
-    "istanbul": "0.3.18",
+    "istanbul": "0.4.5",
     "mocha": "3.2.0",
     "proxyquire": "1.7.11",
     "redux-thunk": "2.2.0",
