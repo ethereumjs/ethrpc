@@ -65,8 +65,9 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
     ipcTransport: null,
     syncTransport: null,
     debugLogging: Boolean(debugLogging),
-    nextReconnectListenerToken: 1,
-    reconnectListeners: {}
+    nextListenerToken: 1,
+    reconnectListeners: {},
+    disconnectListeners: {}
   };
 
   if (syncOnly) {
@@ -148,12 +149,20 @@ Transporter.prototype.blockchainRpc = function (jso, requirements, debugLogging)
 };
 
 Transporter.prototype.addReconnectListener = function (callback) {
-  var token = (this.internalState.nextReconnectListenerToken++).toString();
+  var token = (this.internalState.nextListenerToken++).toString();
   this.internalState.reconnectListeners[token] = callback;
   return token;
 };
 Transporter.prototype.removeReconnectListener = function (token) {
   delete this.internalState.reconnectListeners[token];
+};
+Transporter.prototype.addDisconnectListener = function (callback) {
+  var token = (this.internalState.nextListenerToken++).toString();
+  this.internalState.disconnectListeners[token] = callback;
+  return token;
+};
+Transporter.prototype.removeDisconnectListener = function (token) {
+  delete this.internalState.disconnectListeners[token];
 };
 
 module.exports = Transporter;

@@ -63,6 +63,7 @@ var createEthrpc = function (reducer) {
 
     // Redux store state-lookup wrappers
     getBlockStream: function () { return internalState.get("blockAndLogStreamer"); },
+    getTransport: function () { return internalState.get("transporter"); },
     getConfiguration: function () { return store.getState().configuration; },
     getCoinbase: function () { return store.getState().coinbase; },
     getCurrentBlock: function () { return store.getState().currentBlock; },

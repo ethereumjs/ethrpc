@@ -159,7 +159,7 @@ function processWork(abstractTransport, rpcObject) {
       // if this is the first retriable failure then initiate a reconnect
       if (abstractTransport.connected) {
         abstractTransport.connected = false;
-        notifyDisconnectListeners(activeTransport);
+        notifyDisconnectListeners(abstractTransport);
         reconnect(abstractTransport);
       }
     } else {
@@ -179,7 +179,7 @@ function reconnect(abstractTransport) {
     if (error !== null) {
       setTimeout(reconnect.bind(this, abstractTransport), abstractTransport.backoffMilliseconds *= 2);
     } else {
-      notifyResconnectListeners(activeTransport);
+      notifyReconnectListeners(abstractTransport);
       abstractTransport.connected = true;
       abstractTransport.backoffMilliseconds = 1;
       pumpQueue(abstractTransport);
