@@ -27,6 +27,12 @@ function createTransportAdapter(transporter) {
       unsubscribeFromReconnects: function (token) {
         transporter.removeReconnectListener(token);
       },
+      subscribeToDisconnects: function (onDisconnect) {
+        return transporter.addDisconnectListener(onDisconnect);
+      },
+      unsubscribeFromDisconnects: function (token) {
+        transporter.removeDisconnectListener(token);
+      },
       subscribeToNewHeads: function (onNewHead, onSubscriptionError) {
         var token = (nextToken++).toString();
         subscriptionMapping[token] = null;
