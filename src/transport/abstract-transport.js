@@ -191,7 +191,7 @@ function reconnect(abstractTransport) {
  * Notify all reconnect listeners of a reconect
  *
  */
- function notifyReconnectListeners(abstractTransport) {
+function notifyReconnectListeners(abstractTransport) {
   Object.keys(abstractTransport.reconnectListeners).forEach(function (key) {
     if (typeof abstractTransport.reconnectListeners[key] !== "function") {
       delete abstractTransport.reconnectListeners[key];
@@ -205,7 +205,7 @@ function reconnect(abstractTransport) {
  * Notify all disconnect listeners of a reconect
  *
  */
- function notifyDisconnectListeners(abstractTransport) {
+function notifyDisconnectListeners(abstractTransport) {
   Object.keys(abstractTransport.disconnectListeners).forEach(function (key) {
     if (typeof abstractTransport.disconnectListeners[key] !== "function") {
       delete abstractTransport.disconnectListeners[key];
