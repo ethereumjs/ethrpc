@@ -1,9 +1,9 @@
 "use strict";
-const createKeccakHash = require("keccak/js");
+const sha3 = require('../utils/sha3');
 
 function checksumAddress (address) {
-  address = address.toLowerCase().slice(2);
-  var hash = createKeccakHash('keccak256').update(address).digest('hex')
+  address = address.slice(2).toLowerCase();
+  var hash = sha3(address).slice(2);
   var ret = '0x'
 
   for (var i = 0; i < address.length; i++) {
@@ -13,7 +13,7 @@ function checksumAddress (address) {
       ret += address[i]
     }
   }
-
+  
   return ret
 }
 
