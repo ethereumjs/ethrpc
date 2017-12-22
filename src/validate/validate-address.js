@@ -1,20 +1,20 @@
 "use strict";
-var sha3 = require('../utils/sha3');
+var sha3 = require("../utils/sha3");
 
-function checksumAddress (address) {
+function checksumAddress(address) {
   address = address.slice(2).toLowerCase();
   var hash = sha3(address).slice(2);
-  var ret = '0x'
+  var ret = "0x";
 
   for (var i = 0; i < address.length; i++) {
     if (parseInt(hash[i], 16) >= 8) {
-      ret += address[i].toUpperCase()
+      ret += address[i].toUpperCase();
     } else {
-      ret += address[i]
+      ret += address[i];
     }
   }
-  
-  return ret
+
+  return ret;
 }
 
 var validateAddress = function (address) {
