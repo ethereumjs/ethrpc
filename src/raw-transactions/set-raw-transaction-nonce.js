@@ -9,20 +9,12 @@ var isFunction = require("../utils/is-function");
  * @param {Object} packaged Packaged transaction.
  * @param {string} address The sender's Ethereum address.
  * @param {function=} callback Callback function (optional).
- * @return {Object|void} Packaged transaction with nonce set.
+ * @return {Object} Packaged transaction with nonce set.
  */
 function setRawTransactionNonce(packaged, address, callback) {
   return function (dispatch) {
-    var transactionCount;
-    if (!isFunction(callback)) {
-      transactionCount = dispatch(eth.getTransactionCount([address, "pending"]));
-      if (transactionCount && !transactionCount.error && !(transactionCount instanceof Error)) {
-        packaged.nonce = parseInt(transactionCount, 16);
-      }
-      packaged.nonce = dispatch(verifyRawTransactionNonce(packaged.nonce));
-      return packaged;
-    }
     dispatch(eth.getTransactionCount([address, "pending"], function (transactionCount) {
+      console.log("count:", address, transactionCount, parseInt(transactionCount, 16));
       if (transactionCount && !transactionCount.error && !(transactionCount instanceof Error)) {
         packaged.nonce = parseInt(transactionCount, 16);
       }

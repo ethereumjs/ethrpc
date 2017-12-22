@@ -9,7 +9,7 @@ var mockStore = require("../mock-store");
 
 describe("raw-transactions/set-raw-transaction-nonce", function () {
   var test = function (t) {
-    it(t.description, function () {
+    it(t.description, function (done) {
       var store = mockStore(t.state || {});
       var setRawTransactionNonce = proxyquire("../../src/raw-transactions/set-raw-transaction-nonce.js", {
         "./verify-raw-transaction-nonce": function (nonce) {
@@ -26,12 +26,14 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
           }
         }
       });
-      var output = store.dispatch(setRawTransactionNonce(t.params.packaged, t.params.address, t.params.callback));
-      if (!isFunction(t.params.callback)) t.assertions(output);
+      store.dispatch(setRawTransactionNonce(t.params.packaged, t.params.address, function (packaged) {
+        t.assertions(packaged);
+        done();
+      }));
     });
   };
   test({
-    description: "10 transactions, without callback",
+    description: "10 transactions",
     params: {
       packaged: {nonce: 0},
       address: "0xb0b"
@@ -44,20 +46,7 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
     }
   });
   test({
-    description: "10 transactions, with callback",
-    params: {
-      packaged: {nonce: 0},
-      address: "0xb0b",
-      callback: function (packaged) {
-        assert.deepEqual(packaged, {nonce: 10});
-      }
-    },
-    blockchain: {
-      transactionCount: "0xa"
-    }
-  });
-  test({
-    description: "Error from pendingTxCount, without callback",
+    description: "Error from pendingTxCount",
     params: {
       packaged: {nonce: 0},
       address: "0xb0b"
@@ -67,19 +56,6 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
     },
     assertions: function (packaged) {
       assert.deepEqual(packaged, {nonce: 0});
-    }
-  });
-  test({
-    description: "Error from pendingTxCount, with callback",
-    params: {
-      packaged: {nonce: 0},
-      address: "0xb0b",
-      callback: function (packaged) {
-        assert.deepEqual(packaged, {nonce: 0});
-      }
-    },
-    blockchain: {
-      transactionCount: {error: -32000}
     }
   });
 });
