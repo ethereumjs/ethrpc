@@ -11,8 +11,8 @@ function handleRawTransactionError(rawTransactionResponse) {
   return function (dispatch) {
     if (rawTransactionResponse.message.indexOf("rlp") > -1) {
       return errors.RLP_ENCODING_ERROR;
-    } else if (rawTransactionResponse.message.indexOf("Nonce too low") > -1) {
-      dispatch({ type: "INCREMENT_HIGHEST_NONCE" });
+    // TODO figure out a better way to do this than comparing strings
+    } else if (rawTransactionResponse.message.indexOf("Nonce too low") > -1 || rawTransactionResponse.message.indexOf("replacement transaction underpriced") > -1) {
       return null;
     }
     return rawTransactionResponse;

@@ -12,9 +12,9 @@ var isFunction = require("../utils/is-function");
  * @return {Object} Packaged transaction with nonce set.
  */
 function setRawTransactionNonce(packaged, address, callback) {
-  return function (dispatch) {
+  return function (dispatch, getState) {
     dispatch(eth.getTransactionCount([address, "pending"], function (transactionCount) {
-      console.log("count:", address, transactionCount, parseInt(transactionCount, 16));
+      if (getState().debug.tx) console.log("transaction count:", address, transactionCount, parseInt(transactionCount, 16));
       if (transactionCount && !transactionCount.error && !(transactionCount instanceof Error)) {
         packaged.nonce = parseInt(transactionCount, 16);
       }

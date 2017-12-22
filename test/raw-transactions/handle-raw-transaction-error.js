@@ -53,7 +53,7 @@ describe("raw-transactions/handle-raw-transaction-error", function () {
     },
     assertions: function (output, state) {
       assert.isNull(output);
-      assert.strictEqual(state.highestNonce, 8);
+      assert.strictEqual(state.highestNonce, 7);
     }
   });
 });

@@ -42522,8 +42522,8 @@ function handleRawTransactionError(rawTransactionResponse) {
   return function (dispatch) {
     if (rawTransactionResponse.message.indexOf("rlp") > -1) {
       return errors.RLP_ENCODING_ERROR;
-    } else if (rawTransactionResponse.message.indexOf("Nonce too low") > -1) {
-      dispatch({ type: "INCREMENT_HIGHEST_NONCE" });
+    // TODO figure out a better way to do this than comparing strings
+    } else if (rawTransactionResponse.message.indexOf("Nonce too low") > -1 || rawTransactionResponse.message.indexOf("replacement transaction underpriced") > -1) {
       return null;
     }
     return rawTransactionResponse;
@@ -42703,20 +42703,12 @@ var isFunction = require("../utils/is-function");
  * @param {Object} packaged Packaged transaction.
  * @param {string} address The sender's Ethereum address.
  * @param {function=} callback Callback function (optional).
- * @return {Object|void} Packaged transaction with nonce set.
+ * @return {Object} Packaged transaction with nonce set.
  */
 function setRawTransactionNonce(packaged, address, callback) {
-  return function (dispatch) {
-    var transactionCount;
-    if (!isFunction(callback)) {
-      transactionCount = dispatch(eth.getTransactionCount([address, "pending"]));
-      if (transactionCount && !transactionCount.error && !(transactionCount instanceof Error)) {
-        packaged.nonce = parseInt(transactionCount, 16);
-      }
-      packaged.nonce = dispatch(verifyRawTransactionNonce(packaged.nonce));
-      return packaged;
-    }
+  return function (dispatch, getState) {
     dispatch(eth.getTransactionCount([address, "pending"], function (transactionCount) {
+      if (getState().debug.tx) console.log("transaction count:", address, transactionCount, parseInt(transactionCount, 16));
       if (transactionCount && !transactionCount.error && !(transactionCount instanceof Error)) {
         packaged.nonce = parseInt(transactionCount, 16);
       }
@@ -42816,6 +42808,7 @@ var speedomatic = require("speedomatic");
 function verifyRawTransactionNonce(nonce) {
   return function (dispatch, getState) {
     var highestNonce = getState().highestNonce;
+    if (getState().debug.tx) console.log({ nonce: nonce, highestNonce: highestNonce });
     if (nonce <= highestNonce) {
       nonce = highestNonce + 1;
       dispatch({ type: "INCREMENT_HIGHEST_NONCE" });

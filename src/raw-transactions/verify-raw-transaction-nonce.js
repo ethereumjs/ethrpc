@@ -10,6 +10,7 @@ var speedomatic = require("speedomatic");
 function verifyRawTransactionNonce(nonce) {
   return function (dispatch, getState) {
     var highestNonce = getState().highestNonce;
+    if (getState().debug.tx) console.log({ nonce: nonce, highestNonce: highestNonce });
     if (nonce <= highestNonce) {
       nonce = highestNonce + 1;
       dispatch({ type: "INCREMENT_HIGHEST_NONCE" });
