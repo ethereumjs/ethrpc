@@ -1,5 +1,5 @@
 "use strict";
-const sha3 = require('../utils/sha3');
+var sha3 = require('../utils/sha3');
 
 function checksumAddress (address) {
   address = address.slice(2).toLowerCase();
