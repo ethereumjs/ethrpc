@@ -15,6 +15,7 @@ function blockchainMessageHandler(error, jso) {
     var outOfBandErrorHandler, subscriptionHandler, responseHandler, errorHandler, subscriptions, state = getState();
     subscriptions = state.subscriptions;
     outOfBandErrorHandler = internalState.get("outOfBandErrorHandler");
+    // if (state.debug.broadcast) console.log("[ethrpc] RPC response:", JSON.stringify(jso));
 
     if (error !== null) {
       return outOfBandErrorHandler(error);

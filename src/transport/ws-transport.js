@@ -13,7 +13,7 @@ WsTransport.prototype = Object.create(AbstractTransport.prototype);
 WsTransport.prototype.constructor = WsTransport;
 
 WsTransport.prototype.connect = function (callback) {
-  var messageHandler;
+  var messageHandler, self = this;
   this.webSocketClient = new WebSocketClient(this.address, undefined, undefined, undefined, { timeout: this.timeout });
   messageHandler = function () { };
   this.webSocketClient.onopen = function () {
@@ -31,7 +31,7 @@ WsTransport.prototype.connect = function (callback) {
   };
   this.webSocketClient.onclose = function (event) {
     if (event && event.code !== 1000) {
-      console.error("websocket.onclose:", event.code, event.reason);
+      console.error("websocket", self.address, "closed:", event.code, event.reason);
       callback(new Error("Web socket closed without opening, usually means failed connection."));
     }
     callback = function () { };

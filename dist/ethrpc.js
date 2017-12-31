@@ -43272,6 +43272,7 @@ function blockchainMessageHandler(error, jso) {
     var outOfBandErrorHandler, subscriptionHandler, responseHandler, errorHandler, subscriptions, state = getState();
     subscriptions = state.subscriptions;
     outOfBandErrorHandler = internalState.get("outOfBandErrorHandler");
+    // if (state.debug.broadcast) console.log("[ethrpc] RPC response:", JSON.stringify(jso));
 
     if (error !== null) {
       return outOfBandErrorHandler(error);
@@ -44810,7 +44811,7 @@ WsTransport.prototype = Object.create(AbstractTransport.prototype);
 WsTransport.prototype.constructor = WsTransport;
 
 WsTransport.prototype.connect = function (callback) {
-  var messageHandler;
+  var messageHandler, self = this;
   this.webSocketClient = new WebSocketClient(this.address, undefined, undefined, undefined, { timeout: this.timeout });
   messageHandler = function () { };
   this.webSocketClient.onopen = function () {
@@ -44828,7 +44829,7 @@ WsTransport.prototype.connect = function (callback) {
   };
   this.webSocketClient.onclose = function (event) {
     if (event && event.code !== 1000) {
-      console.error("websocket.onclose:", event.code, event.reason);
+      console.error("websocket", self.address, "closed:", event.code, event.reason);
       callback(new Error("Web socket closed without opening, usually means failed connection."));
     }
     callback = function () { };
@@ -44951,6 +44952,23 @@ module.exports = function (data, encoding, callback) {
 }).call(this,require("buffer").Buffer)
 },{"../utils/is-function":278,"buffer":14,"keccak/js":72,"speedomatic":158}],286:[function(require,module,exports){
 "use strict";
+var sha3 = require("../utils/sha3");
+
+function checksumAddress(address) {
+  address = address.slice(2).toLowerCase();
+  var hash = sha3(address).slice(2);
+  var ret = "0x";
+
+  for (var i = 0; i < address.length; i++) {
+    if (parseInt(hash[i], 16) >= 8) {
+      ret += address[i].toUpperCase();
+    } else {
+      ret += address[i];
+    }
+  }
+
+  return ret;
+}
 
 var validateAddress = function (address) {
   if (address === null || address === undefined) {
@@ -44959,22 +44977,24 @@ var validateAddress = function (address) {
   if (typeof address !== "string") {
     throw new Error("address must be a string but was " + typeof address);
   }
-  // fixup malformed addresses
-  if (/^[0-9a-fA-F]*$/.test(address)) {
+  if (address.slice(0, 2) !== "0x") {
     address = "0x" + address;
-  }
-  if (!/^0x[0-9a-fA-F]*$/.test(address)) {
-    throw new Error("address can only contain 0-9 and a-Z and must start with 0x.  Provided: " + address);
   }
   if (address.length !== 42) {
     throw new Error("address must be 42 characters, 20 bytes (2 hex encoded code points each) plus the 0x prefix.  Length: " + address.length);
+  }
+  if (!/^0x[0-9a-fA-F]{40}$/.test(address)) {
+    throw new Error("address can only contain 0-9 and a-F and must start with 0x.  Provided: " + address);
+  }
+  if (/[a-f]+/.test(address) && /[A-F]+/.test(address) && checksumAddress(address) !== address) {
+    throw new Error("address checksum is invalid.");
   }
   return address;
 };
 
 module.exports = validateAddress;
 
-},{}],287:[function(require,module,exports){
+},{"../utils/sha3":285}],287:[function(require,module,exports){
 "use strict";
 
 var validateNumber = require("./validate-number");
