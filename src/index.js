@@ -10,5 +10,5 @@ ethrpc.withCustomReducer = function (customReducer) {
   return createEthrpc(composeReducers(customReducer, reducer));
 };
 
-ethrpc.version = version;
+ethrpc.lib_version = version;
 module.exports = ethrpc;
