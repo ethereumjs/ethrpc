@@ -32,6 +32,11 @@ WsTransport.prototype.connect = function (callback) {
   this.webSocketClient.onclose = function (event) {
     if (event && event.code !== 1000) {
       console.error("websocket", self.address, "closed:", event.code, event.reason);
+      var keys = Object.keys(self.disconnectListeners);
+      var listeners = self.disconnectListeners;
+      keys.forEach(function (key) {
+        return listeners[key]();
+      });
       callback(new Error("Web socket closed without opening, usually means failed connection."));
     }
     callback = function () { };
@@ -40,6 +45,10 @@ WsTransport.prototype.connect = function (callback) {
 
 WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
+    if (this.webSocketClient.readyState === 3) {
+      var err = new Error("Websocket Disconnected"); err.retryable = true;
+      return errorCallback(err);
+    }
     this.webSocketClient.send(JSON.stringify(rpcJso));
   } catch (error) {
     if (error.code === "INVALID_STATE_ERR") error.retryable = true;
