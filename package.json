@@ -10,12 +10,13 @@
     "lint": "eslint src && eslint test/*.js test/block-management test/raw-transactions test/reducers test/transport test/utils",
     "coverage": "istanbul cover --include-all-sources --root ./src ./node_modules/mocha/bin/_mocha test/",
     "link": "npm link speedomatic ethereumjs-blockstream",
-    "build": "mkdirp dist && genversion src/version.js && browserify ./exports.js -o ./dist/ethrpc.js && uglifyjs ./dist/ethrpc.js -o ./dist/ethrpc.min.js",
+    "genversion": "genversion src/version",
+    "build": "mkdirp dist && browserify ./exports.js -o ./dist/ethrpc.js && uglifyjs ./dist/ethrpc.js -o ./dist/ethrpc.min.js",
     "build:tests": "browserify ./test/reducers/*.js -o ./test/browser/bundle.js",
     "postinstall": "postinstall-build --only-as-dependency dist",
     "prepublishOnly": "npm run build",
     "preversion": "npm test",
-    "version": "npm run build && git add src/version.js package.json package-lock.json"
+    "version": "npm run genversion && git add src/version.js"
   },
   "repository": {
     "type": "git",
