@@ -34,7 +34,7 @@ WsTransport.prototype.connect = function (callback) {
       console.error("websocket", self.address, "closed:", event.code, event.reason);
       var keys = Object.keys(self.disconnectListeners);
       var listeners = self.disconnectListeners;
-      keys.forEach(function(key) {
+      keys.forEach(function (key) {
         return listeners[key]();
       });
       callback(new Error("Web socket closed without opening, usually means failed connection."));
@@ -46,8 +46,8 @@ WsTransport.prototype.connect = function (callback) {
 WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
     if (this.webSocketClient.readyState === 3) {
-      var error = new Error("Websocket Disconnected"); error.retryable = true;
-      return errorCallback(error);
+      var err = new Error("Websocket Disconnected"); err.retryable = true;
+      return errorCallback(err);
     }
     this.webSocketClient.send(JSON.stringify(rpcJso));
   } catch (error) {
