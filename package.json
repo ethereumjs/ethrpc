@@ -14,7 +14,7 @@
     "build": "mkdirp dist && browserify ./exports.js -o ./dist/ethrpc.js && uglifyjs ./dist/ethrpc.js -o ./dist/ethrpc.min.js",
     "build:tests": "browserify ./test/reducers/*.js -o ./test/browser/bundle.js",
     "postinstall": "postinstall-build --only-as-dependency dist",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "postinstall-build dist",
     "preversion": "npm test",
     "version": "npm run genversion && git add src/version.js"
   },
