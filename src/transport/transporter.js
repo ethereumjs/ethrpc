@@ -98,8 +98,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
   web3Transport = new Web3Transport(messageHandler, function (error) {
     // only use web3 transport if we're on mainnet (1) or public testnet (3)
     var networkID = parseInt(configuration.networkID, 10);
-    var isMainnetOrPublicTestnet = !isNaN(networkID) && (networkID === 1 || networkID === 3);
-    resultAggregator.web3Transports[0] = (error !== null || !isMainnetOrPublicTestnet) ? null : web3Transport;
+    resultAggregator.web3Transports[0] = (error !== null) ? null : web3Transport;
     checkIfComplete(this, resultAggregator, callback);
   }.bind(this));
   configuration.ipcAddresses.forEach(function (ipcAddress, index) {
