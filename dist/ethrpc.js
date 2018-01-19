@@ -14990,7 +14990,7 @@ module.exports={
   "_args": [
     [
       "elliptic@6.4.0",
-      "/home/jack/src/ethrpc"
+      "/storage/home/pg/Development/augur/ethrpc"
     ]
   ],
   "_from": "elliptic@6.4.0",
@@ -15016,7 +15016,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.0.tgz",
   "_spec": "6.4.0",
-  "_where": "/home/jack/src/ethrpc",
+  "_where": "/storage/home/pg/Development/augur/ethrpc",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -44830,6 +44830,11 @@ WsTransport.prototype.connect = function (callback) {
   this.webSocketClient.onclose = function (event) {
     if (event && event.code !== 1000) {
       console.error("websocket", self.address, "closed:", event.code, event.reason);
+      var keys = Object.keys(self.disconnectListeners);
+      var listeners = self.disconnectListeners;
+      keys.forEach(function (key) {
+        return listeners[key]();
+      });
       callback(new Error("Web socket closed without opening, usually means failed connection."));
     }
     callback = function () { };
@@ -44838,6 +44843,10 @@ WsTransport.prototype.connect = function (callback) {
 
 WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
+    if (this.webSocketClient.readyState === 3) {
+      var err = new Error("Websocket Disconnected"); err.retryable = true;
+      return errorCallback(err);
+    }
     this.webSocketClient.send(JSON.stringify(rpcJso));
   } catch (error) {
     if (error.code === "INVALID_STATE_ERR") error.retryable = true;
