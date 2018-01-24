@@ -5,7 +5,7 @@ var errors = require("../errors/codes");
 
 var handleRPCError = function (method, returns, response) {
   var i, len, responseNumber;
-  if (!response) return response;
+  if (response == null) return response;
   if (Array.isArray(response)) {
     for (i = 0, len = response.length; i < len; ++i) {
       response[i] = handleRPCError(method, returns, response[i]);
