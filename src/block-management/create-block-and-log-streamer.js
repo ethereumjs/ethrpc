@@ -66,24 +66,18 @@ function createBlockAndLogStreamer(configuration, transport, callback) {
       callback(null);
     }
 
-    if (typeof configuration.startingBlockNumber !== "undefined") {
-      transport.getBlockByNumber(configuration.startingBlockNumber, function (err, block) {
-        if (err) {
-          return console.log(err);
-        }
-
-        blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) {
-          if (err) {
-            if (callback) return callback(err);
-            return console.log(err);
-          }
-
-          subscribeToBlockNotifier();
-        });
-      });
-    } else {
-      subscribeToBlockNotifier();
+    if (typeof configuration.startingBlockNumber === "undefined") {
+      return subscribeToBlockNotifier();
     }
+
+    transport.getBlockByNumber(configuration.startingBlockNumber, function (err, block) {
+      if (err) return callback(err);
+
+      blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) {
+        if (err) return callback(err);
+        subscribeToBlockNotifier();
+      });
+    });
   };
 }
 
