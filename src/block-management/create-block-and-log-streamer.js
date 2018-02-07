@@ -66,7 +66,7 @@ function createBlockAndLogStreamer(configuration, transport, callback) {
     }
 
     if (typeof configuration.startingBlockNumber !== "undefined") {
-      dispatch(eth_getBlockByNumber([configuration.startingBlockNumber, false], function(err, block) {
+      dispatch(eth_getBlockByNumber([configuration.startingBlockNumber, false], function (err, block) {
         if (err) {
           if (callback) return callback(err);
           return console.log(err);
