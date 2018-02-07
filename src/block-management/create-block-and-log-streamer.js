@@ -3,6 +3,7 @@
 var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
 var BlockNotifier = require("../block-management/block-notifier");
 var internalState = require("../internal-state");
+var isFunction = require("../utils/is-function");
 
 /**
  * Used internally.  Instantiates a new BlockAndLogStreamer backed by ethrpc and BlockNotifier.
@@ -57,7 +58,7 @@ function createBlockAndLogStreamer(configuration, transport, callback) {
 
     internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
 
-    callback = callback ? callback : function (e) { if (e) console.log(e); };
+    callback = isFunction(callback) ? callback : function (e) { if (e) console.log(e); };
     function subscribeToBlockNotifier() {
       blockNotifier.subscribe(function (block) {
         blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
