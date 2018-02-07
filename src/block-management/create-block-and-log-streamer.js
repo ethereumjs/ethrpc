@@ -41,7 +41,7 @@ var eth_getBlockByNumber = require("../wrappers/eth").getBlockByNumber;
  * @param {Configuration} configuration
  * @param {Transport} transport
  */
-function createBlockAndLogStreamer(configuration, transport) {
+function createBlockAndLogStreamer(configuration, transport, callback) {
   return function (dispatch, getState) {
     var blockNotifier = new BlockNotifier({
       getLatestBlock: transport.getLatestBlock,
@@ -61,14 +61,26 @@ function createBlockAndLogStreamer(configuration, transport) {
       blockNotifier.subscribe(function (block) {
         blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
       });
+
+      if (callback) callback(null);
     }
 
     if (typeof configuration.startingBlockNumber !== "undefined") {
-      var block = dispatch(eth_getBlockByNumber([configuration.startingBlockNumber, false]));
-      blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) {
-        if (err) return console.error(err);
-        subscribeToBlockNotifier();
-      });
+      dispatch(eth_getBlockByNumber([configuration.startingBlockNumber, false], function(err, block) {
+        if (err) {
+          if (callback) return callback(err);
+          return console.log(err);
+        }
+
+        blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) {
+          if (err) {
+            if (callback) return callback(err);
+            return console.log(err);
+          }
+
+          subscribeToBlockNotifier();
+        });
+      }));
     } else {
       subscribeToBlockNotifier();
     }
