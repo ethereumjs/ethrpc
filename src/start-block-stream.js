@@ -12,7 +12,7 @@ module.exports = function (startingBlockNumber, callback) {
       pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
       blockRetention: storedConfiguration.blockRetention,
       startingBlockNumber: startingBlockNumber
-    }, dispatch(createTransportAdapter(internalState.get("transporter"))), internalState.get("outOfBandErrorHandler"), callback));
+    }, dispatch(createTransportAdapter(internalState.get("transporter"))), callback));
 
     internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) {
       dispatch(onNewBlock(block));
