@@ -1,6 +1,6 @@
 {
   "name": "ethrpc",
-  "version": "4.5.3",
+  "version": "4.5.7",
   "description": "Ethereum JSON RPC",
   "author": "The Augur Developers <team@augur.net>",
   "license": "MIT",
@@ -43,7 +43,7 @@
     "postinstall-build": "5.0.1",
     "redux": "3.6.0",
     "redux-thunk-subscribe": "1.0.3",
-    "speedomatic": "2.1.1",
+    "speedomatic": "2.1.2",
     "sync-request": "2.0.1",
     "uuid": "3.0.1"
   },
@@ -60,6 +60,7 @@
     "chai": "3.5.0",
     "coveralls": "2.11.3",
     "eslint": "3.17.1",
+    "ethereumjs-abi": "0.6.5",
     "ethereumjs-stub-rpc-server": "2.1.4",
     "genversion": "2.0.1",
     "istanbul": "0.4.5",

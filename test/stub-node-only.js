@@ -1107,9 +1107,9 @@ describe("tests that only work against stub server", function () {
             params: []
           };
           function callback(wrappedResultOrError) {
-            assert.strictEqual(wrappedResultOrError.resultOrError[0], "0x1");
-            assert.strictEqual(wrappedResultOrError.resultOrError[1], "0x64");
-            assert.strictEqual(wrappedResultOrError.resultOrError[2], "0x186a0");
+            assert.strictEqual(wrappedResultOrError.resultOrError[0], "0x0000000000000000000000000000000000000000000000000000000000000001");
+            assert.strictEqual(wrappedResultOrError.resultOrError[1], "0x0000000000000000000000000000000000000000000000000000000000000064");
+            assert.strictEqual(wrappedResultOrError.resultOrError[2], "0x00000000000000000000000000000000000000000000000000000000000186a0");
             server.assertExpectations();
             done();
           }

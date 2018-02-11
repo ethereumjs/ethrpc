@@ -17,10 +17,11 @@ WsTransport.prototype.connect = function (callback) {
   this.webSocketClient = new WebSocketClient(this.address, undefined, undefined, undefined, { timeout: this.timeout });
   messageHandler = function () { };
   this.webSocketClient.onopen = function () {
+    console.log("websocket", self.address, "opened");
     callback(null);
     callback = function () { };
-    messageHandler = this.messageHandler;
-  }.bind(this);
+    messageHandler = self.messageHandler;
+  };
   this.webSocketClient.onmessage = function (message) {
     messageHandler(null, JSON.parse(message.data));
   };
@@ -51,6 +52,7 @@ WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
     }
     this.webSocketClient.send(JSON.stringify(rpcJso));
   } catch (error) {
+    console.error("websocket", this.address, "error:", error, JSON.stringify(rpcJso));
     if (error.code === "INVALID_STATE_ERR") error.retryable = true;
     if (error.message === "cannot call send() while not connected") error.retryable = true;
     errorCallback(error);

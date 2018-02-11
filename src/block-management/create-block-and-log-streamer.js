@@ -3,7 +3,7 @@
 var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
 var BlockNotifier = require("../block-management/block-notifier");
 var internalState = require("../internal-state");
-var eth_getBlockByNumber = require("../wrappers/eth").getBlockByNumber;
+var isFunction = require("../utils/is-function");
 
 /**
  * Used internally.  Instantiates a new BlockAndLogStreamer backed by ethrpc and BlockNotifier.
@@ -41,7 +41,7 @@ var eth_getBlockByNumber = require("../wrappers/eth").getBlockByNumber;
  * @param {Configuration} configuration
  * @param {Transport} transport
  */
-function createBlockAndLogStreamer(configuration, transport) {
+function createBlockAndLogStreamer(configuration, transport, callback) {
   return function (dispatch, getState) {
     var blockNotifier = new BlockNotifier({
       getLatestBlock: transport.getLatestBlock,
@@ -57,21 +57,28 @@ function createBlockAndLogStreamer(configuration, transport) {
     });
 
     internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
+
+    callback = isFunction(callback) ? callback : function (e) { if (e) console.log(e); };
     function subscribeToBlockNotifier() {
       blockNotifier.subscribe(function (block) {
         blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
       });
+
+      callback(null);
     }
 
-    if (typeof configuration.startingBlockNumber !== "undefined") {
-      var block = dispatch(eth_getBlockByNumber([configuration.startingBlockNumber, false]));
+    if (typeof configuration.startingBlockNumber === "undefined") {
+      return subscribeToBlockNotifier();
+    }
+
+    transport.getBlockByNumber(configuration.startingBlockNumber, function (err, block) {
+      if (err) return callback(err);
+
       blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) {
-        if (err) return console.error(err);
+        if (err) return callback(err);
         subscribeToBlockNotifier();
       });
-    } else {
-      subscribeToBlockNotifier();
-    }
+    });
   };
 }
 
