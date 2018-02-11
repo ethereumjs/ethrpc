@@ -18,6 +18,9 @@ function createTransportAdapter(transporter) {
       getBlockByHash: function (hash, callback) {
         dispatch(eth.getBlockByHash([hash, false], errorSplittingWrapper(callback)));
       },
+      getBlockByNumber: function (blockNumber, callback) {
+        dispatch(eth.getBlockByNumber([blockNumber, false], errorSplittingWrapper(callback)));
+      },
       getLogs: function (filters, callback) {
         dispatch(eth.getLogs(filters, errorSplittingWrapper(callback)));
       },

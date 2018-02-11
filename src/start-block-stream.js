@@ -5,14 +5,15 @@ var createTransportAdapter = require("./block-management/ethrpc-transport-adapte
 var onNewBlock = require("./block-management/on-new-block");
 var internalState = require("./internal-state");
 
-module.exports = function (startingBlockNumber) {
+module.exports = function (startingBlockNumber, callback) {
   return function (dispatch, getState) {
     var storedConfiguration = getState().configuration;
     dispatch(createBlockAndLogStreamer({
       pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
       blockRetention: storedConfiguration.blockRetention,
       startingBlockNumber: startingBlockNumber
-    }, dispatch(createTransportAdapter(internalState.get("transporter"))), internalState.get("outOfBandErrorHandler")));
+    }, dispatch(createTransportAdapter(internalState.get("transporter"))), callback));
+
     internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) {
       dispatch(onNewBlock(block));
     });
