@@ -1168,7 +1168,7 @@ describe("tests that only work against stub server", function () {
             assert.strictEqual(result, "0x12345");
             done();
           }
-          function onFailure(error) { assert.isFalse(true, "onFailure should not have been called: " + error, +"\n" + err.stack); }
+          function onFailure(error) { assert.isFalse(true, "onFailure should not have been called: " + error); }
           server.addResponder(function (jso) {
             if (jso.method === "eth_estimateGas") return "0x12345";
           });
