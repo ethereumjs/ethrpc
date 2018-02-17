@@ -1172,7 +1172,7 @@ describe("tests that only work against stub server", function () {
           server.addResponder(function (jso) {
             if (jso.method === "eth_estimateGas") return "0x12345";
           });
-          const payload = createReasonableTransactPayload();
+          var payload = createReasonableTransactPayload();
           payload.estimateGas = true;
           rpc.transact(payload, null, null, onSent, onSuccess, onFailure);
         });
