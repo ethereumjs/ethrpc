@@ -15,7 +15,8 @@ var errors = require("../errors/codes");
  *   signature: <function signature, e.g. "iia"> (string)
  *   params: <parameters passed to the function> (optional)
  *   returns: <"number[]", "int", "BigNumber", or "string" (default)>
- *   send: <true to sendTransaction, false to call (default)>
+ *   send: <true to sendTransaction, false to estimateGas or call (default)>
+ *   estimateGas: <true to estimateGas, false to call>
  * }
  */
 function callOrSendTransaction(payload, callback) {
@@ -27,10 +28,12 @@ function callOrSendTransaction(payload, callback) {
     }
     packaged = packageRequest(payload);
     if (getState().debug.broadcast) console.log("packaged:", packaged);
-    if (payload.send) {
-      return dispatch(eth.sendTransaction(packageRequest(payload), callback));
+    if (payload.estimateGas) {
+      return dispatch(eth.estimateGas([packaged, "latest"], callback));
+    } else if (payload.send) {
+      return dispatch(eth.sendTransaction(packaged, callback));
     }
-    return dispatch(eth.call([packageRequest(payload), "latest"], callback));
+    return dispatch(eth.call([packaged, "latest"], callback));
   };
 }
 
