@@ -1162,7 +1162,7 @@ describe("tests that only work against stub server", function () {
           rpc.transact(createReasonableTransactPayload(), null, null, onSent, onSuccess, onFailure);
         });
 
-        it.only("should send eth_estimateGas from transact", function (done) {
+        it("should send eth_estimateGas from transact", function (done) {
           function onSent(result) { }
           function onSuccess(result) {
             assert.strictEqual(result, "0x12345");
