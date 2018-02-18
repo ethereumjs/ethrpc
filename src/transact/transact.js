@@ -16,7 +16,6 @@ function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, o
   return function (dispatch, getState) {
     var onSentCallback, onSuccessCallback, onFailedCallback, debug = getState().debug;
     if (debug.tx) console.log("payload transact:", payload);
-    if (!isFunction(onSent)) return dispatch(callOrSendTransaction(payload));
     onSentCallback = onSent;
     onSuccessCallback = (isFunction(onSuccess)) ? onSuccess : noop;
     onFailedCallback = function (response) {
@@ -28,6 +27,14 @@ function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, o
       if (isFunction(onFailed)) onFailed(response);
     };
     payload.send = false;
+    if (payload.estimateGas) {
+      return dispatch(callOrSendTransaction(payload, function (res) {
+        if (!res) return onFailedCallback(errors.NULL_CALL_RETURN);
+        if (res.error) return onFailedCallback(res);
+        return onSuccessCallback(res);
+      }));
+    }
+    if (!isFunction(onSent)) return dispatch(callOrSendTransaction(payload));
     if (payload.mutable || payload.returns === "null") {
       return dispatch(transactAsync(payload, null, privateKeyOrSigner, accountType, onSentCallback, onSuccessCallback, onFailedCallback));
     }

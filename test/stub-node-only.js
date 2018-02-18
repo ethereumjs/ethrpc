@@ -1162,6 +1162,21 @@ describe("tests that only work against stub server", function () {
           rpc.transact(createReasonableTransactPayload(), null, null, onSent, onSuccess, onFailure);
         });
 
+        it("should send eth_estimateGas from transact", function (done) {
+          function onSent(result) { }
+          function onSuccess(result) {
+            assert.strictEqual(result, "0x12345");
+            done();
+          }
+          function onFailure(error) { assert.isFalse(true, "onFailure should not have been called: " + error); }
+          server.addResponder(function (jso) {
+            if (jso.method === "eth_estimateGas") return "0x12345";
+          });
+          var payload = createReasonableTransactPayload();
+          payload.estimateGas = true;
+          rpc.transact(payload, null, null, onSent, onSuccess, onFailure);
+        });
+
         it("ensureLatestBlock", function (done) {
           clearInterval(interval);
           helpers.rpcConnect(transportType, transportAddress, function () {
@@ -1217,6 +1232,31 @@ describe("tests that only work against stub server", function () {
             params: []
           };
           server.addResponder(function (jso) { if (jso.method === "eth_call") return expectedResults; });
+          rpc.callOrSendTransaction(payload, function (resultOrError) {
+            assert.strictEqual(resultOrError, expectedResults);
+            done();
+          });
+        });
+
+        it("gets the gas price of a transaction", function (done) {
+          server.addExpectation(function (jso) {
+            return jso.method === "eth_estimateGas"
+              && jso.params[0].from === "0x00bae5113ee9f252cceb0001205b88fad175461a"
+              && jso.params[0].to === "0x482c57abdce592b39434e3f619ffc3db62ab6d01"
+              && jso.params[0].value === "0xfffffffff"
+              && jso.params[1] === "latest";
+          });
+          var expectedResults = "0x12345";
+          var payload = {
+            estimateGas: true,
+            name: "getBranches",
+            returns: "bytes32[]",
+            from: "0x00bae5113ee9f252cceb0001205b88fad175461a",
+            to: "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
+            gas: "0xfffffffff",
+            params: []
+          };
+          server.addResponder(function (jso) { if (jso.method === "eth_estimateGas") return expectedResults; });
           rpc.callOrSendTransaction(payload, function (resultOrError) {
             assert.strictEqual(resultOrError, expectedResults);
             done();
