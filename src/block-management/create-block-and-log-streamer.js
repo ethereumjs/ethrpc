@@ -1,9 +1,17 @@
 "use strict";
 
+var Promise = require("es6-promise").Promise;
 var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
 var BlockNotifier = require("../block-management/block-notifier");
 var internalState = require("../internal-state");
 var isFunction = require("../utils/is-function");
+var noop = require("../utils/noop");
+
+function subscribeToBlockNotifier(blockNotifier, blockAndLogStreamer) {
+  blockNotifier.subscribe(function (block) {
+    blockAndLogStreamer.reconcileNewBlock(block).then(noop).catch(function (err) { console.error(err); });
+  });
+}
 
 /**
  * Used internally.  Instantiates a new BlockAndLogStreamer backed by ethrpc and BlockNotifier.
@@ -41,8 +49,9 @@ var isFunction = require("../utils/is-function");
  * @param {Configuration} configuration
  * @param {Transport} transport
  */
-function createBlockAndLogStreamer(configuration, transport, callback) {
-  return function (dispatch, getState) {
+function createBlockAndLogStreamer(configuration, transport, cb) {
+  return function (dispatch) {
+    var callback = isFunction(cb) ? cb : function (err) { if (err) console.error(err); };
     var blockNotifier = new BlockNotifier({
       getLatestBlock: transport.getLatestBlock,
       subscribeToReconnects: transport.subscribeToReconnects,
@@ -52,32 +61,33 @@ function createBlockAndLogStreamer(configuration, transport, callback) {
       subscribeToNewHeads: transport.subscribeToNewHeads,
       unsubscribeFromNewHeads: transport.unsubscribeFromNewHeads
     }, configuration.pollingIntervalMilliseconds);
-    var blockAndLogStreamer = BlockAndLogStreamer.createCallbackStyle(transport.getBlockByHash, transport.getLogs, {
-      blockRetention: configuration.blockRetention
-    });
-
-    internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
-
-    callback = isFunction(callback) ? callback : function (e) { if (e) console.log(e); };
-    function subscribeToBlockNotifier() {
-      blockNotifier.subscribe(function (block) {
-        blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) { if (err) return console.error(err); });
+    var blockAndLogStreamer = new BlockAndLogStreamer(function (hash) {
+      return new Promise(function (resolve, reject) {
+        transport.getBlockByHash(hash, function (err, block) {
+          if (err) throw err;
+          resolve(block);
+        });
       });
-
-      callback(null);
-    }
-
+    }, function (filterOptions) {
+      return new Promise(function (resolve, reject) {
+        transport.getLogs(filterOptions, function (err, logs) {
+          if (err) throw err;
+          if (logs == null) throw new Error("Received null/undefined logs and no error.");
+          resolve(logs);
+        });
+      });
+    }, { blockRetention: configuration.blockRetention });
+    internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
     if (typeof configuration.startingBlockNumber === "undefined") {
-      return subscribeToBlockNotifier();
+      subscribeToBlockNotifier(blockNotifier, blockAndLogStreamer);
+      return callback(null);
     }
-
     transport.getBlockByNumber(configuration.startingBlockNumber, function (err, block) {
       if (err) return callback(err);
-
-      blockAndLogStreamer.reconcileNewBlockCallbackStyle(block, function (err) {
-        if (err) return callback(err);
-        subscribeToBlockNotifier();
-      });
+      blockAndLogStreamer.reconcileNewBlock(block).then(function () {
+        subscribeToBlockNotifier(blockNotifier, blockAndLogStreamer);
+        callback(null);
+      }).catch(callback);
     });
   };
 }
