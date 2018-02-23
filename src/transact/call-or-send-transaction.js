@@ -29,7 +29,7 @@ function callOrSendTransaction(payload, callback) {
     packaged = packageRequest(payload);
     if (getState().debug.broadcast) console.log("packaged:", packaged);
     if (payload.estimateGas) {
-      return dispatch(eth.estimateGas([packaged, "latest"], callback));
+      return dispatch(eth.estimateGas(packaged, callback));
     } else if (payload.send) {
       return dispatch(eth.sendTransaction(packaged, callback));
     }
