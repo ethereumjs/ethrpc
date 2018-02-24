@@ -6,10 +6,11 @@ var BlockNotifier = require("../block-management/block-notifier");
 var internalState = require("../internal-state");
 var isFunction = require("../utils/is-function");
 var noop = require("../utils/noop");
+var logError = require("../utils/log-error");
 
 function subscribeToBlockNotifier(blockNotifier, blockAndLogStreamer) {
   blockNotifier.subscribe(function (block) {
-    blockAndLogStreamer.reconcileNewBlock(block).then(noop).catch(function (err) { console.error(err); });
+    blockAndLogStreamer.reconcileNewBlock(block).then(noop).catch(logError);
   });
 }
 
@@ -51,7 +52,7 @@ function subscribeToBlockNotifier(blockNotifier, blockAndLogStreamer) {
  */
 function createBlockAndLogStreamer(configuration, transport, cb) {
   return function (dispatch) {
-    var callback = isFunction(cb) ? cb : function (err) { if (err) console.error(err); };
+    var callback = isFunction(cb) ? cb : logError;
     var blockNotifier = new BlockNotifier({
       getLatestBlock: transport.getLatestBlock,
       subscribeToReconnects: transport.subscribeToReconnects,
@@ -64,15 +65,15 @@ function createBlockAndLogStreamer(configuration, transport, cb) {
     var blockAndLogStreamer = new BlockAndLogStreamer(function (hash) {
       return new Promise(function (resolve, reject) {
         transport.getBlockByHash(hash, function (err, block) {
-          if (err) throw err;
+          if (err) return reject(err);
           resolve(block);
         });
       });
     }, function (filterOptions) {
       return new Promise(function (resolve, reject) {
         transport.getLogs(filterOptions, function (err, logs) {
-          if (err) throw err;
-          if (logs == null) throw new Error("Received null/undefined logs and no error.");
+          if (err) return reject(err);
+          if (logs == null) reject(new Error("Received null/undefined logs and no error."));
           resolve(logs);
         });
       });
