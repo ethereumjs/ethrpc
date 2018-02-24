@@ -10,7 +10,8 @@ module.exports = {
     U_PORT: "uPort",
     LEDGER: "ledger",
     PRIVATE_KEY: "privateKey",
-    UNLOCKED_ETHEREUM_NODE: "unlockedEthereumNode"
+    UNLOCKED_ETHEREUM_NODE: "unlockedEthereumNode",
+    META_MASK: "metaMask"
   },
 
   // Number of required confirmations for transact sequence
