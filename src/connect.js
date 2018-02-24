@@ -13,6 +13,7 @@ var validateConfiguration = require("./validate/validate-configuration");
 var resetState = require("./reset-state");
 var ErrorWithData = require("./errors").ErrorWithData;
 var isFunction = require("./utils/is-function");
+var logError = require("./utils/log-error");
 var internalState = require("./internal-state");
 
 /**
@@ -37,9 +38,9 @@ function connect(configuration, initialConnectCallback) {
     var syncOnly, storedConfiguration, debug = getState().debug;
     dispatch(resetState());
 
-    // Use console.error as default out-of-band error handler if not set
+    // Use logError (console.error) as default out-of-band error handler if not set
     if (!isFunction(configuration.errorHandler)) {
-      configuration.errorHandler = function (err) { if (err) console.error(err); };
+      configuration.errorHandler = logError;
     }
     internalState.set("outOfBandErrorHandler", configuration.errorHandler);
     dispatch({ type: "SET_CONFIGURATION", configuration: validateConfiguration(configuration) });

@@ -4,6 +4,10 @@ var assert = require("chai").assert;
 var os = require("os");
 var rpc = require("../src");
 
+function errorHandler(error) {
+  assert.isTrue(false, (error || {}).message || error);
+}
+
 module.exports.getIpcAddress = function () {
   return process.env.ETHRPC_TEST_IPC_ADDRESS || ((os.type() === "Windows_NT") ? "\\\\.\\pipe\\TestRPC" : "testrpc.ipc");
 };
@@ -17,20 +21,14 @@ module.exports.getHttpAddress = function () {
 };
 
 module.exports.rpcConnect = function (transportType, transportAddress, callback) {
-  var configuration;
-  function assertingCallback(error) {
+  var configuration = this.getRpcConfiguration(transportType, transportAddress);
+  rpc.connect(configuration, function (error) {
     assert.isNull(error, (error || {}).message);
     callback();
-  }
-  configuration = this.getRpcConfiguration(transportType, transportAddress);
-  rpc.connect(configuration, assertingCallback);
+  });
 };
 
 module.exports.getRpcConfiguration = function (transportType, transportAddress) {
-  function errorHandler(error) {
-    assert.isTrue(false, (error || {}).message || error);
-  }
-
   switch (transportType) {
     case "IPC":
       return {
