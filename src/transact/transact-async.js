@@ -15,11 +15,16 @@ var errors = require("../errors/codes");
  */
 function transactAsync(payload, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
-    var invoke = (privateKeyOrSigner == null) ? callOrSendTransaction : function (payload, callback) {
-      return packageAndSubmitRawTransaction(payload, payload.from, privateKeyOrSigner, accountType, callback);
-    };
+    var sendTransactionOrRawTransaction;
+    if (privateKeyOrSigner == null) {
+      sendTransactionOrRawTransaction = callOrSendTransaction;
+    } else {
+      sendTransactionOrRawTransaction = function (payload, callback) {
+        return packageAndSubmitRawTransaction(payload, payload.from, privateKeyOrSigner, accountType, callback);
+      };
+    }
     payload.send = true;
-    dispatch(invoke(immutableDelete(payload, "returns"), function (txHash) {
+    dispatch(sendTransactionOrRawTransaction(immutableDelete(payload, "returns"), function (txHash) {
       if (getState().debug.tx) console.log("txHash:", txHash);
       if (txHash == null) return onFailed(errors.NULL_RESPONSE);
       if (txHash.error) return onFailed(txHash);
