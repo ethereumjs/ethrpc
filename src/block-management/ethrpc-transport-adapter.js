@@ -62,7 +62,7 @@ function createTransportAdapter(transporter) {
           dispatch(removeSubscription(subscriptionID));
           dispatch(eth.unsubscribe(subscriptionID, noop));
         }
-      }
+      },
     };
   };
 }

@@ -21,14 +21,14 @@ function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, acco
         tx: { callReturn: callReturn },
         meta: {
           signer: privateKeyOrSigner,
-          accountType: accountType
+          accountType: accountType,
         },
         onSent: onSent,
         onSuccess: onSuccess,
         onFailed: onFailed,
         count: 0,
-        status: "pending"
-      }
+        status: "pending",
+      },
     });
     dispatch(updateTx.default(txHash));
     callback(null);

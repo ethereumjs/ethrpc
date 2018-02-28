@@ -16,7 +16,7 @@ function registerTransactionRelay(transactionRelay) {
               type: payload.label || payload.name,
               status: transactions[hash].status,
               data: payload,
-              response: transactions[hash].tx
+              response: transactions[hash].tx,
             });
           }
         }

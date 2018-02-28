@@ -37,7 +37,7 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         httpAddresses: [],
         pollingIntervalMilliseconds: 1,
         blockRetention: 5,
-        errorHandler: errorHandler
+        errorHandler: errorHandler,
       };
     case "WS":
       return {
@@ -46,7 +46,7 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         httpAddresses: [],
         pollingIntervalMilliseconds: 1,
         blockRetention: 5,
-        errorHandler: errorHandler
+        errorHandler: errorHandler,
       };
     case "HTTP":
       return {
@@ -55,7 +55,7 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         httpAddresses: [transportAddress],
         pollingIntervalMilliseconds: 1,
         blockRetention: 5,
-        errorHandler: errorHandler
+        errorHandler: errorHandler,
       };
     default:
       assert.false(true, "Unknown transportType: " + transportType);

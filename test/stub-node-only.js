@@ -17,7 +17,7 @@ function createReasonableTransactPayload() {
     returns: "uint256",
     signature: [],
     from: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-    to: "0xdeadbabedeadbabedeadbabedeadbabedeadbabe"
+    to: "0xdeadbabedeadbabedeadbabedeadbabedeadbabe",
   };
 }
 
@@ -41,7 +41,7 @@ describe("tests that only work against stub server", function () {
             httpAddresses: [],
             wsAddresses: [],
             ipcAddresses: [],
-            errorHandler: function (error) { assert.fail(error); }
+            errorHandler: function (error) { assert.fail(error); },
           }, function (error) {
             assert.isNotNull(error);
             assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any tranpsort (Web3, HTTP, WS, IPC).");
@@ -350,10 +350,10 @@ describe("tests that only work against stub server", function () {
               value: "0xde0b6b3a7640000",
               v: "0x1c",
               r: "0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486",
-              s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196"
+              s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196",
             }],
             transactionsRoot: "0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64",
-            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"]
+            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"],
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getBlockByHash"
@@ -390,7 +390,7 @@ describe("tests that only work against stub server", function () {
             totalDifficulty: "0xac18c72ebbc",
             transactions: ["0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a"],
             transactionsRoot: "0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64",
-            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"]
+            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"],
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getBlockByNumber"
@@ -425,7 +425,7 @@ describe("tests that only work against stub server", function () {
             value: "0xde0b6b3a7640000",
             v: "0x1c",
             r: "0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486",
-            s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196"
+            s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196",
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getTransactionByHash"
@@ -455,9 +455,9 @@ describe("tests that only work against stub server", function () {
                 transactionIndex: "0x0",
                 address: "0x16c5785ac562ff41e2dcfdf829c5a142f1fccd7d",
                 data: "0x0000000000000000000000000000000000000000000000000000000000000000",
-                topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"]
-              }
-            ]
+                topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"],
+              },
+            ],
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getFilterChanges"
@@ -485,9 +485,9 @@ describe("tests that only work against stub server", function () {
                 transactionIndex: "0x0",
                 address: "0x16c5785ac562ff41e2dcfdf829c5a142f1fccd7d",
                 data: "0x0000000000000000000000000000000000000000000000000000000000000000",
-                topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"]
-              }
-            ]
+                topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"],
+              },
+            ],
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getFilterLogs"
@@ -515,9 +515,9 @@ describe("tests that only work against stub server", function () {
                 transactionIndex: "0x0",
                 address: "0x16c5785ac562ff41e2dcfdf829c5a142f1fccd7d",
                 data: "0x0000000000000000000000000000000000000000000000000000000000000000",
-                topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"]
-              }
-            ]
+                topics: ["0x59ebeb90bc63057b6515673c3ecf9438e5058bca0f92585014eced636878c9a5"],
+              },
+            ],
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getLogs"
@@ -564,7 +564,7 @@ describe("tests that only work against stub server", function () {
             value: "0x7f110",
             gas: "0x7f110",
             gasPrice: "0x09184e72a000",
-            input: "0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360"
+            input: "0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360",
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getTransactionByHash"
@@ -624,7 +624,7 @@ describe("tests that only work against stub server", function () {
             root: "0xc569ec33d9119c828b96d7bcdcebbd6d810722e6675e8f399339b263978a09de",
             to: "0x787f88347aa3eefcc16e9e71c672138181bce266",
             transactionHash: "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a",
-            transactionIndex: "0x0"
+            transactionIndex: "0x0",
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getTransactionReceipt"
@@ -673,10 +673,10 @@ describe("tests that only work against stub server", function () {
               value: "0xde0b6b3a7640000",
               v: "0x1c",
               r: "0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486",
-              s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196"
+              s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196",
             }],
             transactionsRoot: "0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64",
-            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"]
+            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"],
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getUncleByBlockHashAndIndex"
@@ -726,10 +726,10 @@ describe("tests that only work against stub server", function () {
               value: "0xde0b6b3a7640000",
               v: "0x1c",
               r: "0x739344b05d1084ffffd7f11e7226a3ffa633422268a6c83c15bad56bcb6d3486",
-              s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196"
+              s: "0x2b10836b3b632b337e410bb9661799b2467c16bdf626aa1ad70bced750540196",
             }],
             transactionsRoot: "0x1c66bef1f1c1083b8a2903ef5e8b528b3c359f390ad36d9bb120b1ce3aa3df64",
-            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"]
+            uncles: ["0xd21d74cac9356eb7cfcc0d55edc326d72ba056a7f7bc7953ae94df3366e8b120"],
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_getUncleByBlockNumberAndIndex"
@@ -891,7 +891,7 @@ describe("tests that only work against stub server", function () {
             gasPrice: 10000000000000,
             value: 2441406250,
             data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
-            nonce: 35
+            nonce: 35,
           }, function (resultOrError) {
             assert.deepEqual(resultOrError, expectedResult);
             server.assertExpectations();
@@ -929,8 +929,8 @@ describe("tests that only work against stub server", function () {
               value: "0x7f110",
               gas: "0x7f110",
               gasPrice: "0x09184e72a000",
-              input: "0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360"
-            }
+              input: "0x603880600c6000396000f300603880600c6000396000f3603880600c6000396000f360",
+            },
           };
           server.addExpectation(function (jso) {
             return jso.method === "eth_signTransaction"
@@ -951,7 +951,7 @@ describe("tests that only work against stub server", function () {
             gasPrice: 10000000000000,
             value: 520464,
             data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
-            nonce: 35
+            nonce: 35,
           }, function (resultOrError) {
             assert.deepEqual(resultOrError, expectedResult);
             server.assertExpectations();
@@ -1104,7 +1104,7 @@ describe("tests that only work against stub server", function () {
             returns: "bytes32[]",
             from: "0x00bae5113ee9f252cceb0001205b88fad175461a",
             to: "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
-            params: []
+            params: [],
           };
           function callback(wrappedResultOrError) {
             assert.strictEqual(wrappedResultOrError.resultOrError[0], "0x0000000000000000000000000000000000000000000000000000000000000001");
@@ -1229,7 +1229,7 @@ describe("tests that only work against stub server", function () {
             returns: "bytes32[]",
             from: "0x00bae5113ee9f252cceb0001205b88fad175461a",
             to: "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
-            params: []
+            params: [],
           };
           server.addResponder(function (jso) { if (jso.method === "eth_call") return expectedResults; });
           rpc.callOrSendTransaction(payload, function (resultOrError) {
@@ -1254,7 +1254,7 @@ describe("tests that only work against stub server", function () {
             from: "0x00bae5113ee9f252cceb0001205b88fad175461a",
             to: "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
             gas: "0xfffffffff",
-            params: []
+            params: [],
           };
           server.addResponder(function (jso) { if (jso.method === "eth_estimateGas") return expectedResults; });
           rpc.callOrSendTransaction(payload, function (resultOrError) {
@@ -1313,7 +1313,7 @@ describe("tests that only work against stub server", function () {
           });
           token = rpc.getBlockStream().addLogFilter({
             address: "0xbadf00d",
-            topics: ["0xdeadbeef"]
+            topics: ["0xdeadbeef"],
           });
           rpc.getBlockStream().removeLogFilter(token);
           rpc.getBlockStream().subscribeToOnLogAdded(function (logs) {

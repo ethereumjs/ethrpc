@@ -19,7 +19,7 @@ function waitForNextPoll(tx, callback) {
         if (storedTransaction.status === "pending" || storedTransaction.status === "sealed") {
           callback(null, null);
         }
-      }, constants.TX_POLL_INTERVAL)
+      }, constants.TX_POLL_INTERVAL),
     });
   };
 }

@@ -16,7 +16,7 @@ var makeRequestPayload = function (command, params, prefix) {
   payload = {
     id: numRequests++,
     jsonrpc: "2.0",
-    method: method
+    method: method,
   };
   if (params === undefined || params === null) params = [];
   payload.params = (Array.isArray(params)) ? encodeArray(params) : [encodePrimitive(params)];

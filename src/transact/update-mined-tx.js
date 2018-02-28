@@ -20,7 +20,7 @@ function updateMinedTx(txHash) {
     dispatch({
       type: "SET_TRANSACTION_CONFIRMATIONS",
       hash: txHash,
-      currentBlockNumber: currentBlock.number
+      currentBlockNumber: currentBlock.number,
     });
     transaction = state.transactions[txHash];
     if (transaction.confirmations >= constants.REQUIRED_CONFIRMATIONS) {
@@ -31,13 +31,13 @@ function updateMinedTx(txHash) {
             dispatch({
               type: "UPDATE_TRANSACTION",
               hash: txHash,
-              data: { tx: { timestamp: parseInt(block.timestamp, 16) } }
+              data: { tx: { timestamp: parseInt(block.timestamp, 16) } },
             });
           }
           dispatch({
             type: "UPDATE_TRANSACTION",
             hash: txHash,
-            data: { tx: { callReturn: transaction.tx.callReturn } }
+            data: { tx: { callReturn: transaction.tx.callReturn } },
           });
           dispatch(eth.getTransactionReceipt(txHash, function (receipt) {
             if (debug.tx) console.log("[ethrpc] got receipt:", receipt);
@@ -48,9 +48,9 @@ function updateMinedTx(txHash) {
                 hash: txHash,
                 data: {
                   tx: {
-                    gasFees: speedomatic.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(transaction.tx.gasPrice, 16)), "string")
-                  }
-                }
+                    gasFees: speedomatic.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(transaction.tx.gasPrice, 16)), "string"),
+                  },
+                },
               });
             }
             dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });

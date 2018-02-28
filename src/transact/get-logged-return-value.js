@@ -20,7 +20,7 @@ function getLoggedReturnValue(txHash, callback) {
       }
       callback(null, {
         returnValue: log.data,
-        gasUsed: new BigNumber(receipt.gasUsed, 16)
+        gasUsed: new BigNumber(receipt.gasUsed, 16),
       });
     }));
   };

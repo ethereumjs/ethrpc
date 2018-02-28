@@ -11,7 +11,7 @@ describe("reducers/debug", function () {
     tx: false,
     broadcast: false,
     nonce: false,
-    sync: false
+    sync: false,
   };
   var test = function (t) {
     it(t.description, function () {
@@ -29,8 +29,8 @@ describe("reducers/debug", function () {
           tx: true,
           broadcast: true,
           nonce: false,
-          sync: false
-        }
+          sync: false,
+        },
       },
       assertions: function (state) {
         assert.deepEqual(state, {
@@ -38,9 +38,9 @@ describe("reducers/debug", function () {
           tx: true,
           broadcast: true,
           nonce: false,
-          sync: false
+          sync: false,
         });
-      }
+      },
     });
   });
   describe("RESET_DEBUG_OPTIONS", function () {
@@ -51,14 +51,14 @@ describe("reducers/debug", function () {
         tx: true,
         broadcast: true,
         nonce: false,
-        sync: false
+        sync: false,
       },
       action: {
-        type: "RESET_DEBUG_OPTIONS"
+        type: "RESET_DEBUG_OPTIONS",
       },
       assertions: function (state) {
         assert.deepEqual(state, initialState);
-      }
+      },
     });
   });
 });

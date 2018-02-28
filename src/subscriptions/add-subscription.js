@@ -8,7 +8,7 @@ function addSubscription(id, reaction, select, onStateChange) {
       type: "ADD_SUBSCRIPTION",
       id: id,
       reaction: reaction,
-      unsubscribeToken: dispatch(addStoreListener(select, onStateChange))
+      unsubscribeToken: dispatch(addStoreListener(select, onStateChange)),
     });
   };
 }

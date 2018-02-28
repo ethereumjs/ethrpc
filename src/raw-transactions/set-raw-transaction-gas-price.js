@@ -9,7 +9,7 @@ var errors = require("../errors/codes");
 /**
  * Set the gas price for a raw transaction.
  * @param {Object} packaged Packaged transaction.
- * @param {function=} callback Callback function (optional).
+ * @param {function} callback Callback function.
  * @return {Object|void} Packaged transaction with gasPrice set.
  */
 var setRawTransactionGasPrice = function (packaged, callback) {

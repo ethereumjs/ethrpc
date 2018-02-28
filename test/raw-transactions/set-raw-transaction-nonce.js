@@ -20,11 +20,10 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
         "../wrappers/eth": {
           getTransactionCount: function (params, callback) {
             return function () {
-              if (!isFunction(callback)) return t.blockchain.transactionCount;
               callback(t.blockchain.transactionCount);
             };
-          }
-        }
+          },
+        },
       });
       store.dispatch(setRawTransactionNonce(t.params.packaged, t.params.address, function (packaged) {
         t.assertions(packaged);
@@ -36,26 +35,26 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
     description: "10 transactions",
     params: {
       packaged: {nonce: 0},
-      address: "0xb0b"
+      address: "0xb0b",
     },
     blockchain: {
-      transactionCount: "0xa"
+      transactionCount: "0xa",
     },
     assertions: function (packaged) {
       assert.deepEqual(packaged, {nonce: 10});
-    }
+    },
   });
   test({
     description: "Error from pendingTxCount",
     params: {
       packaged: {nonce: 0},
-      address: "0xb0b"
+      address: "0xb0b",
     },
     blockchain: {
-      transactionCount: {error: -32000}
+      transactionCount: {error: -32000},
     },
     assertions: function (packaged) {
       assert.deepEqual(packaged, {nonce: 0});
-    }
+    },
   });
 });

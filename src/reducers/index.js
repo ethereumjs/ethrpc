@@ -22,7 +22,7 @@ function reducer(state, action) {
     networkID: networkIDReducer(state.networkID, action),
     transactions: transactionsReducer(state.transactions, action),
     subscriptions: subscriptionsReducer(state.subscriptions, action),
-    coinbase: coinbaseReducer(state.coinbase, action)
+    coinbase: coinbaseReducer(state.coinbase, action),
   };
 }
 

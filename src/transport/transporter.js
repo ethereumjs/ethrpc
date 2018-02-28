@@ -54,7 +54,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
     ipcTransports: createArrayWithDefaultValue(configuration.ipcAddresses.length, undefined),
     wsTransports: createArrayWithDefaultValue(configuration.wsAddresses.length, undefined),
     httpTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined),
-    syncTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined)
+    syncTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined),
   };
 
   // set the internal state reasonable default values
@@ -67,7 +67,7 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
     debugLogging: Boolean(debugLogging),
     nextListenerToken: 1,
     reconnectListeners: {},
-    disconnectListeners: {}
+    disconnectListeners: {},
   };
 
   if (syncOnly) {

@@ -12,5 +12,5 @@ module.exports = {
   newFilter: makeWrapper("shh_newFilter"),
   uninstallFilter: makeWrapper("shh_uninstallFilter"),
   getFilterChanges: makeWrapper("shh_getFilterChanges"),
-  getMessages: makeWrapper("shh_getMessages")
+  getMessages: makeWrapper("shh_getMessages"),
 };

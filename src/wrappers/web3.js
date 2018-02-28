@@ -9,5 +9,5 @@ module.exports = {
       return sha3(data, encoding, callback);
     };
   },
-  clientVersion: makeWrapper("web3_clientVersion")
+  clientVersion: makeWrapper("web3_clientVersion"),
 };

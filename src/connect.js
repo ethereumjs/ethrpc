@@ -73,7 +73,7 @@ function connect(configuration, initialConnectCallback) {
         async.parallel([
           function (next) { dispatch(ensureLatestBlock(function () { next(); })); },
           function (next) { dispatch(setCoinbase(next)); },
-          function (next) { dispatch(setGasPrice(next)); }
+          function (next) { dispatch(setGasPrice(next)); },
         ], initialConnectCallback);
       }));
     });

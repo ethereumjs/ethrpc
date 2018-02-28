@@ -15,66 +15,38 @@ describe("raw-transactions/set-raw-transaction-gas-price", function () {
         "../wrappers/eth": {
           gasPrice: function (params, callback) {
             return function () {
-              if (!isFunction(callback)) return t.blockchain.gasPrice;
               callback(t.blockchain.gasPrice);
             };
-          }
-        }
+          },
+        },
       });
-      var output = store.dispatch(setRawTransactionGasPrice(t.params.packaged, t.params.callback));
-      if (!isFunction(t.params.callback)) t.assertions(output);
+      store.dispatch(setRawTransactionGasPrice(t.params.packaged, t.params.callback));
     });
   };
   test({
-    description: "Without callback",
-    params: {
-      packaged: {},
-      address: "0xb0b"
-    },
-    blockchain: {
-      gasPrice: "0x4a817c800"
-    },
-    assertions: function (packaged) {
-      assert.deepEqual(packaged, {gasPrice: "0x4a817c800"});
-    }
-  });
-  test({
-    description: "With callback",
+    description: "gasPrice not specified by caller",
     params: {
       packaged: {},
       address: "0xb0b",
       callback: function (packaged) {
         assert.deepEqual(packaged, {gasPrice: "0x4a817c800"});
-      }
+      },
     },
     blockchain: {
-      gasPrice: "0x4a817c800"
-    }
+      gasPrice: "0x4a817c800",
+    },
   });
   test({
-    description: "Without callback, gasPrice specified by caller",
-    params: {
-      packaged: {gasPrice: "0x1"},
-      address: "0xb0b"
-    },
-    blockchain: {
-      gasPrice: "0x4a817c800"
-    },
-    assertions: function (packaged) {
-      assert.deepEqual(packaged, {gasPrice: "0x1"});
-    }
-  });
-  test({
-    description: "With callback, gasPrice specified by caller",
+    description: "gasPrice specified by caller",
     params: {
       packaged: {gasPrice: "0x1"},
       address: "0xb0b",
       callback: function (packaged) {
         assert.deepEqual(packaged, {gasPrice: "0x1"});
-      }
+      },
     },
     blockchain: {
-      gasPrice: "0x4a817c800"
-    }
+      gasPrice: "0x4a817c800",
+    },
   });
 });

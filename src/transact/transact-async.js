@@ -1,5 +1,6 @@
 "use strict";
 
+var assign = require("lodash.assign");
 var speedomatic = require("speedomatic");
 var immutableDelete = require("immutable-delete");
 var packageAndSubmitRawTransaction = require("../raw-transactions/package-and-submit-raw-transaction");
@@ -24,21 +25,17 @@ function transactAsync(payload, callReturn, privateKeyOrSigner, accountType, onS
       };
     }
     payload.send = true;
-    dispatch(sendTransactionOrRawTransaction(immutableDelete(payload, "returns"), function (txHash) {
+    dispatch(sendTransactionOrRawTransaction(immutableDelete(payload, "returns"), function (err, txHash) {
       if (getState().debug.tx) console.log("txHash:", txHash);
+      if (err) return onFailed(err);
       if (txHash == null) return onFailed(errors.NULL_RESPONSE);
-      if (txHash.error) return onFailed(txHash);
       txHash = speedomatic.formatInt256(txHash);
 
-      // send the transaction hash and return value back
-      // to the client, using the onSent callback
+      // send the transaction hash and return value back to the client, using the onSent callback
       onSent({ hash: txHash, callReturn: callReturn });
 
       dispatch(verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed, function (err) {
-        if (err != null) {
-          err.hash = txHash;
-          return onFailed(err);
-        }
+        if (err) onFailed(assign({}, err, { hash: txHash }));
       }));
     }));
   };

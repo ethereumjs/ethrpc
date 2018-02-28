@@ -17,25 +17,25 @@ describe("reducers/no-relay", function () {
       state: {},
       action: {
         type: "EXCLUDE_METHOD_FROM_TRANSACTION_RELAY",
-        method: "method1"
+        method: "method1",
       },
       assertions: function (state) {
         assert.deepEqual(state, { method1: true });
-      }
+      },
     });
     test({
       description: "Exclude method from relay, initial state non-empty",
       state: { method2: true },
       action: {
         type: "EXCLUDE_METHOD_FROM_TRANSACTION_RELAY",
-        method: "method1"
+        method: "method1",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           method1: true,
-          method2: true
+          method2: true,
         });
-      }
+      },
     });
   });
   describe("INCLUDE_METHOD_IN_TRANSACTION_RELAY", function () {
@@ -44,25 +44,25 @@ describe("reducers/no-relay", function () {
       state: {},
       action: {
         type: "INCLUDE_METHOD_IN_TRANSACTION_RELAY",
-        method: "method1"
+        method: "method1",
       },
       assertions: function (state) {
         assert.deepEqual(state, { method1: false });
-      }
+      },
     });
     test({
       description: "Include method in relay, initial state non-empty",
       state: { method2: true },
       action: {
         type: "INCLUDE_METHOD_IN_TRANSACTION_RELAY",
-        method: "method1"
+        method: "method1",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           method1: false,
-          method2: true
+          method2: true,
         });
-      }
+      },
     });
   });
   describe("CLEAR_NO_RELAY", function () {
@@ -71,14 +71,14 @@ describe("reducers/no-relay", function () {
       state: {
         method1: true,
         method2: true,
-        method3: true
+        method3: true,
       },
       action: {
-        type: "CLEAR_NO_RELAY"
+        type: "CLEAR_NO_RELAY",
       },
       assertions: function (state) {
         assert.deepEqual(state, {});
-      }
+      },
     });
   });
 });

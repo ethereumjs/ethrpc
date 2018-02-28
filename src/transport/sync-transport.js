@@ -30,7 +30,7 @@ SyncTransport.prototype.connect = function (callback) {
     try {
       result = syncRequest("POST", this.address, {
         json: { jsonrpc: "2.0", id: 0, method: "net_version" },
-        timeout: this.timeout
+        timeout: this.timeout,
       });
       JSON.parse(result.getBody().toString());
       callback(null);

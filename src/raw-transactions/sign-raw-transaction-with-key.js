@@ -14,19 +14,17 @@ var isFunction = require("../utils/is-function");
  * @return {string} Signed and serialized raw transaction.
  */
 function signRawTransactionWithKey(packaged, privateKey, callback) {
-  var serialized, rawTransaction = new Transaction(packaged);
+  var rawTransaction = new Transaction(packaged);
   if (!Buffer.isBuffer(privateKey)) {
     rawTransaction.sign(Buffer.from(privateKey));
   } else {
     rawTransaction.sign(privateKey);
   }
-
   if (!rawTransaction.validate()) {
     if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_INVALID);
-    callback(errors.TRANSACTION_INVALID);
-    return;
+    return callback(new RPCError(errors.TRANSACTION_INVALID));
   }
-  serialized = speedomatic.prefixHex(rawTransaction.serialize().toString("hex"));
+  var serialized = speedomatic.prefixHex(rawTransaction.serialize().toString("hex"));
   if (!isFunction(callback)) return serialized;
   callback(null, serialized);
 }

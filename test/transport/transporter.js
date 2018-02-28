@@ -35,7 +35,7 @@ describe("transport/transporter", function () {
       function (callback) { if (wsServer1) wsServer1.destroy(callback); else callback(); },
       function (callback) { if (wsServer2) wsServer2.destroy(callback); else callback(); },
       function (callback) { if (httpServer1) httpServer1.destroy(callback); else callback(); },
-      function (callback) { if (httpServer2) httpServer2.destroy(callback); else callback(); }
+      function (callback) { if (httpServer2) httpServer2.destroy(callback); else callback(); },
     ], function () { done(); });
   });
 
@@ -44,7 +44,7 @@ describe("transport/transporter", function () {
       httpAddresses: [],
       wsAddresses: [],
       ipcAddresses: [],
-      connectionTimeout: 1000
+      connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) { assert.fail("expected no messages"); };
     new Transporter(configuration, messageHandler, false, false, function (error) {
@@ -59,7 +59,7 @@ describe("transport/transporter", function () {
       httpAddresses: ["http://nowhere:1234"],
       wsAddresses: ["ws://nowhere:1235"],
       ipcAddresses: ["nowhere"],
-      connectionTimeout: 1000
+      connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) { assert.fail("expected no messages"); };
     new Transporter(configuration, messageHandler, false, false, function (error) {
@@ -74,7 +74,7 @@ describe("transport/transporter", function () {
       httpAddresses: ["http://localhost:1338"],
       wsAddresses: ["ws://nowhere:1235"],
       ipcAddresses: [],
-      connectionTimeout: 1000
+      connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) {
       assert.isNull(error);
@@ -92,7 +92,7 @@ describe("transport/transporter", function () {
       httpAddresses: ["http://localhost:1338"],
       wsAddresses: ["ws://localhost:1337"],
       ipcAddresses: [],
-      connectionTimeout: 1000
+      connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) {
       assert.isNull(error);
@@ -110,7 +110,7 @@ describe("transport/transporter", function () {
       httpAddresses: ["http://localhost:2338", "http://localhost:1338"],
       wsAddresses: [],
       ipcAddresses: [],
-      connectionTimeout: 1000
+      connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) {
       assert.isNull(error);

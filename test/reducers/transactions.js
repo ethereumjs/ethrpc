@@ -22,12 +22,12 @@ describe("reducers/transactions", function () {
           payload: {
             method: "myOtherTransaction",
             from: "0xb0b",
-            to: "0xd00d"
+            to: "0xd00d",
           },
           callReturn: "0x42",
           count: 0,
-          status: "pending"
-        }
+          status: "pending",
+        },
       },
       assertions: function (state) {
         assert.deepEqual(state, {
@@ -36,14 +36,14 @@ describe("reducers/transactions", function () {
             payload: {
               method: "myOtherTransaction",
               from: "0xb0b",
-              to: "0xd00d"
+              to: "0xd00d",
             },
             callReturn: "0x42",
             count: 0,
-            status: "pending"
-          }
+            status: "pending",
+          },
         });
-      }
+      },
     });
     test({
       description: "Add a new transaction, initial state non-empty",
@@ -53,12 +53,12 @@ describe("reducers/transactions", function () {
           payload: {
             method: "myTransaction",
             from: "0xb0b",
-            to: "0xd00d"
+            to: "0xd00d",
           },
           callReturn: "0x12",
           count: 0,
-          status: "pending"
-        }
+          status: "pending",
+        },
       },
       action: {
         type: "ADD_TRANSACTION",
@@ -67,12 +67,12 @@ describe("reducers/transactions", function () {
           payload: {
             method: "myOtherTransaction",
             from: "0xb0b",
-            to: "0xd00d"
+            to: "0xd00d",
           },
           callReturn: "0x42",
           count: 0,
-          status: "pending"
-        }
+          status: "pending",
+        },
       },
       assertions: function (state) {
         assert.deepEqual(state, {
@@ -81,25 +81,25 @@ describe("reducers/transactions", function () {
             payload: {
               method: "myTransaction",
               from: "0xb0b",
-              to: "0xd00d"
+              to: "0xd00d",
             },
             callReturn: "0x12",
             count: 0,
-            status: "pending"
+            status: "pending",
           },
           "0xf00dbeef": {
             hash: "0xf00dbeef",
             payload: {
               method: "myOtherTransaction",
               from: "0xb0b",
-              to: "0xd00d"
+              to: "0xd00d",
             },
             callReturn: "0x42",
             count: 0,
-            status: "pending"
-          }
+            status: "pending",
+          },
         });
-      }
+      },
     });
     test({
       description: "Overwrite an existing transaction",
@@ -109,12 +109,12 @@ describe("reducers/transactions", function () {
           payload: {
             method: "myTransaction",
             from: "0xb0b",
-            to: "0xd00d"
+            to: "0xd00d",
           },
           callReturn: "0x12",
           count: 0,
-          status: "pending"
-        }
+          status: "pending",
+        },
       },
       action: {
         type: "ADD_TRANSACTION",
@@ -123,12 +123,12 @@ describe("reducers/transactions", function () {
           payload: {
             method: "myOtherTransaction",
             from: "0xb0b",
-            to: "0xd00d"
+            to: "0xd00d",
           },
           callReturn: "0x42",
           count: 0,
-          status: "pending"
-        }
+          status: "pending",
+        },
       },
       assertions: function (state) {
         assert.deepEqual(state, {
@@ -137,14 +137,14 @@ describe("reducers/transactions", function () {
             payload: {
               method: "myOtherTransaction",
               from: "0xb0b",
-              to: "0xd00d"
+              to: "0xd00d",
             },
             callReturn: "0x42",
             count: 0,
-            status: "pending"
-          }
+            status: "pending",
+          },
         });
-      }
+      },
     });
   });
   describe("UPDATE_TRANSACTION", function () {
@@ -156,17 +156,17 @@ describe("reducers/transactions", function () {
           payload: {
             method: "myTransaction",
             from: "0xb0b",
-            to: "0xd00d"
+            to: "0xd00d",
           },
           callReturn: "0x12",
           count: 0,
-          status: "pending"
-        }
+          status: "pending",
+        },
       },
       action: {
         type: "UPDATE_TRANSACTION",
         hash: "0xdeadbeef",
-        data: { tx: { key1: "value1" } }
+        data: { tx: { key1: "value1" } },
       },
       assertions: function (state) {
         assert.deepEqual(state, {
@@ -175,15 +175,15 @@ describe("reducers/transactions", function () {
             payload: {
               method: "myTransaction",
               from: "0xb0b",
-              to: "0xd00d"
+              to: "0xd00d",
             },
             callReturn: "0x12",
             count: 0,
             status: "pending",
-            tx: { key1: "value1" }
-          }
+            tx: { key1: "value1" },
+          },
         });
-      }
+      },
     });
     test({
       description: "Update two different object fields in an existing transaction",
@@ -193,21 +193,21 @@ describe("reducers/transactions", function () {
           payload: {
             method: "myTransaction",
             from: "0xb0b",
-            to: "0xd00d"
+            to: "0xd00d",
           },
           callReturn: "0x12",
           count: 0,
           status: "pending",
-          tx: { key1: "value1" }
-        }
+          tx: { key1: "value1" },
+        },
       },
       action: {
         type: "UPDATE_TRANSACTION",
         hash: "0xdeadbeef",
         data: {
           payload: { method: "myOtherTransaction" },
-          tx: { key2: "value2" }
-        }
+          tx: { key2: "value2" },
+        },
       },
       assertions: function (state) {
         assert.deepEqual(state, {
@@ -216,15 +216,15 @@ describe("reducers/transactions", function () {
             payload: {
               method: "myOtherTransaction",
               from: "0xb0b",
-              to: "0xd00d"
+              to: "0xd00d",
             },
             callReturn: "0x12",
             count: 0,
             status: "pending",
-            tx: { key1: "value1", key2: "value2" }
-          }
+            tx: { key1: "value1", key2: "value2" },
+          },
         });
-      }
+      },
     });
   });
   describe("LOCK_TRANSACTION", function () {
@@ -233,22 +233,22 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "pending"
-        }
+          status: "pending",
+        },
       },
       action: {
         type: "LOCK_TRANSACTION",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
             status: "pending",
-            isLocked: true
-          }
+            isLocked: true,
+          },
         });
-      }
+      },
     });
   });
   describe("UNLOCK_TRANSACTION", function () {
@@ -258,22 +258,22 @@ describe("reducers/transactions", function () {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
           status: "pending",
-          isLocked: true
-        }
+          isLocked: true,
+        },
       },
       action: {
         type: "UNLOCK_TRANSACTION",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
             status: "pending",
-            isLocked: false
-          }
+            isLocked: false,
+          },
         });
-      }
+      },
     });
   });
   describe("SET_TRANSACTION_CONFIRMATIONS", function () {
@@ -282,23 +282,23 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          tx: { blockNumber: 93 }
-        }
+          tx: { blockNumber: 93 },
+        },
       },
       action: {
         type: "SET_TRANSACTION_CONFIRMATIONS",
         hash: "0xdeadbeef",
-        currentBlockNumber: 100
+        currentBlockNumber: 100,
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
             tx: { blockNumber: 93 },
-            confirmations: 7
-          }
+            confirmations: 7,
+          },
         });
-      }
+      },
     });
   });
   describe("TRANSACTION_FAILED", function () {
@@ -307,21 +307,21 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "sealed"
-        }
+          status: "sealed",
+        },
       },
       action: {
         type: "TRANSACTION_FAILED",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
-            status: "failed"
-          }
+            status: "failed",
+          },
         });
-      }
+      },
     });
   });
   describe("TRANSACTION_SEALED", function () {
@@ -330,21 +330,21 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "pending"
-        }
+          status: "pending",
+        },
       },
       action: {
         type: "TRANSACTION_SEALED",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
-            status: "sealed"
-          }
+            status: "sealed",
+          },
         });
-      }
+      },
     });
   });
   describe("TRANSACTION_RESUBMITTED", function () {
@@ -353,21 +353,21 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "sealed"
-        }
+          status: "sealed",
+        },
       },
       action: {
         type: "TRANSACTION_RESUBMITTED",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
-            status: "resubmitted"
-          }
+            status: "resubmitted",
+          },
         });
-      }
+      },
     });
   });
   describe("TRANSACTION_CONFIRMED", function () {
@@ -376,21 +376,21 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "sealed"
-        }
+          status: "sealed",
+        },
       },
       action: {
         type: "TRANSACTION_CONFIRMED",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
-            status: "confirmed"
-          }
+            status: "confirmed",
+          },
         });
-      }
+      },
     });
   });
   describe("INCREMENT_TRANSACTION_COUNT", function () {
@@ -399,41 +399,41 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          count: 1
-        }
+          count: 1,
+        },
       },
       action: {
         type: "INCREMENT_TRANSACTION_COUNT",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
-            count: 2
-          }
+            count: 2,
+          },
         });
-      }
+      },
     });
     test({
       description: "Set an undefined transaction count to 1",
       state: {
         "0xdeadbeef": {
-          hash: "0xdeadbeef"
-        }
+          hash: "0xdeadbeef",
+        },
       },
       action: {
         type: "INCREMENT_TRANSACTION_COUNT",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
-            count: 1
-          }
+            count: 1,
+          },
         });
-      }
+      },
     });
   });
   describe("INCREMENT_TRANSACTION_PAYLOAD_TRIES", function () {
@@ -444,13 +444,13 @@ describe("reducers/transactions", function () {
           hash: "0xdeadbeef",
           payload: {
             method: "sayHelloToTheWorld",
-            tries: 2
-          }
-        }
+            tries: 2,
+          },
+        },
       },
       action: {
         type: "INCREMENT_TRANSACTION_PAYLOAD_TRIES",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
@@ -458,11 +458,11 @@ describe("reducers/transactions", function () {
             hash: "0xdeadbeef",
             payload: {
               method: "sayHelloToTheWorld",
-              tries: 3
-            }
-          }
+              tries: 3,
+            },
+          },
         });
-      }
+      },
     });
     test({
       description: "Set an transaction payload with undefined tries counter to 1",
@@ -470,13 +470,13 @@ describe("reducers/transactions", function () {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
           payload: {
-            method: "sayHelloToTheWorld"
-          }
-        }
+            method: "sayHelloToTheWorld",
+          },
+        },
       },
       action: {
         type: "INCREMENT_TRANSACTION_PAYLOAD_TRIES",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
@@ -484,52 +484,52 @@ describe("reducers/transactions", function () {
             hash: "0xdeadbeef",
             payload: {
               method: "sayHelloToTheWorld",
-              tries: 1
-            }
-          }
+              tries: 1,
+            },
+          },
         });
-      }
+      },
     });
     test({
       description: "Set an empty transaction payload tries counter to 1",
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          payload: {}
-        }
+          payload: {},
+        },
       },
       action: {
         type: "INCREMENT_TRANSACTION_PAYLOAD_TRIES",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
-            payload: { tries: 1 }
-          }
+            payload: { tries: 1 },
+          },
         });
-      }
+      },
     });
     test({
       description: "Set an undefined transaction payload tries counter to 1",
       state: {
         "0xdeadbeef": {
-          hash: "0xdeadbeef"
-        }
+          hash: "0xdeadbeef",
+        },
       },
       action: {
         type: "INCREMENT_TRANSACTION_PAYLOAD_TRIES",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
-            payload: { tries: 1 }
-          }
+            payload: { tries: 1 },
+          },
         });
-      }
+      },
     });
   });
   describe("REMOVE_TRANSACTION", function () {
@@ -538,41 +538,41 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "sealed"
+          status: "sealed",
         },
         "0xf00dbeef": {
           hash: "0xf00dbeef",
-          status: "pending"
-        }
+          status: "pending",
+        },
       },
       action: {
         type: "REMOVE_TRANSACTION",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0xf00dbeef": {
             hash: "0xf00dbeef",
-            status: "pending"
-          }
+            status: "pending",
+          },
         });
-      }
+      },
     });
     test({
       description: "Remove the last transaction",
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "sealed"
-        }
+          status: "sealed",
+        },
       },
       action: {
         type: "REMOVE_TRANSACTION",
-        hash: "0xdeadbeef"
+        hash: "0xdeadbeef",
       },
       assertions: function (state) {
         assert.deepEqual(state, {});
-      }
+      },
     });
   });
   describe("REMOVE_ALL_TRANSACTIONS", function () {
@@ -581,19 +581,19 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          status: "sealed"
+          status: "sealed",
         },
         "0xf00dbeef": {
           hash: "0xf00dbeef",
-          status: "pending"
-        }
+          status: "pending",
+        },
       },
       action: {
-        type: "REMOVE_ALL_TRANSACTIONS"
+        type: "REMOVE_ALL_TRANSACTIONS",
       },
       assertions: function (state) {
         assert.deepEqual(state, {});
-      }
+      },
     });
   });
 });

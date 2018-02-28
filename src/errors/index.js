@@ -33,5 +33,5 @@ ErrorWithCodeAndData.prototype = Object.create(BetterError.prototype, { construc
 module.exports = {
   ErrorWithCode: ErrorWithCode,
   ErrorWithData: ErrorWithData,
-  ErrorWithCodeAndData: ErrorWithCodeAndData
+  ErrorWithCodeAndData: ErrorWithCodeAndData,
 };

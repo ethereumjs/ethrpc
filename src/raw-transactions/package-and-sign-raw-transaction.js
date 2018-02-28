@@ -19,18 +19,16 @@ var errors = require("../errors/codes");
  */
 function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, callback) {
   return function (dispatch, getState) {
-    var packaged, state = getState();
-    if (!payload || payload.constructor !== Object) return callback(errors.TRANSACTION_FAILED);
-    if (!address || !privateKeyOrSigner) return callback(errors.NOT_LOGGED_IN);
-    packaged = packageRawTransaction(payload, address, state.networkID, state.currentBlock);
+    var state = getState();
+    if (!payload || payload.constructor !== Object) return callback(new RPCError(errors.TRANSACTION_FAILED));
+    if (!address || !privateKeyOrSigner) return callback(new RPCError(errors.NOT_LOGGED_IN));
+    var packaged = packageRawTransaction(payload, address, state.networkID, state.currentBlock);
     if (state.debug.broadcast) console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
-    dispatch(setRawTransactionGasPrice(packaged, function (packaged) {
-      if (packaged.error) return callback(packaged);
-      dispatch(setRawTransactionNonce(packaged, address, function (packaged) {
-        if (packaged.error) return callback(packaged);
-        signRawTransaction(packaged, privateKeyOrSigner, accountType, function (err, result) {
-          callback(err || result);
-        });
+    dispatch(setRawTransactionGasPrice(packaged, function (err, packaged) {
+      if (err) return callback(err);
+      dispatch(setRawTransactionNonce(packaged, address, function (err, packaged) {
+        if (err) return callback(err);
+        signRawTransaction(packaged, privateKeyOrSigner, accountType, callback);
       }));
     }));
   };

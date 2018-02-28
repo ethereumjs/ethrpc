@@ -16,7 +16,7 @@ function updatePendingTx(txHash) {
       dispatch({
         type: "UPDATE_TRANSACTION",
         hash: txHash,
-        data: { tx: onChainTx || {} }
+        data: { tx: onChainTx || {} },
       });
 
       // if transaction is null, then it was dropped from the txpool
@@ -52,9 +52,9 @@ function updatePendingTx(txHash) {
             data: {
               tx: {
                 blockNumber: parseInt(onChainTx.blockNumber, 16),
-                blockHash: onChainTx.blockHash
-              }
-            }
+                blockHash: onChainTx.blockHash,
+              },
+            },
           });
           dispatch({ type: "TRANSACTION_SEALED", hash: txHash });
           currentBlock = getState().currentBlock;
@@ -62,7 +62,7 @@ function updatePendingTx(txHash) {
             dispatch({
               type: "SET_TRANSACTION_CONFIRMATIONS",
               hash: txHash,
-              currentBlockNumber: currentBlock.number
+              currentBlockNumber: currentBlock.number,
             });
             dispatch(updateMinedTx(txHash));
           } else {
@@ -72,7 +72,7 @@ function updatePendingTx(txHash) {
               dispatch({
                 type: "SET_TRANSACTION_CONFIRMATIONS",
                 hash: txHash,
-                currentBlockNumber: parseInt(blockNumber, 16)
+                currentBlockNumber: parseInt(blockNumber, 16),
               });
               dispatch(updateMinedTx(txHash));
             }));

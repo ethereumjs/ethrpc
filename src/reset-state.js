@@ -45,7 +45,7 @@ function resetState() {
       // be a pointer to an object that we can mutate before replacing when reset
       shimMessageHandler: function (error, jso) {
         dispatch(this.realMessageHandler(error, jso));
-      }.bind(messageHandlerObject)
+      }.bind(messageHandlerObject),
     });
 
     // reset state to defaults

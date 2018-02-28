@@ -3,6 +3,8 @@
 var immutableDelete = require("immutable-delete");
 var signRawTransactionWithKey = require("./sign-raw-transaction-with-key");
 var isFunction = require("../utils/is-function");
+var RPCError = require("../errors/rpc-error");
+var errors = require("../errors/codes");
 var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
 
 /**
@@ -22,13 +24,13 @@ function signRawTransaction(packaged, privateKeyOrSigner, accountType, callback)
     } else if (accountType === ACCOUNT_TYPES.U_PORT) {
       privateKeyOrSigner(immutableDelete(packaged, "returns")).then(function (txHash) {
         callback(null, txHash);
-      });
+      }).catch(callback);
     } else {
-      callback({ error: "unknown account type" });
+      callback(new RPCError(errors.UNKNOWN_ACCOUNT_TYPE));
     }
-  } catch (error) {
-    if (!isFunction(callback)) throw error;
-    return callback(error);
+  } catch (err) {
+    if (!isFunction(callback)) throw err;
+    return callback(err);
   }
 }
 

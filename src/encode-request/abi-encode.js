@@ -42,5 +42,5 @@ module.exports = {
   encodePrimitive: encodePrimitive,
   encodeNumber: encodeNumber,
   encodeArray: encodeArray,
-  encodeObject: encodeObject
+  encodeObject: encodeObject,
 };

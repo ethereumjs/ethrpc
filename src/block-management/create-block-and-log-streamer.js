@@ -60,7 +60,7 @@ function createBlockAndLogStreamer(configuration, transport, cb) {
       subscribeToDisconnects: transport.subscribeToDisconnects,
       unsubscribeFromDisconnects: transport.unsubscribeFromDisconnects,
       subscribeToNewHeads: transport.subscribeToNewHeads,
-      unsubscribeFromNewHeads: transport.unsubscribeFromNewHeads
+      unsubscribeFromNewHeads: transport.unsubscribeFromNewHeads,
     }, configuration.pollingIntervalMilliseconds);
     var blockAndLogStreamer = new BlockAndLogStreamer(function (hash) {
       return new Promise(function (resolve, reject) {

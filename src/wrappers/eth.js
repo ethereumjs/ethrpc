@@ -48,5 +48,5 @@ module.exports = {
   subscribe: makeWrapper("eth_subscribe"),
   syncing: makeWrapper("eth_syncing"),
   uninstallFilter: makeWrapper("eth_uninstallFilter"),
-  unsubscribe: makeWrapper("eth_unsubscribe")
+  unsubscribe: makeWrapper("eth_unsubscribe"),
 };

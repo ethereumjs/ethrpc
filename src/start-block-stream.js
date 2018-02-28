@@ -11,7 +11,7 @@ module.exports = function (startingBlockNumber, callback) {
     dispatch(createBlockAndLogStreamer({
       pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
       blockRetention: storedConfiguration.blockRetention,
-      startingBlockNumber: startingBlockNumber
+      startingBlockNumber: startingBlockNumber,
     }, dispatch(createTransportAdapter(internalState.get("transporter"))), callback));
 
     internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) {

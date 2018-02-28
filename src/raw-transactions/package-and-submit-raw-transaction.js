@@ -19,22 +19,21 @@ var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
  */
 function packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, accountType, callback) {
   return function (dispatch, getState) {
-    dispatch(packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, function (signedRawTransaction) {
-      function handleRawTransactionResponse(response) {
-        var err;
+    dispatch(packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, function (err, signedRawTransaction) {
+      if (err) return callback(err);
+      function handleRawTransactionResponse(err, response) {
         if (getState().debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
-        if (!response) return callback(errors.RAW_TRANSACTION_ERROR);
-        if (response.error) {
-          err = dispatch(handleRawTransactionError(response));
-          if (err != null) return callback(err);
+        if (!response) return callback(new RPCError(errors.RAW_TRANSACTION_ERROR));
+        if (err) {
+          var handledError = dispatch(handleRawTransactionError(err));
+          if (handledError != null) return callback(new RPCError(handledError));
           dispatch(packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, accountType, callback));
         } else {
-          callback(response);
+          callback(null, response);
         }
       }
-      if (signedRawTransaction.error) return callback(signedRawTransaction);
       if (accountType === ACCOUNT_TYPES.U_PORT) { // signedRawTransaction is transaction hash for uPort
-        handleRawTransactionResponse(signedRawTransaction);
+        handleRawTransactionResponse(null, signedRawTransaction);
       } else {
         dispatch(eth_sendRawTransaction(signedRawTransaction, handleRawTransactionResponse));
       }
