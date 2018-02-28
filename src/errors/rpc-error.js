@@ -2,7 +2,7 @@
 
 function RPCError(err) {
   this.name = "RPCError";
-  this.error = err.error;
+  this.error = err.error || err.code;
   this.message = err.message;
 }
 
