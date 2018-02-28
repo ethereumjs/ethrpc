@@ -7,7 +7,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "mocha test/*.js test/block-management test/raw-transactions test/reducers test/transport test/utils",
-    "lint": "eslint src && eslint test/*.js test/block-management test/raw-transactions test/reducers test/transport test/utils",
+    "lint": "eslint src test/*.js test/block-management test/raw-transactions test/reducers test/transport test/utils",
     "coverage": "istanbul cover --include-all-sources --root ./src ./node_modules/mocha/bin/_mocha test/",
     "link": "npm link speedomatic ethereumjs-blockstream",
     "genversion": "genversion src/version.js",

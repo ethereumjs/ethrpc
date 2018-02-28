@@ -72,7 +72,7 @@
     "no-trailing-spaces": 2,
     "comma-dangle": [
       2,
-      "never"
+      "always-multiline"
     ],
     "brace-style": [
       2,
