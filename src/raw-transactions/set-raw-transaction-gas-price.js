@@ -1,5 +1,6 @@
 "use strict";
 
+var assign = require("lodash.assign");
 var eth_gasPrice = require("../wrappers/eth").gasPrice;
 var isFunction = require("../utils/is-function");
 var RPCError = require("../errors/rpc-error");
@@ -13,19 +14,10 @@ var errors = require("../errors/codes");
  */
 var setRawTransactionGasPrice = function (packaged, callback) {
   return function (dispatch) {
-    var gasPrice;
-    if (!isFunction(callback)) {
-      if (packaged.gasPrice) return packaged;
-      gasPrice = dispatch(eth_gasPrice(null));
-      if (!gasPrice || gasPrice.error) throw new RPCError(errors.TRANSACTION_FAILED);
-      packaged.gasPrice = gasPrice;
-      return packaged;
-    }
-    if (packaged.gasPrice) return callback(packaged);
-    dispatch(eth_gasPrice(null, function (gasPrice) {
-      if (!gasPrice || gasPrice.error) return callback(errors.TRANSACTION_FAILED);
-      packaged.gasPrice = gasPrice;
-      callback(packaged);
+    if (packaged.gasPrice != null) return callback(null, packaged);
+    dispatch(eth_gasPrice(null, function (err, gasPrice) {
+      if (err || gasPrice == null) return callback(new RPCError(errors.TRANSACTION_FAILED));
+      callback(null, assign({}, packaged, { gasPrice: gasPrice }));
     }));
   };
 };
