@@ -5,7 +5,7 @@ var makeRequestPayload = require("../encode-request/make-request-payload");
 
 function raw(command, params, callback) {
   return function (dispatch) {
-    return dispatch(submitRequestToBlockchain(makeRequestPayload(command, params, null), "ANY", callback));
+    return dispatch(submitRequestToBlockchain(makeRequestPayload(command, params, null), callback));
   };
 }
 

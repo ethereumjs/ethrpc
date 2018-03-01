@@ -20,13 +20,11 @@ describe("transport/transporter", function () {
     wsServer2 = StubServer.createStubServer("WS", "ws://localhost:2337");
     httpServer1 = StubServer.createStubServer("HTTP", "http://localhost:1338");
     httpServer2 = StubServer.createStubServer("HTTP", "http://localhost:2338");
-
     ipcServer1.addResponder(function (request) { if (request.method === "net_version") return "ipc server 1"; });
     wsServer1.addResponder(function (request) { if (request.method === "net_version") return "ws server 1"; });
     wsServer2.addResponder(function (request) { if (request.method === "net_version") return "ws server 2"; });
     httpServer1.addResponder(function (request) { if (request.method === "net_version") return "http server 1"; });
     httpServer2.addResponder(function (request) { if (request.method === "net_version") return "http server 2"; });
-
     done();
   });
   afterEach(function (done) {
@@ -83,7 +81,7 @@ describe("transport/transporter", function () {
     };
     new Transporter(configuration, messageHandler, false, function (error, transporter) {
       assert.isNull(error);
-      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] }, "ANY");
+      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
     });
   });
 
@@ -101,7 +99,7 @@ describe("transport/transporter", function () {
     };
     new Transporter(configuration, messageHandler, false, function (error, transporter) {
       assert.isNull(error);
-      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] }, "ANY");
+      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
     });
   });
 
@@ -119,7 +117,7 @@ describe("transport/transporter", function () {
     };
     new Transporter(configuration, messageHandler, false, function (error, transporter) {
       assert.isNull(error);
-      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] }, "ANY");
+      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
     });
   });
 });

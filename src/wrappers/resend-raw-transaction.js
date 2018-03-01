@@ -7,11 +7,10 @@ var signRawTransactionWithKey = require("../raw-transactions/sign-raw-transactio
 
 function resendRawTransaction(transaction, privateKey, gasPrice, gasLimit, callback) {
   return function (dispatch) {
-    var signedTransaction;
     var newTransaction = clone(transaction);
     if (gasPrice) newTransaction.gasPrice = speedomatic.hex(gasPrice);
     if (gasLimit) newTransaction.gasLimit = speedomatic.hex(gasLimit);
-    signedTransaction = signRawTransactionWithKey(newTransaction, privateKey);
+    var signedTransaction = signRawTransactionWithKey(newTransaction, privateKey);
     return dispatch(eth.sendRawTransaction(signedTransaction, callback));
   };
 }

@@ -3,7 +3,6 @@
 var HttpTransport = require("./http-transport");
 var IpcTransport = require("./ipc-transport");
 var Web3Transport = require("./web3-transport");
-var SyncTransport = require("./sync-transport");
 var WsTransport = require("./ws-transport");
 var checkIfComplete = require("./helpers/check-if-complete");
 var chooseTransport = require("./helpers/choose-transport");
@@ -20,7 +19,7 @@ var createArrayWithDefaultValue = require("../utils/create-array-with-default-va
  * @property {!number} connectionTimeout
  *
  * @param {!Configuration} configuration
- * @param {!function(?Error,?object):void} messageHandler - Function to call when a message from the blockchain is received or an unrecoverable error occurs while attempting to talk to the blockchain.  The error will, if possible, contain the original request. Note: for SYNC requests, the provided handler is guaranteed to be called before blockchainRpc returns.
+ * @param {!function(?Error,?object):void} messageHandler - Function to call when a message from the blockchain is received or an unrecoverable error occurs while attempting to talk to the blockchain.  The error will, if possible, contain the original request.
  * @param {!boolean} debugLogging - Whether to log debug information to the console as part of the connect process.
  * @param {!function(?Error, ?Transporter):void} callback - Called when the transporter is ready to be used or an error occurs while hooking it up.
  * @returns {void}
@@ -53,7 +52,6 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
     ipcTransports: createArrayWithDefaultValue(configuration.ipcAddresses.length, undefined),
     wsTransports: createArrayWithDefaultValue(configuration.wsAddresses.length, undefined),
     httpTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined),
-    syncTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined),
   };
 
   // set the internal state reasonable default values
@@ -62,7 +60,6 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
     httpTransport: null,
     wsTransport: null,
     ipcTransport: null,
-    syncTransport: null,
     debugLogging: Boolean(debugLogging),
     nextListenerToken: 1,
     reconnectListeners: {},
@@ -95,25 +92,17 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
       checkIfComplete(this, resultAggregator, callback);
     }.bind(this));
   }.bind(this));
-  configuration.httpAddresses.forEach(function (httpAddress, index) {
-    var syncTransport = new SyncTransport(httpAddress, configuration.connectionTimeout, messageHandler, false, function (error) {
-      resultAggregator.syncTransports[index] = (error !== null) ? null : syncTransport;
-      // TODO: propagate the error up to the caller for reporting
-      checkIfComplete(this, resultAggregator, callback);
-    }.bind(this));
-  }.bind(this));
 }
 
 /**
  * Submits a remote procedure call to the blockchain.
  *
  * @param {object} jso - RPC to make against the blockchain.  Assumed to already be validated.
- * @param {?string} requirements - ANY, SYNC or DUPLEX.  Will choose best available transport that meets the requirements.
  * @param {!boolean} debugLogging - Whether to log details about this request to the console.
  * @returns {void}
  */
-Transporter.prototype.blockchainRpc = function (jso, requirements, debugLogging) {
-  var chosenTransport = chooseTransport(this.internalState, requirements);
+Transporter.prototype.blockchainRpc = function (jso, debugLogging) {
+  var chosenTransport = chooseTransport(this.internalState);
   if (debugLogging) {
     console.log("Blockchain RPC to " + chosenTransport.address + " via " + chosenTransport.constructor.name + " with payload: " + JSON.stringify(jso));
   }

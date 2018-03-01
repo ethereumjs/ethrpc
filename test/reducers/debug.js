@@ -10,8 +10,6 @@ describe("reducers/debug", function () {
     connect: false,
     tx: false,
     broadcast: false,
-    nonce: false,
-    sync: false,
   };
   var test = function (t) {
     it(t.description, function () {
@@ -28,8 +26,6 @@ describe("reducers/debug", function () {
           connect: true,
           tx: true,
           broadcast: true,
-          nonce: false,
-          sync: false,
         },
       },
       assertions: function (state) {
@@ -37,8 +33,6 @@ describe("reducers/debug", function () {
           connect: true,
           tx: true,
           broadcast: true,
-          nonce: false,
-          sync: false,
         });
       },
     });
@@ -50,8 +44,6 @@ describe("reducers/debug", function () {
         connect: true,
         tx: true,
         broadcast: true,
-        nonce: false,
-        sync: false,
       },
       action: {
         type: "RESET_DEBUG_OPTIONS",

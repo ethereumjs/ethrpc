@@ -4,8 +4,6 @@ module.exports.debug = {
   connect: false,
   tx: false,
   broadcast: false,
-  nonce: false,
-  sync: false,
 };
 module.exports.configuration = {
   httpAddresses: [],
