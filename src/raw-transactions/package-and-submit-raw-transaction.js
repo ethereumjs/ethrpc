@@ -4,7 +4,6 @@ var eth_sendRawTransaction = require("../wrappers/eth").sendRawTransaction;
 var packageAndSignRawTransaction = require("./package-and-sign-raw-transaction");
 var handleRawTransactionError = require("./handle-raw-transaction-error");
 var RPCError = require("../errors/rpc-error");
-var isFunction = require("../utils/is-function");
 var errors = require("../errors/codes");
 var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
 
@@ -23,11 +22,12 @@ function packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, ac
       if (err) return callback(err);
       function handleRawTransactionResponse(err, response) {
         if (getState().debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
-        if (!response) return callback(new RPCError(errors.RAW_TRANSACTION_ERROR));
         if (err) {
-          var handledError = dispatch(handleRawTransactionError(err));
-          if (handledError != null) return callback(new RPCError(handledError));
+          var handledError = handleRawTransactionError(err);
+          if (handledError != null) return callback(handledError);
           dispatch(packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, accountType, callback));
+        } else if (response == null) {
+          callback(new RPCError(errors.RAW_TRANSACTION_ERROR));
         } else {
           callback(null, response);
         }

@@ -3,7 +3,6 @@
 var assign = require("lodash.assign");
 var eth = require("../wrappers/eth");
 var verifyRawTransactionNonce = require("./verify-raw-transaction-nonce");
-var isFunction = require("../utils/is-function");
 
 /**
  * Use the number of transactions from this account to set the nonce.

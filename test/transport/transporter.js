@@ -47,7 +47,7 @@ describe("transport/transporter", function () {
       connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) { assert.fail("expected no messages"); };
-    new Transporter(configuration, messageHandler, false, false, function (error) {
+    new Transporter(configuration, messageHandler, false, function (error) {
       assert.typeOf(error, "Error");
       assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any tranpsort (Web3, HTTP, WS, IPC).");
       done();
@@ -62,7 +62,7 @@ describe("transport/transporter", function () {
       connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) { assert.fail("expected no messages"); };
-    new Transporter(configuration, messageHandler, false, false, function (error) {
+    new Transporter(configuration, messageHandler, false, function (error) {
       assert.typeOf(error, "Error");
       assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any tranpsort (Web3, HTTP, WS, IPC).");
       done();
@@ -81,7 +81,7 @@ describe("transport/transporter", function () {
       assert.deepEqual(message, { jsonrpc: "2.0", id: 0, result: "http server 1" });
       done();
     };
-    new Transporter(configuration, messageHandler, false, false, function (error, transporter) {
+    new Transporter(configuration, messageHandler, false, function (error, transporter) {
       assert.isNull(error);
       transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] }, "ANY");
     });
@@ -99,7 +99,7 @@ describe("transport/transporter", function () {
       assert.deepEqual(message, { jsonrpc: "2.0", id: 0, result: "ws server 1" });
       done();
     };
-    new Transporter(configuration, messageHandler, false, false, function (error, transporter) {
+    new Transporter(configuration, messageHandler, false, function (error, transporter) {
       assert.isNull(error);
       transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] }, "ANY");
     });
@@ -117,7 +117,7 @@ describe("transport/transporter", function () {
       assert.deepEqual(message, { jsonrpc: "2.0", id: 0, result: "http server 2" });
       done();
     };
-    new Transporter(configuration, messageHandler, false, false, function (error, transporter) {
+    new Transporter(configuration, messageHandler, false, function (error, transporter) {
       assert.isNull(error);
       transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] }, "ANY");
     });

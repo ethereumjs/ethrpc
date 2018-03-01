@@ -3,14 +3,12 @@
 "use strict";
 
 var assert = require("chai").assert;
-var mockStore = require("../mock-store");
 var handleRawTransactionError = require("../../src/raw-transactions/handle-raw-transaction-error");
 
 describe("raw-transactions/handle-raw-transaction-error", function () {
   var test = function (t) {
     it(t.description, function () {
-      var store = mockStore(t.state || {});
-      t.assertions(store.dispatch(handleRawTransactionError(t.params.rawTransactionResponse)), store.getState());
+      t.assertions(handleRawTransactionError(t.params.rawTransactionResponse));
     });
   };
   test({
@@ -18,28 +16,8 @@ describe("raw-transactions/handle-raw-transaction-error", function () {
     params: {
       rawTransactionResponse: { message: "0xdeadbeef" },
     },
-    state: {
-      highestNonce: 7,
-    },
-    assertions: function (output, state) {
+    assertions: function (output) {
       assert.deepEqual(output, { message: "0xdeadbeef" });
-      assert.strictEqual(state.highestNonce, 7);
-    },
-  });
-  test({
-    description: "RLP encoding error message",
-    params: {
-      rawTransactionResponse: { message: "rlp encoding error" },
-    },
-    state: {
-      highestNonce: 7,
-    },
-    assertions: function (output, state) {
-      assert.deepEqual(output, {
-        error: 504,
-        message: "RLP encoding error",
-      });
-      assert.strictEqual(state.highestNonce, 7);
     },
   });
   test({
@@ -47,12 +25,8 @@ describe("raw-transactions/handle-raw-transaction-error", function () {
     params: {
       rawTransactionResponse: { message: "Nonce too low" },
     },
-    state: {
-      highestNonce: 7,
-    },
-    assertions: function (output, state) {
+    assertions: function (output) {
       assert.isNull(output);
-      assert.strictEqual(state.highestNonce, 7);
     },
   });
 });

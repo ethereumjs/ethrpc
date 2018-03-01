@@ -64,8 +64,9 @@ describe("tests that only work against stub server", function () {
             if (request.method === "net_version") return "apple";
           });
           helpers.rpcConnect(transportType, transportAddress, function () {
-            rpc.version(function (errorOrVersion) {
-              assert.strictEqual(errorOrVersion, "apple");
+            rpc.version(function (err, version) {
+              assert.isNull(err);
+              assert.strictEqual(version, "apple");
               done();
             });
           });
@@ -78,12 +79,14 @@ describe("tests that only work against stub server", function () {
               if (request.method === "net_version") return "apple";
             });
             helpers.rpcConnect(transportType, transportAddress, function () {
-              rpc.version(function (errorOrVersion) {
-                assert.strictEqual(errorOrVersion, "apple");
+              rpc.version(function (err, version) {
+                assert.isNull(err);
+                assert.strictEqual(version, "apple");
                 stubRpcServer.destroy(function () {
                   stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
-                  rpc.version(function (errorOrVersion) {
-                    assert.strictEqual(errorOrVersion, "default stub rpc server version");
+                  rpc.version(function (err, version) {
+                    assert.isNull(err);
+                    assert.strictEqual(version, "default stub rpc server version");
                     done();
                   });
                 });
@@ -93,19 +96,24 @@ describe("tests that only work against stub server", function () {
           it("starts connected > uses connection > loses connection > uses connection > reconnects > uses connection (brittle)", function (done) {
             stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
             helpers.rpcConnect(transportType, transportAddress, function () {
-              rpc.version(function (errorOrVersion) {
-                assert.strictEqual(errorOrVersion, "apple");
+              rpc.version(function (err, version) {
+                assert.isNull(err);
+                assert.strictEqual(version, "apple");
                 stubRpcServer.destroy(function () {
                   var doneCount = 0;
-                  function maybeDone() { if (++doneCount === 2) done(); }
-                  rpc.version(function (errorOrVersion) {
-                    assert.strictEqual(errorOrVersion, "banana");
+                  function maybeDone() {
+                    if (++doneCount === 2) done();
+                  }
+                  rpc.version(function (err, version) {
+                    assert.isNull(err);
+                    assert.strictEqual(version, "banana");
                     maybeDone();
                   });
                   stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
                   stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "banana"; });
-                  rpc.version(function (errorOrVersion) {
-                    assert.strictEqual(errorOrVersion, "banana");
+                  rpc.version(function (err, version) {
+                    assert.isNull(err);
+                    assert.strictEqual(version, "banana");
                     maybeDone();
                   });
                 });
@@ -129,8 +137,9 @@ describe("tests that only work against stub server", function () {
         it("net_version", function (done) {
           server.addExpectation(function (jso) { return jso.method === "net_version"; });
           server.addResponder(function (jso) { if (jso.method === "net_version") return "apple"; });
-          rpc.raw("net_version", null, function (resultOrError) {
-            assert.strictEqual(resultOrError, "apple");
+          rpc.raw("net_version", null, function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "apple");
             server.assertExpectations();
             done();
           });
@@ -151,8 +160,9 @@ describe("tests that only work against stub server", function () {
         it("clientVersion", function (done) {
           server.addExpectation(function (jso) { return jso.method === "web3_clientVersion"; });
           server.addResponder(function (jso) { if (jso.method === "web3_clientVersion") return "apple"; });
-          rpc.clientVersion(function (resultOrError) {
-            assert.strictEqual(resultOrError, "apple");
+          rpc.clientVersion(function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "apple");
             server.assertExpectations();
             done();
           });
@@ -180,8 +190,9 @@ describe("tests that only work against stub server", function () {
         it("listening", function (done) {
           server.addExpectation(function (jso) { return jso.method === "net_listening"; });
           server.addResponder(function (jso) { if (jso.method === "net_listening") return true; });
-          rpc.listening(function (resultOrError) {
-            assert.isTrue(resultOrError);
+          rpc.listening(function (err, result) {
+            assert.isNull(err);
+            assert.isTrue(result);
             server.assertExpectations();
             done();
           });
@@ -190,8 +201,9 @@ describe("tests that only work against stub server", function () {
         it("peerCount", function (done) {
           server.addExpectation(function (jso) { return jso.method === "net_peerCount"; });
           server.addResponder(function (jso) { if (jso.method === "net_peerCount") return "0x2"; });
-          rpc.peerCount(function (resultOrError) {
-            assert.strictEqual(resultOrError, "0x2");
+          rpc.peerCount(function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "0x2");
             server.assertExpectations();
             done();
           });
@@ -200,8 +212,9 @@ describe("tests that only work against stub server", function () {
         it("version", function (done) {
           server.addExpectation(function (jso) { return jso.method === "net_version"; });
           server.addResponder(function (jso) { if (jso.method === "net_version") return "apple"; });
-          rpc.version(function (resultOrError) {
-            assert.strictEqual(resultOrError, "apple");
+          rpc.version(function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "apple");
             server.assertExpectations();
             done();
           });
@@ -210,8 +223,9 @@ describe("tests that only work against stub server", function () {
         it("netVersion", function (done) {
           server.addExpectation(function (jso) { return jso.method === "net_version"; });
           server.addResponder(function (jso) { if (jso.method === "net_version") return "apple"; });
-          rpc.netVersion(function (resultOrError) {
-            assert.strictEqual(resultOrError, "apple");
+          rpc.netVersion(function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "apple");
             server.assertExpectations();
             done();
           });
@@ -232,8 +246,9 @@ describe("tests that only work against stub server", function () {
         it("accounts", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_accounts"; });
           server.addResponder(function (jso) { if (jso.method === "eth_accounts") return "0x407d73d8a49eeb85d32cf465507dd71d507100c1"; });
-          rpc.accounts(function (resultOrError) {
-            assert.strictEqual(resultOrError, "0x407d73d8a49eeb85d32cf465507dd71d507100c1");
+          rpc.accounts(function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "0x407d73d8a49eeb85d32cf465507dd71d507100c1");
             server.assertExpectations();
             done();
           });
@@ -242,8 +257,9 @@ describe("tests that only work against stub server", function () {
         it("blockNumber", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_blockNumber"; });
           server.addResponder(function (jso) { if (jso.method === "eth_blockNumber") return "0x4b7"; });
-          rpc.blockNumber(function (resultOrError) {
-            assert.strictEqual(resultOrError, "0x4b7");
+          rpc.blockNumber(function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "0x4b7");
             server.assertExpectations();
             done();
           });
@@ -258,8 +274,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === "latest";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x"; });
-          rpc.call({ from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1", to: "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b", value: 100000 }, function (resultOrError) {
-            assert.strictEqual(resultOrError, "0x");
+          rpc.call({ from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1", to: "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b", value: 100000 }, function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "0x");
             server.assertExpectations();
             done();
           });
@@ -268,8 +285,9 @@ describe("tests that only work against stub server", function () {
         it("coinbase", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_coinbase"; });
           server.addResponder(function (jso) { if (jso.method === "eth_coinbase") return "0x407d73d8a49eeb85d32cf465507dd71d507100c1"; });
-          rpc.coinbase(function (resultOrError) {
-            assert.strictEqual(resultOrError, "0x407d73d8a49eeb85d32cf465507dd71d507100c1");
+          rpc.coinbase(function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "0x407d73d8a49eeb85d32cf465507dd71d507100c1");
             server.assertExpectations();
             done();
           });
@@ -284,8 +302,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === "latest";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_estimateGas") return "0x5208"; });
-          rpc.estimateGas({ from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1", to: "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b", value: "0x186a0" }, function (resultOrError) {
-            assert.strictEqual(resultOrError, "0x5208");
+          rpc.estimateGas({ from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1", to: "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b", value: "0x186a0" }, function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "0x5208");
             server.assertExpectations();
             done();
           });
@@ -294,8 +313,9 @@ describe("tests that only work against stub server", function () {
         it("gasPrice", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_gasPrice"; });
           server.addResponder(function (jso) { if (jso.method === "eth_gasPrice") return "0x9184e72a000"; });
-          rpc.gasPrice(function (resultOrError) {
-            assert.strictEqual(resultOrError, "0x9184e72a000");
+          rpc.gasPrice(function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "0x9184e72a000");
             server.assertExpectations();
             done();
           });
@@ -309,8 +329,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === "latest";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getBalance") return "0x0234c8a3397aab58"; });
-          rpc.getBalance("0x407d73d8a49eeb85d32cf465507dd71d507100c1", null, function (resultOrError) {
-            assert.strictEqual(resultOrError, "0x0234c8a3397aab58");
+          rpc.getBalance("0x407d73d8a49eeb85d32cf465507dd71d507100c1", null, function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "0x0234c8a3397aab58");
             server.assertExpectations();
             done();
           });
@@ -335,8 +356,7 @@ describe("tests that only work against stub server", function () {
             stateRoot: "0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad",
             timestamp: "0x5845709c",
             totalDifficulty: "0xac18c72ebbc",
-            transactions:
-            [{
+            transactions: [{
               blockHash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
               blockNumber: "0x186a0",
               from: "0x687422eea2cb73b5d3e242ba5456b782919afc85",
@@ -362,8 +382,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === true;
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getBlockByHash") return expectedBlock; });
-          rpc.getBlockByHash("0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918", undefined, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedBlock);
+          rpc.getBlockByHash("0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918", undefined, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedBlock);
             server.assertExpectations();
             done();
           });
@@ -399,8 +420,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === false;
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getBlockByNumber") return expectedBlock; });
-          rpc.getBlockByNumber(100000, false, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedBlock);
+          rpc.getBlockByNumber(100000, false, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedBlock);
             server.assertExpectations();
             done();
           });
@@ -433,14 +455,13 @@ describe("tests that only work against stub server", function () {
               && jso.params[0] === "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getTransactionByHash") return expectedResult; });
-          rpc.getTransactionByHash("0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a", function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.getTransactionByHash("0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a", function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
         });
-
-        // TODO: getCompilers
 
         it("getFilterChanges", function (done) {
           var expectedResult = {
@@ -465,8 +486,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[0] === "0x16";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getFilterChanges") return expectedResult; });
-          rpc.getFilterChanges(22, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.getFilterChanges(22, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -495,8 +517,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[0] === "0x16";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getFilterLogs") return expectedResult; });
-          rpc.getFilterLogs(22, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.getFilterLogs(22, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -525,8 +548,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[0] === "0x16";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return expectedResult; });
-          rpc.getLogs(22, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.getLogs(22, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -541,8 +565,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[2] === "latest";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getStorageAt") return "0x0000000000000000000000000000000000000000000000000000000000000003"; });
-          rpc.getStorageAt("0x407d73d8a49eeb85d32cf465507dd71d507100c1", 2, null, function (resultOrError) {
-            assert.strictEqual(resultOrError, "0x0000000000000000000000000000000000000000000000000000000000000003");
+          rpc.getStorageAt("0x407d73d8a49eeb85d32cf465507dd71d507100c1", 2, null, function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "0x0000000000000000000000000000000000000000000000000000000000000003");
             server.assertExpectations();
             done();
           });
@@ -572,8 +597,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[0] === "0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getTransactionByHash") return expectedTransaction; });
-          rpc.getTransactionByHash("0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238", function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedTransaction);
+          rpc.getTransactionByHash("0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238", function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedTransaction);
             server.assertExpectations();
             done();
           });
@@ -588,8 +614,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === "latest";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getTransactionCount") return expectedResult; });
-          rpc.getTransactionCount("0x407d73d8a49eeb85d32cf465507dd71d507100c1", function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.getTransactionCount("0x407d73d8a49eeb85d32cf465507dd71d507100c1", function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -604,7 +631,8 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === "pending";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getTransactionCount") return expectedResult; });
-          rpc.getPendingTransactionCount("0x407d73d8a49eeb85d32cf465507dd71d507100c1", function (resultOrError) {
+          rpc.getPendingTransactionCount("0x407d73d8a49eeb85d32cf465507dd71d507100c1", function (err, result) {
+            assert.isNull(err);
             assert.deepEqual(resultOrError, expectedResult);
             server.assertExpectations();
             done();
@@ -632,8 +660,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[0] === "0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getTransactionReceipt") return expectedResult; });
-          rpc.getTransactionReceipt("0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a", function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.getTransactionReceipt("0x7c85585eaf277bf4933f9702930263a451d62fba664be9c69f5cf891ba226e4a", function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -658,8 +687,7 @@ describe("tests that only work against stub server", function () {
             stateRoot: "0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad",
             timestamp: "0x5845709c",
             totalDifficulty: "0xac18c72ebbc",
-            transactions:
-            [{
+            transactions: [{
               blockHash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
               blockNumber: "0x186a0",
               from: "0x687422eea2cb73b5d3e242ba5456b782919afc85",
@@ -685,8 +713,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === "0x0";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getUncleByBlockHashAndIndex") return expectedResult; });
-          rpc.getUncleByBlockHashAndIndex("0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b", 0, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.getUncleByBlockHashAndIndex("0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b", 0, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -711,8 +740,7 @@ describe("tests that only work against stub server", function () {
             stateRoot: "0x69d017196eccb1d9f1ba578a1f00d7153226ed6da3843f181da43743fd79e2ad",
             timestamp: "0x5845709c",
             totalDifficulty: "0xac18c72ebbc",
-            transactions:
-            [{
+            transactions: [{
               blockHash: "0xaa5550e8b9ce48e5f524bf680672f5eed6c60cfdf0bbe476613850a85d25f918",
               blockNumber: "0x186a0",
               from: "0x687422eea2cb73b5d3e242ba5456b782919afc85",
@@ -738,8 +766,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === "0x0";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getUncleByBlockNumberAndIndex") return expectedResult; });
-          rpc.getUncleByBlockNumberAndIndex(668, 0, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.getUncleByBlockNumberAndIndex(668, 0, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -753,8 +782,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[0] === "0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getUncleCountByBlockHash") return expectedResult; });
-          rpc.getUncleCountByBlockHash("0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238", function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.getUncleCountByBlockHash("0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238", function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -768,8 +798,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[0] === "0xe8";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_getUncleCountByBlockNumber") return expectedResult; });
-          rpc.getUncleCountByBlockNumber(232, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.getUncleCountByBlockNumber(232, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -780,8 +811,9 @@ describe("tests that only work against stub server", function () {
         it("hashrate", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_hashrate"; });
           server.addResponder(function (jso) { if (jso.method === "eth_hashrate") return "0x38a"; });
-          rpc.hashrate(function (resultOrError) {
-            assert.strictEqual(resultOrError, "0x38a");
+          rpc.hashrate(function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "0x38a");
             server.assertExpectations();
             done();
           });
@@ -790,8 +822,9 @@ describe("tests that only work against stub server", function () {
         it("mining", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_mining"; });
           server.addResponder(function (jso) { if (jso.method === "eth_mining") return true; });
-          rpc.mining(function (resultOrError) {
-            assert.isTrue(resultOrError);
+          rpc.mining(function (err, result) {
+            assert.isNull(err);
+            assert.isTrue(result);
             server.assertExpectations();
             done();
           });
@@ -804,8 +837,9 @@ describe("tests that only work against stub server", function () {
               && jso.params.length === 0;
           });
           server.addResponder(function (jso) { if (jso.method === "eth_newBlockFilter") return expectedResult; });
-          rpc.newBlockFilter(function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.newBlockFilter(function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -824,8 +858,15 @@ describe("tests that only work against stub server", function () {
               && jso.params[0].limit === "0x5";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_newFilter") return expectedResult; });
-          rpc.newFilter({ fromBlock: 1, toBlock: null, address: "0x8888f1f195afa192cfee860698584c030f4c9db1", topics: ["0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b", null], limit: 5 }, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.newFilter({
+            fromBlock: 1,
+            toBlock: null,
+            address: "0x8888f1f195afa192cfee860698584c030f4c9db1",
+            topics: ["0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b", null],
+            limit: 5,
+          }, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -838,8 +879,9 @@ describe("tests that only work against stub server", function () {
               && jso.params.length === 0;
           });
           server.addResponder(function (jso) { if (jso.method === "eth_newPendingTransactionFilter") return expectedResult; });
-          rpc.newPendingTransactionFilter(function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.newPendingTransactionFilter(function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -848,8 +890,9 @@ describe("tests that only work against stub server", function () {
         it("protocolVersion", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_protocolVersion"; });
           server.addResponder(function (jso) { if (jso.method === "eth_protocolVersion") return "apple"; });
-          rpc.protocolVersion(function (resultOrError) {
-            assert.strictEqual(resultOrError, "apple");
+          rpc.protocolVersion(function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, "apple");
             server.assertExpectations();
             done();
           });
@@ -863,8 +906,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[0] === "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_sendRawTransaction") return expectedResult; });
-          rpc.sendRawTransaction("d46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675", function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.sendRawTransaction("d46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675", function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -892,8 +936,9 @@ describe("tests that only work against stub server", function () {
             value: 2441406250,
             data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
             nonce: 35,
-          }, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          }, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -908,8 +953,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[1] === "0x5363686f6f6c627573";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_sign") return expectedResult; });
-          rpc.sign("0xd1ade25ccd3d550a7eb532ac759cac7be09c2719", "0x5363686f6f6c627573", function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.sign("0xd1ade25ccd3d550a7eb532ac759cac7be09c2719", "0x5363686f6f6c627573", function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -952,8 +998,9 @@ describe("tests that only work against stub server", function () {
             value: 520464,
             data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
             nonce: 35,
-          }, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          }, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -972,8 +1019,9 @@ describe("tests that only work against stub server", function () {
               && typeof jso.params[1] === "object" && Object.keys(jso.params[1]).length === 0;
           });
           server.addResponder(function (jso) { if (jso.method === "eth_subscribe") return expectedResult; });
-          rpc.subscribe("newHeads", null, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.subscribe("newHeads", null, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -986,8 +1034,9 @@ describe("tests that only work against stub server", function () {
               return { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" };
             }
           });
-          rpc.syncing(function (resultOrError) {
-            assert.deepEqual(resultOrError, { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" });
+          rpc.syncing(function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, { startingBlock: "0x384", currentBlock: "0x386", highestBlock: "0x454" });
             server.assertExpectations();
             done();
           });
@@ -996,8 +1045,9 @@ describe("tests that only work against stub server", function () {
         it("syncing (false)", function (done) {
           server.addExpectation(function (jso) { return jso.method === "eth_syncing"; });
           server.addResponder(function (jso) { if (jso.method === "eth_syncing") return false; });
-          rpc.syncing(function (resultOrError) {
-            assert.deepEqual(resultOrError, false);
+          rpc.syncing(function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, false);
             server.assertExpectations();
             done();
           });
@@ -1011,8 +1061,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[0] === "0xb";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_uninstallFilter") return expectedResult; });
-          rpc.uninstallFilter(11, function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.uninstallFilter(11, function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -1026,8 +1077,9 @@ describe("tests that only work against stub server", function () {
               && jso.params[0] === "0xcd0c3e8af590364c09d0fa6a1210faf5";
           });
           server.addResponder(function (jso) { if (jso.method === "eth_unsubscribe") return expectedResult; });
-          rpc.unsubscribe("0xcd0c3e8af590364c09d0fa6a1210faf5", function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.unsubscribe("0xcd0c3e8af590364c09d0fa6a1210faf5", function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -1055,8 +1107,9 @@ describe("tests that only work against stub server", function () {
               return expectedResult;
             }
           });
-          rpc.shh.newIdentity(function (resultOrError) {
-            assert.deepEqual(resultOrError, expectedResult);
+          rpc.shh.newIdentity(function (err, result) {
+            assert.isNull(err);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -1076,8 +1129,9 @@ describe("tests that only work against stub server", function () {
 
         it("calls callback with error on response with id", function (done) {
           server.addResponder(function (jso) { if (jso.method === "net_version") return new Error("error response"); });
-          rpc.version(function (errorOrResponse) {
-            assert.strictEqual(errorOrResponse.message, "error response");
+          rpc.version(function (err, result) {
+            assert.strictEqual(err.message, "error response");
+            assert.isUndefined(result);
             done();
           });
         });
@@ -1098,7 +1152,6 @@ describe("tests that only work against stub server", function () {
         });
 
         it("callContractFunction no parameters", function (done) {
-          var expectedObject = {};
           var payload = {
             name: "getBranches",
             returns: "bytes32[]",
@@ -1106,17 +1159,6 @@ describe("tests that only work against stub server", function () {
             to: "0x482c57abdce592b39434e3f619ffc3db62ab6d01",
             params: [],
           };
-          function callback(wrappedResultOrError) {
-            assert.strictEqual(wrappedResultOrError.resultOrError[0], "0x0000000000000000000000000000000000000000000000000000000000000001");
-            assert.strictEqual(wrappedResultOrError.resultOrError[1], "0x0000000000000000000000000000000000000000000000000000000000000064");
-            assert.strictEqual(wrappedResultOrError.resultOrError[2], "0x00000000000000000000000000000000000000000000000000000000000186a0");
-            server.assertExpectations();
-            done();
-          }
-          function wrapper(resultOrError, object) {
-            assert.strictEqual(object, expectedObject);
-            return { resultOrError: resultOrError };
-          }
           server.addExpectation(function (jso) {
             return jso.method === "eth_call"
               && jso.params.length === 2
@@ -1133,15 +1175,21 @@ describe("tests that only work against stub server", function () {
               return "0x" + ethereumjsAbi.rawEncode(["uint256[]"], [[1, 100, 100000]]).toString("hex");
             }
           });
-          rpc.callContractFunction(payload, callback, wrapper, expectedObject);
+          rpc.callContractFunction(payload, function (err, result) {
+            assert.strictEqual(result[0], "0x0000000000000000000000000000000000000000000000000000000000000001");
+            assert.strictEqual(result[1], "0x0000000000000000000000000000000000000000000000000000000000000064");
+            assert.strictEqual(result[2], "0x00000000000000000000000000000000000000000000000000000000000186a0");
+            server.assertExpectations();
+            done();
+          });
         });
 
         it("transact pool not accepting", function (done) {
           function onSent() { }
           function onSuccess() { assert.isFalse(true, "onSuccess should not have been called"); }
-          function onFailure(error) {
-            assert.strictEqual(error.error, 413);
-            assert.strictEqual(error.hash, "0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf" + "0006");
+          function onFailure(err) {
+            assert.strictEqual(err.error, 413);
+            assert.strictEqual(err.hash, "0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf" + "0006");
             done();
           }
           server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x12"; });
@@ -1155,7 +1203,9 @@ describe("tests that only work against stub server", function () {
             assert.strictEqual(result.callReturn, "18");
             done();
           }
-          function onFailure(error) { assert.isFalse(true, "onFailure should not have been called."); }
+          function onFailure(error) {
+            assert.isFalse(true, "onFailure should not have been called.");
+          }
           server.addResponder(function (jso) {
             if (jso.method === "eth_call") return "0x12";
           });
@@ -1168,7 +1218,9 @@ describe("tests that only work against stub server", function () {
             assert.strictEqual(result, "0x12345");
             done();
           }
-          function onFailure(error) { assert.isFalse(true, "onFailure should not have been called: " + error); }
+          function onFailure(error) {
+            assert.isFalse(true, "onFailure should not have been called: " + error);
+          }
           server.addResponder(function (jso) {
             if (jso.method === "eth_estimateGas") return "0x12345";
           });
@@ -1191,8 +1243,9 @@ describe("tests that only work against stub server", function () {
               return new ErrorWithCode("account is locked", -32000);
             }
           });
-          rpc.isUnlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
-            assert.strictEqual(resultOrError, false);
+          rpc.isUnlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, false);
             done();
           });
         });
@@ -1203,8 +1256,9 @@ describe("tests that only work against stub server", function () {
               return "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b";
             }
           });
-          rpc.isUnlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (resultOrError) {
-            assert.strictEqual(resultOrError, true);
+          rpc.isUnlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, true);
             done();
           });
         });
@@ -1214,8 +1268,8 @@ describe("tests that only work against stub server", function () {
           constants.BLOCK_POLL_INTERVAL = 1;
           server.addExpectations(3, function (jso) { return jso.method === "eth_blockNumber"; });
           server.addResponder(function (jso) { if (jso.method === "eth_blockNumber") return "0x" + (currentBlock++).toString(16); });
-          rpc.waitForNextBlocks(2, null, function (resultOrError) {
-            assert.strictEqual(resultOrError, 7);
+          rpc.waitForNextBlocks(2, null, function (err, result) {
+            assert.strictEqual(result, 7);
             server.assertExpectations();
             constants.BLOCK_POLL_INTERVAL = 30000;
             done();

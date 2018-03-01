@@ -15,6 +15,10 @@
     "error": 404,
     "message": "transaction not found"
   },
+  "BLOCK_NOT_FOUND": {
+    "error": 405,
+    "message": "block not found"
+  },
   "NULL_CALL_RETURN": {
     "error": 406,
     "message": "expected contract call to return value, received null"
@@ -50,10 +54,6 @@
   "RAW_TRANSACTION_ERROR": {
     "error": 503,
     "message": "error sending client-side transaction"
-  },
-  "RLP_ENCODING_ERROR": {
-    "error": 504,
-    "message": "RLP encoding error"
   },
   "TRANSACTION_RECEIPT_NOT_FOUND": {
     "error": 505,

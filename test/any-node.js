@@ -21,7 +21,8 @@ describe("tests that work against any node (test or live)", function () {
       });
       describe("version", function () {
         it("returns a version string", function (done) {
-          rpc.version(function (version) {
+          rpc.version(function (err, version) {
+            assert.isNull(err);
             assert.strictEqual(typeof version, "string");
             done();
           });

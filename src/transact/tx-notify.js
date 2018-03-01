@@ -5,13 +5,14 @@ var isFunction = require("../utils/is-function");
 
 function txNotify(txHash, callback) {
   return function (dispatch, getState) {
-    eth_getTransaction(txHash, function (tx) {
-      if (tx) return callback(null, tx);
+    dispatch(eth_getTransaction(txHash, function (err, transaction) {
+      if (err) return callback(err);
+      if (transaction) return callback(null, transaction);
       dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
       if (getState().debug.broadcast) console.log(" *** Re-submitting transaction:", txHash);
       dispatch({ type: "TRANSACTION_RESUBMITTED", hash: txHash });
       return callback(null, null);
-    });
+    }));
   };
 }
 

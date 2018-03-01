@@ -22,8 +22,8 @@ function signRawTransaction(packaged, privateKeyOrSigner, accountType, callback)
     } else if (accountType === ACCOUNT_TYPES.LEDGER) {
       privateKeyOrSigner(immutableDelete(packaged, "returns"), callback);
     } else if (accountType === ACCOUNT_TYPES.U_PORT) {
-      privateKeyOrSigner(immutableDelete(packaged, "returns")).then(function (txHash) {
-        callback(null, txHash);
+      privateKeyOrSigner(immutableDelete(packaged, "returns")).then(function (transactionHash) {
+        callback(null, transactionHash);
       }).catch(callback);
     } else {
       callback(new RPCError(errors.UNKNOWN_ACCOUNT_TYPE));

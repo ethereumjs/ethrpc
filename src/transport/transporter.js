@@ -21,12 +21,11 @@ var createArrayWithDefaultValue = require("../utils/create-array-with-default-va
  *
  * @param {!Configuration} configuration
  * @param {!function(?Error,?object):void} messageHandler - Function to call when a message from the blockchain is received or an unrecoverable error occurs while attempting to talk to the blockchain.  The error will, if possible, contain the original request. Note: for SYNC requests, the provided handler is guaranteed to be called before blockchainRpc returns.
- * @param {!boolean} syncOnly - Whether or not to connect synchronously.  If true, only supports HTTP address in configuration.
  * @param {!boolean} debugLogging - Whether to log debug information to the console as part of the connect process.
  * @param {!function(?Error, ?Transporter):void} callback - Called when the transporter is ready to be used or an error occurs while hooking it up.
  * @returns {void}
  */
-function Transporter(configuration, messageHandler, syncOnly, debugLogging, callback) {
+function Transporter(configuration, messageHandler, debugLogging, callback) {
   var resultAggregator, web3Transport;
 
   // validate configuration
@@ -69,30 +68,6 @@ function Transporter(configuration, messageHandler, syncOnly, debugLogging, call
     reconnectListeners: {},
     disconnectListeners: {},
   };
-
-  if (syncOnly) {
-    resultAggregator.web3Transports = [];
-    if (configuration.wsAddresses.length !== 0) {
-      throw new Error("Sync connect does not support any addresses other than HTTP.");
-    }
-    if (configuration.ipcAddresses.length !== 0) {
-      throw new Error("Sync connect does not support any addresses other than HTTP.");
-    }
-    configuration.httpAddresses.forEach(function (httpAddress, index) {
-      new SyncTransport(httpAddress, configuration.connectionTimeout, messageHandler, true, function (error, syncTransport) {
-        resultAggregator.syncTransports[index] = (error !== null) ? null : syncTransport;
-        // TODO: propagate the error up to the caller for reporting
-        checkIfComplete(this, resultAggregator, callback);
-        // instantiate an HttpTransport with all the same parameters, we don't need to worry about validating the connection since that is already done by now.
-        // we want an HTTP transport because there are some necessarily async operations that need an async transport like background polling for blocks
-        configuration.httpAddresses.forEach(function (httpAddress, index) {
-          resultAggregator.httpTransports[index] = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function () { });
-          checkIfComplete(this, resultAggregator, callback);
-        }.bind(this));
-      }.bind(this));
-    }.bind(this));
-    return;
-  }
 
   // initiate connections to all provided addresses, as each completes it will check to see if everything is done
   web3Transport = new Web3Transport(messageHandler, function (error) {

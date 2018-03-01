@@ -2,7 +2,6 @@
 
 var assign = require("lodash.assign");
 var eth_gasPrice = require("../wrappers/eth").gasPrice;
-var isFunction = require("../utils/is-function");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
 
