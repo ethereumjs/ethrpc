@@ -1,6 +1,5 @@
 "use strict";
 
-var assign = require("lodash.assign");
 var speedomatic = require("speedomatic");
 var immutableDelete = require("immutable-delete");
 var packageAndSubmitRawTransaction = require("../raw-transactions/package-and-submit-raw-transaction");

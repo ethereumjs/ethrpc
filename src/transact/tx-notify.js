@@ -1,7 +1,6 @@
 "use strict";
 
 var eth_getTransaction = require("../wrappers/eth").getTransaction;
-var isFunction = require("../utils/is-function");
 
 function txNotify(txHash, callback) {
   return function (dispatch, getState) {

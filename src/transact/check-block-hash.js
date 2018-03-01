@@ -2,7 +2,6 @@
 
 var checkConfirmations = require("../transact/check-confirmations");
 var waitForNextPoll = require("../transact/wait-for-next-poll");
-var isFunction = require("../utils/is-function");
 var internalState = require("../internal-state");
 
 function checkBlockHash(tx, numConfirmations, callback) {

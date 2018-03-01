@@ -3,7 +3,6 @@
 "use strict";
 
 var assert = require("chai").assert;
-var isFunction = require("../../src/utils/is-function");
 var proxyquire = require("proxyquire");
 var mockStore = require("../mock-store");
 
@@ -15,7 +14,7 @@ describe("raw-transactions/set-raw-transaction-gas-price", function () {
         "../wrappers/eth": {
           gasPrice: function (params, callback) {
             return function () {
-              callback(t.blockchain.gasPrice);
+              callback(null, t.blockchain.gasPrice);
             };
           },
         },
@@ -28,7 +27,8 @@ describe("raw-transactions/set-raw-transaction-gas-price", function () {
     params: {
       packaged: {},
       address: "0xb0b",
-      callback: function (packaged) {
+      callback: function (err, packaged) {
+        assert.isNull(err);
         assert.deepEqual(packaged, {gasPrice: "0x4a817c800"});
       },
     },
@@ -41,7 +41,8 @@ describe("raw-transactions/set-raw-transaction-gas-price", function () {
     params: {
       packaged: {gasPrice: "0x1"},
       address: "0xb0b",
-      callback: function (packaged) {
+      callback: function (err, packaged) {
+        assert.isNull(err);
         assert.deepEqual(packaged, {gasPrice: "0x1"});
       },
     },

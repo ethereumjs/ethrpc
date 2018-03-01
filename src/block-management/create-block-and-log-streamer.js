@@ -51,46 +51,44 @@ function subscribeToBlockNotifier(blockNotifier, blockAndLogStreamer) {
  * @param {Transport} transport
  */
 function createBlockAndLogStreamer(configuration, transport, cb) {
-  return function (dispatch) {
-    var callback = isFunction(cb) ? cb : logError;
-    var blockNotifier = new BlockNotifier({
-      getLatestBlock: transport.getLatestBlock,
-      subscribeToReconnects: transport.subscribeToReconnects,
-      unsubscribeFromReconnects: transport.unsubscribeFromReconnects,
-      subscribeToDisconnects: transport.subscribeToDisconnects,
-      unsubscribeFromDisconnects: transport.unsubscribeFromDisconnects,
-      subscribeToNewHeads: transport.subscribeToNewHeads,
-      unsubscribeFromNewHeads: transport.unsubscribeFromNewHeads,
-    }, configuration.pollingIntervalMilliseconds);
-    var blockAndLogStreamer = new BlockAndLogStreamer(function (hash) {
-      return new Promise(function (resolve, reject) {
-        transport.getBlockByHash(hash, function (err, block) {
-          if (err) return reject(err);
-          resolve(block);
-        });
+  var callback = isFunction(cb) ? cb : logError;
+  var blockNotifier = new BlockNotifier({
+    getLatestBlock: transport.getLatestBlock,
+    subscribeToReconnects: transport.subscribeToReconnects,
+    unsubscribeFromReconnects: transport.unsubscribeFromReconnects,
+    subscribeToDisconnects: transport.subscribeToDisconnects,
+    unsubscribeFromDisconnects: transport.unsubscribeFromDisconnects,
+    subscribeToNewHeads: transport.subscribeToNewHeads,
+    unsubscribeFromNewHeads: transport.unsubscribeFromNewHeads,
+  }, configuration.pollingIntervalMilliseconds);
+  var blockAndLogStreamer = new BlockAndLogStreamer(function (hash) {
+    return new Promise(function (resolve, reject) {
+      transport.getBlockByHash(hash, function (err, block) {
+        if (err) return reject(err);
+        resolve(block);
       });
-    }, function (filterOptions) {
-      return new Promise(function (resolve, reject) {
-        transport.getLogs(filterOptions, function (err, logs) {
-          if (err) return reject(err);
-          if (logs == null) reject(new Error("Received null/undefined logs and no error."));
-          resolve(logs);
-        });
-      });
-    }, { blockRetention: configuration.blockRetention });
-    internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
-    if (typeof configuration.startingBlockNumber === "undefined") {
-      subscribeToBlockNotifier(blockNotifier, blockAndLogStreamer);
-      return callback(null);
-    }
-    transport.getBlockByNumber(configuration.startingBlockNumber, function (err, block) {
-      if (err) return callback(err);
-      blockAndLogStreamer.reconcileNewBlock(block).then(function () {
-        subscribeToBlockNotifier(blockNotifier, blockAndLogStreamer);
-        callback(null);
-      }).catch(callback);
     });
-  };
+  }, function (filterOptions) {
+    return new Promise(function (resolve, reject) {
+      transport.getLogs(filterOptions, function (err, logs) {
+        if (err) return reject(err);
+        if (logs == null) reject(new Error("Received null/undefined logs and no error."));
+        resolve(logs);
+      });
+    });
+  }, { blockRetention: configuration.blockRetention });
+  internalState.setState({ blockAndLogStreamer: blockAndLogStreamer, blockNotifier: blockNotifier });
+  if (typeof configuration.startingBlockNumber === "undefined") {
+    subscribeToBlockNotifier(blockNotifier, blockAndLogStreamer);
+    return callback(null);
+  }
+  transport.getBlockByNumber(configuration.startingBlockNumber, function (err, block) {
+    if (err) return callback(err);
+    blockAndLogStreamer.reconcileNewBlock(block).then(function () {
+      subscribeToBlockNotifier(blockNotifier, blockAndLogStreamer);
+      callback(null);
+    }).catch(callback);
+  });
 }
 
 module.exports = createBlockAndLogStreamer;

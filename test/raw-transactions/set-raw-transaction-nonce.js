@@ -3,7 +3,6 @@
 "use strict";
 
 var assert = require("chai").assert;
-var isFunction = require("../../src/utils/is-function");
 var proxyquire = require("proxyquire");
 var mockStore = require("../mock-store");
 
@@ -20,13 +19,13 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
         "../wrappers/eth": {
           getTransactionCount: function (params, callback) {
             return function () {
-              callback(t.blockchain.transactionCount);
+              callback(null, t.blockchain.transactionCount);
             };
           },
         },
       });
-      store.dispatch(setRawTransactionNonce(t.params.packaged, t.params.address, function (packaged) {
-        t.assertions(packaged);
+      store.dispatch(setRawTransactionNonce(t.params.packaged, t.params.address, function (err, packaged) {
+        t.assertions(err, packaged);
         done();
       }));
     });
@@ -40,7 +39,8 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
     blockchain: {
       transactionCount: "0xa",
     },
-    assertions: function (packaged) {
+    assertions: function (err, packaged) {
+      assert.isNull(err);
       assert.deepEqual(packaged, {nonce: 10});
     },
   });
@@ -53,7 +53,8 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
     blockchain: {
       transactionCount: {error: -32000},
     },
-    assertions: function (packaged) {
+    assertions: function (err, packaged) {
+      assert.isNull(err);
       assert.deepEqual(packaged, {nonce: 0});
     },
   });

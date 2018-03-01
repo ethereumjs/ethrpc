@@ -4,7 +4,6 @@
 
 var assert = require("chai").assert;
 var errors = require("../../src/errors/codes");
-var RPCError = require("../../src/errors/rpc-error");
 var proxyquire = require("proxyquire");
 var mockStore = require("../mock-store");
 var ACCOUNT_TYPES = require("../../src/constants").ACCOUNT_TYPES;
@@ -19,8 +18,8 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
           sendRawTransaction: t.stub.sendRawTransaction.bind(t.stub),
         },
       });
-      store.dispatch(packageAndSubmitRawTransaction(t.params.payload, t.params.address, t.params.privateKeyOrSigner, t.params.accountType, function (result) {
-        t.assertions(result);
+      store.dispatch(packageAndSubmitRawTransaction(t.params.payload, t.params.address, t.params.privateKeyOrSigner, t.params.accountType, function (err, result) {
+        t.assertions(err, result);
         done();
       }));
     });
@@ -83,7 +82,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
       },
       address: "0x0000000000000000000000000000000000000b0b",
-      privateKeyOrSigner: function (packaged) {
+      privateKeyOrSigner: function (/*packaged*/) {
         return {
           then: function (callback) {
             callback("0x00000000000000000000000000000000000000000000000000000000deadbeef");

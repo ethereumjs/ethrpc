@@ -2,8 +2,6 @@
 
 var eth_gasPrice = require("./eth").gasPrice;
 var isHex = require("../utils/is-hex");
-var isFunction = require("../utils/is-function");
-var errors = require("../errors/codes");
 
 function setGasPrice(callback) {
   return function (dispatch) {

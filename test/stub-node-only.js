@@ -50,11 +50,10 @@ describe("tests that only work against stub server", function () {
         });
 
         it("returns failure to initial RPC call", function (done) {
-          var configuration;
-          stubRpcServer.addResponder(function (jso) { return new Error("apple"); });
-          configuration = helpers.getRpcConfiguration(transportType, transportAddress);
-          rpc.connect(configuration, function (error) {
-            assert.isNotNull(error);
+          stubRpcServer.addResponder(function (/*jso*/) { return new Error("apple"); });
+          var configuration = helpers.getRpcConfiguration(transportType, transportAddress);
+          rpc.connect(configuration, function (err) {
+            assert.isNotNull(err);
             done();
           });
         });
@@ -633,7 +632,7 @@ describe("tests that only work against stub server", function () {
           server.addResponder(function (jso) { if (jso.method === "eth_getTransactionCount") return expectedResult; });
           rpc.getPendingTransactionCount("0x407d73d8a49eeb85d32cf465507dd71d507100c1", function (err, result) {
             assert.isNull(err);
-            assert.deepEqual(resultOrError, expectedResult);
+            assert.deepEqual(result, expectedResult);
             server.assertExpectations();
             done();
           });
@@ -1198,13 +1197,13 @@ describe("tests that only work against stub server", function () {
         });
 
         it("transact", function (done) {
-          function onSent(result) { }
+          function onSent() { }
           function onSuccess(result) {
             assert.strictEqual(result.callReturn, "18");
             done();
           }
           function onFailure(error) {
-            assert.isFalse(true, "onFailure should not have been called.");
+            assert.isFalse(true, "onFailure should not have been called." + error);
           }
           server.addResponder(function (jso) {
             if (jso.method === "eth_call") return "0x12";
@@ -1213,7 +1212,7 @@ describe("tests that only work against stub server", function () {
         });
 
         it("should send eth_estimateGas from transact", function (done) {
-          function onSent(result) { }
+          function onSent() { }
           function onSuccess(result) {
             assert.strictEqual(result, "0x12345");
             done();
@@ -1286,8 +1285,9 @@ describe("tests that only work against stub server", function () {
             params: [],
           };
           server.addResponder(function (jso) { if (jso.method === "eth_call") return expectedResults; });
-          rpc.callOrSendTransaction(payload, function (resultOrError) {
-            assert.strictEqual(resultOrError, expectedResults);
+          rpc.callOrSendTransaction(payload, function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, expectedResults);
             done();
           });
         });
@@ -1311,24 +1311,23 @@ describe("tests that only work against stub server", function () {
             params: [],
           };
           server.addResponder(function (jso) { if (jso.method === "eth_estimateGas") return expectedResults; });
-          rpc.callOrSendTransaction(payload, function (resultOrError) {
-            assert.strictEqual(resultOrError, expectedResults);
+          rpc.callOrSendTransaction(payload, function (err, result) {
+            assert.isNull(err);
+            assert.strictEqual(result, expectedResults);
             done();
           });
         });
 
         it("can subscribe to new blocks", function (done) {
-          var called = false;
-          rpc.getBlockStream().subscribeToOnBlockAdded(function (block) { done(); });
+          rpc.getBlockStream().subscribeToOnBlockAdded(function (/*block*/) { done(); });
         });
 
         it("can subscribe to new logs", function (done) {
-          var called = false;
           server.addResponder(function (jso) {
             if (jso.method === "eth_getLogs") return [{}];
           });
           rpc.getBlockStream().addLogFilter({});
-          rpc.getBlockStream().subscribeToOnLogAdded(function (logs) { done(); });
+          rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) { done(); });
         });
 
         it("can supply a log filter", function (done) {
@@ -1343,34 +1342,32 @@ describe("tests that only work against stub server", function () {
               && jso.params[0].topics[0] === "0xdeadbeef";
           });
           rpc.getBlockStream().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
-          rpc.getBlockStream().subscribeToOnLogAdded(function (logs) {
+          rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) {
             server.assertExpectations();
             done();
           });
         });
 
         it("can unsubscribe from log filter", function (done) {
-          var called, token;
           server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
-          called = false;
-          token = rpc.getBlockStream().subscribeToOnLogAdded(function (logs) { called = true; });
+          var called = false;
+          var token = rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) { called = true; });
           rpc.getBlockStream().unsubscribeFromOnLogAdded(token);
-          rpc.getBlockStream().subscribeToOnBlockAdded(function (block) { done(called ? new Error("log handler was called") : undefined); });
+          rpc.getBlockStream().subscribeToOnBlockAdded(function (/*block*/) { done(called ? new Error("log handler was called") : undefined); });
         });
 
         it("can remove log filter", function (done) {
-          var token;
           server.addResponder(function (jso) {
             if (jso.method === "eth_getLogs") {
               done(new Error("should not be called"));
             }
           });
-          token = rpc.getBlockStream().addLogFilter({
+          var token = rpc.getBlockStream().addLogFilter({
             address: "0xbadf00d",
             topics: ["0xdeadbeef"],
           });
           rpc.getBlockStream().removeLogFilter(token);
-          rpc.getBlockStream().subscribeToOnLogAdded(function (logs) {
+          rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) {
             done(new Error("should not be called"));
           });
           setTimeout(done, 10);

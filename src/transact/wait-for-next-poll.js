@@ -1,6 +1,5 @@
 "use strict";
 
-var isFunction = require("../utils/is-function");
 var errors = require("../errors/codes");
 var RPCError = require("../errors/rpc-error");
 var constants = require("../constants");

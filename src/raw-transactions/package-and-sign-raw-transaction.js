@@ -4,7 +4,7 @@ var packageRawTransaction = require("./package-raw-transaction");
 var setRawTransactionNonce = require("./set-raw-transaction-nonce");
 var setRawTransactionGasPrice = require("./set-raw-transaction-gas-price");
 var signRawTransaction = require("./sign-raw-transaction");
-var isObject = require("../utils/is-function");
+var isObject = require("../utils/is-object");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
 
