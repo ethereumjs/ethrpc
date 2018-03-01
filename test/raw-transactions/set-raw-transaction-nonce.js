@@ -4,6 +4,7 @@
 
 var assert = require("chai").assert;
 var proxyquire = require("proxyquire");
+var RPCError = require("../../src/errors/rpc-error");
 var mockStore = require("../mock-store");
 
 describe("raw-transactions/set-raw-transaction-nonce", function () {
@@ -16,13 +17,7 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
             return nonce;
           };
         },
-        "../wrappers/eth": {
-          getTransactionCount: function (params, callback) {
-            return function () {
-              callback(null, t.blockchain.transactionCount);
-            };
-          },
-        },
+        "../wrappers/eth": t.stub.eth,
       });
       store.dispatch(setRawTransactionNonce(t.params.packaged, t.params.address, function (err, packaged) {
         t.assertions(err, packaged);
@@ -33,29 +28,43 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
   test({
     description: "10 transactions",
     params: {
-      packaged: {nonce: 0},
+      packaged: { nonce: 0 },
       address: "0xb0b",
     },
-    blockchain: {
-      transactionCount: "0xa",
+    stub: {
+      eth: {
+        getTransactionCount: function (params, callback) {
+          return function () {
+            callback(null, "0xa");
+          };
+        },
+      },
     },
     assertions: function (err, packaged) {
       assert.isNull(err);
-      assert.deepEqual(packaged, {nonce: 10});
+      assert.deepEqual(packaged, { nonce: 10 });
     },
   });
   test({
-    description: "Error from pendingTxCount",
+    description: "Error from eth_getTransactionCount",
     params: {
-      packaged: {nonce: 0},
+      packaged: { nonce: 0 },
       address: "0xb0b",
     },
-    blockchain: {
-      transactionCount: {error: -32000},
+    stub: {
+      eth: {
+        getTransactionCount: function (params, callback) {
+          return function () {
+            callback(new RPCError({ code: -32000 }));
+          };
+        },
+      },
     },
     assertions: function (err, packaged) {
-      assert.isNull(err);
-      assert.deepEqual(packaged, {nonce: 0});
+      assert.strictEqual(err.name, "RPCError");
+      assert.strictEqual(err.error, -32000);
+      assert.isUndefined(err.message);
+      assert.isUndefined(packaged);
     },
   });
 });

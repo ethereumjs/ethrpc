@@ -14,16 +14,27 @@ describe("raw-transactions/handle-raw-transaction-error", function () {
   test({
     description: "Regular error message",
     params: {
-      rawTransactionResponse: { message: "0xdeadbeef" },
+      rawTransactionResponse: { code: -2, message: "0xdeadbeef" },
     },
     assertions: function (output) {
-      assert.deepEqual(output, { message: "0xdeadbeef" });
+      assert.strictEqual(output.name, "RPCError");
+      assert.strictEqual(output.message, "0xdeadbeef");
+      assert.strictEqual(output.error, -2);
     },
   });
   test({
     description: "Nonce too low error message",
     params: {
-      rawTransactionResponse: { message: "Nonce too low" },
+      rawTransactionResponse: { code: -3, message: "Nonce too low" },
+    },
+    assertions: function (output) {
+      assert.isNull(output);
+    },
+  });
+  test({
+    description: "Replacement transaction underpriced error message",
+    params: {
+      rawTransactionResponse: { code: -4, message: "replacement transaction underpriced" },
     },
     assertions: function (output) {
       assert.isNull(output);

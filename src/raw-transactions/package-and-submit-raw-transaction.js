@@ -9,7 +9,7 @@ var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
 
 /**
  * Package, sign, and submit a raw transaction to Ethereum.
- * @param {Object} payload Static API data with "params" and "from" set.
+ * @param {Object} payload Static ABI data with the "params" and "from" fields set.
  * @param {string} address The sender's Ethereum address.
  * @param {buffer|function} privateKeyOrSigner Sender's plaintext private key or signing function.
  * @param {string} accountType One of "privateKey", "uPort", or "ledger".
@@ -20,16 +20,16 @@ function packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, ac
   return function (dispatch, getState) {
     dispatch(packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, function (err, signedRawTransaction) {
       if (err) return callback(err);
-      function handleRawTransactionResponse(err, response) {
-        if (getState().debug.broadcast) console.log("[ethrpc] sendRawTransaction", response);
+      function handleRawTransactionResponse(err, rawTransactionResponse) {
+        if (getState().debug.broadcast) console.log("[ethrpc] sendRawTransaction response:", rawTransactionResponse);
         if (err) {
           var handledError = handleRawTransactionError(err);
           if (handledError != null) return callback(handledError);
           dispatch(packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, accountType, callback));
-        } else if (response == null) {
+        } else if (rawTransactionResponse == null) {
           callback(new RPCError(errors.RAW_TRANSACTION_ERROR));
         } else {
-          callback(null, response);
+          callback(null, rawTransactionResponse);
         }
       }
       if (accountType === ACCOUNT_TYPES.U_PORT) { // signedRawTransaction is transaction hash for uPort

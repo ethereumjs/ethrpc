@@ -1,7 +1,7 @@
 "use strict";
 
 var assign = require("lodash.assign");
-var eth = require("../wrappers/eth");
+var eth_getTransactionCount = require("../wrappers/eth").getTransactionCount;
 var verifyRawTransactionNonce = require("./verify-raw-transaction-nonce");
 
 /**
@@ -13,7 +13,7 @@ var verifyRawTransactionNonce = require("./verify-raw-transaction-nonce");
  */
 function setRawTransactionNonce(packaged, address, callback) {
   return function (dispatch, getState) {
-    dispatch(eth.getTransactionCount([address, "pending"], function (err, transactionCount) {
+    dispatch(eth_getTransactionCount([address, "pending"], function (err, transactionCount) {
       if (getState().debug.tx) console.log("transaction count:", address, transactionCount, parseInt(transactionCount, 16));
       if (err) return callback(err);
       callback(null, assign({}, packaged, { nonce: dispatch(verifyRawTransactionNonce(parseInt(transactionCount, 16))) }));

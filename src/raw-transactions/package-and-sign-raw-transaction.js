@@ -1,5 +1,6 @@
 "use strict";
 
+var immutableDelete = require("immutable-delete");
 var packageRawTransaction = require("./package-raw-transaction");
 var setRawTransactionNonce = require("./set-raw-transaction-nonce");
 var setRawTransactionGasPrice = require("./set-raw-transaction-gas-price");
@@ -28,7 +29,7 @@ function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, acco
       if (err) return callback(err);
       dispatch(setRawTransactionNonce(packaged, address, function (err, packaged) {
         if (err) return callback(err);
-        signRawTransaction(packaged, privateKeyOrSigner, accountType, callback);
+        signRawTransaction(immutableDelete(packaged, "returns"), privateKeyOrSigner, accountType, callback);
       }));
     }));
   };

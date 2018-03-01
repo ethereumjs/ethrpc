@@ -10,23 +10,17 @@ var isFunction = require("../utils/is-function");
  * Sign the transaction using the private key.
  * @param {Object} packaged Unsigned transaction.
  * @param {buffer} privateKey The sender's plaintext private key.
- * @param {function=} callback Callback function (optional).
  * @return {string} Signed and serialized raw transaction.
  */
-function signRawTransactionWithKey(packaged, privateKey, callback) {
+function signRawTransactionWithKey(packaged, privateKey) {
   var rawTransaction = new Transaction(packaged);
   if (!Buffer.isBuffer(privateKey)) {
     rawTransaction.sign(Buffer.from(privateKey));
   } else {
     rawTransaction.sign(privateKey);
   }
-  if (!rawTransaction.validate()) {
-    if (!isFunction(callback)) throw new RPCError(errors.TRANSACTION_INVALID);
-    return callback(new RPCError(errors.TRANSACTION_INVALID));
-  }
-  var serialized = speedomatic.prefixHex(rawTransaction.serialize().toString("hex"));
-  if (!isFunction(callback)) return serialized;
-  callback(null, serialized);
+  if (!rawTransaction.validate()) throw new RPCError(errors.TRANSACTION_INVALID);
+  return speedomatic.prefixHex(rawTransaction.serialize().toString("hex"));
 }
 
 module.exports = signRawTransactionWithKey;
