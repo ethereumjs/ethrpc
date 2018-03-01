@@ -19,7 +19,7 @@ function updateMinedTx(txHash) {
       hash: txHash,
       currentBlockNumber: currentBlock.number,
     });
-    var transaction = state.transactions[txHash];
+    var transaction = getState().transactions[txHash];
     var onFailed = isFunction(transaction.onFailed) ? transaction.onFailed : logError;
     if (transaction.confirmations >= constants.REQUIRED_CONFIRMATIONS) {
       dispatch({ type: "TRANSACTION_CONFIRMED", hash: txHash });
@@ -39,7 +39,7 @@ function updateMinedTx(txHash) {
           data: { tx: { callReturn: transaction.tx.callReturn } },
         });
         dispatch(eth.getTransactionReceipt(txHash, function (err, receipt) {
-          if (debug.tx) console.log("[ethrpc] got receipt:", receipt);
+          if (debug.tx) console.log("[ethrpc] got receipt:", err, receipt);
           if (err) return onFailed(err);
           if (receipt == null) return onFailed(new RPCError(errors.TRANSACTION_RECEIPT_NOT_FOUND));
           if (receipt.gasUsed) {

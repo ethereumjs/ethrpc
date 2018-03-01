@@ -1,7 +1,6 @@
 "use strict";
 
 var signRawTransactionWithKey = require("./sign-raw-transaction-with-key");
-var isFunction = require("../utils/is-function");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
 var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;

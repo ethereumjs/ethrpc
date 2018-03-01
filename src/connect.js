@@ -32,19 +32,16 @@ var internalState = require("./internal-state");
  */
 function connect(configuration, initialConnectCallback) {
   return function (dispatch, getState) {
-    var debug = getState().debug;
     dispatch(resetState());
 
     // Use logError (console.error) as default out-of-band error handler if not set
-    if (!isFunction(configuration.errorHandler)) {
-      configuration.errorHandler = logError;
-    }
+    if (!isFunction(configuration.errorHandler)) configuration.errorHandler = logError;
     internalState.set("outOfBandErrorHandler", configuration.errorHandler);
     dispatch({ type: "SET_CONFIGURATION", configuration: validateConfiguration(configuration) });
 
     // initialize the transporter, this will be how we send to and receive from the blockchain
     var storedConfiguration = getState().configuration;
-    new Transporter(storedConfiguration, internalState.get("shimMessageHandler"), debug.connect, function (err, transporter) {
+    new Transporter(storedConfiguration, internalState.get("shimMessageHandler"), getState().debug.connect, function (err, transporter) {
       if (err) return initialConnectCallback(err);
       internalState.set("transporter", transporter);
 
@@ -60,7 +57,7 @@ function connect(configuration, initialConnectCallback) {
         dispatch({ type: "SET_NETWORK_ID", networkID: networkID });
         if (storedConfiguration.startBlockStreamOnConnect) dispatch(startBlockStream());
         async.parallel([
-          function (next) { dispatch(ensureLatestBlock(function () { next(); })); },
+          function (next) { dispatch(ensureLatestBlock(function (err) { next(err); })); },
           function (next) { dispatch(setCoinbase(next)); },
           function (next) { dispatch(setGasPrice(next)); },
         ], initialConnectCallback);

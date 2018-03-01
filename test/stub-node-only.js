@@ -21,6 +21,23 @@ function createReasonableTransactPayload() {
   };
 }
 
+function createStubRpcServerWithRequiredResponders(transportType, transportAddress) {
+  var stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
+  stubRpcServer.addResponder(function (request) {
+    switch (request.method) {
+      case "eth_coinbase":
+        return "0x0000000000000000000000000000000000000b0b";
+      case "eth_gasPrice":
+        return "0x09184e72a000";
+      case "eth_subscribe":
+        return "0x00000000000000000000000000000001";
+      case "eth_unsubscribe":
+        return true;
+    }
+  });
+  return stubRpcServer;
+}
+
 describe("tests that only work against stub server", function () {
   function tests(transportType, transportAddress) {
     describe(transportType, function () {
@@ -28,7 +45,7 @@ describe("tests that only work against stub server", function () {
       describe("connectivity", function () {
         var stubRpcServer = null;
         beforeEach(function (done) {
-          stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
+          stubRpcServer = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           done();
         });
         afterEach(function (done) {
@@ -82,7 +99,7 @@ describe("tests that only work against stub server", function () {
                 assert.isNull(err);
                 assert.strictEqual(version, "apple");
                 stubRpcServer.destroy(function () {
-                  stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
+                  stubRpcServer = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
                   rpc.version(function (err, version) {
                     assert.isNull(err);
                     assert.strictEqual(version, "default stub rpc server version");
@@ -108,7 +125,7 @@ describe("tests that only work against stub server", function () {
                     assert.strictEqual(version, "banana");
                     maybeDone();
                   });
-                  stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
+                  stubRpcServer = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
                   stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "banana"; });
                   rpc.version(function (err, version) {
                     assert.isNull(err);
@@ -125,7 +142,7 @@ describe("tests that only work against stub server", function () {
       describe("raw", function () {
         var server;
         beforeEach(function (done) {
-          server = StubServer.createStubServer(transportType, transportAddress);
+          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -148,7 +165,7 @@ describe("tests that only work against stub server", function () {
       describe("web3", function () {
         var server;
         beforeEach(function (done) {
-          server = StubServer.createStubServer(transportType, transportAddress);
+          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -178,7 +195,7 @@ describe("tests that only work against stub server", function () {
       describe("net", function () {
         var server;
         beforeEach(function (done) {
-          server = StubServer.createStubServer(transportType, transportAddress);
+          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -234,7 +251,7 @@ describe("tests that only work against stub server", function () {
       describe("eth", function () {
         var server;
         beforeEach(function (done) {
-          server = StubServer.createStubServer(transportType, transportAddress);
+          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -1088,7 +1105,7 @@ describe("tests that only work against stub server", function () {
       describe("shh", function () {
         var server;
         beforeEach(function (done) {
-          server = StubServer.createStubServer(transportType, transportAddress);
+          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -1118,7 +1135,7 @@ describe("tests that only work against stub server", function () {
       describe("errors", function () {
         var server;
         beforeEach(function (done) {
-          server = StubServer.createStubServer(transportType, transportAddress);
+          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -1140,7 +1157,7 @@ describe("tests that only work against stub server", function () {
         var server;
         var interval;
         beforeEach(function (done) {
-          server = StubServer.createStubServer(transportType, transportAddress);
+          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
           interval = setInterval(function () { server.mine(); }, 1);
         });
@@ -1186,14 +1203,14 @@ describe("tests that only work against stub server", function () {
         it("transact pool not accepting", function (done) {
           function onSent() { }
           function onSuccess() { assert.isFalse(true, "onSuccess should not have been called"); }
-          function onFailure(err) {
+          function onFailed(err) {
             assert.strictEqual(err.error, 413);
             assert.strictEqual(err.hash, "0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf" + "0006");
             done();
           }
           server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x12"; });
           server.addResponder(function (jso) { if (jso.method === "eth_getTransactionByHash") return null; });
-          rpc.transact(createReasonableTransactPayload(), null, null, onSent, onSuccess, onFailure);
+          rpc.transact(createReasonableTransactPayload(), null, null, onSent, onSuccess, onFailed);
         });
 
         it("transact", function (done) {
@@ -1202,13 +1219,18 @@ describe("tests that only work against stub server", function () {
             assert.strictEqual(result.callReturn, "18");
             done();
           }
-          function onFailure(error) {
-            assert.isFalse(true, "onFailure should not have been called." + error);
+          function onFailed(error) {
+            assert.isFalse(true, "onFailed should not have been called." + error);
           }
           server.addResponder(function (jso) {
-            if (jso.method === "eth_call") return "0x12";
+            switch (jso.method) {
+              case "eth_call":
+                return "0x12";
+              case "eth_getTransactionReceipt":
+                return { status: "0x1" };
+            }
           });
-          rpc.transact(createReasonableTransactPayload(), null, null, onSent, onSuccess, onFailure);
+          rpc.transact(createReasonableTransactPayload(), null, null, onSent, onSuccess, onFailed);
         });
 
         it("should send eth_estimateGas from transact", function (done) {
@@ -1217,15 +1239,15 @@ describe("tests that only work against stub server", function () {
             assert.strictEqual(result, "0x12345");
             done();
           }
-          function onFailure(error) {
-            assert.isFalse(true, "onFailure should not have been called: " + error);
+          function onFailed(error) {
+            assert.isFalse(true, "onFailed should not have been called: " + error);
           }
           server.addResponder(function (jso) {
             if (jso.method === "eth_estimateGas") return "0x12345";
           });
           var payload = createReasonableTransactPayload();
           payload.estimateGas = true;
-          rpc.transact(payload, null, null, onSent, onSuccess, onFailure);
+          rpc.transact(payload, null, null, onSent, onSuccess, onFailed);
         });
 
         it("ensureLatestBlock", function (done) {

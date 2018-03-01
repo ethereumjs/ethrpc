@@ -4,8 +4,8 @@ var assert = require("chai").assert;
 var os = require("os");
 var rpc = require("../src");
 
-function errorHandler(error) {
-  assert.isTrue(false, (error || {}).message || error);
+function errorHandler(err) {
+  assert.isTrue(false, (err || {}).message || err);
 }
 
 module.exports.getIpcAddress = function () {
@@ -13,7 +13,7 @@ module.exports.getIpcAddress = function () {
 };
 
 module.exports.getWsAddress = function () {
-  return process.env.ETHRPC_TEST_WS_ADRESS || "ws://localhost:1337";
+  return process.env.ETHRPC_TEST_WS_ADDRESS || "ws://localhost:1337";
 };
 
 module.exports.getHttpAddress = function () {
@@ -22,9 +22,9 @@ module.exports.getHttpAddress = function () {
 
 module.exports.rpcConnect = function (transportType, transportAddress, callback) {
   var configuration = this.getRpcConfiguration(transportType, transportAddress);
-  rpc.connect(configuration, function (error) {
-    assert.isNull(error, (error || {}).message);
-    callback();
+  rpc.connect(configuration, function (err) {
+    assert.isNull(err, (err || {}).message);
+    callback(null);
   });
 };
 
@@ -58,6 +58,6 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         errorHandler: errorHandler,
       };
     default:
-      assert.false(true, "Unknown transportType: " + transportType);
+      assert.isFalse(true, "Unknown transportType: " + transportType);
   }
 };

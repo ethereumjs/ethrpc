@@ -43,7 +43,10 @@ module.exports = function (transactions, action) {
       return assign({}, transactions, newTransaction);
     case "TRANSACTION_RESUBMITTED":
       newTransaction = {};
-      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "resubmitted" });
+      newTransaction[action.hash] = assign({}, transactions[action.hash], {
+        status: "resubmitted",
+        payload: assign({}, transactions[action.hash].payload || {}),
+      });
       return assign({}, transactions, newTransaction);
     case "TRANSACTION_CONFIRMED":
       newTransaction = {};
@@ -67,9 +70,7 @@ module.exports = function (transactions, action) {
       payload = transactions[action.hash].payload || {};
       newTransaction = {};
       newTransaction[action.hash] = assign({}, transactions[action.hash], {
-        payload: assign({}, payload, {
-          tries: (payload.tries) ? payload.tries + 1 : 1,
-        }),
+        payload: assign({}, payload, { tries: (payload.tries) ? payload.tries + 1 : 1 }),
       });
       return assign({}, transactions, newTransaction);
     case "REMOVE_TRANSACTION":

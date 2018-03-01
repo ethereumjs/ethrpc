@@ -25,9 +25,10 @@ function updatePendingTx(txHash) {
       // if transaction is null, then it was dropped from the txpool
       if (onChainTx === null) {
         dispatch({ type: "INCREMENT_TRANSACTION_PAYLOAD_TRIES", hash: txHash });
+        var transaction = getState().transactions[txHash];
 
         // if we have retries left, then resubmit the transaction
-        if (getState().transactions[txHash].payload.tries > constants.TX_RETRY_MAX) {
+        if (transaction.payload.tries > constants.TX_RETRY_MAX) {
           dispatch({ type: "TRANSACTION_FAILED", hash: txHash });
           dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
           onFailed(new RPCError(assign({}, errors.TRANSACTION_RETRY_MAX_EXCEEDED, { hash: txHash })));
@@ -36,7 +37,7 @@ function updatePendingTx(txHash) {
           dispatch({ type: "TRANSACTION_RESUBMITTED", hash: txHash });
           dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
           if (getState().debug.tx) console.log("resubmitting tx:", txHash);
-          dispatch(transact(storedTransaction.payload, (storedTransaction.meta || {}).signer, (storedTransaction.meta || {}).accountType, storedTransaction.onSent, storedTransaction.onSuccess, storedTransaction.onFailed));
+          dispatch(transact(transaction.payload, (transaction.meta || {}).signer, (transaction.meta || {}).accountType, transaction.onSent, transaction.onSuccess, transaction.onFailed));
         }
 
       // non-null transaction: transaction still alive and kicking!

@@ -4,7 +4,6 @@ var speedomatic = require("speedomatic");
 var Transaction = require("ethereumjs-tx");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
-var isFunction = require("../utils/is-function");
 
 /**
  * Sign the transaction using the private key.

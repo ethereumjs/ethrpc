@@ -3,7 +3,7 @@
 var eth = require("../wrappers/eth");
 var addNewHeadsSubscription = require("../subscriptions/add-new-heads-subscription");
 var removeSubscription = require("../subscriptions/remove-subscription");
-var noop = require("../utils/noop");
+var logError = require("../utils/log-error");
 
 var nextToken = 1;
 var subscriptionMapping = {};
@@ -45,7 +45,7 @@ function createTransportAdapter(transporter) {
           // if the caller already unsubscribed by the time this callback is
           // called, we need to unsubscribe from the remote
           if (subscriptionMapping[token] === undefined) {
-            dispatch(eth.unsubscribe(subscriptionID, noop));
+            dispatch(eth.unsubscribe(subscriptionID, logError));
           } else {
             subscriptionMapping[token] = subscriptionID;
             dispatch(addNewHeadsSubscription(subscriptionID, onNewHead));
@@ -58,7 +58,7 @@ function createTransportAdapter(transporter) {
           var subscriptionID = subscriptionMapping[token];
           delete subscriptionMapping[token];
           dispatch(removeSubscription(subscriptionID));
-          dispatch(eth.unsubscribe(subscriptionID, noop));
+          dispatch(eth.unsubscribe(subscriptionID, logError));
         }
       },
     };
