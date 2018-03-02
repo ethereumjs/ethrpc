@@ -1,6 +1,6 @@
 {
   "name": "ethrpc",
-  "version": "4.5.14",
+  "version": "5.0.0",
   "description": "Ethereum JSON RPC",
   "author": "The Augur Developers <team@augur.net>",
   "license": "MIT",
