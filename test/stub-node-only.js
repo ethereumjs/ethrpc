@@ -5,7 +5,6 @@
 var assert = require("chai").assert;
 var ethereumjsAbi = require("ethereumjs-abi");
 var os = require("os");
-var StubServer = require("ethereumjs-stub-rpc-server");
 var helpers = require("./helpers");
 var rpc = require("../src");
 var ErrorWithCode = require("../src/errors").ErrorWithCode;
@@ -21,23 +20,6 @@ function createReasonableTransactPayload() {
   };
 }
 
-function createStubRpcServerWithRequiredResponders(transportType, transportAddress) {
-  var stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
-  stubRpcServer.addResponder(function (request) {
-    switch (request.method) {
-      case "eth_coinbase":
-        return "0x0000000000000000000000000000000000000b0b";
-      case "eth_gasPrice":
-        return "0x09184e72a000";
-      case "eth_subscribe":
-        return "0x00000000000000000000000000000001";
-      case "eth_unsubscribe":
-        return true;
-    }
-  });
-  return stubRpcServer;
-}
-
 describe("tests that only work against stub server", function () {
   function tests(transportType, transportAddress) {
     describe(transportType, function () {
@@ -45,7 +27,7 @@ describe("tests that only work against stub server", function () {
       describe("connectivity", function () {
         var stubRpcServer = null;
         beforeEach(function (done) {
-          stubRpcServer = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
+          stubRpcServer = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           done();
         });
         afterEach(function (done) {
@@ -99,7 +81,7 @@ describe("tests that only work against stub server", function () {
                 assert.isNull(err);
                 assert.strictEqual(version, "apple");
                 stubRpcServer.destroy(function () {
-                  stubRpcServer = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
+                  stubRpcServer = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
                   rpc.version(function (err, version) {
                     assert.isNull(err);
                     assert.strictEqual(version, "default stub rpc server version");
@@ -125,7 +107,7 @@ describe("tests that only work against stub server", function () {
                     assert.strictEqual(version, "banana");
                     maybeDone();
                   });
-                  stubRpcServer = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
+                  stubRpcServer = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
                   stubRpcServer.addResponder(function (request) { if (request.method === "net_version") return "banana"; });
                   rpc.version(function (err, version) {
                     assert.isNull(err);
@@ -142,7 +124,7 @@ describe("tests that only work against stub server", function () {
       describe("raw", function () {
         var server;
         beforeEach(function (done) {
-          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
+          server = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -165,7 +147,7 @@ describe("tests that only work against stub server", function () {
       describe("web3", function () {
         var server;
         beforeEach(function (done) {
-          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
+          server = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -195,7 +177,7 @@ describe("tests that only work against stub server", function () {
       describe("net", function () {
         var server;
         beforeEach(function (done) {
-          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
+          server = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -251,7 +233,7 @@ describe("tests that only work against stub server", function () {
       describe("eth", function () {
         var server;
         beforeEach(function (done) {
-          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
+          server = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -1105,7 +1087,7 @@ describe("tests that only work against stub server", function () {
       describe("shh", function () {
         var server;
         beforeEach(function (done) {
-          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
+          server = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -1135,7 +1117,7 @@ describe("tests that only work against stub server", function () {
       describe("errors", function () {
         var server;
         beforeEach(function (done) {
-          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
+          server = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
         });
         afterEach(function (done) {
@@ -1157,7 +1139,7 @@ describe("tests that only work against stub server", function () {
         var server;
         var interval;
         beforeEach(function (done) {
-          server = createStubRpcServerWithRequiredResponders(transportType, transportAddress);
+          server = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
           helpers.rpcConnect(transportType, transportAddress, done);
           interval = setInterval(function () { server.mine(); }, 1);
         });

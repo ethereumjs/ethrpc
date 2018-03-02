@@ -12,10 +12,10 @@ var configuration = {
 rpc.setDebugOptions({ connect: true });
 rpc.connect(configuration, function (err) {
   if (err) return console.error("ethrpc connection failed:", err);
-  rpc.eth.coinbase(function (coinbase) {
+  rpc.eth.coinbase(function (err, coinbase) {
     global.COINBASE = coinbase;
   });
-  rpc.net.version(function (networkID) {
+  rpc.net.version(function (err, networkID) {
     global.NETWORK_ID = networkID;
   });
 });
