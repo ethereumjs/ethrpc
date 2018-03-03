@@ -1,6 +1,6 @@
 "use strict";
 
-var ErrorWithData = require("../errors").ErrorWithData;
+var RPCError = require("../errors/rpc-error");
 
 // validate that the parameter looks like a block
 function validateBlock(block) {
@@ -10,7 +10,7 @@ function validateBlock(block) {
     || block.error
     || !block.hash
     || !block.parentHash
-    || !block.number) throw new ErrorWithData("Expected a block, but found not a block.", block);
+    || !block.number) throw new RPCError("INVALID_BLOCK", { data: block });
 }
 
 module.exports = validateBlock;

@@ -61,9 +61,8 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
       },
     },
     assertions: function (err, packaged) {
-      assert.strictEqual(err.name, "RPCError");
-      assert.strictEqual(err.error, -32000);
-      assert.isUndefined(err.message);
+      assert.strictEqual(err.code, -32000);
+      assert.strictEqual(err.message, "");
       assert.isUndefined(packaged);
     },
   });

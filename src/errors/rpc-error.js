@@ -1,14 +1,16 @@
 "use strict";
 
 var assign = require("lodash.assign");
-var immutableDelete = require("immutable-delete");
+var errors = require("./codes");
+var isObject = require("../utils/is-object");
 
-function RPCError(err) {
-  assign(this, immutableDelete(err, "code"), {
-    name: "RPCError",
-    error: err.error || err.code,
-    message: err.message,
-  });
+function RPCError(err, data) {
+  if (isObject(err)) {
+    assign(this, err);
+  } else if (typeof err === "string") {
+    assign(this, errors[err] || { message: err });
+  }
+  if (data) assign(this, data);
 }
 
 RPCError.prototype = Error.prototype;

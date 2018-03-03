@@ -1,62 +1,74 @@
 {
+  "INVALID_TRANSPORT_MESSAGE": {
+    "message": "Unexpectedly received a message from the transport that was not an object"
+  },
+  "UNSUPPORTED_RPC_REQUEST": {
+    "message": "Received an RPC request that was not an eth_subscription"
+  },
+  "NO_SUBSCRIPTION_ID": {
+    "message": "Received an eth_subscription request without a subscription id"
+  },
+  "NO_SUBSCRIPTION_RESULT": {
+    "message": "Received an eth_subscription request without a result"
+  },
+  "INVALID_MESSAGE_ID": {
+    "message": "Received a message from the blockchain that did not have a valid id"
+  },
+  "JSON_RPC_REQUEST_NOT_FOUND": {
+    "message": "Unable to locate original request for blockchain response"
+  },
+  "INVALID_JSON_RPC_MESSAGE": {
+    "message": "Received an invalid JSON-RPC message"
+  },
+  "INVALID_BLOCK": {
+    "message": "Expected a block, found not a block"
+  },
   "UNKNOWN_ACCOUNT_TYPE": {
-    "error": 400,
-    "message": "unknown account type"
+    "message": "Unknown account type"
   },
   "NOT_LOGGED_IN": {
-    "error": 401,
-    "message": "not logged in"
+    "message": "Not logged in"
   },
   "PARAMETER_NUMBER_ERROR": {
-    "error": 402,
-    "message": "wrong number of parameters"
+    "message": "Wrong number of parameters"
   },
   "TRANSACTION_NOT_FOUND": {
-    "error": 404,
-    "message": "transaction not found"
+    "message": "Transaction not found"
   },
   "BLOCK_NOT_FOUND": {
-    "error": 405,
-    "message": "block not found"
+    "message": "Block not found"
   },
   "NULL_CALL_RETURN": {
-    "error": 406,
-    "message": "expected contract call to return value, received null"
+    "message": "Expected contract call to return value, received null"
   },
   "NULL_RESPONSE": {
-    "error": 407,
-    "message": "expected transaction hash from Ethereum node, received null"
+    "message": "Expected transaction hash from Ethereum node, received null"
   },
   "NO_RESPONSE": {
-    "error": 408,
-    "message": "no response"
+    "message": "No response"
   },
   "TRANSACTION_INVALID": {
-    "error": 412,
-    "message": "transaction validation failed"
+    "message": "Transaction validation failed"
   },
   "TRANSACTION_RETRY_MAX_EXCEEDED": {
-    "error": 413,
-    "message": "maximum number of transaction retry attempts exceeded"
+    "message": "Maximum number of transaction retry attempts exceeded"
   },
   "TRANSACTION_FAILED": {
-    "error": 500,
-    "message": "transaction failed"
+    "message": "Transaction failed"
   },
   "TRANSACTION_NOT_CONFIRMED": {
-    "error": 501,
-    "message": "polled network but could not confirm transaction"
+    "message": "Polled network but could not confirm transaction"
   },
   "DUPLICATE_TRANSACTION": {
-    "error": 502,
-    "message": "duplicate transaction"
+    "message": "Duplicate transaction"
   },
   "RAW_TRANSACTION_ERROR": {
-    "error": 503,
-    "message": "error sending client-side transaction"
+    "message": "Error sending client-side transaction"
   },
   "TRANSACTION_RECEIPT_NOT_FOUND": {
-    "error": 505,
-    "message": "transaction receipt not found"
+    "message": "Transaction receipt not found"
+  },
+  "COINBASE_NOT_SET": {
+    "message": "Coinbase account not set"
   }
 }

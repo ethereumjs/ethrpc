@@ -3,12 +3,11 @@
 var eth = require("../wrappers/eth");
 var packageRequest = require("../encode-request/package-request");
 var isObject = require("../utils/is-object");
-var errors = require("../errors/codes");
 var RPCError = require("../errors/rpc-error");
 
 function callOrSendTransaction(payload, callback) {
   return function (dispatch, getState) {
-    if (!isObject(payload)) return callback(new RPCError(errors.TRANSACTION_FAILED));
+    if (!isObject(payload)) return callback(new RPCError("TRANSACTION_FAILED"));
     try {
       var packaged = packageRequest(payload);
     } catch (err) {

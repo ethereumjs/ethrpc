@@ -145,7 +145,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
           });
           assert.strictEqual(address, "0x0000000000000000000000000000000000000b0b");
           assert.strictEqual(privateKeyOrSigner.toString("hex"), "1111111111111111111111111111111111111111111111111111111111111111");
-          callback(new RPCError(errors.TRANSACTION_FAILED));
+          callback(new RPCError("TRANSACTION_FAILED"));
         };
       },
       sendRawTransaction: function () {
@@ -155,7 +155,6 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
       },
     },
     assertions: function (err, response) {
-      assert.strictEqual(err.error, errors.TRANSACTION_FAILED.error);
       assert.strictEqual(err.message, errors.TRANSACTION_FAILED.message);
       assert.isUndefined(response);
     },
@@ -188,7 +187,7 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
           });
           assert.strictEqual(address, "0x0000000000000000000000000000000000000b0b");
           assert.strictEqual(privateKeyOrSigner.toString("hex"), "1111111111111111111111111111111111111111111111111111111111111111");
-          callback(new RPCError(errors.NOT_LOGGED_IN));
+          callback(new RPCError("NOT_LOGGED_IN"));
         };
       },
       sendRawTransaction: function () {
@@ -198,7 +197,6 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
       },
     },
     assertions: function (err, response) {
-      assert.strictEqual(err.error, errors.NOT_LOGGED_IN.error);
       assert.strictEqual(err.message, errors.NOT_LOGGED_IN.message);
       assert.isUndefined(response);
     },
@@ -238,12 +236,11 @@ describe("raw-transaction/package-and-submit-raw-transaction", function () {
       sendRawTransaction: function (signedRawTransaction, callback) {
         return function () {
           assert.strictEqual(signedRawTransaction, "f8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a132a016a8194ce8d38b4c90c7afb87b1f27276b8231f8a83f392f0ddbbeb91d3cdcfda0286448f5d63ccd695f4f3e80b48cdaf7fb671f8d1af6f31d684e7041227baad1");
-          callback(new RPCError(errors.RAW_TRANSACTION_ERROR));
+          callback(new RPCError("RAW_TRANSACTION_ERROR"));
         };
       },
     },
     assertions: function (err, response) {
-      assert.strictEqual(err.error, errors.RAW_TRANSACTION_ERROR.error);
       assert.strictEqual(err.message, errors.RAW_TRANSACTION_ERROR.message);
       assert.isUndefined(response);
     },

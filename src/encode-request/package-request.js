@@ -3,7 +3,6 @@
 var speedomatic = require("speedomatic");
 var clone = require("clone");
 var RPCError = require("../errors/rpc-error");
-var errors = require("../errors/codes");
 var constants = require("../constants");
 
 /**
@@ -21,7 +20,7 @@ var packageRequest = function (payload) {
   var numParams = tx.params.length;
   if (numParams) {
     if (tx.signature && tx.signature.length !== numParams) {
-      throw new RPCError(errors.PARAMETER_NUMBER_ERROR);
+      throw new RPCError("PARAMETER_NUMBER_ERROR");
     }
     for (var j = 0; j < numParams; ++j) {
       if (tx.params[j] != null && tx.signature[j]) {

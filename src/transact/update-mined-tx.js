@@ -5,7 +5,6 @@ var BigNumber = require("bignumber.js");
 var eth = require("../wrappers/eth");
 var isFunction = require("../utils/is-function");
 var logError = require("../utils/log-error");
-var errors = require("../errors/codes");
 var RPCError = require("../errors/rpc-error");
 var constants = require("../constants");
 
@@ -25,7 +24,7 @@ function updateMinedTx(txHash) {
       dispatch({ type: "TRANSACTION_CONFIRMED", hash: txHash });
       dispatch(eth.getBlockByNumber([transaction.tx.blockNumber, false], function (err, block) {
         if (err) return onFailed(err);
-        if (block == null) return onFailed(new RPCError(errors.BLOCK_NOT_FOUND));
+        if (block == null) return onFailed(new RPCError("BLOCK_NOT_FOUND"));
         if (block.timestamp != null) {
           dispatch({
             type: "UPDATE_TRANSACTION",
@@ -41,7 +40,7 @@ function updateMinedTx(txHash) {
         dispatch(eth.getTransactionReceipt(txHash, function (err, receipt) {
           if (debug.tx) console.log("[ethrpc] got receipt:", err, receipt);
           if (err) return onFailed(err);
-          if (receipt == null) return onFailed(new RPCError(errors.TRANSACTION_RECEIPT_NOT_FOUND));
+          if (receipt == null) return onFailed(new RPCError("TRANSACTION_RECEIPT_NOT_FOUND"));
           if (receipt.gasUsed) {
             dispatch({
               type: "UPDATE_TRANSACTION",
