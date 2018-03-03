@@ -54,6 +54,7 @@ function blockchainMessageHandler(error, jso) {
     var errorHandler = function () {
       // errors with IDs can go through the normal result process
       if (jso.id !== null && jso.id !== undefined) {
+        if (state.debug.broadcast) console.log("outstanding request:", internalState.get("outstandingRequests." + jso.id));
         return responseHandler(jso);
       }
       outOfBandErrorHandler(new RPCError(jso.error));

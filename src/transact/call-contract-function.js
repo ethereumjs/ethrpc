@@ -3,7 +3,6 @@
 var assign = require("lodash.assign");
 var speedomatic = require("speedomatic");
 var callOrSendTransaction = require("../transact/call-or-send-transaction");
-var handleRPCError = require("../decode-response/handle-rpc-error");
 
 /**
  * Invoke a function from a contract on the blockchain.
@@ -21,8 +20,6 @@ function callContractFunction(payload, callback) {
   return function (dispatch) {
     dispatch(callOrSendTransaction(assign({}, payload), function (err, result) {
       if (err) return callback(err);
-      // var handledError = handleRPCError(payload.returns, err); // TODO is this needed...?
-      // if (handledError && handledError.error) return callback(handledError);
       callback(null, speedomatic.abiDecodeRpcResponse(payload.returns, result));
     }));
   };

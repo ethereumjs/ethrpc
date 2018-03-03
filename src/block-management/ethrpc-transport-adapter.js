@@ -4,6 +4,7 @@ var eth = require("../wrappers/eth");
 var addNewHeadsSubscription = require("../subscriptions/add-new-heads-subscription");
 var removeSubscription = require("../subscriptions/remove-subscription");
 var logError = require("../utils/log-error");
+var setDebugOptions = require("../debug/set-debug-options");
 
 var nextToken = 1;
 var subscriptionMapping = {};
@@ -38,7 +39,7 @@ function createTransportAdapter(transporter) {
       subscribeToNewHeads: function (onNewHead, onSubscriptionError) {
         var token = (nextToken++).toString();
         subscriptionMapping[token] = null;
-        dispatch(eth.subscribe(["newHeads", {}], function (err, subscriptionID) {
+        dispatch(eth.subscribe(["newHeads"], function (err, subscriptionID) {
           if (err) return onSubscriptionError(err);
           if (!subscriptionID) return onSubscriptionError(subscriptionID);
 
@@ -57,8 +58,10 @@ function createTransportAdapter(transporter) {
         if (token) {
           var subscriptionID = subscriptionMapping[token];
           delete subscriptionMapping[token];
-          dispatch(removeSubscription(subscriptionID));
-          dispatch(eth.unsubscribe(subscriptionID, logError));
+          if (subscriptionID != null) {
+            dispatch(removeSubscription(subscriptionID));
+            dispatch(eth.unsubscribe(subscriptionID, logError));
+          }
         }
       },
     };
