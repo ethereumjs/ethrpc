@@ -12,6 +12,8 @@ var resetState = require("./reset-state");
 var isFunction = require("./utils/is-function");
 var logError = require("./utils/log-error");
 var internalState = require("./internal-state");
+var errors = require("./errors/codes");
+var RPCError = require("./errors/rpc-error");
 
 /**
  * Initiates a connection to Ethereum.  This must be called before any other methods are called.
@@ -48,6 +50,7 @@ function connect(configuration, initialConnectCallback) {
       // ensure we can do basic JSON-RPC over this connection
       dispatch(net_version(null, function (err, networkID) {
         if (err) return initialConnectCallback(err);
+        if (networkID == null) return initialConnectCallback(new RPCError(errors.NO_RESPONSE));
 
         // If configuration.networkID is provided, verify that we're actually on that network
         if (configuration.networkID && parseInt(networkID, 10) !== parseInt(configuration.networkID, 10)) {

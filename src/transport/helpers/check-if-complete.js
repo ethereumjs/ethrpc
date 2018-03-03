@@ -19,7 +19,7 @@ function checkIfComplete(transporter, resultAggregator, onCompleteCallback) {
     && resultAggregator.httpTransports.every(isNull)
     && resultAggregator.wsTransports.every(isNull)
     && resultAggregator.ipcTransports.every(isNull)) {
-    return onCompleteCallback(new Error("Unable to connect to an Ethereum node via any tranpsort (Web3, HTTP, WS, IPC)."), null);
+    return onCompleteCallback(new Error("Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC)."), null);
   }
 
   internalState.web3Transport = resultAggregator.web3Transports.filter(isNotNull)[0] || null;
