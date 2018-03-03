@@ -4,13 +4,9 @@ var updateTx = require("./update-tx");
 
 function reprocessTransactions() {
   return function (dispatch, getState) {
-    var txHash, transactions;
-    transactions = getState().transactions;
-    for (txHash in transactions) {
-      if (transactions.hasOwnProperty(txHash)) {
-        dispatch(updateTx.default(txHash));
-      }
-    }
+    Object.keys(getState().transactions).forEach(function (transactionHash) {
+      dispatch(updateTx.default(transactionHash));
+    });
   };
 }
 

@@ -20,7 +20,7 @@ function wrapTransactionRelayCallback(status, payload, callback) {
           type: payload.method,
           status: status,
           data: payload,
-          response: response
+          response: response,
         });
       }
     };

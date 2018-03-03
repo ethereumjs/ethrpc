@@ -1,31 +1,19 @@
 "use strict";
 
-var speedomatic = require("speedomatic");
-var errors = require("../errors/codes");
+var assign = require("lodash.assign");
+var RPCError = require("../errors/rpc-error");
 
-var handleRPCError = function (method, returns, response) {
-  var i, len, responseNumber;
-  if (response == null) return response;
-  if (Array.isArray(response)) {
-    for (i = 0, len = response.length; i < len; ++i) {
-      response[i] = handleRPCError(method, returns, response[i]);
-    }
-  } else if (response.name && response.message && response.stack) {
-    response.error = response.name;
-  } else if (!response.error) {
-    if (returns && returns.indexOf("[]") > -1 && response.length >= 194) {
-      response = "0x" + response.slice(130, 194);
-    }
-    if (errors[response]) {
-      response = { error: response, message: errors[response] };
-    } else if (returns !== "null" && returns !== "string" || (typeof response === "string" && response.slice(0, 2) === "0x")) {
-      responseNumber = speedomatic.bignum(response, "string", true);
-      if (responseNumber && errors[method] && errors[method][responseNumber]) {
-        response = { error: responseNumber, message: errors[method][responseNumber] };
-      }
-    }
+// TODO is this needed...?
+var handleRPCError = function (returns, rpcError) {
+  if (rpcError == null || rpcError === "0x") return new RPCError({ error: "0x", message: "no response or bad input" });
+  if (rpcError.name != null && rpcError.message != null && rpcError.stack != null) {
+    return new RPCError(assign({}, rpcError, { error: rpcError.name }));
+  } else if (rpcError.error != null) {
+    return rpcError;
+  } else if (returns != null && returns.indexOf("[]") > -1 && rpcError.length >= 194) {
+    return "0x" + rpcError.slice(130, 194);
   }
-  return response;
+  return rpcError;
 };
 
 module.exports = handleRPCError;

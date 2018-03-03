@@ -20,13 +20,11 @@ describe("transport/transporter", function () {
     wsServer2 = StubServer.createStubServer("WS", "ws://localhost:2337");
     httpServer1 = StubServer.createStubServer("HTTP", "http://localhost:1338");
     httpServer2 = StubServer.createStubServer("HTTP", "http://localhost:2338");
-
     ipcServer1.addResponder(function (request) { if (request.method === "net_version") return "ipc server 1"; });
     wsServer1.addResponder(function (request) { if (request.method === "net_version") return "ws server 1"; });
     wsServer2.addResponder(function (request) { if (request.method === "net_version") return "ws server 2"; });
     httpServer1.addResponder(function (request) { if (request.method === "net_version") return "http server 1"; });
     httpServer2.addResponder(function (request) { if (request.method === "net_version") return "http server 2"; });
-
     done();
   });
   afterEach(function (done) {
@@ -35,7 +33,7 @@ describe("transport/transporter", function () {
       function (callback) { if (wsServer1) wsServer1.destroy(callback); else callback(); },
       function (callback) { if (wsServer2) wsServer2.destroy(callback); else callback(); },
       function (callback) { if (httpServer1) httpServer1.destroy(callback); else callback(); },
-      function (callback) { if (httpServer2) httpServer2.destroy(callback); else callback(); }
+      function (callback) { if (httpServer2) httpServer2.destroy(callback); else callback(); },
     ], function () { done(); });
   });
 
@@ -44,12 +42,12 @@ describe("transport/transporter", function () {
       httpAddresses: [],
       wsAddresses: [],
       ipcAddresses: [],
-      connectionTimeout: 1000
+      connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) { assert.fail("expected no messages"); };
-    new Transporter(configuration, messageHandler, false, false, function (error) {
+    new Transporter(configuration, messageHandler, false, function (error) {
       assert.typeOf(error, "Error");
-      assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any tranpsort (Web3, HTTP, WS, IPC).");
+      assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC).");
       done();
     });
   });
@@ -59,12 +57,12 @@ describe("transport/transporter", function () {
       httpAddresses: ["http://nowhere:1234"],
       wsAddresses: ["ws://nowhere:1235"],
       ipcAddresses: ["nowhere"],
-      connectionTimeout: 1000
+      connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) { assert.fail("expected no messages"); };
-    new Transporter(configuration, messageHandler, false, false, function (error) {
+    new Transporter(configuration, messageHandler, false, function (error) {
       assert.typeOf(error, "Error");
-      assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any tranpsort (Web3, HTTP, WS, IPC).");
+      assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC).");
       done();
     });
   });
@@ -74,16 +72,16 @@ describe("transport/transporter", function () {
       httpAddresses: ["http://localhost:1338"],
       wsAddresses: ["ws://nowhere:1235"],
       ipcAddresses: [],
-      connectionTimeout: 1000
+      connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) {
       assert.isNull(error);
       assert.deepEqual(message, { jsonrpc: "2.0", id: 0, result: "http server 1" });
       done();
     };
-    new Transporter(configuration, messageHandler, false, false, function (error, transporter) {
+    new Transporter(configuration, messageHandler, false, function (error, transporter) {
       assert.isNull(error);
-      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] }, "ANY");
+      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
     });
   });
 
@@ -92,16 +90,16 @@ describe("transport/transporter", function () {
       httpAddresses: ["http://localhost:1338"],
       wsAddresses: ["ws://localhost:1337"],
       ipcAddresses: [],
-      connectionTimeout: 1000
+      connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) {
       assert.isNull(error);
       assert.deepEqual(message, { jsonrpc: "2.0", id: 0, result: "ws server 1" });
       done();
     };
-    new Transporter(configuration, messageHandler, false, false, function (error, transporter) {
+    new Transporter(configuration, messageHandler, false, function (error, transporter) {
       assert.isNull(error);
-      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] }, "ANY");
+      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
     });
   });
 
@@ -110,16 +108,16 @@ describe("transport/transporter", function () {
       httpAddresses: ["http://localhost:2338", "http://localhost:1338"],
       wsAddresses: [],
       ipcAddresses: [],
-      connectionTimeout: 1000
+      connectionTimeout: 1000,
     };
     var messageHandler = function (error, message) {
       assert.isNull(error);
       assert.deepEqual(message, { jsonrpc: "2.0", id: 0, result: "http server 2" });
       done();
     };
-    new Transporter(configuration, messageHandler, false, false, function (error, transporter) {
+    new Transporter(configuration, messageHandler, false, function (error, transporter) {
       assert.isNull(error);
-      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] }, "ANY");
+      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
     });
   });
 });

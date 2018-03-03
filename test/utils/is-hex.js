@@ -16,48 +16,48 @@ describe("utils/is-hex", function () {
     s: "deadbeef",
     assertions: function (isHex) {
       assert.isTrue(isHex);
-    }
+    },
   });
   test({
     description: "deadbee -> true",
     s: "deadbee",
     assertions: function (isHex) {
       assert.isTrue(isHex);
-    }
+    },
   });
   test({
     description: "dEaDbEeF -> true",
     s: "dEaDbEeF",
     assertions: function (isHex) {
       assert.isTrue(isHex);
-    }
+    },
   });
   test({
     description: "123456 -> true",
     s: "123456",
     assertions: function (isHex) {
       assert.isTrue(isHex);
-    }
+    },
   });
   test({
     description: "00aa33 -> true",
     s: "00aa33",
     assertions: function (isHex) {
       assert.isTrue(isHex);
-    }
+    },
   });
   test({
     description: "0xdEaDbEeF -> true",
     s: "0xdEaDbEeF",
     assertions: function (isHex) {
       assert.isTrue(isHex);
-    }
+    },
   });
   test({
     description: ".. -> false",
     s: "..",
     assertions: function (isHex) {
       assert.isFalse(isHex);
-    }
+    },
   });
 });

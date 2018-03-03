@@ -30,7 +30,7 @@ module.exports = function (transactions, action) {
       if (transactions[action.hash].tx.blockNumber == null) return transactions;
       newTransaction = {};
       newTransaction[action.hash] = assign({}, transactions[action.hash], {
-        confirmations: action.currentBlockNumber - transactions[action.hash].tx.blockNumber
+        confirmations: action.currentBlockNumber - transactions[action.hash].tx.blockNumber,
       });
       return assign({}, transactions, newTransaction);
     case "TRANSACTION_FAILED":
@@ -60,16 +60,14 @@ module.exports = function (transactions, action) {
     case "INCREMENT_TRANSACTION_COUNT":
       newTransaction = {};
       newTransaction[action.hash] = assign({}, transactions[action.hash], {
-        count: (transactions[action.hash].count) ? transactions[action.hash].count + 1 : 1
+        count: (transactions[action.hash].count) ? transactions[action.hash].count + 1 : 1,
       });
       return assign({}, transactions, newTransaction);
     case "INCREMENT_TRANSACTION_PAYLOAD_TRIES":
       payload = transactions[action.hash].payload || {};
       newTransaction = {};
       newTransaction[action.hash] = assign({}, transactions[action.hash], {
-        payload: assign({}, payload, {
-          tries: (payload.tries) ? payload.tries + 1 : 1
-        })
+        payload: assign({}, payload, { tries: (payload.tries) ? payload.tries + 1 : 1 }),
       });
       return assign({}, transactions, newTransaction);
     case "REMOVE_TRANSACTION":

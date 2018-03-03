@@ -3,7 +3,6 @@
 "use strict";
 
 var assert = require("chai").assert;
-var isFunction = require("../../src/utils/is-function");
 var proxyquire = require("proxyquire");
 var mockStore = require("../mock-store");
 var ACCOUNT_TYPES = require("../../src/constants").ACCOUNT_TYPES;
@@ -18,18 +17,18 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
         "./set-raw-transaction-gas-price": function (packaged, callback) {
           return function () {
             packaged.gasPrice = t.blockchain.gasPrice;
-            callback(packaged);
+            callback(null, packaged);
           };
         },
         "./set-raw-transaction-nonce": function (packaged, address, callback) {
           return function () {
             packaged.nonce = parseInt(t.blockchain.transactionCount, 16);
-            callback(packaged);
+            callback(null, packaged);
           };
-        }
+        },
       });
-      store.dispatch(packageAndSignRawTransaction(t.params.payload, t.params.address, t.params.privateKeyOrSigner, t.params.accountType, function (result) {
-        t.assertions(result);
+      store.dispatch(packageAndSignRawTransaction(t.params.payload, t.params.address, t.params.privateKeyOrSigner, t.params.accountType, function (err, result) {
+        t.assertions(err, result);
         done();
       }));
     });
@@ -43,19 +42,20 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
         send: true,
         signature: ["int256", "int256"],
         params: ["101010", "0xa1"],
-        to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68"
+        to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
       },
       address: "0x0000000000000000000000000000000000000b0b",
       privateKeyOrSigner: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex"),
-      accountType: ACCOUNT_TYPES.PRIVATE_KEY
+      accountType: ACCOUNT_TYPES.PRIVATE_KEY,
     },
     blockchain: {
       gasPrice: "0x64",
-      transactionCount: "0xa"
+      transactionCount: "0xa",
     },
-    assertions: function (output) {
+    assertions: function (err, output) {
+      assert.isNull(err);
       assert.strictEqual(output, mockSignedTransaction);
-    }
+    },
   });
   test({
     description: "With ledger",
@@ -66,7 +66,7 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
         send: true,
         signature: ["int256", "int256"],
         params: ["101010", "0xa1"],
-        to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68"
+        to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
       },
       address: "0x0000000000000000000000000000000000000b0b",
       privateKeyOrSigner: function (packaged, callback) {
@@ -78,19 +78,20 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
           nonce: 10,
           value: "0x0",
           gasLimit: "0x2fd618",
-          gasPrice: "0x64"
+          gasPrice: "0x64",
         });
         callback(null, mockSignedTransaction);
       },
-      accountType: ACCOUNT_TYPES.LEDGER
+      accountType: ACCOUNT_TYPES.LEDGER,
     },
     blockchain: {
       gasPrice: "0x64",
-      transactionCount: "0xa"
+      transactionCount: "0xa",
     },
-    assertions: function (output) {
+    assertions: function (err, output) {
+      assert.isNull(err);
       assert.deepEqual(output, mockSignedTransaction);
-    }
+    },
   });
   test({
     description: "With uPort",
@@ -101,24 +102,25 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
         send: true,
         signature: ["int256", "int256"],
         params: ["101010", "0xa1"],
-        to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68"
+        to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
       },
       address: "0x0000000000000000000000000000000000000b0b",
-      privateKeyOrSigner: function (packaged) {
+      privateKeyOrSigner: function (/*packaged*/) {
         return {
           then: function (callback) {
             callback("0x00000000000000000000000000000000000000000000000000000000deadbeef");
-          }
+          },
         };
       },
-      accountType: ACCOUNT_TYPES.U_PORT
+      accountType: ACCOUNT_TYPES.U_PORT,
     },
     blockchain: {
       gasPrice: "0x64",
-      transactionCount: "0xa"
+      transactionCount: "0xa",
     },
-    assertions: function (output) {
+    assertions: function (err, output) {
+      assert.isNull(err);
       assert.strictEqual(output, "0x00000000000000000000000000000000000000000000000000000000deadbeef");
-    }
+    },
   });
 });

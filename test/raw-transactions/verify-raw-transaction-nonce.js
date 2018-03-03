@@ -17,40 +17,40 @@ describe("raw-transactions/verify-raw-transaction-nonce", function () {
   test({
     description: "Nonce greater than highestNonce",
     params: {
-      nonce: 7
+      nonce: 7,
     },
     state: {
-      highestNonce: -1
+      highestNonce: -1,
     },
     assertions: function (nonce, state) {
       assert.strictEqual(nonce, "0x7");
       assert.strictEqual(state.highestNonce, 7);
-    }
+    },
   });
   test({
     description: "Nonce equal to highestNonce",
     params: {
-      nonce: 7
+      nonce: 7,
     },
     state: {
-      highestNonce: 7
+      highestNonce: 7,
     },
     assertions: function (nonce, state) {
       assert.strictEqual(nonce, "0x8");
       assert.strictEqual(state.highestNonce, 8);
-    }
+    },
   });
   test({
     description: "Nonce less than highestNonce",
     params: {
-      nonce: 7
+      nonce: 7,
     },
     state: {
-      highestNonce: 8
+      highestNonce: 8,
     },
     assertions: function (nonce, state) {
       assert.strictEqual(nonce, "0x9");
       assert.strictEqual(state.highestNonce, 9);
-    }
+    },
   });
 });

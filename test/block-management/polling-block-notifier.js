@@ -38,7 +38,7 @@ describe("block-management/polling-block-notifier", function () {
       getLatestBlock: function (callback) {
         assert.throws(function () { callback(undefined, {}); });
         pollingBlockNotifier.destroy();
-      }
+      },
     };
     pollingBlockNotifier = new PollingBlockNotifier(mockTransport, 1);
     pollingBlockNotifier.subscribe(assertingCallback);

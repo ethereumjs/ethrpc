@@ -17,11 +17,11 @@ describe("reducers/gas-price", function () {
       state: 20000000000,
       action: {
         type: "SET_GAS_PRICE",
-        gasPrice: 20000000001
+        gasPrice: 20000000001,
       },
       assertions: function (state) {
         assert.strictEqual(state, 20000000001);
-      }
+      },
     });
   });
   describe("RESET_GAS_PRICE", function () {
@@ -29,11 +29,11 @@ describe("reducers/gas-price", function () {
       description: "Reset gasPrice to its initial value",
       state: 20000000001,
       action: {
-        type: "RESET_GAS_PRICE"
+        type: "RESET_GAS_PRICE",
       },
       assertions: function (state) {
         assert.strictEqual(state, 20000000000);
-      }
+      },
     });
   });
 });

@@ -17,7 +17,7 @@
             ],
             // "env": {
             //     "ETHRPC_TEST_HTTP_ADDRESS": "https://eth3.augur.net:443",
-            //     "ETHRPC_TEST_WS_ADRESS": "wss://ws.augur.net:443"
+            //     "ETHRPC_TEST_WS_ADDRESS": "wss://ws.augur.net:443"
             // },
             "internalConsoleOptions": "openOnSessionStart",
             "outFiles": [

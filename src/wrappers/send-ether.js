@@ -20,7 +20,7 @@ function sendEther(to, value, from, onSent, onSuccess, onFailed) {
       to: to,
       value: speedomatic.fix(value, "hex"),
       returns: "null",
-      gas: "0xcf08"
+      gas: "0xcf08",
     }, null, onSent, onSuccess, onFailed));
   };
 }

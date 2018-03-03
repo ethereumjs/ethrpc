@@ -1,8 +1,8 @@
 "use strict";
 
-var immutableDelete = require("immutable-delete");
 var signRawTransactionWithKey = require("./sign-raw-transaction-with-key");
-var isFunction = require("../utils/is-function");
+var RPCError = require("../errors/rpc-error");
+var errors = require("../errors/codes");
 var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
 
 /**
@@ -10,25 +10,25 @@ var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
  * @param {Object} packaged Unsigned transaction.
  * @param {buffer|function} privateKeyOrSigner Sender's plaintext private key or signing function.
  * @param {string} accountType One of "privateKey", "uPort", or "ledger".
- * @param {function=} callback Callback function (optional).
+ * @param {function} callback Callback function.
  * @return {string} Signed and serialized raw transaction.
  */
 function signRawTransaction(packaged, privateKeyOrSigner, accountType, callback) {
-  try {
-    if (accountType === ACCOUNT_TYPES.PRIVATE_KEY) {
-      return signRawTransactionWithKey(packaged, privateKeyOrSigner, callback);
-    } else if (accountType === ACCOUNT_TYPES.LEDGER) {
-      privateKeyOrSigner(immutableDelete(packaged, "returns"), callback);
-    } else if (accountType === ACCOUNT_TYPES.U_PORT) {
-      privateKeyOrSigner(immutableDelete(packaged, "returns")).then(function (txHash) {
-        callback(null, txHash);
-      });
-    } else {
-      callback({ error: "unknown account type" });
-    }
-  } catch (error) {
-    if (!isFunction(callback)) throw error;
-    return callback(error);
+  switch (accountType) {
+    case ACCOUNT_TYPES.PRIVATE_KEY:
+      try {
+        return callback(null, signRawTransactionWithKey(packaged, privateKeyOrSigner));
+      } catch (err) {
+        return callback(err);
+      }
+    case ACCOUNT_TYPES.LEDGER:
+      return privateKeyOrSigner(packaged, callback);
+    case ACCOUNT_TYPES.U_PORT:
+      return privateKeyOrSigner(packaged).then(function (transactionHash) {
+        callback(null, transactionHash);
+      }).catch(callback);
+    default:
+      callback(new RPCError(errors.UNKNOWN_ACCOUNT_TYPE));
   }
 }
 

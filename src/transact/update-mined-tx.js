@@ -3,75 +3,68 @@
 var speedomatic = require("speedomatic");
 var BigNumber = require("bignumber.js");
 var eth = require("../wrappers/eth");
-var getLoggedReturnValue = require("../transact/get-logged-return-value");
-var callContractFunction = require("../transact/call-contract-function");
-var handleRPCError = require("../decode-response/handle-rpc-error");
 var isFunction = require("../utils/is-function");
+var logError = require("../utils/log-error");
 var errors = require("../errors/codes");
+var RPCError = require("../errors/rpc-error");
 var constants = require("../constants");
-
-BigNumber.config({ MODULO_MODE: BigNumber.EUCLID, ROUNDING_MODE: BigNumber.ROUND_HALF_DOWN });
 
 function updateMinedTx(txHash) {
   return function (dispatch, getState) {
-    var debug, transaction, currentBlock, state = getState();
-    debug = state.debug;
-    currentBlock = state.currentBlock;
+    var state = getState();
+    var debug = state.debug;
+    var currentBlock = state.currentBlock;
     dispatch({
       type: "SET_TRANSACTION_CONFIRMATIONS",
       hash: txHash,
-      currentBlockNumber: currentBlock.number
+      currentBlockNumber: currentBlock.number,
     });
-    transaction = state.transactions[txHash];
+    var transaction = getState().transactions[txHash];
+    var onFailed = isFunction(transaction.onFailed) ? transaction.onFailed : logError;
     if (transaction.confirmations >= constants.REQUIRED_CONFIRMATIONS) {
       dispatch({ type: "TRANSACTION_CONFIRMED", hash: txHash });
-      if (isFunction(transaction.onSuccess)) {
-        dispatch(eth.getBlockByNumber([transaction.tx.blockNumber, false], function (block) {
-          if (block && block.timestamp) {
-            dispatch({
-              type: "UPDATE_TRANSACTION",
-              hash: txHash,
-              data: { tx: { timestamp: parseInt(block.timestamp, 16) } }
-            });
-          }
+      dispatch(eth.getBlockByNumber([transaction.tx.blockNumber, false], function (err, block) {
+        if (err) return onFailed(err);
+        if (block == null) return onFailed(new RPCError(errors.BLOCK_NOT_FOUND));
+        if (block.timestamp != null) {
           dispatch({
             type: "UPDATE_TRANSACTION",
             hash: txHash,
-            data: { tx: { callReturn: transaction.tx.callReturn } }
+            data: { tx: { timestamp: parseInt(block.timestamp, 16) } },
           });
-          dispatch(eth.getTransactionReceipt(txHash, function (receipt) {
-            if (debug.tx) console.log("[ethrpc] got receipt:", receipt);
-            if (!receipt) return console.error("[ethrpc] receipt not found for", txHash);
-            if (receipt.gasUsed) {
-              dispatch({
-                type: "UPDATE_TRANSACTION",
-                hash: txHash,
-                data: {
-                  tx: {
-                    gasFees: speedomatic.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(transaction.tx.gasPrice, 16)), "string")
-                  }
-                }
-              });
-            }
-            dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
-            if (receipt.status != null) {
-              if (parseInt(receipt.status, 16) === 0) {
-                if (isFunction(transaction.onFailed)) {
-                  transaction.onFailed(getState().transactions[txHash].tx);
-                } else {
-                  console.error("[ethrpc] transaction failed:", getState().transactions[txHash].tx);
-                }
-              } else if (parseInt(receipt.status, 16) === 1) {
-                transaction.onSuccess(getState().transactions[txHash].tx);
-              }
-            } else {
+        }
+        dispatch({
+          type: "UPDATE_TRANSACTION",
+          hash: txHash,
+          data: { tx: { callReturn: transaction.tx.callReturn } },
+        });
+        dispatch(eth.getTransactionReceipt(txHash, function (err, receipt) {
+          if (debug.tx) console.log("[ethrpc] got receipt:", err, receipt);
+          if (err) return onFailed(err);
+          if (receipt == null) return onFailed(new RPCError(errors.TRANSACTION_RECEIPT_NOT_FOUND));
+          if (receipt.gasUsed) {
+            dispatch({
+              type: "UPDATE_TRANSACTION",
+              hash: txHash,
+              data: {
+                tx: {
+                  gasFees: speedomatic.unfix(new BigNumber(receipt.gasUsed, 16).times(new BigNumber(transaction.tx.gasPrice, 16)), "string"),
+                },
+              },
+            });
+          }
+          dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
+          if (receipt.status != null) {
+            if (parseInt(receipt.status, 16) === 0) {
+              onFailed(getState().transactions[txHash].tx);
+            } else if (parseInt(receipt.status, 16) === 1) {
               transaction.onSuccess(getState().transactions[txHash].tx);
             }
-          }));
+          } else {
+            transaction.onSuccess(getState().transactions[txHash].tx);
+          }
         }));
-      } else {
-        dispatch({ type: "UNLOCK_TRANSACTION", hash: transaction.hash });
-      }
+      }));
     } else {
       dispatch({ type: "UNLOCK_TRANSACTION", hash: transaction.hash });
     }

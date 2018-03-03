@@ -8,12 +8,11 @@ var internalState = require("./internal-state");
 module.exports = function (startingBlockNumber, callback) {
   return function (dispatch, getState) {
     var storedConfiguration = getState().configuration;
-    dispatch(createBlockAndLogStreamer({
+    createBlockAndLogStreamer({
       pollingIntervalMilliseconds: storedConfiguration.pollingIntervalMilliseconds,
       blockRetention: storedConfiguration.blockRetention,
-      startingBlockNumber: startingBlockNumber
-    }, dispatch(createTransportAdapter(internalState.get("transporter"))), callback));
-
+      startingBlockNumber: startingBlockNumber,
+    }, dispatch(createTransportAdapter(internalState.get("transporter"))), callback);
     internalState.get("blockAndLogStreamer").subscribeToOnBlockAdded(function (block) {
       dispatch(onNewBlock(block));
     });

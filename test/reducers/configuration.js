@@ -21,7 +21,7 @@ describe("reducers/configuration", function () {
         connectionTimeout: 3000,
         networkID: null,
         pollingIntervalMilliseconds: 30000,
-        blockRetention: 100
+        blockRetention: 100,
       },
       action: {
         type: "SET_CONFIGURATION",
@@ -29,8 +29,8 @@ describe("reducers/configuration", function () {
           httpAddresses: ["https://eth3.augur.net"],
           wsAddresses: ["wss://ws.augur.net"],
           ipcAddresses: [],
-          blockRetention: 10
-        }
+          blockRetention: 10,
+        },
       },
       assertions: function (state) {
         assert.deepEqual(state, {
@@ -40,9 +40,9 @@ describe("reducers/configuration", function () {
           connectionTimeout: 3000,
           networkID: null,
           pollingIntervalMilliseconds: 30000,
-          blockRetention: 10
+          blockRetention: 10,
         });
-      }
+      },
     });
     test({
       description: "Ignore extra confirmation option fields",
@@ -53,7 +53,7 @@ describe("reducers/configuration", function () {
         connectionTimeout: 3000,
         networkID: null,
         pollingIntervalMilliseconds: 30000,
-        blockRetention: 100
+        blockRetention: 100,
       },
       action: {
         type: "SET_CONFIGURATION",
@@ -62,8 +62,8 @@ describe("reducers/configuration", function () {
           wsAddresses: ["wss://ws.augur.net"],
           ipcAddresses: [],
           blockRetention: 10,
-          cruft: "crufty!"
-        }
+          cruft: "crufty!",
+        },
       },
       assertions: function (state) {
         assert.deepEqual(state, {
@@ -73,9 +73,9 @@ describe("reducers/configuration", function () {
           connectionTimeout: 3000,
           networkID: null,
           pollingIntervalMilliseconds: 30000,
-          blockRetention: 10
+          blockRetention: 10,
         });
-      }
+      },
     });
   });
   describe("RESET_CONFIGURATION", function () {
@@ -88,10 +88,10 @@ describe("reducers/configuration", function () {
         connectionTimeout: 20000,
         networkID: null,
         pollingIntervalMilliseconds: 30000,
-        blockRetention: 10
+        blockRetention: 10,
       },
       action: {
-        type: "RESET_CONFIGURATION"
+        type: "RESET_CONFIGURATION",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
@@ -102,9 +102,9 @@ describe("reducers/configuration", function () {
           networkID: null,
           pollingIntervalMilliseconds: 30000,
           startBlockStreamOnConnect: true,
-          blockRetention: 100
+          blockRetention: 100,
         });
-      }
+      },
     });
   });
 });

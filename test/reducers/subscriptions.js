@@ -19,66 +19,66 @@ describe("reducers/subscriptions", function () {
         type: "ADD_SUBSCRIPTION",
         id: "0x0000000000000",
         reaction: "SET_CURRENT_BLOCK",
-        unsubscribeToken: "0"
+        unsubscribeToken: "0",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0x0000000000000": {
             unsubscribeToken: "0",
-            reaction: "SET_CURRENT_BLOCK"
-          }
+            reaction: "SET_CURRENT_BLOCK",
+          },
         });
-      }
+      },
     });
     test({
       description: "Add a new subscription, initial state non-empty",
       state: {
         "0x0000000000000": {
           unsubscribeToken: "0",
-          reaction: "SET_CURRENT_BLOCK"
-        }
+          reaction: "SET_CURRENT_BLOCK",
+        },
       },
       action: {
         type: "ADD_SUBSCRIPTION",
         id: "0x00000000000001",
         reaction: "SET_CURRENT_BLOCK",
-        unsubscribeToken: "2"
+        unsubscribeToken: "2",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0x0000000000000": {
             unsubscribeToken: "0",
-            reaction: "SET_CURRENT_BLOCK"
+            reaction: "SET_CURRENT_BLOCK",
           },
           "0x00000000000001": {
             unsubscribeToken: "2",
-            reaction: "SET_CURRENT_BLOCK"
-          }
+            reaction: "SET_CURRENT_BLOCK",
+          },
         });
-      }
+      },
     });
     test({
       description: "Overwrite an existing subscription",
       state: {
         "0x0000000000000": {
           unsubscribeToken: "0",
-          reaction: "SET_CURRENT_BLOCK"
-        }
+          reaction: "SET_CURRENT_BLOCK",
+        },
       },
       action: {
         type: "ADD_SUBSCRIPTION",
         id: "0x0000000000000",
         reaction: "SET_CURRENT_BLOCK",
-        unsubscribeToken: "2"
+        unsubscribeToken: "2",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0x0000000000000": {
             unsubscribeToken: "2",
-            reaction: "SET_CURRENT_BLOCK"
-          }
+            reaction: "SET_CURRENT_BLOCK",
+          },
         });
-      }
+      },
     });
   });
   describe("REMOVE_SUBSCRIPTION", function () {
@@ -87,41 +87,41 @@ describe("reducers/subscriptions", function () {
       state: {
         "0x0000000000000": {
           unsubscribeToken: "0",
-          reaction: "SET_CURRENT_BLOCK"
+          reaction: "SET_CURRENT_BLOCK",
         },
         "0x00000000000001": {
           unsubscribeToken: "2",
-          reaction: "SET_CURRENT_BLOCK"
-        }
+          reaction: "SET_CURRENT_BLOCK",
+        },
       },
       action: {
         type: "REMOVE_SUBSCRIPTION",
-        id: "0x0000000000000"
+        id: "0x0000000000000",
       },
       assertions: function (state) {
         assert.deepEqual(state, {
           "0x00000000000001": {
             unsubscribeToken: "2",
-            reaction: "SET_CURRENT_BLOCK"
-          }
+            reaction: "SET_CURRENT_BLOCK",
+          },
         });
-      }
+      },
     });
     test({
       description: "Remove the last subscription",
       state: {
         "0x0000000000000": {
           unsubscribeToken: "0",
-          reaction: "SET_CURRENT_BLOCK"
-        }
+          reaction: "SET_CURRENT_BLOCK",
+        },
       },
       action: {
         type: "REMOVE_SUBSCRIPTION",
-        id: "0x0000000000000"
+        id: "0x0000000000000",
       },
       assertions: function (state) {
         assert.deepEqual(state, {});
-      }
+      },
     });
   });
   describe("REMOVE_ALL_SUBSCRIPTIONS", function () {
@@ -130,19 +130,19 @@ describe("reducers/subscriptions", function () {
       state: {
         "0x0000000000000": {
           unsubscribeToken: "0",
-          reaction: "SET_CURRENT_BLOCK"
+          reaction: "SET_CURRENT_BLOCK",
         },
         "0x00000000000001": {
           unsubscribeToken: "2",
-          reaction: "SET_CURRENT_BLOCK"
-        }
+          reaction: "SET_CURRENT_BLOCK",
+        },
       },
       action: {
-        type: "REMOVE_ALL_SUBSCRIPTIONS"
+        type: "REMOVE_ALL_SUBSCRIPTIONS",
       },
       assertions: function (state) {
         assert.deepEqual(state, {});
-      }
+      },
     });
   });
 });

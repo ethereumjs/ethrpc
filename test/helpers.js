@@ -2,10 +2,11 @@
 
 var assert = require("chai").assert;
 var os = require("os");
+var StubServer = require("ethereumjs-stub-rpc-server");
 var rpc = require("../src");
 
-function errorHandler(error) {
-  assert.isTrue(false, (error || {}).message || error);
+function errorHandler(err) {
+  assert.isTrue(false, (err || {}).message || err);
 }
 
 module.exports.getIpcAddress = function () {
@@ -13,7 +14,7 @@ module.exports.getIpcAddress = function () {
 };
 
 module.exports.getWsAddress = function () {
-  return process.env.ETHRPC_TEST_WS_ADRESS || "ws://localhost:1337";
+  return process.env.ETHRPC_TEST_WS_ADDRESS || "ws://localhost:1337";
 };
 
 module.exports.getHttpAddress = function () {
@@ -22,9 +23,9 @@ module.exports.getHttpAddress = function () {
 
 module.exports.rpcConnect = function (transportType, transportAddress, callback) {
   var configuration = this.getRpcConfiguration(transportType, transportAddress);
-  rpc.connect(configuration, function (error) {
-    assert.isNull(error, (error || {}).message);
-    callback();
+  rpc.connect(configuration, function (err) {
+    assert.isNull(err, (err || {}).message);
+    callback(null);
   });
 };
 
@@ -37,7 +38,7 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         httpAddresses: [],
         pollingIntervalMilliseconds: 1,
         blockRetention: 5,
-        errorHandler: errorHandler
+        errorHandler: errorHandler,
       };
     case "WS":
       return {
@@ -46,7 +47,7 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         httpAddresses: [],
         pollingIntervalMilliseconds: 1,
         blockRetention: 5,
-        errorHandler: errorHandler
+        errorHandler: errorHandler,
       };
     case "HTTP":
       return {
@@ -55,9 +56,26 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
         httpAddresses: [transportAddress],
         pollingIntervalMilliseconds: 1,
         blockRetention: 5,
-        errorHandler: errorHandler
+        errorHandler: errorHandler,
       };
     default:
-      assert.false(true, "Unknown transportType: " + transportType);
+      assert.isFalse(true, "Unknown transportType: " + transportType);
   }
+};
+
+module.exports.createStubRpcServerWithRequiredResponders = function (transportType, transportAddress) {
+  var stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
+  stubRpcServer.addResponder(function (request) {
+    switch (request.method) {
+      case "eth_coinbase":
+        return "0x0000000000000000000000000000000000000b0b";
+      case "eth_gasPrice":
+        return "0x09184e72a000";
+      case "eth_subscribe":
+        return "0x00000000000000000000000000000001";
+      case "eth_unsubscribe":
+        return true;
+    }
+  });
+  return stubRpcServer;
 };

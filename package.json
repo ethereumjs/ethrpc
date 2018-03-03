@@ -1,13 +1,13 @@
 {
   "name": "ethrpc",
-  "version": "4.5.14",
+  "version": "5.0.0",
   "description": "Ethereum JSON RPC",
   "author": "The Augur Developers <team@augur.net>",
   "license": "MIT",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha test/*.js test/block-management test/raw-transactions test/reducers test/transport test/utils",
-    "lint": "eslint src && eslint test/*.js test/block-management test/raw-transactions test/reducers test/transport test/utils",
+    "lint": "eslint src test/*.js test/block-management test/raw-transactions test/reducers test/transport test/utils",
     "coverage": "istanbul cover --include-all-sources --root ./src ./node_modules/mocha/bin/_mocha test/",
     "link": "npm link speedomatic ethereumjs-blockstream",
     "genversion": "genversion src/version.js",
@@ -45,7 +45,6 @@
     "redux": "3.6.0",
     "redux-thunk-subscribe": "1.0.3",
     "speedomatic": "2.1.2",
-    "sync-request": "2.0.1",
     "uuid": "3.0.1"
   },
   "devDependencies": {

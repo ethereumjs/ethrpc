@@ -1,10 +1,11 @@
 "use strict";
 
+var immutableDelete = require("immutable-delete");
 var packageRawTransaction = require("./package-raw-transaction");
 var setRawTransactionNonce = require("./set-raw-transaction-nonce");
 var setRawTransactionGasPrice = require("./set-raw-transaction-gas-price");
 var signRawTransaction = require("./sign-raw-transaction");
-var isFunction = require("../utils/is-function");
+var isObject = require("../utils/is-object");
 var RPCError = require("../errors/rpc-error");
 var errors = require("../errors/codes");
 
@@ -19,18 +20,16 @@ var errors = require("../errors/codes");
  */
 function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, callback) {
   return function (dispatch, getState) {
-    var packaged, state = getState();
-    if (!payload || payload.constructor !== Object) return callback(errors.TRANSACTION_FAILED);
-    if (!address || !privateKeyOrSigner) return callback(errors.NOT_LOGGED_IN);
-    packaged = packageRawTransaction(payload, address, state.networkID, state.currentBlock);
+    var state = getState();
+    if (!isObject(payload)) return callback(new RPCError(errors.TRANSACTION_FAILED));
+    if (address == null || privateKeyOrSigner == null) return callback(new RPCError(errors.NOT_LOGGED_IN));
+    var packaged = packageRawTransaction(payload, address, state.networkID, state.currentBlock);
     if (state.debug.broadcast) console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
-    dispatch(setRawTransactionGasPrice(packaged, function (packaged) {
-      if (packaged.error) return callback(packaged);
-      dispatch(setRawTransactionNonce(packaged, address, function (packaged) {
-        if (packaged.error) return callback(packaged);
-        signRawTransaction(packaged, privateKeyOrSigner, accountType, function (err, result) {
-          callback(err || result);
-        });
+    dispatch(setRawTransactionGasPrice(packaged, function (err, packaged) {
+      if (err) return callback(err);
+      dispatch(setRawTransactionNonce(packaged, address, function (err, packaged) {
+        if (err) return callback(err);
+        signRawTransaction(immutableDelete(packaged, "returns"), privateKeyOrSigner, accountType, callback);
       }));
     }));
   };

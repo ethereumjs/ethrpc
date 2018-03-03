@@ -4,8 +4,6 @@ module.exports.debug = {
   connect: false,
   tx: false,
   broadcast: false,
-  nonce: false,
-  sync: false
 };
 module.exports.configuration = {
   httpAddresses: [],
@@ -15,7 +13,7 @@ module.exports.configuration = {
   connectionTimeout: 10000,
   pollingIntervalMilliseconds: 30000,
   blockRetention: 100,
-  startBlockStreamOnConnect: true
+  startBlockStreamOnConnect: true,
 };
 module.exports.currentBlock = null;
 module.exports.highestNonce = -1;

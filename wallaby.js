@@ -6,7 +6,6 @@ module.exports = function () {
     ],
     "tests": [
       "test/**/*.js",
-      "!test/sync-node-only.js",
       "!test/transporter.js"
     ],
     "testFramework": "mocha",

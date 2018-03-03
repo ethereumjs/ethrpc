@@ -11,7 +11,7 @@ module.exports = {
     LEDGER: "ledger",
     PRIVATE_KEY: "privateKey",
     UNLOCKED_ETHEREUM_NODE: "unlockedEthereumNode",
-    META_MASK: "metaMask"
+    META_MASK: "metaMask",
   },
 
   // Number of required confirmations for transact sequence
@@ -31,6 +31,6 @@ module.exports = {
 
   DEFAULT_GAS: "0x2fd618",
 
-  ETHER: new BigNumber(10, 10).toPower(18)
+  ETHER: new BigNumber(10, 10).toPower(18),
 
 };

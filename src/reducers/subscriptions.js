@@ -15,7 +15,7 @@ module.exports = function (subscriptions, action) {
       newSubscription = {};
       newSubscription[action.id] = {
         reaction: action.reaction,
-        unsubscribeToken: action.unsubscribeToken
+        unsubscribeToken: action.unsubscribeToken,
       };
       return assign({}, subscriptions, newSubscription);
     case "REMOVE_SUBSCRIPTION":

@@ -3,7 +3,6 @@
 "use strict";
 
 var assert = require("chai").assert;
-var StubServer = require("ethereumjs-stub-rpc-server");
 var helpers = require("./helpers");
 var rpc = require("../src");
 
@@ -12,7 +11,7 @@ describe("tests that work against any node (test or live)", function () {
     describe(transportType, function () {
       var server;
       beforeEach(function (done) {
-        server = StubServer.createStubServer(transportType, transportAddress);
+        server = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
         helpers.rpcConnect(transportType, transportAddress, done);
       });
       afterEach(function (done) {
@@ -21,7 +20,8 @@ describe("tests that work against any node (test or live)", function () {
       });
       describe("version", function () {
         it("returns a version string", function (done) {
-          rpc.version(function (version) {
+          rpc.version(function (err, version) {
+            assert.isNull(err);
             assert.strictEqual(typeof version, "string");
             done();
           });

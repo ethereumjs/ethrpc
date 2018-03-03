@@ -7,14 +7,13 @@ var setCoinbase = require("./wrappers/set-coinbase");
 var Transporter = require("./transport/transporter");
 var ensureLatestBlock = require("./block-management/ensure-latest-block");
 var startBlockStream = require("./start-block-stream");
-var createTransportAdapter = require("./block-management/ethrpc-transport-adapter");
-var onNewBlock = require("./block-management/on-new-block");
 var validateConfiguration = require("./validate/validate-configuration");
 var resetState = require("./reset-state");
-var ErrorWithData = require("./errors").ErrorWithData;
 var isFunction = require("./utils/is-function");
 var logError = require("./utils/log-error");
 var internalState = require("./internal-state");
+var errors = require("./errors/codes");
+var RPCError = require("./errors/rpc-error");
 
 /**
  * Initiates a connection to Ethereum.  This must be called before any other methods are called.
@@ -35,33 +34,23 @@ var internalState = require("./internal-state");
  */
 function connect(configuration, initialConnectCallback) {
   return function (dispatch, getState) {
-    var syncOnly, storedConfiguration, debug = getState().debug;
     dispatch(resetState());
 
     // Use logError (console.error) as default out-of-band error handler if not set
-    if (!isFunction(configuration.errorHandler)) {
-      configuration.errorHandler = logError;
-    }
+    if (!isFunction(configuration.errorHandler)) configuration.errorHandler = logError;
     internalState.set("outOfBandErrorHandler", configuration.errorHandler);
     dispatch({ type: "SET_CONFIGURATION", configuration: validateConfiguration(configuration) });
 
-    syncOnly = !initialConnectCallback;
-    if (syncOnly) {
-      initialConnectCallback = function (error) {
-        if (error instanceof Error) throw error;
-        else if (error) throw new ErrorWithData(error);
-      };
-    }
-
     // initialize the transporter, this will be how we send to and receive from the blockchain
-    storedConfiguration = getState().configuration;
-    new Transporter(storedConfiguration, internalState.get("shimMessageHandler"), syncOnly, debug.connect, function (err, transporter) {
-      if (err !== null) return initialConnectCallback(err);
+    var storedConfiguration = getState().configuration;
+    new Transporter(storedConfiguration, internalState.get("shimMessageHandler"), getState().debug.connect, function (err, transporter) {
+      if (err) return initialConnectCallback(err);
       internalState.set("transporter", transporter);
 
       // ensure we can do basic JSON-RPC over this connection
-      dispatch(net_version(null, function (networkID) {
-        if (networkID instanceof Error || networkID.error) return initialConnectCallback(networkID);
+      dispatch(net_version(null, function (err, networkID) {
+        if (err) return initialConnectCallback(err);
+        if (networkID == null) return initialConnectCallback(new RPCError(errors.NO_RESPONSE));
 
         // If configuration.networkID is provided, verify that we're actually on that network
         if (configuration.networkID && parseInt(networkID, 10) !== parseInt(configuration.networkID, 10)) {
@@ -71,9 +60,9 @@ function connect(configuration, initialConnectCallback) {
         dispatch({ type: "SET_NETWORK_ID", networkID: networkID });
         if (storedConfiguration.startBlockStreamOnConnect) dispatch(startBlockStream());
         async.parallel([
-          function (next) { dispatch(ensureLatestBlock(function () { next(); })); },
+          function (next) { dispatch(ensureLatestBlock(function (err) { next(err); })); },
           function (next) { dispatch(setCoinbase(next)); },
-          function (next) { dispatch(setGasPrice(next)); }
+          function (next) { dispatch(setGasPrice(next)); },
         ], initialConnectCallback);
       }));
     });

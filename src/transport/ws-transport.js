@@ -13,9 +13,9 @@ WsTransport.prototype = Object.create(AbstractTransport.prototype);
 WsTransport.prototype.constructor = WsTransport;
 
 WsTransport.prototype.connect = function (callback) {
-  var messageHandler, self = this;
+  var self = this;
   this.webSocketClient = new WebSocketClient(this.address, undefined, undefined, undefined, { timeout: this.timeout });
-  messageHandler = function () { };
+  var messageHandler = function () { };
   this.webSocketClient.onopen = function () {
     //console.log("websocket", self.address, "opened");
     callback(null);
@@ -47,7 +47,8 @@ WsTransport.prototype.connect = function (callback) {
 WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
     if (this.webSocketClient.readyState === 3) {
-      var err = new Error("Websocket Disconnected"); err.retryable = true;
+      var err = new Error("Websocket Disconnected");
+      err.retryable = true;
       return errorCallback(err);
     }
     this.webSocketClient.send(JSON.stringify(rpcJso));

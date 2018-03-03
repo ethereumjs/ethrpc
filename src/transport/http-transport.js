@@ -19,7 +19,7 @@ HttpTransport.prototype.connect = function (callback) {
     url: this.address,
     method: "POST",
     json: { jsonrpc: "2.0", id: 0, method: "net_version" },
-    timeout: this.timeout
+    timeout: this.timeout,
   }, function (error, response, jso) {
     if (error || response.statusCode !== 200) {
       callback(error);
@@ -41,7 +41,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
     url: this.address,
     method: "POST",
     json: rpcObject, // lies! this actually wants a JSO, not a JSON string
-    timeout: this.timeout
+    timeout: this.timeout,
   }, function (error, response, body) {
     if (error) {
       if (error.code === "ECONNRESET") error.retryable = true;
@@ -56,7 +56,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       this.messageHandler(null, {
         id: rpcObject.id,
         jsonrpc: "2.0",
-        error: {"code": -32601, "message": "Method not found"}
+        error: {"code": -32601, "message": "Method not found"},
       });
     } else {
       error = new Error("Unexpected status code.");
