@@ -17,9 +17,8 @@ describe("raw-transactions/handle-raw-transaction-error", function () {
       rawTransactionResponse: { code: -2, message: "0xdeadbeef" },
     },
     assertions: function (output) {
-      assert.strictEqual(output.name, "RPCError");
       assert.strictEqual(output.message, "0xdeadbeef");
-      assert.strictEqual(output.error, -2);
+      assert.strictEqual(output.code, -2);
     },
   });
   test({

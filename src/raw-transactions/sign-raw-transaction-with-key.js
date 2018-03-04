@@ -3,7 +3,6 @@
 var speedomatic = require("speedomatic");
 var Transaction = require("ethereumjs-tx");
 var RPCError = require("../errors/rpc-error");
-var errors = require("../errors/codes");
 
 /**
  * Sign the transaction using the private key.
@@ -18,7 +17,7 @@ function signRawTransactionWithKey(packaged, privateKey) {
   } else {
     rawTransaction.sign(privateKey);
   }
-  if (!rawTransaction.validate()) throw new RPCError(errors.TRANSACTION_INVALID);
+  if (!rawTransaction.validate()) throw new RPCError("TRANSACTION_INVALID");
   return speedomatic.prefixHex(rawTransaction.serialize().toString("hex"));
 }
 

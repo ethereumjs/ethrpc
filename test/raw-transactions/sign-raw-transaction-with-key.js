@@ -55,7 +55,7 @@ describe("raw-transactions/sign-raw-transaction-with-key", function () {
       privateKey: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex"),
     },
     assertions: function (signedRawTransaction) {
-      assert.deepEqual(signedRawTransaction, new RPCError(errors.TRANSACTION_INVALID));
+      assert.deepEqual(signedRawTransaction, new RPCError("TRANSACTION_INVALID"));
     },
   });
 });

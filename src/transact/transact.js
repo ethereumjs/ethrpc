@@ -11,7 +11,6 @@ var callOrSendTransaction = require("../transact/call-or-send-transaction");
 var isFunction = require("../utils/is-function");
 var noop = require("../utils/noop");
 var RPCError = require("../errors/rpc-error");
-var errors = require("../errors/codes");
 
 function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
@@ -31,7 +30,7 @@ function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, o
     if (payload.estimateGas) {
       return dispatch(callOrSendTransaction(payload, function (err, result) {
         if (err) return onFailedCallback(err);
-        if (result == null) return onFailedCallback(new RPCError(errors.NULL_CALL_RETURN));
+        if (result == null) return onFailedCallback(new RPCError("NULL_CALL_RETURN"));
         return onSuccessCallback(result);
       }));
     }
@@ -42,7 +41,7 @@ function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, o
     dispatch(callContractFunction(payload, function (err, returnData) {
       if (debug.tx) console.log("returnData:", returnData);
       if (err) return onFailedCallback(returnData);
-      if (returnData == null) return onFailedCallback(new RPCError(errors.NULL_CALL_RETURN));
+      if (returnData == null) return onFailedCallback(new RPCError("NULL_CALL_RETURN"));
       dispatch(transactAsync(payload, returnData, privateKeyOrSigner, accountType, onSentCallback, onSuccessCallback, onFailedCallback));
     }));
   };

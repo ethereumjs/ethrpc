@@ -7,7 +7,7 @@ var ethereumjsAbi = require("ethereumjs-abi");
 var os = require("os");
 var helpers = require("./helpers");
 var rpc = require("../src");
-var ErrorWithCode = require("../src/errors").ErrorWithCode;
+var RPCError = require("../src/errors/rpc-error");
 var constants = require("../src/constants");
 
 function createReasonableTransactPayload() {
@@ -1186,7 +1186,7 @@ describe("tests that only work against stub server", function () {
           function onSent() { }
           function onSuccess() { assert.isFalse(true, "onSuccess should not have been called"); }
           function onFailed(err) {
-            assert.strictEqual(err.error, 413);
+            assert.strictEqual(err.message, "Maximum number of transaction retry attempts exceeded");
             assert.strictEqual(err.hash, "0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf" + "0006");
             done();
           }
@@ -1243,7 +1243,7 @@ describe("tests that only work against stub server", function () {
         it("isUnlocked (locked)", function (done) {
           server.addResponder(function (jso) {
             if (jso.method === "eth_sign") {
-              return new ErrorWithCode("account is locked", -32000);
+              return new RPCError({ code: -32000, message: "account is locked" });
             }
           });
           rpc.isUnlocked("0x00bae5113ee9f252cceb0001205b88fad175461a", function (err, result) {

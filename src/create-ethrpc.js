@@ -11,7 +11,6 @@ var packageRawTransaction = require("./raw-transactions/package-raw-transaction"
 var signRawTransaction = require("./raw-transactions/sign-raw-transaction");
 var signRawTransactionWithKey = require("./raw-transactions/sign-raw-transaction-with-key");
 var packageRequest = require("./encode-request/package-request");
-var handleRPCError = require("./decode-response/handle-rpc-error");
 var validateAndDefaultBlockNumber = require("./validate/validate-and-default-block-number");
 var validateTransaction = require("./validate/validate-transaction");
 var registerTransactionRelay = require("./transaction-relay/register-transaction-relay");
@@ -228,7 +227,6 @@ var createEthrpc = function (reducer) {
       return dispatch(packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, callback));
     },
 
-    handleRPCError: handleRPCError,
     sendEther: function (to, value, from, onSent, onSuccess, onFailed) { return dispatch(sendEther(to, value, from, onSent, onSuccess, onFailed)); },
     publish: function (compiled, callback) { return dispatch(publish(compiled, callback)); },
     ensureLatestBlock: function (callback) { return dispatch(ensureLatestBlock(callback)); },

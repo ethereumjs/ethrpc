@@ -9,7 +9,7 @@ function isUnlocked(account, callback) {
   return function (dispatch) {
     dispatch(eth_sign([account, "0x00000000000000000000000000000000000000000000000000000000000f69b5"], function (err) {
       if (err) {
-        if (err.error !== -32000 || err.message !== "account is locked") return callback(err);
+        console.warn("eth_sign failed during ethrpc.isUnlocked:", err);
         return callback(null, false);
       }
       callback(null, true);

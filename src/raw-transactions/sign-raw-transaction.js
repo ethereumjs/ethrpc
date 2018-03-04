@@ -2,7 +2,6 @@
 
 var signRawTransactionWithKey = require("./sign-raw-transaction-with-key");
 var RPCError = require("../errors/rpc-error");
-var errors = require("../errors/codes");
 var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
 
 /**
@@ -28,7 +27,7 @@ function signRawTransaction(packaged, privateKeyOrSigner, accountType, callback)
         callback(null, transactionHash);
       }).catch(callback);
     default:
-      callback(new RPCError(errors.UNKNOWN_ACCOUNT_TYPE));
+      callback(new RPCError("UNKNOWN_ACCOUNT_TYPE"));
   }
 }
 

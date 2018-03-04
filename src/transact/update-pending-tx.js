@@ -6,7 +6,6 @@ var updateMinedTx = require("../transact/update-mined-tx");
 var transact = require("../transact/transact");
 var isFunction = require("../utils/is-function");
 var logError = require("../utils/log-error");
-var errors = require("../errors/codes");
 var RPCError = require("../errors/rpc-error");
 var constants = require("../constants");
 
@@ -31,7 +30,7 @@ function updatePendingTx(txHash) {
         if (transaction.payload.tries > constants.TX_RETRY_MAX) {
           dispatch({ type: "TRANSACTION_FAILED", hash: txHash });
           dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
-          onFailed(new RPCError(assign({}, errors.TRANSACTION_RETRY_MAX_EXCEEDED, { hash: txHash })));
+          onFailed(new RPCError("TRANSACTION_RETRY_MAX_EXCEEDED", { hash: txHash }));
         } else {
           dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
           dispatch({ type: "TRANSACTION_RESUBMITTED", hash: txHash });

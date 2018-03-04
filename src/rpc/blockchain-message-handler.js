@@ -2,8 +2,7 @@
 
 var parseEthereumResponse = require("../decode-response/parse-ethereum-response");
 var isObject = require("../utils/is-object");
-var ErrorWithData = require("../errors").ErrorWithData;
-var ErrorWithCodeAndData = require("../errors").ErrorWithCodeAndData;
+var RPCError = require("../errors/rpc-error");
 var internalState = require("../internal-state");
 
 /**
@@ -12,56 +11,53 @@ var internalState = require("../internal-state");
  */
 function blockchainMessageHandler(error, jso) {
   return function (dispatch, getState) {
-    var outOfBandErrorHandler, subscriptionHandler, responseHandler, errorHandler, subscriptions, state = getState();
-    subscriptions = state.subscriptions;
-    outOfBandErrorHandler = internalState.get("outOfBandErrorHandler");
-    // if (state.debug.broadcast) console.log("[ethrpc] RPC response:", JSON.stringify(jso));
+    var state = getState();
+    var subscriptions = state.subscriptions;
+    var outOfBandErrorHandler = internalState.get("outOfBandErrorHandler");
+    if (state.debug.broadcast) console.log("[ethrpc] RPC response:", JSON.stringify(jso));
 
     if (error !== null) {
       return outOfBandErrorHandler(error);
     }
-    if (typeof jso !== "object") {
-      return outOfBandErrorHandler(new ErrorWithData("Unexpectedly received a message from the transport that was not an object.", jso));
+    if (!isObject(jso)) {
+      return outOfBandErrorHandler(new RPCError("INVALID_TRANSPORT_MESSAGE", jso));
     }
 
-    subscriptionHandler = function () {
-      var subscription;
+    var subscriptionHandler = function () {
       if (jso.method !== "eth_subscription") {
-        return outOfBandErrorHandler(new ErrorWithData("Received an RPC request that wasn't an `eth_subscription`.", jso));
+        return outOfBandErrorHandler(new RPCError("UNSUPPORTED_RPC_REQUEST", jso));
       }
       if (typeof jso.params.subscription !== "string") {
-        return outOfBandErrorHandler(new ErrorWithData("Received an `eth_subscription` request without a subscription ID.", jso));
+        return outOfBandErrorHandler(new RPCError("NO_SUBSCRIPTION_ID", jso));
       }
       if (jso.params.result === null || jso.params.result === undefined) {
-        return outOfBandErrorHandler(new ErrorWithData("Received an `eth_subscription` request without a result.", jso));
+        return outOfBandErrorHandler(new RPCError("NO_SUBSCRIPTION_RESULT", jso));
       }
-      subscription = subscriptions[jso.params.subscription];
+      var subscription = subscriptions[jso.params.subscription];
       if (subscription != null) {
         dispatch({ type: subscription.reaction, data: jso });
       }
     };
 
-    responseHandler = function () {
-      var outstandingRequest;
+    var responseHandler = function () {
       if (typeof jso.id !== "number") {
-        return errorHandler(new ErrorWithData("Received a message from the blockchain that didn't have a valid id.", jso));
+        return errorHandler(new RPCError("INVALID_MESSAGE_ID", jso));
       }
-      outstandingRequest = internalState.get("outstandingRequests." + jso.id);
+      var outstandingRequest = internalState.get("outstandingRequests." + jso.id);
       internalState.unset("outstandingRequests." + jso.id);
       if (!isObject(outstandingRequest)) {
-        return outOfBandErrorHandler(new ErrorWithData("Unable to locate original request for blockchain response.", jso));
+        return outOfBandErrorHandler(new RPCError("JSON_RPC_REQUEST_NOT_FOUND", jso));
       }
-
-      // FIXME: outstandingRequest.callback should be function(Error,object) not function(Error|object)
       parseEthereumResponse(jso, outstandingRequest.callback);
     };
 
-    errorHandler = function () {
+    var errorHandler = function () {
       // errors with IDs can go through the normal result process
       if (jso.id !== null && jso.id !== undefined) {
+        if (state.debug.broadcast) console.log("outstanding request:", internalState.get("outstandingRequests." + jso.id));
         return responseHandler(jso);
       }
-      outOfBandErrorHandler(new ErrorWithCodeAndData(jso.error.message, jso.error.code, jso.error.data));
+      outOfBandErrorHandler(new RPCError(jso.error));
     };
 
     // depending on the type of message it is (request, response, error, invalid) we will handle it differently
@@ -72,7 +68,7 @@ function blockchainMessageHandler(error, jso) {
     } else if (jso.error !== undefined) {
       errorHandler();
     } else {
-      outOfBandErrorHandler(new ErrorWithData("Received an invalid JSON-RPC message.", jso));
+      outOfBandErrorHandler(new RPCError("INVALID_JSON_RPC_MESSAGE", jso));
     }
   };
 }

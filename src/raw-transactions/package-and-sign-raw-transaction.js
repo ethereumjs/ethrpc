@@ -7,7 +7,6 @@ var setRawTransactionGasPrice = require("./set-raw-transaction-gas-price");
 var signRawTransaction = require("./sign-raw-transaction");
 var isObject = require("../utils/is-object");
 var RPCError = require("../errors/rpc-error");
-var errors = require("../errors/codes");
 
 /**
  * Package and sign a raw transaction.
@@ -21,8 +20,8 @@ var errors = require("../errors/codes");
 function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, callback) {
   return function (dispatch, getState) {
     var state = getState();
-    if (!isObject(payload)) return callback(new RPCError(errors.TRANSACTION_FAILED));
-    if (address == null || privateKeyOrSigner == null) return callback(new RPCError(errors.NOT_LOGGED_IN));
+    if (!isObject(payload)) return callback(new RPCError("TRANSACTION_FAILED"));
+    if (address == null || privateKeyOrSigner == null) return callback(new RPCError("NOT_LOGGED_IN"));
     var packaged = packageRawTransaction(payload, address, state.networkID, state.currentBlock);
     if (state.debug.broadcast) console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
     dispatch(setRawTransactionGasPrice(packaged, function (err, packaged) {

@@ -4,7 +4,6 @@ var eth_blockNumber = require("../wrappers/eth").blockNumber;
 var miner = require("../wrappers/miner");
 var isFunction = require("../utils/is-function");
 var constants = require("../constants");
-var errors = require("../errors/codes");
 var RPCError = require("../errors/rpc-error");
 
 /**
@@ -17,7 +16,7 @@ module.exports = function (blocks, mine, callback) {
       if (err) return callback(err);
       dispatch(eth_blockNumber(null, function (err, blockNumber) {
         if (err) return callback(err);
-        if (blockNumber == null) return callback(new RPCError(errors.NO_RESPONSE));
+        if (blockNumber == null) return callback(new RPCError("NO_RESPONSE"));
         blockNumber = parseInt(blockNumber, 16);
         if (startBlock === undefined) {
           startBlock = blockNumber;
