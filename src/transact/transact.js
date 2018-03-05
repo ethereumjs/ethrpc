@@ -16,7 +16,7 @@ var RPCError = require("../errors/rpc-error");
  */
 function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
-    payload.uuid = uuid.v4();
+    if (payload.uuid == null) payload.uuid = uuid.v4();
     var debug = getState().debug;
     if (debug.tx) console.log("ethrpc.transact payload:", payload);
     if (!isFunction(onSent) || !isFunction(onSuccess) || !isFunction(onFailed)) {
