@@ -11,6 +11,11 @@ function RPCError(err, data) {
     assign(this, errors[err] || { message: err });
   }
   if (data) assign(this, data);
+  Object.defineProperty(this, "stack", {
+    get: function () {
+      return new Error(err).stack;
+    },
+  });
 }
 
 RPCError.prototype = Error.prototype;

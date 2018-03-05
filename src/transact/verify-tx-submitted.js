@@ -1,18 +1,13 @@
 "use strict";
 
-var assign = require("lodash.assign");
 var updateTransaction = require("../transact/update-transaction");
-var RPCError = require("../errors/rpc-error");
 
-function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
-  return function (dispatch, getState) {
-    var transactions = getState().transactions;
-    if (payload == null || txHash == null) return onFailed(new RPCError("TRANSACTION_FAILED", { hash: txHash }));
-    if (transactions[txHash] != null) return onFailed(new RPCError("DUPLICATE_TRANSACTION", { hash: txHash }));
+function verifyTxSubmitted(payload, transactionHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
+  return function (dispatch) {
     dispatch({
       type: "ADD_TRANSACTION",
       transaction: {
-        hash: txHash,
+        hash: transactionHash,
         payload: payload,
         tx: { callReturn: callReturn },
         meta: {
@@ -26,7 +21,7 @@ function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, acco
         status: "pending",
       },
     });
-    dispatch(updateTransaction.default(txHash));
+    dispatch(updateTransaction.default(transactionHash));
   };
 }
 

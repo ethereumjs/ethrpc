@@ -147,6 +147,49 @@ describe("reducers/transactions", function () {
       },
     });
   });
+  describe("UPDATE_ON_CHAIN_TRANSACTION", function () {
+    test({
+      description: "Update on chain transaction data",
+      state: {
+        "0xdeadbeef": {
+          hash: "0xdeadbeef",
+          payload: {
+            method: "myTransaction",
+            from: "0xb0b",
+            to: "0xd00d",
+          },
+          callReturn: "0x12",
+          count: 0,
+          status: "pending",
+          tx: { key0: "value0" },
+        },
+      },
+      action: {
+        type: "UPDATE_ON_CHAIN_TRANSACTION",
+        hash: "0xdeadbeef",
+        data: { key1: "value1" },
+      },
+      assertions: function (state) {
+        assert.deepEqual(state, {
+          "0xdeadbeef": {
+            hash: "0xdeadbeef",
+            payload: {
+              method: "myTransaction",
+              from: "0xb0b",
+              to: "0xd00d",
+            },
+            callReturn: "0x12",
+            count: 0,
+            status: "pending",
+            tx: {
+              key0: "value0",
+              key1: "value1",
+            },
+          },
+        });
+      },
+    });
+  });
   describe("UPDATE_TRANSACTION", function () {
     test({
       description: "Add a new object field to an existing transaction",
@@ -288,7 +331,7 @@ describe("reducers/transactions", function () {
       action: {
         type: "SET_TRANSACTION_CONFIRMATIONS",
         hash: "0xdeadbeef",
-        currentBlockNumber: 100,
+        currentBlockNumber: "0x64",
       },
       assertions: function (state) {
         assert.deepEqual(state, {

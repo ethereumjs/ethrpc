@@ -2,7 +2,6 @@
 
 var assign = require("lodash.assign");
 var eth_gasPrice = require("../wrappers/eth").gasPrice;
-var RPCError = require("../errors/rpc-error");
 
 /**
  * Set the gas price for a raw transaction.

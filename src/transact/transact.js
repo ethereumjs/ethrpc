@@ -1,5 +1,6 @@
 "use strict";
 
+var uuid = require("uuid");
 var sha3 = require("../utils/sha3");
 var transactAsync = require("./transact-async");
 var callContractFunction = require("./call-contract-function");
@@ -17,36 +18,32 @@ var RPCError = require("../errors/rpc-error");
  */
 function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
+    payload.uuid = uuid.v4();
     var debug = getState().debug;
-    // if (debug.tx)
-      console.log("ethrpc.transact payload:", payload);
+    if (debug.tx) console.log("ethrpc.transact payload:", payload);
     if (!isFunction(onSent) || !isFunction(onSuccess) || !isFunction(onFailed)) {
-      console.error("onSent, onSuccess, and onFailed callbacks not found", payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed);
-      if (isFunction(onFailed)) return onFailed(new RPCError("TRANSACTION_PAYLOAD_INVALID", { payload: payload }));
-      return;
+      return console.error("onSent, onSuccess, and onFailed callbacks not found", payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed);
     }
-    var onSentCallback = onSent;
-    var onSuccessCallback = onSuccess;
-    var onFailedCallback = wrapOnFailedCallback(payload, onFailed);
+    var wrappedOnFailedCallback = wrapOnFailedCallback(payload, onFailed, dispatch);
     if (!isObject(payload) || payload.to == null) {
-      return onFailedCallback(new RPCError("TRANSACTION_PAYLOAD_INVALID", { payload: payload }));
+      return onFailed(new RPCError("TRANSACTION_PAYLOAD_INVALID", { payload: payload }));
     }
     payload.send = false;
     if (payload.estimateGas) {
       return dispatch(callOrSendTransaction(payload, function (err, result) {
-        if (err) return onFailedCallback(err);
-        if (result == null) return onFailedCallback(new RPCError("NULL_CALL_RETURN"));
-        return onSuccessCallback(result);
+        if (err) return wrappedOnFailedCallback(err);
+        if (result == null) return wrappedOnFailedCallback(new RPCError("NULL_CALL_RETURN"));
+        return onSuccess(result);
       }));
     }
     if (payload.returns === "null") {
-      return dispatch(transactAsync(payload, null, privateKeyOrSigner, accountType, onSentCallback, onSuccessCallback, onFailedCallback));
+      return dispatch(transactAsync(payload, null, privateKeyOrSigner, accountType, onSent, onSuccess, wrappedOnFailedCallback));
     }
     dispatch(callContractFunction(payload, function (err, returnData) {
       if (debug.tx) console.log("returnData:", returnData);
-      if (err) return onFailedCallback(returnData);
-      if (returnData == null) return onFailedCallback(new RPCError("NULL_CALL_RETURN"));
-      dispatch(transactAsync(payload, returnData, privateKeyOrSigner, accountType, onSentCallback, onSuccessCallback, onFailedCallback));
+      if (err) return wrappedOnFailedCallback(err);
+      if (returnData == null) return wrappedOnFailedCallback(new RPCError("NULL_CALL_RETURN"));
+      dispatch(transactAsync(payload, returnData, privateKeyOrSigner, accountType, onSent, onSuccess, wrappedOnFailedCallback));
     }));
   };
 }

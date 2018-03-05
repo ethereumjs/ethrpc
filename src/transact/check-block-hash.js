@@ -10,9 +10,6 @@ function checkBlockHash(tx, numConfirmations, callback) {
     var debug = state.debug;
     var transactions = state.transactions;
     var txHash = tx.hash;
-    if (!transactions[txHash]) {
-      dispatch({ type: "ADD_TRANSACTION", transaction: { hash: txHash, tx: tx } });
-    }
     dispatch({ type: "INCREMENT_TRANSACTION_COUNT", hash: txHash });
     if (debug.tx) console.log("checkBlockHash:", tx.blockHash);
     if (tx && tx.blockHash && parseInt(tx.blockHash, 16) !== 0) {

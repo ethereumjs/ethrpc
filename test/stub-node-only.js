@@ -1209,7 +1209,19 @@ describe("tests that only work against stub server", function () {
               case "eth_call":
                 return "0x12";
               case "eth_getTransactionReceipt":
-                return { status: "0x1" };
+                return { status: "0x1", gasUsed: "0x2" };
+              case "eth_getTransactionByHash":
+                return {
+                  from: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+                  to: "0xdeadbabedeadbabedeadbabedeadbabedeadbabe",
+                  data: "0xf85563ad",
+                  gas: "0x2fd618",
+                  hash: "0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf0001",
+                  blockNumber: "0xd",
+                  blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c000d",
+                  transactionIndex: "0x1",
+                  gasPrice: "0x12a05f200",
+                };
             }
           });
           rpc.transact(createReasonableTransactPayload(), null, null, onSent, onSuccess, onFailed);
