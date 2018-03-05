@@ -28,7 +28,6 @@ var web3 = require("./wrappers/web3");
 var personal = require("./wrappers/personal");
 var shh = require("./wrappers/shh");
 var miner = require("./wrappers/miner");
-var sendEther = require("./wrappers/send-ether");
 var publish = require("./wrappers/publish");
 var bindDispatch = require("./wrappers/bind-dispatch");
 var isUnlocked = require("./wrappers/is-unlocked");
@@ -227,7 +226,6 @@ var createEthrpc = function (reducer) {
       return dispatch(packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, callback));
     },
 
-    sendEther: function (to, value, from, onSent, onSuccess, onFailed) { return dispatch(sendEther(to, value, from, onSent, onSuccess, onFailed)); },
     publish: function (compiled, callback) { return dispatch(publish(compiled, callback)); },
     ensureLatestBlock: function (callback) { return dispatch(ensureLatestBlock(callback)); },
     isUnlocked: function (account, callback) { return dispatch(isUnlocked(account, callback)); },
