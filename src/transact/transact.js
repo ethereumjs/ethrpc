@@ -1,31 +1,36 @@
-/**
- * Send-call-confirm callback sequence
- */
-
 "use strict";
 
 var sha3 = require("../utils/sha3");
-var transactAsync = require("../transact/transact-async");
-var callContractFunction = require("../transact/call-contract-function");
-var callOrSendTransaction = require("../transact/call-or-send-transaction");
+var transactAsync = require("./transact-async");
+var callContractFunction = require("./call-contract-function");
+var callOrSendTransaction = require("./call-or-send-transaction");
+var wrapOnFailedCallback = require("./wrap-on-failed-callback");
 var isFunction = require("../utils/is-function");
+var isObject = require("../utils/is-object");
 var noop = require("../utils/noop");
 var RPCError = require("../errors/rpc-error");
 
+/**
+ * - call onSent when the transaction is broadcast to the network
+ * - call onSuccess when the transaction has REQUIRED_CONFIRMATIONS
+ * - call onFailed if the transaction fails
+ */
 function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
     var debug = getState().debug;
-    if (debug.tx) console.log("payload transact:", payload);
+    // if (debug.tx)
+      console.log("ethrpc.transact payload:", payload);
+    if (!isFunction(onSent) || !isFunction(onSuccess) || !isFunction(onFailed)) {
+      console.error("onSent, onSuccess, and onFailed callbacks not found", payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed);
+      if (isFunction(onFailed)) return onFailed(new RPCError("TRANSACTION_PAYLOAD_INVALID", { payload: payload }));
+      return;
+    }
     var onSentCallback = onSent;
-    var onSuccessCallback = (isFunction(onSuccess)) ? onSuccess : noop;
-    var onFailedCallback = function (response) {
-      // notify subscribers of failed transaction
-      dispatch({
-        type: "TRANSACTION_FAILED",
-        hash: (response && response.hash) || sha3(JSON.stringify(payload)),
-      });
-      if (isFunction(onFailed)) onFailed(response);
-    };
+    var onSuccessCallback = onSuccess;
+    var onFailedCallback = wrapOnFailedCallback(payload, onFailed);
+    if (!isObject(payload) || payload.to == null) {
+      return onFailedCallback(new RPCError("TRANSACTION_PAYLOAD_INVALID", { payload: payload }));
+    }
     payload.send = false;
     if (payload.estimateGas) {
       return dispatch(callOrSendTransaction(payload, function (err, result) {
@@ -34,7 +39,6 @@ function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, o
         return onSuccessCallback(result);
       }));
     }
-    if (!isFunction(onSent)) return dispatch(callOrSendTransaction(payload));
     if (payload.returns === "null") {
       return dispatch(transactAsync(payload, null, privateKeyOrSigner, accountType, onSentCallback, onSuccessCallback, onFailedCallback));
     }

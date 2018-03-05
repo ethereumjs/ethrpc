@@ -14,7 +14,7 @@ var setRawTransactionGasPrice = function (packaged, callback) {
   return function (dispatch) {
     if (packaged.gasPrice != null) return callback(null, packaged);
     dispatch(eth_gasPrice(null, function (err, gasPrice) {
-      if (err || gasPrice == null) return callback(new RPCError("TRANSACTION_FAILED"));
+      if (err) return callback(err);
       callback(null, assign({}, packaged, { gasPrice: gasPrice }));
     }));
   };

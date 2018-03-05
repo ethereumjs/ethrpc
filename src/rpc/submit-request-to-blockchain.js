@@ -13,7 +13,10 @@ var internalState = require("../internal-state");
 function submitRequestToBlockchain(jso, callback) {
   return function (dispatch, getState) {
     var debug = getState().debug;
-    if (!isFunction(callback)) throw new Error("callback must be a function");
+    if (!isFunction(callback)) {
+      if (debug.broadcast) console.log("callback not found for request", jso);
+      throw new Error("callback must be a function");
+    }
     if (typeof jso !== "object") return callback(new Error("jso must be an object"));
     if (typeof jso.id !== "number") return callback(new Error("jso.id must be a number"));
     var expectedReturnTypes = stripReturnsTypeAndInvocation(jso); // FIXME: return types shouldn't be embedded into the RPC JSO

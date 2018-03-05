@@ -1,7 +1,7 @@
 "use strict";
 
 var assign = require("lodash.assign");
-var updateTx = require("../transact/update-tx");
+var updateTransaction = require("../transact/update-transaction");
 var RPCError = require("../errors/rpc-error");
 
 function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
@@ -26,7 +26,7 @@ function verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, acco
         status: "pending",
       },
     });
-    dispatch(updateTx.default(txHash));
+    dispatch(updateTransaction.default(txHash));
   };
 }
 

@@ -2,14 +2,14 @@
 
 var assign = require("lodash.assign");
 var eth = require("../wrappers/eth");
-var updateMinedTx = require("../transact/update-mined-tx");
+var updateSealedTransaction = require("../transact/update-sealed-transaction");
 var transact = require("../transact/transact");
 var isFunction = require("../utils/is-function");
 var logError = require("../utils/log-error");
 var RPCError = require("../errors/rpc-error");
 var constants = require("../constants");
 
-function updatePendingTx(txHash) {
+function updatePendingTransaction(txHash) {
   return function (dispatch, getState) {
     var storedTransaction = getState().transactions[txHash];
     var onFailed = isFunction(storedTransaction.onFailed) ? storedTransaction.onFailed : logError;
@@ -30,7 +30,7 @@ function updatePendingTx(txHash) {
         if (transaction.payload.tries > constants.TX_RETRY_MAX) {
           dispatch({ type: "TRANSACTION_FAILED", hash: txHash });
           dispatch({ type: "UNLOCK_TRANSACTION", hash: txHash });
-          onFailed(new RPCError("TRANSACTION_RETRY_MAX_EXCEEDED", { hash: txHash }));
+          onFailed(new RPCError("TRANSACTION_RETRY_MAX_EXCEEDED", { hash: txHash, data: getState().transactions[txHash] }));
         } else {
           dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
           dispatch({ type: "TRANSACTION_RESUBMITTED", hash: txHash });
@@ -61,7 +61,7 @@ function updatePendingTx(txHash) {
               hash: txHash,
               currentBlockNumber: currentBlock.number,
             });
-            dispatch(updateMinedTx(txHash));
+            dispatch(updateSealedTransaction(txHash));
           } else {
             dispatch(eth.blockNumber(null, function (err, blockNumber) {
               if (err) return onFailed(err);
@@ -71,7 +71,7 @@ function updatePendingTx(txHash) {
                 hash: txHash,
                 currentBlockNumber: parseInt(blockNumber, 16),
               });
-              dispatch(updateMinedTx(txHash));
+              dispatch(updateSealedTransaction(txHash));
             }));
           }
         } else {
@@ -82,4 +82,4 @@ function updatePendingTx(txHash) {
   };
 }
 
-module.exports = updatePendingTx;
+module.exports = updatePendingTransaction;

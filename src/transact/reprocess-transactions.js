@@ -1,11 +1,12 @@
 "use strict";
 
-var updateTx = require("./update-tx");
+var updateTransaction = require("./update-transaction");
 
 function reprocessTransactions() {
   return function (dispatch, getState) {
-    Object.keys(getState().transactions).forEach(function (transactionHash) {
-      dispatch(updateTx.default(transactionHash));
+    var transactions = getState().transactions;
+    Object.keys(transactions).forEach(function (transactionHash) {
+      dispatch(updateTransaction.default(transactionHash));
     });
   };
 }
