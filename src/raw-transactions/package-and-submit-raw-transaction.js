@@ -33,27 +33,37 @@ function packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, ac
           callback(null, rawTransactionResponse);
         }
       }
-      var transactionHash;
       if (accountType === ACCOUNT_TYPES.U_PORT) { // signedRawTransaction is transaction hash for uPort
-        transactionHash = signedRawTransaction;
+        dispatch({
+          type: "ADD_TRANSACTION",
+          transaction: {
+            hash: speedomatic.formatInt256(signedRawTransaction),
+            payload: payload,
+            meta: {
+              signer: privateKeyOrSigner,
+              accountType: accountType,
+            },
+            count: 0,
+            status: "sending",
+          },
+        });
         handleRawTransactionResponse(null, signedRawTransaction);
       } else {
-        transactionHash = sha3(signedRawTransaction, "hex");
+        dispatch({
+          type: "ADD_TRANSACTION",
+          transaction: {
+            hash: speedomatic.formatInt256(sha3(signedRawTransaction, "hex")),
+            payload: payload,
+            meta: {
+              signer: privateKeyOrSigner,
+              accountType: accountType,
+            },
+            count: 0,
+            status: "sending",
+          },
+        });
         dispatch(eth_sendRawTransaction(signedRawTransaction, handleRawTransactionResponse));
       }
-      dispatch({
-        type: "ADD_TRANSACTION",
-        transaction: {
-          hash: speedomatic.formatInt256(transactionHash),
-          payload: payload,
-          meta: {
-            signer: privateKeyOrSigner,
-            accountType: accountType,
-          },
-          count: 0,
-          status: "sending",
-        },
-      });
     }));
   };
 }
