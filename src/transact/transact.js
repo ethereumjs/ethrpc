@@ -1,14 +1,12 @@
 "use strict";
 
 var uuid = require("uuid");
-var sha3 = require("../utils/sha3");
 var transactAsync = require("./transact-async");
 var callContractFunction = require("./call-contract-function");
 var callOrSendTransaction = require("./call-or-send-transaction");
 var wrapOnFailedCallback = require("./wrap-on-failed-callback");
 var isFunction = require("../utils/is-function");
 var isObject = require("../utils/is-object");
-var noop = require("../utils/noop");
 var RPCError = require("../errors/rpc-error");
 
 /**

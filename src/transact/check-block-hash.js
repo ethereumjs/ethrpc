@@ -8,7 +8,6 @@ function checkBlockHash(tx, numConfirmations, callback) {
   return function (dispatch, getState) {
     var state = getState();
     var debug = state.debug;
-    var transactions = state.transactions;
     var txHash = tx.hash;
     dispatch({ type: "INCREMENT_TRANSACTION_COUNT", hash: txHash });
     if (debug.tx) console.log("checkBlockHash:", tx.blockHash);
