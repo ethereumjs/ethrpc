@@ -351,6 +351,7 @@ describe("reducers/transactions", function () {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
           status: "sealed",
+          confirmations: 3,
         },
       },
       action: {
@@ -362,6 +363,7 @@ describe("reducers/transactions", function () {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
             status: "pending",
+            confirmations: 0,
           },
         });
       },

@@ -45,7 +45,7 @@ module.exports = function (transactions, action) {
     case "TRANSACTION_PENDING":
       if (transactions[action.hash] == null) return transactions;
       newTransaction = {};
-      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "pending" });
+      newTransaction[action.hash] = assign({}, transactions[action.hash], { status: "pending", confirmations: 0 });
       return assign({}, transactions, newTransaction);
     case "TRANSACTION_FAILED":
       if (transactions[action.hash] == null) return transactions;
