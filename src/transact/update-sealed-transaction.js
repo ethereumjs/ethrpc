@@ -2,6 +2,7 @@
 
 var speedomatic = require("speedomatic");
 var BigNumber = require("bignumber.js");
+var recheckSealedBlock = require("./recheck-sealed-block");
 var eth = require("../wrappers/eth");
 var RPCError = require("../errors/rpc-error");
 var constants = require("../constants");
@@ -10,16 +11,13 @@ function updateSealedTransaction(transactionHash, callback) {
   return function (dispatch, getState) {
     dispatch({ type: "SET_TRANSACTION_CONFIRMATIONS", hash: transactionHash, currentBlockNumber: parseInt(getState().currentBlock.number, 16) });
     var transaction = getState().transactions[transactionHash];
-    if (transaction.confirmations < constants.REQUIRED_CONFIRMATIONS) return callback(null);
+    if (transaction.confirmations < constants.REQUIRED_CONFIRMATIONS) {
+      return dispatch(recheckSealedBlock(transaction.tx, callback));
+    }
     dispatch({ type: "TRANSACTION_CONFIRMED", hash: transactionHash });
-    dispatch(eth.getBlockByNumber([transaction.tx.blockNumber, false], function (err, block) {
+    dispatch(recheckSealedBlock(transaction.tx, function (err, isBlockIncluded) {
       if (err) return callback(err);
-      if (block == null) {
-        console.warn("No block found for block number", transaction.tx.blockNumber);
-        return callback(new RPCError("BLOCK_NOT_FOUND"));
-      }
-      dispatch({ type: "UPDATE_ON_CHAIN_TRANSACTION", hash: transactionHash, data: { timestamp: parseInt(block.timestamp, 16) } });
-      dispatch({ type: "UPDATE_ON_CHAIN_TRANSACTION", hash: transactionHash, data: { callReturn: transaction.tx.callReturn } });
+      if (!isBlockIncluded) return callback(null);
       dispatch(eth.getTransactionReceipt(transactionHash, function (err, receipt) {
         if (getState().debug.tx) console.log("eth_getTransactionReceipt", transactionHash, err, receipt);
         if (err) return callback(err);

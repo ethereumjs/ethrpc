@@ -8,12 +8,12 @@ var constants = require("../constants");
 
 function updatePendingTransaction(transactionHash, callback) {
   return function (dispatch, getState) {
-    dispatch(eth.getTransactionByHash(transactionHash, function (err, onChainTx) {
+    dispatch(eth.getTransactionByHash(transactionHash, function (err, onChainTransaction) {
       if (err) return callback(err);
-      dispatch({ type: "UPDATE_ON_CHAIN_TRANSACTION", hash: transactionHash, data: onChainTx });
+      dispatch({ type: "UPDATE_ON_CHAIN_TRANSACTION", hash: transactionHash, data: onChainTransaction });
 
       // if transaction is null, then it was dropped from the txpool
-      if (onChainTx === null) {
+      if (onChainTransaction === null) {
         dispatch({ type: "INCREMENT_TRANSACTION_PAYLOAD_TRIES", hash: transactionHash });
 
         // if we have retries left, then resubmit the transaction
@@ -30,10 +30,10 @@ function updatePendingTransaction(transactionHash, callback) {
 
       // non-null transaction: transaction still alive and kicking!
       // check if it has been sealed (mined) yet by checking for a non-zero blockhash
-      } else if (parseInt(onChainTx.blockHash, 16) === 0) { // not yet sealed
+      } else if (parseInt(onChainTransaction.blockHash, 16) === 0) { // not yet sealed
         callback(null);
       } else { // sealed
-        dispatch({ type: "UPDATE_ON_CHAIN_TRANSACTION", hash: transactionHash, data: onChainTx });
+        dispatch({ type: "UPDATE_ON_CHAIN_TRANSACTION", hash: transactionHash, data: onChainTransaction });
         dispatch({ type: "TRANSACTION_SEALED", hash: transactionHash });
         dispatch({ type: "SET_TRANSACTION_CONFIRMATIONS", hash: transactionHash, currentBlockNumber: parseInt(getState().currentBlock.number, 16) });
         dispatch(updateSealedTransaction(transactionHash, callback));

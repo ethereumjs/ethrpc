@@ -344,6 +344,29 @@ describe("reducers/transactions", function () {
       },
     });
   });
+  describe("TRANSACTION_PENDING", function () {
+    test({
+      description: "Set transaction status to 'pending'",
+      state: {
+        "0xdeadbeef": {
+          hash: "0xdeadbeef",
+          status: "sealed",
+        },
+      },
+      action: {
+        type: "TRANSACTION_PENDING",
+        hash: "0xdeadbeef",
+      },
+      assertions: function (state) {
+        assert.deepEqual(state, {
+          "0xdeadbeef": {
+            hash: "0xdeadbeef",
+            status: "pending",
+          },
+        });
+      },
+    });
+  });
   describe("TRANSACTION_FAILED", function () {
     test({
       description: "Set transaction status to 'failed'",
