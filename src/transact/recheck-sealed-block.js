@@ -17,7 +17,7 @@ function recheckSealedBlock(onChainTransaction, callback) {
       }
       var updatedOnChainTransactionData = { timestamp: parseInt(block.timestamp, 16), callReturn: onChainTransaction.callReturn };
       dispatch({ type: "UPDATE_ON_CHAIN_TRANSACTION", hash: onChainTransaction.hash, data: updatedOnChainTransactionData });
-      callback(null, !!updatedOnChainTransactionData);
+      callback(null, true);
     }));
   };
 }
