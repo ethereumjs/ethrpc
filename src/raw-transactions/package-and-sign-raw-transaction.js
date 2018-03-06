@@ -20,7 +20,7 @@ var RPCError = require("../errors/rpc-error");
 function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, callback) {
   return function (dispatch, getState) {
     var state = getState();
-    if (!isObject(payload)) return callback(new RPCError("INVALID_TRANSACTION_PAYLOAD", { payload: payload }));
+    if (!isObject(payload)) return callback(new RPCError("TRANSACTION_PAYLOAD_INVALID", { payload: payload }));
     if (address == null || privateKeyOrSigner == null) return callback(new RPCError("NOT_LOGGED_IN"));
     var packaged = packageRawTransaction(payload, address, state.networkID, state.currentBlock);
     if (state.debug.broadcast) console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
