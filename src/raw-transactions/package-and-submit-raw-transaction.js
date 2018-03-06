@@ -1,8 +1,10 @@
 "use strict";
 
+var speedomatic = require("speedomatic");
 var eth_sendRawTransaction = require("../wrappers/eth").sendRawTransaction;
 var packageAndSignRawTransaction = require("./package-and-sign-raw-transaction");
 var handleRawTransactionError = require("./handle-raw-transaction-error");
+var sha3 = require("../utils/sha3");
 var RPCError = require("../errors/rpc-error");
 var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
 
@@ -32,8 +34,34 @@ function packageAndSubmitRawTransaction(payload, address, privateKeyOrSigner, ac
         }
       }
       if (accountType === ACCOUNT_TYPES.U_PORT) { // signedRawTransaction is transaction hash for uPort
+        dispatch({
+          type: "ADD_TRANSACTION",
+          transaction: {
+            hash: speedomatic.formatInt256(signedRawTransaction),
+            payload: payload,
+            meta: {
+              signer: privateKeyOrSigner,
+              accountType: accountType,
+            },
+            count: 0,
+            status: "sending",
+          },
+        });
         handleRawTransactionResponse(null, signedRawTransaction);
       } else {
+        dispatch({
+          type: "ADD_TRANSACTION",
+          transaction: {
+            hash: speedomatic.formatInt256(sha3(signedRawTransaction, "hex")),
+            payload: payload,
+            meta: {
+              signer: privateKeyOrSigner,
+              accountType: accountType,
+            },
+            count: 0,
+            status: "sending",
+          },
+        });
         dispatch(eth_sendRawTransaction(signedRawTransaction, handleRawTransactionResponse));
       }
     }));

@@ -6,10 +6,14 @@ function registerTransactionRelay(transactionRelay) {
   return function (dispatch, getState) {
     dispatch(addTransactionsSubscription(function (transactions, oldTransactions) {
       var noRelay = getState().noRelay;
-      Object.keys(transactions).map(function (hash) {
-        var payload;
+      Object.keys(transactions).forEach(function (hash) {
         if (transactions[hash] !== oldTransactions[hash]) {
-          payload = transactions[hash].payload;
+          if (getState().debug.tx) {
+            console.log("+++++++++++ Detected change in transaction", hash);
+            console.log("new:", transactions[hash]);
+            console.log("old:", oldTransactions[hash]);
+          }
+          var payload = transactions[hash].payload;
           if (payload && payload.name && !noRelay[payload.name]) {
             transactionRelay({
               hash: hash,

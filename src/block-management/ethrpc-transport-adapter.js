@@ -4,7 +4,6 @@ var eth = require("../wrappers/eth");
 var addNewHeadsSubscription = require("../subscriptions/add-new-heads-subscription");
 var removeSubscription = require("../subscriptions/remove-subscription");
 var logError = require("../utils/log-error");
-var setDebugOptions = require("../debug/set-debug-options");
 
 var nextToken = 1;
 var subscriptionMapping = {};

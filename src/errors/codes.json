@@ -41,11 +41,14 @@
   "NULL_CALL_RETURN": {
     "message": "Expected contract call to return value, received null"
   },
-  "NULL_RESPONSE": {
+  "NULL_TRANSACTION_HASH": {
     "message": "Expected transaction hash from Ethereum node, received null"
   },
   "NO_RESPONSE": {
     "message": "No response"
+  },
+  "TRANSACTION_PAYLOAD_INVALID": {
+    "message": "Transaction payload invalid"
   },
   "TRANSACTION_INVALID": {
     "message": "Transaction validation failed"

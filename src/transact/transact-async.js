@@ -8,10 +8,9 @@ var verifyTxSubmitted = require("../transact/verify-tx-submitted");
 var RPCError = require("../errors/rpc-error");
 
 /**
- * asynchronous / non-blocking transact:
- *  - call onSent when the transaction is broadcast to the network
- *  - call onSuccess when the transaction has REQUIRED_CONFIRMATIONS
- *  - call onFailed if the transaction fails
+ * - call onSent when the transaction is broadcast to the network
+ * - call onSuccess when the transaction has REQUIRED_CONFIRMATIONS
+ * - call onFailed if the transaction fails
  */
 function transactAsync(payload, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) {
   return function (dispatch, getState) {
@@ -24,16 +23,13 @@ function transactAsync(payload, callReturn, privateKeyOrSigner, accountType, onS
       };
     }
     payload.send = true;
-    dispatch(sendTransactionOrRawTransaction(immutableDelete(payload, "returns"), function (err, txHash) {
-      if (getState().debug.tx) console.log("txHash:", txHash);
+    dispatch(sendTransactionOrRawTransaction(immutableDelete(payload, "returns"), function (err, transactionHash) {
+      if (getState().debug.tx) console.log("transactionHash:", transactionHash);
       if (err) return onFailed(err);
-      if (txHash == null) return onFailed(new RPCError("NULL_RESPONSE"));
-      txHash = speedomatic.formatInt256(txHash);
-
-      // send the transaction hash and return value back to the client, using the onSent callback
-      onSent({ hash: txHash, callReturn: callReturn });
-
-      dispatch(verifyTxSubmitted(payload, txHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed));
+      if (transactionHash == null) return onFailed(new RPCError("NULL_TRANSACTION_HASH"));
+      transactionHash = speedomatic.formatInt256(transactionHash);
+      onSent({ hash: transactionHash, callReturn: callReturn }); // pass the transaction hash and return value back to the client
+      dispatch(verifyTxSubmitted(payload, transactionHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed));
     }));
   };
 }
