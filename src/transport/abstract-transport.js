@@ -159,13 +159,14 @@ function processWork(abstractTransport, rpcObject) {
       // if this is the first retriable failure then initiate a reconnect
       if (abstractTransport.connected) {
         abstractTransport.connected = false;
-        notifyDisconnectListeners(abstractTransport);
+        notifyDisconnectListeners(abstractTransport, error);
         reconnect(abstractTransport);
       }
     } else {
       // if we aren't going to retry the request, let the user know that
       // something went wrong so they can handle it
       error.data = rpcObject;
+      notifyDisconnectListeners(abstractTransport, error);
       abstractTransport.messageHandler(error);
     }
   });
@@ -205,12 +206,12 @@ function notifyReconnectListeners(abstractTransport) {
  * Notify all disconnect listeners of a reconect
  *
  */
-function notifyDisconnectListeners(abstractTransport) {
+function notifyDisconnectListeners(abstractTransport, error) {
   Object.keys(abstractTransport.disconnectListeners).forEach(function (key) {
     if (typeof abstractTransport.disconnectListeners[key] !== "function") {
       delete abstractTransport.disconnectListeners[key];
     } else {
-      abstractTransport.disconnectListeners[key]();
+      abstractTransport.disconnectListeners[key](error);
     }
   });
 }

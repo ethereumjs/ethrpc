@@ -12,14 +12,18 @@ WsTransport.prototype = Object.create(AbstractTransport.prototype);
 
 WsTransport.prototype.constructor = WsTransport;
 
-WsTransport.prototype.connect = function (callback) {
+WsTransport.prototype.connect = function (initialCallback) {
   var self = this;
+  var initialCallbackCalled = false;
+  var callback = function (err) {
+    initialCallbackCalled = true;
+    initialCallback(err);
+  };
   this.webSocketClient = new WebSocketClient(this.address, undefined, undefined, undefined, { timeout: this.timeout });
-  var messageHandler = function () { };
-  this.webSocketClient.onopen = function () {
-    //console.log("websocket", self.address, "opened");
-    callback(null);
-    callback = function () { };
+  var messageHandler = function () {};
+  this.webSocketClient.onopen = function (event) {
+    console.log("websocket", self.address, "opened", event);
+    if (!initialCallbackCalled) callback(null);
     messageHandler = self.messageHandler;
   };
   this.webSocketClient.onmessage = function (message) {
@@ -32,15 +36,10 @@ WsTransport.prototype.connect = function (callback) {
   };
   this.webSocketClient.onclose = function (event) {
     if (event && event.code !== 1000) {
-      ///console.error("websocket", self.address, "closed:", event.code, event.reason);
-      var keys = Object.keys(self.disconnectListeners);
-      var listeners = self.disconnectListeners;
-      keys.forEach(function (key) {
-        return listeners[key]();
-      });
-      callback(new Error("Web socket closed without opening, usually means failed connection."));
+      console.info("websocket", self.address, "closed:", event.code, event.reason, event);
+      Object.keys(self.disconnectListeners).forEach(function (key) { self.disconnectListeners[key](event); });
+      if (!initialCallbackCalled) callback(new Error("Web socket closed without opening, usually means failed connection."));
     }
-    callback = function () { };
   };
 };
 
