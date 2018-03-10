@@ -21,8 +21,8 @@ WsTransport.prototype.connect = function (initialCallback) {
   };
   this.webSocketClient = new WebSocketClient(this.address, undefined, undefined, undefined, { timeout: this.timeout });
   var messageHandler = function () {};
-  this.webSocketClient.onopen = function (event) {
-    console.log("websocket", self.address, "opened", event);
+  this.webSocketClient.onopen = function () {
+    console.log("websocket", self.address, "opened");
     if (!initialCallbackCalled) callback(null);
     messageHandler = self.messageHandler;
   };
