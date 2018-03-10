@@ -1,10 +1,6 @@
 "use strict";
 
-var speedomatic = require("speedomatic");
-var BigNumber = require("bignumber.js");
 var eth = require("../wrappers/eth");
-var RPCError = require("../errors/rpc-error");
-var constants = require("../constants");
 
 function recheckSealedBlock(onChainTransaction, callback) {
   return function (dispatch) {
