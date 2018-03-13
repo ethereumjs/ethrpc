@@ -28,15 +28,15 @@ function updatePendingTransaction(transactionHash, callback) {
           dispatch(transact(transaction.payload, meta.signer, meta.accountType, transaction.onSent, transaction.onSuccess, transaction.onFailed));
         }
 
-      // non-null transaction: transaction still alive and kicking!
-      // check if it has been sealed (mined) yet by checking for a non-zero blockhash
-      } else if (parseInt(onChainTransaction.blockHash, 16) === 0) { // not yet sealed
-        callback(null);
-      } else { // sealed
+      // non-null transaction: transaction not dropped
+      // check if it has been sealed (mined) yet by checking for a greater-than-zero blockhash
+      } else if (parseInt(onChainTransaction.blockHash, 16) > 0) { // sealed
         dispatch({ type: "UPDATE_ON_CHAIN_TRANSACTION", hash: transactionHash, data: onChainTransaction });
         dispatch({ type: "TRANSACTION_SEALED", hash: transactionHash });
         dispatch({ type: "SET_TRANSACTION_CONFIRMATIONS", hash: transactionHash, currentBlockNumber: parseInt(getState().currentBlock.number, 16) });
         dispatch(updateSealedTransaction(transactionHash, callback));
+      } else { // not yet sealed
+        callback(null);
       }
     }));
   };
