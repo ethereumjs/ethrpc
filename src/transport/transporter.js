@@ -68,29 +68,36 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
 
   // initiate connections to all provided addresses, as each completes it will check to see if everything is done
   web3Transport = new Web3Transport(messageHandler, function (error) {
-    resultAggregator.web3Transports[0] = (error !== null) ? null : web3Transport;
-    checkIfComplete(this, resultAggregator, callback);
-  }.bind(this));
-  configuration.ipcAddresses.forEach(function (ipcAddress, index) {
-    var ipcTransport = new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error) {
-      resultAggregator.ipcTransports[index] = (error !== null) ? null : ipcTransport;
-      // TODO: propagate the error up to the caller for reporting
+    if (error === null) {
+      resultAggregator.web3Transports[0] = web3Transport;
       checkIfComplete(this, resultAggregator, callback);
-    }.bind(this));
-  }.bind(this));
-  configuration.wsAddresses.forEach(function (wsAddress, index) {
-    var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error) {
-      resultAggregator.wsTransports[index] = (error !== null) ? null : wsTransport;
-      // TODO: propagate the error up to the caller for reporting
-      checkIfComplete(this, resultAggregator, callback);
-    }.bind(this));
-  }.bind(this));
-  configuration.httpAddresses.forEach(function (httpAddress, index) {
-    var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error) {
-      resultAggregator.httpTransports[index] = (error !== null) ? null : httpTransport;
-      // TODO: propagate the error up to the caller for reporting
-      checkIfComplete(this, resultAggregator, callback);
-    }.bind(this));
+    } else if (configuration.ipcAddresses.length > 0) {
+      configuration.ipcAddresses.slice(0, 1).forEach(function (ipcAddress, index) {
+        var ipcTransport = new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error) {
+          resultAggregator.ipcTransports[index] = (error !== null) ? null : ipcTransport;
+          // TODO: propagate the error up to the caller for reporting
+          checkIfComplete(this, resultAggregator, callback);
+        }.bind(this));
+      }.bind(this));
+    } else if (configuration.wsAddresses.length > 0) {
+      configuration.wsAddresses.slice(0, 1).forEach(function (wsAddress, index) {
+        var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error) {
+          resultAggregator.wsTransports[index] = (error !== null) ? null : wsTransport;
+          // TODO: propagate the error up to the caller for reporting
+          checkIfComplete(this, resultAggregator, callback);
+        }.bind(this));
+      }.bind(this));
+    } else if (configuration.httpAddresses.length > 0) {
+      configuration.httpAddresses.slice(0, 1).forEach(function (httpAddress, index) {
+        var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error) {
+          resultAggregator.httpTransports[index] = (error !== null) ? null : httpTransport;
+          // TODO: propagate the error up to the caller for reporting
+          checkIfComplete(this, resultAggregator, callback);
+        }.bind(this));
+      }.bind(this));
+    } else {
+      return callback(new Error("Ran out of transports to try"));
+    }
   }.bind(this));
 }
 

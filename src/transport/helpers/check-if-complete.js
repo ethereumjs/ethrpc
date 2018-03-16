@@ -10,11 +10,6 @@ var isNotNull = require("../../utils/is-not-null");
 function checkIfComplete(transporter, resultAggregator, onCompleteCallback) {
   var internalState = transporter.internalState;
 
-  if (resultAggregator.web3Transports.some(isUndefined)) return;
-  if (resultAggregator.httpTransports.some(isUndefined)) return;
-  if (resultAggregator.wsTransports.some(isUndefined)) return;
-  if (resultAggregator.ipcTransports.some(isUndefined)) return;
-
   if (resultAggregator.web3Transports.every(isNull)
     && resultAggregator.httpTransports.every(isNull)
     && resultAggregator.wsTransports.every(isNull)
