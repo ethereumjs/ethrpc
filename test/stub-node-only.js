@@ -43,7 +43,7 @@ describe("tests that only work against stub server", function () {
             errorHandler: function (error) { assert.fail(error); },
           }, function (error) {
             assert.isNotNull(error);
-            assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC).");
+            assert.strictEqual(error.message, "Ran out of transports to try (Web3, HTTP, WS, IPC)");
             done();
           });
         });

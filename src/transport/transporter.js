@@ -96,7 +96,7 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
         }.bind(this));
       }.bind(this));
     } else {
-      return callback(new Error("Ran out of transports to try"));
+      return callback(new Error("Ran out of transports to try (Web3, HTTP, WS, IPC)"));
     }
   }.bind(this));
 }
