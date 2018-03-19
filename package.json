@@ -28,7 +28,7 @@
   "homepage": "https://github.com/ethereumjs/ethrpc#readme",
   "dependencies": {
     "async": "1.5.2",
-    "bignumber.js": "2.3.0",
+    "bignumber.js": "6.0.0",
     "browser-request": "0.3.3",
     "clone": "2.1.1",
     "es6-promise": "4.2.4",
@@ -61,7 +61,7 @@
     "chai": "3.5.0",
     "coveralls": "2.11.3",
     "eslint": "3.17.1",
-    "ethereumjs-abi": "0.6.5",
+    "ethereumjs-abi": "^0.6.5",
     "ethereumjs-stub-rpc-server": "2.1.4",
     "genversion": "2.0.1",
     "istanbul": "0.4.5",
