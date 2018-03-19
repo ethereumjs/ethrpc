@@ -58,42 +58,37 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
     disconnectListeners: {},
   };
 
-   // initiate connections to all provided addresses, as each completes it will check to see if everything is done
-  var that = this;
+  // initiate connections to all provided addresses, only callback one that connects
   var connection = null;
   someSeries([
-      function (callback) {
-        var web3Transport = new Web3Transport(messageHandler, function (error) {
-          if (error !== null) return callback(null);
-          return callback(web3Transport);
-        });
-      },
-      function (callback) {
-        if (configuration.ipcAddresses.length === 0) return callback(null);
-        var ipcTransport = new IpcTransport(configuration.ipcAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
-          if (error !== null) return callback(null);
-          return callback(ipcTransport);
-        })
-      },
-      function (callback) {
-        if (configuration.wsAddresses.length === 0) return callback(null);
-        var wsTransport = new WsTransport(configuration.wsAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
-          if (error !== null) return callback(null);
-          return callback(wsTransport);
-          // TODO: propagate the error up to the caller for reporting
-        });
-      },
-      function (callback) {
-        if (configuration.httpAddresses.length === 0) return callback(null);
-        var httpTransport = new HttpTransport(configuration.httpAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
-          if (error !== null) return callback(null);
-          return callback(httpTransport);
-        });
-      },
-    ],
+    function (callback) {
+      var web3Transport = new Web3Transport(messageHandler, function (error) {
+        if (error !== null) return callback(null);
+        return callback(web3Transport);
+      });
+    },
+    function (callback) {
+      if (configuration.ipcAddresses.length === 0) return callback(null);
+      var ipcTransport = new IpcTransport(configuration.ipcAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
+        if (error !== null) return callback(null);
+        return callback(ipcTransport);
+      });
+    },
+    function (callback) {
+      if (configuration.wsAddresses.length === 0) return callback(null);
+      var wsTransport = new WsTransport(configuration.wsAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
+        if (error !== null) return callback(null);
+        return callback(wsTransport);
+      });
+    },
+    function (callback) {
+      if (configuration.httpAddresses.length === 0) return callback(null);
+      var httpTransport = new HttpTransport(configuration.httpAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
+        if (error !== null) return callback(null);
+        return callback(httpTransport);
+      });
+    }],
     function (callback, next) {
-      // connection = callback();
-      // console.log("hi", connection);
       callback(function (val) {
         if (val !== null) {
           connection = val;
@@ -110,9 +105,9 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
       if (connection === null) {
         return callback(new Error("Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC)."), null);
       } else {
-        storeTransport(that, connection, callback);
+        storeTransport(this, connection, callback);
       }
-    });
+    }.bind(this));
 }
 
 /**
