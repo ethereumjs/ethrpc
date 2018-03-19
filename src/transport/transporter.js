@@ -6,7 +6,6 @@ var Web3Transport = require("./web3-transport");
 var WsTransport = require("./ws-transport");
 var storeTransport = require("./helpers/store-transport");
 var chooseTransport = require("./helpers/choose-transport");
-var createArrayWithDefaultValue = require("../utils/create-array-with-default-value");
 var someSeries = require("async/someSeries");
 
 //import someSeries from 'async/someSeries';
@@ -29,22 +28,26 @@ var someSeries = require("async/someSeries");
  * @returns {void}
  */
 function Transporter(configuration, messageHandler, debugLogging, callback) {
-  var resultAggregator, web3Transport;
-
   // validate configuration
   if (typeof configuration !== "object") {
     return callback(new Error("configuration must be an object."));
   } else if (!Array.isArray(configuration.httpAddresses)) {
     return callback(new Error("configuration.httpAddresses must be an array."));
-  } else if (configuration.httpAddresses.some(function (x) { return typeof x !== "string"; })) {
+  } else if (configuration.httpAddresses.some(function (x) {
+    return typeof x !== "string";
+  })) {
     return callback(new Error("configuration.httpAddresses must contain only strings."));
   } else if (!Array.isArray(configuration.wsAddresses)) {
     return callback(new Error("configuration.wsAddresses must be an array."));
-  } else if (configuration.wsAddresses.some(function (x) { return typeof x !== "string"; })) {
+  } else if (configuration.wsAddresses.some(function (x) {
+    return typeof x !== "string";
+  })) {
     return callback(new Error("configuration.wsAddresses must contain only strings."));
   } else if (!Array.isArray(configuration.ipcAddresses)) {
     return callback(new Error("configuration.ipcAddresses must be an array."));
-  } else if (configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) {
+  } else if (configuration.ipcAddresses.some(function (x) {
+    return typeof x !== "string";
+  })) {
     return callback(new Error("configuration.ipcAddresses must contain only strings."));
   } else if (typeof configuration.connectionTimeout !== "number") {
     return callback(new Error("configuration.connectionTimeout must be a number."));
@@ -93,17 +96,15 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
         if (val !== null) {
           connection = val;
           return next(true);
-        } else {
-          next(false);
         }
+        next(false);
       });
     }, function (err) {
       if (err) return callback(err, null);
       if (connection === null) {
         return callback(new Error("Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC)."), null);
-      } else {
-        storeTransport(this, connection, callback);
       }
+      storeTransport(this, connection, callback);
     }.bind(this));
 }
 
