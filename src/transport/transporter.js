@@ -4,7 +4,7 @@ var HttpTransport = require("./http-transport");
 var IpcTransport = require("./ipc-transport");
 var Web3Transport = require("./web3-transport");
 var WsTransport = require("./ws-transport");
-var checkIfComplete = require("./helpers/check-if-complete");
+var storeTransport = require("./helpers/store-transport");
 var chooseTransport = require("./helpers/choose-transport");
 var createArrayWithDefaultValue = require("../utils/create-array-with-default-value");
 var someSeries = require("async/someSeries");
@@ -50,54 +50,43 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
     return callback(new Error("configuration.connectionTimeout must be a number."));
   }
 
-  // default to all transports undefined, we will look for all of them becoming !== undefined to determine when we are done attempting all connects
-  resultAggregator = {
-    web3Transports: [undefined],
-    ipcTransports: createArrayWithDefaultValue(configuration.ipcAddresses.length, undefined),
-    wsTransports: createArrayWithDefaultValue(configuration.wsAddresses.length, undefined),
-    httpTransports: createArrayWithDefaultValue(configuration.httpAddresses.length, undefined),
-  };
-
   // set the internal state reasonable default values
   this.internalState = {
-    web3Transport: null,
-    httpTransport: null,
-    wsTransport: null,
-    ipcTransport: null,
     debugLogging: Boolean(debugLogging),
     nextListenerToken: 1,
     reconnectListeners: {},
     disconnectListeners: {},
   };
 
-  // initiate connections to all provided addresses, as each completes it will check to see if everything is done
+   // initiate connections to all provided addresses, as each completes it will check to see if everything is done
+  var that = this;
   var connection = null;
   someSeries([
       function (callback) {
         var web3Transport = new Web3Transport(messageHandler, function (error) {
-          if (error === null) return callback(null);
+          if (error !== null) return callback(null);
           return callback(web3Transport);
         });
       },
-      function () {
+      function (callback) {
         if (configuration.ipcAddresses.length === 0) return callback(null);
         var ipcTransport = new IpcTransport(configuration.ipcAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
-          if (error === null) return callback(null);
+          if (error !== null) return callback(null);
           return callback(ipcTransport);
         })
       },
-      function () {
+      function (callback) {
         if (configuration.wsAddresses.length === 0) return callback(null);
         var wsTransport = new WsTransport(configuration.wsAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
-          if (error === null) return callback(null);
+          if (error !== null) return callback(null);
           return callback(wsTransport);
           // TODO: propagate the error up to the caller for reporting
         });
       },
-      function () {
+      function (callback) {
         if (configuration.httpAddresses.length === 0) return callback(null);
         var httpTransport = new HttpTransport(configuration.httpAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
-          if (error === null) return callback(null);
+          if (error !== null) return callback(null);
           return callback(httpTransport);
         });
       },
@@ -105,7 +94,7 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
     function (callback, next) {
       // connection = callback();
       // console.log("hi", connection);
-      callback((val) => {
+      callback(function (val) {
         if (val !== null) {
           connection = val;
           return next(true);
@@ -118,6 +107,11 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
       console.log("EE");
       console.log(err);
       console.log(connection);
+      if (connection === null) {
+        return callback(new Error("Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC)."), null);
+      } else {
+        storeTransport(that, connection, callback);
+      }
     });
 }
 
