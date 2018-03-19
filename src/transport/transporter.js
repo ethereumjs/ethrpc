@@ -7,6 +7,10 @@ var WsTransport = require("./ws-transport");
 var checkIfComplete = require("./helpers/check-if-complete");
 var chooseTransport = require("./helpers/choose-transport");
 var createArrayWithDefaultValue = require("../utils/create-array-with-default-value");
+var someSeries = require("async/someSeries");
+
+//import someSeries from 'async/someSeries';
+
 
 /**
  * Attempts to connect to all provided addresses and then picks the "best" of each transport type to return to you in the callback.
@@ -67,38 +71,54 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
   };
 
   // initiate connections to all provided addresses, as each completes it will check to see if everything is done
-  web3Transport = new Web3Transport(messageHandler, function (error) {
-    if (error === null) {
-      resultAggregator.web3Transports[0] = web3Transport;
-      checkIfComplete(this, resultAggregator, callback);
-    } else if (configuration.ipcAddresses.length > 0) {
-      configuration.ipcAddresses.slice(0, 1).forEach(function (ipcAddress, index) {
-        var ipcTransport = new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error) {
-          resultAggregator.ipcTransports[index] = (error !== null) ? null : ipcTransport;
+  var connection = null;
+  someSeries([
+      function (callback) {
+        var web3Transport = new Web3Transport(messageHandler, function (error) {
+          if (error === null) return callback(null);
+          return callback(web3Transport);
+        });
+      },
+      function () {
+        if (configuration.ipcAddresses.length === 0) return callback(null);
+        var ipcTransport = new IpcTransport(configuration.ipcAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
+          if (error === null) return callback(null);
+          return callback(ipcTransport);
+        })
+      },
+      function () {
+        if (configuration.wsAddresses.length === 0) return callback(null);
+        var wsTransport = new WsTransport(configuration.wsAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
+          if (error === null) return callback(null);
+          return callback(wsTransport);
           // TODO: propagate the error up to the caller for reporting
-          checkIfComplete(this, resultAggregator, callback);
-        }.bind(this));
-      }.bind(this));
-    } else if (configuration.wsAddresses.length > 0) {
-      configuration.wsAddresses.slice(0, 1).forEach(function (wsAddress, index) {
-        var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error) {
-          resultAggregator.wsTransports[index] = (error !== null) ? null : wsTransport;
-          // TODO: propagate the error up to the caller for reporting
-          checkIfComplete(this, resultAggregator, callback);
-        }.bind(this));
-      }.bind(this));
-    } else if (configuration.httpAddresses.length > 0) {
-      configuration.httpAddresses.slice(0, 1).forEach(function (httpAddress, index) {
-        var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error) {
-          resultAggregator.httpTransports[index] = (error !== null) ? null : httpTransport;
-          // TODO: propagate the error up to the caller for reporting
-          checkIfComplete(this, resultAggregator, callback);
-        }.bind(this));
-      }.bind(this));
-    } else {
-      return callback(new Error("Ran out of transports to try (Web3, HTTP, WS, IPC)"));
-    }
-  }.bind(this));
+        });
+      },
+      function () {
+        if (configuration.httpAddresses.length === 0) return callback(null);
+        var httpTransport = new HttpTransport(configuration.httpAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
+          if (error === null) return callback(null);
+          return callback(httpTransport);
+        });
+      },
+    ],
+    function (callback, next) {
+      // connection = callback();
+      // console.log("hi", connection);
+      callback((val) => {
+        if (val !== null) {
+          connection = val;
+          return next(true);
+        } else {
+          next(false);
+        }
+      });
+      // next(connection !== null);
+    }, function (err) {
+      console.log("EE");
+      console.log(err);
+      console.log(connection);
+    });
 }
 
 /**
