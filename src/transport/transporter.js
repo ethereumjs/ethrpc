@@ -56,7 +56,6 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
   };
 
   // initiate connections to all provided addresses, only callback one that connects
-  var connection = null;
   someSeries([
     function (callback) {
       var web3Transport = new Web3Transport(messageHandler, function (error) {
@@ -98,18 +97,12 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
         callback);
     }],
     function (callback, next) {
-      callback(function (val) {
-        if (val !== null) {
-          connection = val;
-          return next(true);
-        }
-        next(false);
-      });
+      callback(next);
     }, function (foundTransport) {
-      if (!foundTransport || connection === null) {
+      if (!foundTransport) {
         return callback(new Error("Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC)."), null);
       }
-      storeTransport(this, connection, callback);
+      storeTransport(this, foundTransport, callback);
     }.bind(this));
 }
 
