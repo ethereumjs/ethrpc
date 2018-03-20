@@ -33,21 +33,15 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
     return callback(new Error("configuration must be an object."));
   } else if (!Array.isArray(configuration.httpAddresses)) {
     return callback(new Error("configuration.httpAddresses must be an array."));
-  } else if (configuration.httpAddresses.some(function (x) {
-    return typeof x !== "string";
-  })) {
+  } else if (configuration.httpAddresses.some(function (x) { return typeof x !== "string"; })) {
     return callback(new Error("configuration.httpAddresses must contain only strings."));
   } else if (!Array.isArray(configuration.wsAddresses)) {
     return callback(new Error("configuration.wsAddresses must be an array."));
-  } else if (configuration.wsAddresses.some(function (x) {
-    return typeof x !== "string";
-  })) {
+  } else if (configuration.wsAddresses.some(function (x) { return typeof x !== "string"; })) {
     return callback(new Error("configuration.wsAddresses must contain only strings."));
   } else if (!Array.isArray(configuration.ipcAddresses)) {
     return callback(new Error("configuration.ipcAddresses must be an array."));
-  } else if (configuration.ipcAddresses.some(function (x) {
-    return typeof x !== "string";
-  })) {
+  } else if (configuration.ipcAddresses.some(function (x) { return typeof x !== "string"; })) {
     return callback(new Error("configuration.ipcAddresses must contain only strings."));
   } else if (typeof configuration.connectionTimeout !== "number") {
     return callback(new Error("configuration.connectionTimeout must be a number."));
