@@ -66,24 +66,36 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
     },
     function (callback) {
       if (configuration.ipcAddresses.length === 0) return callback(null);
-      var ipcTransport = new IpcTransport(configuration.ipcAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
-        if (error !== null) return callback(null);
-        return callback(ipcTransport);
-      });
+      someSeries(configuration.ipcAddresses,
+        function (ipcAddress, next) {
+          var ipcTransport = new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error) {
+            if (error !== null) return next(null);
+            return next(ipcTransport);
+          });
+        },
+        callback);
     },
     function (callback) {
       if (configuration.wsAddresses.length === 0) return callback(null);
-      var wsTransport = new WsTransport(configuration.wsAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
-        if (error !== null) return callback(null);
-        return callback(wsTransport);
-      });
+      someSeries(configuration.wsAddresses,
+        function (wsAddress, next) {
+          var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error) {
+            if (error !== null) return next(null);
+            return next(wsTransport);
+          });
+        },
+        callback);
     },
     function (callback) {
       if (configuration.httpAddresses.length === 0) return callback(null);
-      var httpTransport = new HttpTransport(configuration.httpAddresses[0], configuration.connectionTimeout, messageHandler, function (error) {
-        if (error !== null) return callback(null);
-        return callback(httpTransport);
-      });
+      someSeries(configuration.httpAddresses,
+        function (httpAddress, next) {
+          var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error) {
+            if (error !== null) return next(null);
+            return next(httpTransport);
+          });
+        },
+        callback);
     }],
     function (callback, next) {
       callback(function (val) {
