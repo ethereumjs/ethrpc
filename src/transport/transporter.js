@@ -8,9 +8,6 @@ var storeTransport = require("./helpers/store-transport");
 var chooseTransport = require("./helpers/choose-transport");
 var someSeries = require("async/someSeries");
 
-//import someSeries from 'async/someSeries';
-
-
 /**
  * Attempts to connect to all provided addresses and then picks the "best" of each transport type to return to you in the callback.
  *
