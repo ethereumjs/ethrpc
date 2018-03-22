@@ -189,7 +189,7 @@ function reconnect(abstractTransport) {
 }
 
 /**
- * Notify all reconnect listeners of a reconect
+ * Notify all reconnect listeners of a reconnect
  *
  */
 function notifyReconnectListeners(abstractTransport) {
@@ -203,7 +203,7 @@ function notifyReconnectListeners(abstractTransport) {
 }
 
 /**
- * Notify all disconnect listeners of a reconect
+ * Notify all disconnect listeners of a disconnect
  *
  */
 function notifyDisconnectListeners(abstractTransport, error) {

@@ -1,15 +1,16 @@
 "use strict";
 
-var isNotNull = require("../../utils/is-not-null");
-
 /**
  * Choose the transport for this request.
  * @returns {!AbstractTransport}
  */
 function chooseTransport(internalState) {
-  var eligibleTransports = [internalState.web3Transport, internalState.ipcTransport, internalState.wsTransport, internalState.httpTransport].filter(isNotNull);
-  if (eligibleTransports.length === 0) throw new Error("No transports available");
-  return eligibleTransports[0];
+  var eligibleTransport = internalState.transport;
+  if (eligibleTransport == null) {
+    throw new Error("No transports available");
+  } else {
+    return eligibleTransport;
+  }
 }
 
 module.exports = chooseTransport;
