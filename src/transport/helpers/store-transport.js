@@ -11,9 +11,9 @@ function storeTransport(internalState, transport) {
       internalState.reconnectListeners[key]();
     });
   });
-  transport.addDisconnectListener(function () {
+  transport.addDisconnectListener(function (event) {
     Object.keys(internalState.disconnectListeners).forEach(function (key) {
-      internalState.disconnectListeners[key]();
+      internalState.disconnectListeners[key](event);
     });
   });
 }
