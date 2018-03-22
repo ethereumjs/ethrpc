@@ -203,7 +203,7 @@ function notifyReconnectListeners(abstractTransport) {
 }
 
 /**
- * Notify all disconnect listeners of a reconnect
+ * Notify all disconnect listeners of a disconnect
  *
  */
 function notifyDisconnectListeners(abstractTransport, error) {
