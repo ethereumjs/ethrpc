@@ -31,6 +31,6 @@ module.exports = {
 
   DEFAULT_GAS: "0x2fd618",
 
-  ETHER: new BigNumber(10, 10).toPower(18),
+  ETHER: new BigNumber(10, 10).exponentiatedBy(18),
 
 };
