@@ -97,7 +97,7 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
       callback(next);
     }, function (foundTransport) {
       if (!foundTransport) {
-        return callback(new Error("Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC)."), null);
+        return callback(new Error("Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC)."));
       }
       storeTransport(this.internalState, foundTransport);
       callback(null, this);
