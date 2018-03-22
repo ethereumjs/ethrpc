@@ -63,10 +63,10 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
     function (nextTransport) {
       if (configuration.ipcAddresses.length === 0) return nextTransport(null);
       someSeries(configuration.ipcAddresses,
-        function (ipcAddress, next) {
+        function (ipcAddress, nextAddress) {
           var ipcTransport = new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error) {
-            if (error !== null) return next(null);
-            return next(ipcTransport);
+            if (error !== null) return nextAddress(null);
+            return nextAddress(ipcTransport);
           });
         },
         nextTransport);
@@ -74,10 +74,10 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
     function (nextTransport) {
       if (configuration.wsAddresses.length === 0) return nextTransport(null);
       someSeries(configuration.wsAddresses,
-        function (wsAddress, next) {
+        function (wsAddress, nextAddress) {
           var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error) {
-            if (error !== null) return next(null);
-            return next(wsTransport);
+            if (error !== null) return nextAddress(null);
+            return nextAddress(wsTransport);
           });
         },
         nextTransport);
@@ -85,16 +85,16 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
     function (nextTransport) {
       if (configuration.httpAddresses.length === 0) return nextTransport(null);
       someSeries(configuration.httpAddresses,
-        function (httpAddress, next) {
+        function (httpAddress, nextAddress) {
           var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error) {
-            if (error !== null) return next(null);
-            return next(httpTransport);
+            if (error !== null) return nextAddress(null);
+            return nextAddress(httpTransport);
           });
         },
         nextTransport);
     }],
-    function (callback, next) {
-      callback(next);
+    function (tryTransportType, nextTransportType) {
+      tryTransportType(nextTransportType);
     }, function (foundTransport) {
       if (!foundTransport) {
         return callback(new Error("Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC)."));
