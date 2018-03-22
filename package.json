@@ -61,7 +61,7 @@
     "chai": "3.5.0",
     "coveralls": "2.11.3",
     "eslint": "3.17.1",
-    "ethereumjs-abi": "^0.6.5",
+    "ethereumjs-abi": "0.6.5",
     "ethereumjs-stub-rpc-server": "2.1.4",
     "genversion": "2.0.1",
     "istanbul": "0.4.5",
