@@ -54,14 +54,14 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
 
   // initiate connections to all provided addresses, only callback one that connects
   someSeries([
-    function (callback) {
+    function (nextTransport) {
       var web3Transport = new Web3Transport(messageHandler, function (error) {
-        if (error !== null) return callback(null);
-        return callback(web3Transport);
+        if (error !== null) return nextTransport(null);
+        return nextTransport(web3Transport);
       });
     },
-    function (callback) {
-      if (configuration.ipcAddresses.length === 0) return callback(null);
+    function (nextTransport) {
+      if (configuration.ipcAddresses.length === 0) return nextTransport(null);
       someSeries(configuration.ipcAddresses,
         function (ipcAddress, next) {
           var ipcTransport = new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error) {
@@ -69,10 +69,10 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
             return next(ipcTransport);
           });
         },
-        callback);
+        nextTransport);
     },
-    function (callback) {
-      if (configuration.wsAddresses.length === 0) return callback(null);
+    function (nextTransport) {
+      if (configuration.wsAddresses.length === 0) return nextTransport(null);
       someSeries(configuration.wsAddresses,
         function (wsAddress, next) {
           var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error) {
@@ -80,10 +80,10 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
             return next(wsTransport);
           });
         },
-        callback);
+        nextTransport);
     },
-    function (callback) {
-      if (configuration.httpAddresses.length === 0) return callback(null);
+    function (nextTransport) {
+      if (configuration.httpAddresses.length === 0) return nextTransport(null);
       someSeries(configuration.httpAddresses,
         function (httpAddress, next) {
           var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error) {
@@ -91,7 +91,7 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
             return next(httpTransport);
           });
         },
-        callback);
+        nextTransport);
     }],
     function (callback, next) {
       callback(next);
