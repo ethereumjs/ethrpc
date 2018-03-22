@@ -62,31 +62,38 @@ describe("transport/ipc-transport", function () {
     });
   });
 
-  it("queues up multiple work items during outage", function (done) {
-    var results = [];
-    var messageHandler = function (error, result) {
-      var idsFound = {0: false, 1: false};
-      assert.isNull(error);
-      results.push(result);
-      if (results.length !== 2) return;
-      results.forEach(function (result) {
-        assert.isObject(result);
-        assert.strictEqual(result.jsonrpc, "2.0");
-        assert.strictEqual(result.result, "banana");
-        assert(result.id === 0 || result.id === 1);
-        idsFound[result.id] = true;
+  // NOTE: these tests are brittle for IPC on Linux.  see: https://github.com/nodejs/node/issues/11973
+  if (!process.env.CONTINUOUS_INTEGRATION) { // skip brittle IPC test for CI
+    it("queues up multiple work items during outage", function (done) {
+      var results = [];
+      var messageHandler = function (error, result) {
+        var idsFound = {0: false, 1: false};
+        assert.isNull(error);
+        results.push(result);
+        if (results.length !== 2) return;
+        results.forEach(function (result) {
+          assert.isObject(result);
+          assert.strictEqual(result.jsonrpc, "2.0");
+          assert.strictEqual(result.result, "banana");
+          assert(result.id === 0 || result.id === 1);
+          idsFound[result.id] = true;
+        });
+        assert.deepEqual(idsFound, {0: true, 1: true});
+        done();
+      };
+      server.addResponder(function (request) {
+        if (request.method === "net_version") return "apple";
       });
-      assert.deepEqual(idsFound, {0: true, 1: true});
-      done();
-    };
-    server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    new IpcTransport(ipcAddress, 100, messageHandler, function (error, ipcTransport) {
-      server.destroy(function () {
-        ipcTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
-        ipcTransport.submitWork({ id: 1, jsonrpc: "2.0", method: "net_version", params: [] });
-        server = StubServer.createStubServer("IPC", ipcAddress);
-        server.addResponder(function (request) { if (request.method === "net_version") return "banana"; });
+      new IpcTransport(ipcAddress, 100, messageHandler, function (error, ipcTransport) {
+        server.destroy(function () {
+          ipcTransport.submitWork({id: 0, jsonrpc: "2.0", method: "net_version", params: []});
+          ipcTransport.submitWork({id: 1, jsonrpc: "2.0", method: "net_version", params: []});
+          server = StubServer.createStubServer("IPC", ipcAddress);
+          server.addResponder(function (request) {
+            if (request.method === "net_version") return "banana";
+          });
+        });
       });
     });
-  });
+  }
 });
