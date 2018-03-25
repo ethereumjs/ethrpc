@@ -62,7 +62,7 @@ function connect(configuration, initialConnectCallback) {
           function (next) { dispatch(ensureLatestBlock(function (err) { next(err); })); },
           function (next) { dispatch(setCoinbase(next)); },
           function (next) { dispatch(setGasPrice(next)); },
-        ], initialConnectCallback);
+        ], function (err) { initialConnectCallback(err); });
       }));
     });
   };
