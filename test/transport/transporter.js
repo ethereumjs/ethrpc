@@ -103,6 +103,24 @@ describe("transport/transporter", function () {
     });
   });
 
+  it("valid http and ws with unparseable URL, http should be used", function (done) {
+    var configuration = {
+      httpAddresses: ["http://localhost:1338"],
+      wsAddresses: ["blahblahblah"],
+      ipcAddresses: [],
+      connectionTimeout: 1000,
+    };
+    var messageHandler = function (error, message) {
+      assert.isNull(error);
+      assert.deepEqual(message, { jsonrpc: "2.0", id: 0, result: "http server 1" });
+      done();
+    };
+    new Transporter(configuration, messageHandler, false, function (error, transporter) {
+      assert.isNull(error);
+      transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
+    });
+  });
+
   it("multiple valid http, first should be used", function (done) {
     var configuration = {
       httpAddresses: ["http://localhost:2338", "http://localhost:1338"],
