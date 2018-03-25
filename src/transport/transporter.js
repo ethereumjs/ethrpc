@@ -64,10 +64,15 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
       if (configuration.ipcAddresses.length === 0) return nextTransport(null);
       someSeries(configuration.ipcAddresses,
         function (ipcAddress, nextAddress) {
-          var ipcTransport = new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error) {
-            if (error !== null) return nextAddress(null);
-            return nextAddress(ipcTransport);
-          });
+          try {
+            var ipcTransport = new IpcTransport(ipcAddress, configuration.connectionTimeout, messageHandler, function (error) {
+              if (error !== null) return nextAddress(null);
+              return nextAddress(ipcTransport);
+            });
+          } catch (err) {
+            console.warn(ipcAddress, err.message);
+            nextAddress(null);
+          }
         },
         nextTransport);
     },
@@ -75,10 +80,15 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
       if (configuration.wsAddresses.length === 0) return nextTransport(null);
       someSeries(configuration.wsAddresses,
         function (wsAddress, nextAddress) {
-          var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error) {
-            if (error !== null) return nextAddress(null);
-            return nextAddress(wsTransport);
-          });
+          try {
+            var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error) {
+              if (error !== null) return nextAddress(null);
+              return nextAddress(wsTransport);
+            });
+          } catch (err) {
+            console.warn(wsAddress, err.message);
+            nextAddress(null);
+          }
         },
         nextTransport);
     },
@@ -86,10 +96,15 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
       if (configuration.httpAddresses.length === 0) return nextTransport(null);
       someSeries(configuration.httpAddresses,
         function (httpAddress, nextAddress) {
-          var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error) {
-            if (error !== null) return nextAddress(null);
-            return nextAddress(httpTransport);
-          });
+          try {
+            var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error) {
+              if (error !== null) return nextAddress(null);
+              return nextAddress(httpTransport);
+            });
+          } catch (err) {
+            console.warn(httpAddress, err.message);
+            nextAddress(null);
+          }
         },
         nextTransport);
     }],
