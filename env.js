@@ -1,23 +1,25 @@
-global.speedomatic = require("speedomatic");
-global.rpc = require("./src");
-global.log = console.log;
+#!/usr/bin/env node
 
-var configuration = {
+global.ethrpc = require("./src");
+global.logError = require("./src/utils/log-error");
+
+global.connectOptions = {
   httpAddresses: ["http://127.0.0.1:8545"],
   wsAddresses: ["ws://127.0.0.1:8546"],
   ipcAddresses: [],
-  errorHandler: log
+  errorHandler: logError,
 };
 
-rpc.setDebugOptions({ connect: true });
-rpc.connect(configuration, function (err) {
-  if (err) return console.error("ethrpc connection failed:", err);
-  rpc.eth.coinbase(function (err, coinbase) {
-    if (err) return console.error("eth_coinbase failed");
-    global.COINBASE = coinbase;
+ethrpc.setDebugOptions({ connect: true });
+
+ethrpc.connect(connectOptions, function (err) {
+  if (err) return console.error(err);
+  ethrpc.eth.coinbase(function (err, coinbase) {
+    if (err) return console.error(err);
+    if (coinbase == null) console.log("coinbase address not found");
   });
-  rpc.net.version(function (err, networkID) {
-    if (err || networkID == null) return console.error("net_version failed");
-    global.NETWORK_ID = networkID;
+  ethrpc.net.version(function (err, networkID) {
+    if (err) return console.error(err);
+    if (networkID == null) console.error("net_version failed");
   });
 });
