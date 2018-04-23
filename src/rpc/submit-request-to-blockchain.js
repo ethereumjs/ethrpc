@@ -19,6 +19,8 @@ function submitRequestToBlockchain(jso, callback) {
     }
     if (typeof jso !== "object") return callback(new Error("jso must be an object"));
     if (typeof jso.id !== "number") return callback(new Error("jso.id must be a number"));
+    if (internalState.get("transporter") === null) return callback(new Error("Not connected to ethereum node"));
+
     var expectedReturnTypes = stripReturnsTypeAndInvocation(jso); // FIXME: return types shouldn't be embedded into the RPC JSO
     internalState.set("outstandingRequests." + jso.id, {
       jso: jso,
