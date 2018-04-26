@@ -48,7 +48,7 @@
     "uuid": "3.0.1"
   },
   "devDependencies": {
-    "babel-cli": "6.22.2",
+    "babel-cli": "6.26.0",
     "babel-plugin-transform-es3-member-expression-literals": "6.22.0",
     "babel-plugin-transform-es3-property-literals": "6.22.0",
     "babel-plugin-uglify": "1.0.2",
@@ -59,7 +59,7 @@
     "browserify": "11.0.1",
     "bufferutil": "3.0.0",
     "chai": "3.5.0",
-    "coveralls": "2.11.3",
+    "coveralls": "2.13.3",
     "eslint": "3.17.1",
     "ethereumjs-abi": "0.6.5",
     "ethereumjs-stub-rpc-server": "2.1.4",
@@ -74,7 +74,7 @@
     "ws": "2.0.3"
   },
   "optionalDependencies": {
-    "request": "2.67.0",
+    "request": "2.85.0",
     "websocket": "1.0.23"
   },
   "browser": {
