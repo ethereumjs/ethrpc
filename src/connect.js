@@ -60,7 +60,7 @@ function connect(configuration, initialConnectCallback) {
         if (storedConfiguration.startBlockStreamOnConnect) dispatch(startBlockStream());
         async.parallel([
           function (next) { dispatch(ensureLatestBlock(function (err) { next(err); })); },
-          function (next) { dispatch(setCoinbase(next)); },
+          function (next) { dispatch(setCoinbase(function () { next(); })); },
           function (next) { dispatch(setGasPrice(next)); },
         ], function (err) { initialConnectCallback(err); });
       }));
