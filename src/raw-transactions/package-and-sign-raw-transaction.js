@@ -13,7 +13,7 @@ var RPCError = require("../errors/rpc-error");
  * @param {Object} payload Static API data with "params" and "from" set.
  * @param {string} address The sender's Ethereum address.
  * @param {buffer|function} privateKeyOrSigner Sender's plaintext private key or signing function.
- * @param {string} accountType One of "privateKey", "uPort", or "ledger".
+ * @param {string} accountType One of "privateKey", "uPort", "ledger", or "trezor".
  * @param {function} callback Callback function.
  * @return {string|void} Signed transaction.
  */

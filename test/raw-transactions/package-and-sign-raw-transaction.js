@@ -123,4 +123,40 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
       assert.strictEqual(output, "0x00000000000000000000000000000000000000000000000000000000deadbeef");
     },
   });
+  test({
+    description: "With trezor",
+    params: {
+      payload: {
+        name: "addMarketToBranch",
+        returns: "int256",
+        send: true,
+        signature: ["int256", "int256"],
+        params: ["101010", "0xa1"],
+        to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
+      },
+      address: "0x0000000000000000000000000000000000000b0b",
+      privateKeyOrSigner: function (packaged, callback) {
+        assert.deepEqual(packaged, {
+          from: "0x0000000000000000000000000000000000000b0b",
+          to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
+          data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
+          gas: "0x2fd618",
+          nonce: 10,
+          value: "0x0",
+          gasLimit: "0x2fd618",
+          gasPrice: "0x64",
+        });
+        callback(null, mockSignedTransaction);
+      },
+      accountType: ACCOUNT_TYPES.TREZOR,
+    },
+    blockchain: {
+      gasPrice: "0x64",
+      transactionCount: "0xa",
+    },
+    assertions: function (err, output) {
+      assert.isNull(err);
+      assert.deepEqual(output, mockSignedTransaction);
+    },
+  });
 });

@@ -13,7 +13,7 @@ var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
  * @param {Object} payload Static ABI data with the "params" and "from" fields set.
  * @param {string} address The sender's Ethereum address.
  * @param {buffer|function} privateKeyOrSigner Sender's plaintext private key or signing function.
- * @param {string} accountType One of "privateKey", "uPort", or "ledger".
+ * @param {string} accountType One of "privateKey", "uPort", "ledger", or "trezor".
  * @param {function} callback Callback function.
  * @return {string|void} Transaction hash (if successful).
  */

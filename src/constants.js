@@ -12,6 +12,7 @@ module.exports = {
     PRIVATE_KEY: "privateKey",
     UNLOCKED_ETHEREUM_NODE: "unlockedEthereumNode",
     META_MASK: "metaMask",
+    TREZOR: "trezor",
   },
 
   // Number of required confirmations for transact sequence

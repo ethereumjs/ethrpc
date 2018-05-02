@@ -8,7 +8,7 @@ var ACCOUNT_TYPES = require("../constants").ACCOUNT_TYPES;
  * Sign the transaction using either a private key or a signing function.
  * @param {Object} packaged Unsigned transaction.
  * @param {buffer|function} privateKeyOrSigner Sender's plaintext private key or signing function.
- * @param {string} accountType One of "privateKey", "uPort", or "ledger".
+ * @param {string} accountType One of "privateKey", "uPort", "ledger", or "trezor".
  * @param {function} callback Callback function.
  * @return {string} Signed and serialized raw transaction.
  */
@@ -21,6 +21,7 @@ function signRawTransaction(packaged, privateKeyOrSigner, accountType, callback)
         return callback(err);
       }
     case ACCOUNT_TYPES.LEDGER:
+    case ACCOUNT_TYPES.TREZOR:
       return privateKeyOrSigner(packaged, callback);
     case ACCOUNT_TYPES.U_PORT:
       return privateKeyOrSigner(packaged).then(function (transactionHash) {
