@@ -12,6 +12,7 @@ function BlockNotifier(transport, pollingIntervalMilliseconds) {
     blockNotifier = new PollingBlockNotifier(transport, pollingIntervalMilliseconds);
   } else {
     blockNotifier = new SubscribingBlockNotifier(transport, function () {
+      console.info("[ethrpc] eth_subscribe request failed, falling back to polling for blocks");
       blockNotifier.destroy();
       blockNotifier = new PollingBlockNotifier(transport, pollingIntervalMilliseconds);
       blockNotifier.subscribe(this.notifySubscribers);

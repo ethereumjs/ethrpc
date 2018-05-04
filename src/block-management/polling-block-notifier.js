@@ -21,6 +21,7 @@ function PollingBlockNotifier(transport, pollingIntervalMilliseconds) {
   }.bind(this);
 
   pollForLatestBlock = function () {
+    console.log("polling for latest block...");
     transport.getLatestBlock(processNewBlock);
   };
 
