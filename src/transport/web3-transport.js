@@ -1,6 +1,7 @@
 "use strict";
 
 var AbstractTransport = require("./abstract-transport.js");
+var isGlobalWeb3 = require("../utils/is-global-web3");
 
 function Web3Transport(messageHandler, initialConnectCallback) {
   AbstractTransport.call(this, "web3", -1, messageHandler);
@@ -12,7 +13,7 @@ Web3Transport.prototype = Object.create(AbstractTransport.prototype);
 Web3Transport.prototype.constructor = Web3Transport;
 
 Web3Transport.prototype.connect = function (callback) {
-  if (typeof window !== "undefined" && ((window || {}).web3 || {}).currentProvider) {
+  if (isGlobalWeb3()) {
     setTimeout(function () { callback(null); }, 1);
   } else {
     setTimeout(function () { callback(new Error("Nothing found at window.web3.currentProvider.")); }, 1);
