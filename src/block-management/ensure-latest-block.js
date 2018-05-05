@@ -1,6 +1,5 @@
 "use strict";
 
-var onNewBlock = require("../block-management/on-new-block");
 var eth_getBlockByNumber = require("../wrappers/eth").getBlockByNumber;
 var RPCError = require("../errors/rpc-error");
 
@@ -12,7 +11,7 @@ function ensureLatestBlock(callback) {
     dispatch(eth_getBlockByNumber(["latest", false], function (err, block) {
       if (err) return callback(err);
       if (block == null) return callback(new RPCError("BLOCK_NOT_FOUND"));
-      dispatch(onNewBlock(block));
+      dispatch({ type: "SET_CURRENT_BLOCK", data: block });
       callback(null, block);
     }));
   };

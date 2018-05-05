@@ -1,14 +1,16 @@
 "use strict";
 
+var internalState = require("../internal-state");
 var reprocessTransactions = require("../transact/reprocess-transactions");
-var isObject = require("../utils/is-object");
+var logError = require("../utils/log-error");
 
-function onNewBlock(block) {
-  return function (dispatch) {
-    if (isObject(block)) {
-      dispatch({ type: "SET_CURRENT_BLOCK", data: block });
-      dispatch(reprocessTransactions());
-    }
+function onNewBlock(newBlock, cb) {
+  return function (dispatch, getState) {
+    var callback = cb || logError;
+    if (newBlock === null) return callback(null);
+    if (getState().debug.broadcast) console.log("[ethrpc] New block:", newBlock.hash);
+    dispatch(reprocessTransactions());
+    internalState.get("blockAndLogStreamer").reconcileNewBlock(newBlock).then(callback).catch(callback);
   };
 }
 

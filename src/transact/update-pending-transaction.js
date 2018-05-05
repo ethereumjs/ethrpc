@@ -1,6 +1,6 @@
 "use strict";
 
-var eth = require("../wrappers/eth");
+var eth_getTransactionByHash = require("../wrappers/eth").getTransactionByHash;
 var updateSealedTransaction = require("../transact/update-sealed-transaction");
 var transact = require("../transact/transact");
 var RPCError = require("../errors/rpc-error");
@@ -8,7 +8,7 @@ var constants = require("../constants");
 
 function updatePendingTransaction(transactionHash, callback) {
   return function (dispatch, getState) {
-    dispatch(eth.getTransactionByHash(transactionHash, function (err, onChainTransaction) {
+    dispatch(eth_getTransactionByHash(transactionHash, function (err, onChainTransaction) {
       if (err) return callback(err);
       dispatch({ type: "UPDATE_ON_CHAIN_TRANSACTION", hash: transactionHash, data: onChainTransaction });
 
@@ -25,7 +25,7 @@ function updatePendingTransaction(transactionHash, callback) {
           if (getState().debug.tx) console.log("resubmitting tx:", transactionHash);
           var transaction = getState().transactions[transactionHash];
           var meta = transaction.meta || {};
-          dispatch(transact(transaction.payload, meta.signer, meta.accountType, transaction.onSent, transaction.onSuccess, transaction.onFailed));
+          dispatch(transact.default(transaction.payload, meta.signer, meta.accountType, transaction.onSent, transaction.onSuccess, transaction.onFailed));
         }
 
       // non-null transaction: transaction not dropped
@@ -42,4 +42,4 @@ function updatePendingTransaction(transactionHash, callback) {
   };
 }
 
-module.exports = updatePendingTransaction;
+module.exports.default = updatePendingTransaction;

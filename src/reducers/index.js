@@ -8,8 +8,10 @@ var gasPriceReducer = require("./gas-price");
 var noRelayReducer = require("./no-relay");
 var networkIDReducer = require("./network-id");
 var transactionsReducer = require("./transactions");
-var subscriptionsReducer = require("./subscriptions");
+var storeObserversReducer = require("./store-observers");
 var coinbaseReducer = require("./coinbase");
+var newHeadsSubscriptionReducer = require("./new-heads-subscription");
+var newBlockPollingIntervalReducer = require("./new-block-polling-interval");
 
 function reducer(state, action) {
   return {
@@ -21,8 +23,10 @@ function reducer(state, action) {
     noRelay: noRelayReducer(state.noRelay, action),
     networkID: networkIDReducer(state.networkID, action),
     transactions: transactionsReducer(state.transactions, action),
-    subscriptions: subscriptionsReducer(state.subscriptions, action),
+    storeObservers: storeObserversReducer(state.storeObservers, action),
     coinbase: coinbaseReducer(state.coinbase, action),
+    newHeadsSubscription: newHeadsSubscriptionReducer(state.newHeadsSubscription, action),
+    newBlockPollingInterval: newBlockPollingIntervalReducer(state.newBlockPollingInterval, action),
   };
 }
 

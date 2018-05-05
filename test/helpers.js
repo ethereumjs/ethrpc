@@ -66,16 +66,8 @@ module.exports.getRpcConfiguration = function (transportType, transportAddress) 
 module.exports.createStubRpcServerWithRequiredResponders = function (transportType, transportAddress) {
   var stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
   stubRpcServer.addResponder(function (request) {
-    switch (request.method) {
-      case "eth_coinbase":
-        return "0x0000000000000000000000000000000000000b0b";
-      case "eth_gasPrice":
-        return "0x09184e72a000";
-      case "eth_subscribe":
-        return "0x00000000000000000000000000000001";
-      case "eth_unsubscribe":
-        return true;
-    }
+    if (request.method === "eth_gasPrice") return "0x09184e72a000";
+    // if (request.method === "eth_coinbase") return "0x0000000000000000000000000000000000000b0b";
   });
   return stubRpcServer;
 };

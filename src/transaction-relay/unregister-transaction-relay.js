@@ -1,10 +1,10 @@
 "use strict";
 
-var removeSubscription = require("../subscriptions/remove-subscription");
+var storeObservers = require("../store-observers");
 
 function unregisterTransactionRelay() {
   return function (dispatch) {
-    dispatch(removeSubscription("transactions"));
+    dispatch(storeObservers.remove("transactions"));
   };
 }
 

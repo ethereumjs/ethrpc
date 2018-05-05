@@ -41,9 +41,9 @@ function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, o
       if (debug.tx) console.log("returnData:", returnData);
       if (err) return wrappedOnFailedCallback(err);
       if (returnData == null) return wrappedOnFailedCallback(new RPCError("NULL_CALL_RETURN"));
-      dispatch(transactAsync(payload, returnData, privateKeyOrSigner, accountType, onSent, onSuccess, wrappedOnFailedCallback));
+      dispatch(transactAsync.default(payload, returnData, privateKeyOrSigner, accountType, onSent, onSuccess, wrappedOnFailedCallback));
     }));
   };
 }
 
-module.exports = transact;
+module.exports.default = transact;

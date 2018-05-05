@@ -325,7 +325,7 @@ describe("reducers/transactions", function () {
       state: {
         "0xdeadbeef": {
           hash: "0xdeadbeef",
-          tx: { blockNumber: 93 },
+          tx: { blockNumber: "0x5d" },
         },
       },
       action: {
@@ -337,7 +337,7 @@ describe("reducers/transactions", function () {
         assert.deepEqual(state, {
           "0xdeadbeef": {
             hash: "0xdeadbeef",
-            tx: { blockNumber: 93 },
+            tx: { blockNumber: "0x5d" },
             confirmations: 7,
           },
         });

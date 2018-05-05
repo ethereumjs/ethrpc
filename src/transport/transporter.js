@@ -107,17 +107,22 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
           }
         },
         nextTransport);
-    }],
-    function (tryTransportType, nextTransportType) {
-      tryTransportType(nextTransportType);
-    }, function (foundTransport) {
-      if (!foundTransport) {
-        return callback(new Error("Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC)."));
-      }
-      storeTransport(this.internalState, foundTransport);
-      callback(null, this);
-    }.bind(this));
+    },
+  ],
+  function (tryTransportType, nextTransportType) {
+    tryTransportType(nextTransportType);
+  }, function (foundTransport) {
+    if (!foundTransport) {
+      return callback(new Error("Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC)."));
+    }
+    storeTransport(this.internalState, foundTransport);
+    callback(null, this);
+  }.bind(this));
 }
+
+Transporter.prototype.resetState = function () {
+  if (this.internalState.transport) this.internalState.transport.resetState();
+};
 
 /**
  * Submits a remote procedure call to the blockchain.
