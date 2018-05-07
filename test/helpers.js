@@ -67,7 +67,6 @@ module.exports.createStubRpcServerWithRequiredResponders = function (transportTy
   var stubRpcServer = StubServer.createStubServer(transportType, transportAddress);
   stubRpcServer.addResponder(function (request) {
     if (request.method === "eth_gasPrice") return "0x09184e72a000";
-    // if (request.method === "eth_coinbase") return "0x0000000000000000000000000000000000000b0b";
   });
   return stubRpcServer;
 };

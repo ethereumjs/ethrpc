@@ -16,7 +16,6 @@
     "prepublishOnly": "postinstall-build dist",
     "preversion": "npm test",
     "version": "npm run genversion && git add src/version.js",
-    "testwhy": "wtfnode ./node_modules/mocha/bin/_mocha --timeout 5000 ./test/stub-node-only.js"
   },
   "repository": {
     "type": "git",
