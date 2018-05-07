@@ -17,28 +17,52 @@ describe("reducers/current-block", function () {
       state: null,
       action: {
         type: "SET_CURRENT_BLOCK",
-        data: { number: "0x7" },
+        data: {
+          number: "0x7",
+          hash: "0x0000000000000000000000000000000000000000000000000000000000000007",
+          parentHash: "0x0000000000000000000000000000000000000000000000000000000000000006",
+        },
       },
       assertions: function (state) {
-        assert.deepEqual(state, { number: "0x7" });
+        assert.deepEqual(state, {
+          number: "0x7",
+          hash: "0x0000000000000000000000000000000000000000000000000000000000000007",
+          parentHash: "0x0000000000000000000000000000000000000000000000000000000000000006",
+        });
       },
     });
     test({
       description: "Change the current block",
-      state: { number: "0x7" },
+      state: {
+        number: "0x7",
+        hash: "0x0000000000000000000000000000000000000000000000000000000000000007",
+        parentHash: "0x0000000000000000000000000000000000000000000000000000000000000006",
+      },
       action: {
         type: "SET_CURRENT_BLOCK",
-        data: { number: "0x8" },
+        data: {
+          number: "0x8",
+          hash: "0x0000000000000000000000000000000000000000000000000000000000000008",
+          parentHash: "0x0000000000000000000000000000000000000000000000000000000000000007",
+        },
       },
       assertions: function (state) {
-        assert.deepEqual(state, { number: "0x8" });
+        assert.deepEqual(state, {
+          number: "0x8",
+          hash: "0x0000000000000000000000000000000000000000000000000000000000000008",
+          parentHash: "0x0000000000000000000000000000000000000000000000000000000000000007",
+        });
       },
     });
   });
   describe("CLEAR_CURRENT_BLOCK", function () {
     test({
       description: "Remove the current block",
-      state: { number: "0x7" },
+      state: {
+        number: "0x7",
+        hash: "0x0000000000000000000000000000000000000000000000000000000000000007",
+        parentHash: "0x0000000000000000000000000000000000000000000000000000000000000006",
+      },
       action: {
         type: "CLEAR_CURRENT_BLOCK",
       },

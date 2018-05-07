@@ -1,10 +1,10 @@
 "use strict";
 
-var eth = require("../wrappers/eth");
+var eth_getBlockByHash = require("../wrappers/eth").getBlockByHash;
 
 function recheckSealedBlock(onChainTransaction, callback) {
   return function (dispatch) {
-    dispatch(eth.getBlockByHash([onChainTransaction.blockHash, false], function (err, block) {
+    dispatch(eth_getBlockByHash([onChainTransaction.blockHash, false], function (err, block) {
       if (err) return callback(err);
       if (block == null) {
         console.warn("No block found for block hash", onChainTransaction.blockHash);

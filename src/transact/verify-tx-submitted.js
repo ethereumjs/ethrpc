@@ -25,4 +25,4 @@ function verifyTxSubmitted(payload, transactionHash, callReturn, privateKeyOrSig
   };
 }
 
-module.exports = verifyTxSubmitted;
+module.exports.default = verifyTxSubmitted;

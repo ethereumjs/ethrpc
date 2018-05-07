@@ -1140,13 +1140,15 @@ describe("tests that only work against stub server", function () {
         var interval;
         beforeEach(function (done) {
           server = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
-          helpers.rpcConnect(transportType, transportAddress, done);
-          interval = setInterval(function () { server.mine(); }, 1);
+          helpers.rpcConnect(transportType, transportAddress, function () {
+            interval = setInterval(function () { server.mine(); }, 1);
+            done();
+          });
         });
         afterEach(function (done) {
           rpc.resetState();
-          server.destroy(done);
           clearInterval(interval);
+          server.destroy(done);
         });
 
         it("callContractFunction no parameters", function (done) {
@@ -1196,7 +1198,7 @@ describe("tests that only work against stub server", function () {
         });
 
         it("transact", function (done) {
-          function onSent() { }
+          function onSent() {}
           function onSuccess(result) {
             assert.strictEqual(result.callReturn, "18");
             done();
@@ -1217,7 +1219,7 @@ describe("tests that only work against stub server", function () {
                   data: "0xf85563ad",
                   gas: "0x2fd618",
                   hash: "0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf0001",
-                  blockNumber: "0xd",
+                  blockNumber: "0x1",
                   blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c000d",
                   transactionIndex: "0x1",
                   gasPrice: "0x12a05f200",
@@ -1335,7 +1337,7 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can subscribe to new blocks", function (done) {
-          rpc.getBlockStream().subscribeToOnBlockAdded(function (/*block*/) { done(); });
+          rpc.getBlockStream().subscribeToOnBlockAdded(function (/* block */) { done(); });
         });
 
         it("can subscribe to new logs", function (done) {

@@ -3,7 +3,7 @@
 var speedomatic = require("speedomatic");
 var BigNumber = require("bignumber.js");
 var recheckSealedBlock = require("./recheck-sealed-block");
-var eth = require("../wrappers/eth");
+var eth_getTransactionReceipt = require("../wrappers/eth").getTransactionReceipt;
 var constants = require("../constants");
 
 function updateSealedTransaction(transactionHash, callback) {
@@ -17,7 +17,7 @@ function updateSealedTransaction(transactionHash, callback) {
     dispatch(recheckSealedBlock(transaction.tx, function (err, isBlockIncluded) {
       if (err) return callback(err);
       if (!isBlockIncluded) return callback(null);
-      dispatch(eth.getTransactionReceipt(transactionHash, function (err, receipt) {
+      dispatch(eth_getTransactionReceipt(transactionHash, function (err, receipt) {
         if (getState().debug.tx) console.log("eth_getTransactionReceipt", transactionHash, err, receipt);
         if (err) return callback(err);
         if (receipt == null) {

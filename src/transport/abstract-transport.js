@@ -128,6 +128,16 @@ AbstractTransport.prototype.connect = function (callback) {
   callback(new Error("Must be implemented by derived prototype."));
 };
 
+AbstractTransport.prototype.resetState = function () {
+  this.workQueue = [];
+  this.awaitingPump = false;
+  this.connected = false;
+  this.backoffMilliseconds = 1;
+  this.nextListenerToken = 1;
+  this.reconnectListeners = {};
+  this.disconnectListeners = {};
+};
+
 /**
  * Pumps the current work queue.
  */
@@ -215,4 +225,5 @@ function notifyDisconnectListeners(abstractTransport, error) {
     }
   });
 }
+
 module.exports = AbstractTransport;

@@ -5,6 +5,8 @@ var thunkSubscribeEnhancer = require("redux-thunk-subscribe");
 
 var ensureLatestBlock = require("./block-management/ensure-latest-block");
 var waitForNextBlocks = require("./block-management/wait-for-next-blocks");
+var startBlockStream = require("./block-management/start-block-stream.js");
+
 var packageAndSubmitRawTransaction = require("./raw-transactions/package-and-submit-raw-transaction");
 var packageAndSignRawTransaction = require("./raw-transactions/package-and-sign-raw-transaction");
 var packageRawTransaction = require("./raw-transactions/package-raw-transaction");
@@ -41,7 +43,6 @@ var errors = require("./errors/codes");
 var clearTransactions = require("./clear-transactions");
 var resetState = require("./reset-state");
 var connect = require("./connect");
-var startBlockStream = require("./start-block-stream.js");
 var internalState = require("./internal-state");
 var constants = require("./constants");
 
@@ -70,7 +71,7 @@ var createEthrpc = function (reducer) {
     getHighestNonce: function () { return store.getState().highestNonce; },
     getNetworkID: function () { return store.getState().networkID; },
     getNoRelay: function () { return store.getState().noRelay; },
-    getSubscriptions: function () { return store.getState().subscriptions; },
+    getStoreObservers: function () { return store.getState().storeObservers; },
     getTransactions: function () { return store.getState().transactions; },
 
     registerTransactionRelay: function (relayer) { return dispatch(registerTransactionRelay(relayer)); },
@@ -235,7 +236,7 @@ var createEthrpc = function (reducer) {
 
     callOrSendTransaction: function (payload, callback) { return dispatch(callOrSendTransaction(payload, callback)); },
     callContractFunction: function (payload, callback, wrapper, aux) { return dispatch(callContractFunction(payload, callback, wrapper, aux)); },
-    transact: function (payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) { return dispatch(transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed)); },
+    transact: function (payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed) { return dispatch(transact.default(payload, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed)); },
   };
 };
 

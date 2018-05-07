@@ -4,7 +4,6 @@
 
 var assert = require("chai").assert;
 var speedomatic = require("speedomatic");
-var RPCError = require("../../src/errors/rpc-error");
 var signRawTransactionWithKey = require("../../src/raw-transactions/sign-raw-transaction-with-key");
 
 describe("raw-transactions/sign-raw-transaction-with-key", function () {
@@ -54,7 +53,9 @@ describe("raw-transactions/sign-raw-transaction-with-key", function () {
       privateKey: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex"),
     },
     assertions: function (signedRawTransaction) {
-      assert.deepEqual(signedRawTransaction, new RPCError("TRANSACTION_INVALID", { hash: "0x7005e3f167f9c908639f0fe8e036ebe44b71bc9e518d92b19ed3bd3a7a12838" }));
+      assert.strictEqual(signedRawTransaction.message, "Transaction validation failed");
+      assert.strictEqual(signedRawTransaction.code, "TRANSACTION_INVALID");
+      assert.deepEqual(signedRawTransaction.hash, "0x7005e3f167f9c908639f0fe8e036ebe44b71bc9e518d92b19ed3bd3a7a12838");
     },
   });
 });

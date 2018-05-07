@@ -1,10 +1,10 @@
 "use strict";
 
-var addTransactionsSubscription = require("../subscriptions/add-transactions-subscription");
+var observeTransactionsStateChanges = require("../store-observers/transactions");
 
 function registerTransactionRelay(transactionRelay) {
   return function (dispatch, getState) {
-    dispatch(addTransactionsSubscription(function (transactions, oldTransactions) {
+    dispatch(observeTransactionsStateChanges(function (transactions, oldTransactions) {
       var noRelay = getState().noRelay;
       Object.keys(transactions).forEach(function (hash) {
         if (transactions[hash] !== oldTransactions[hash]) {

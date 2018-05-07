@@ -18,7 +18,7 @@ function updateTransaction(transactionHash) {
     if (!transaction.isLocked) {
       dispatch({ type: "LOCK_TRANSACTION", hash: transactionHash });
       if (transaction.status === "pending") {
-        dispatch(updatePendingTransaction(transactionHash, unlockTransaction));
+        dispatch(updatePendingTransaction.default(transactionHash, unlockTransaction));
       } else if (transaction.status === "sealed") {
         dispatch(updateSealedTransaction(transactionHash, unlockTransaction));
       }

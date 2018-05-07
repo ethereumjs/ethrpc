@@ -1,7 +1,8 @@
 "use strict";
 
-var clone = require("clone");
+var assign = require("lodash.assign");
 var initialState = require("./initial-state").currentBlock;
+var validateBlock = require("../validate/validate-block");
 
 module.exports = function (currentBlock, action) {
   if (typeof currentBlock === "undefined") {
@@ -9,7 +10,12 @@ module.exports = function (currentBlock, action) {
   }
   switch (action.type) {
     case "SET_CURRENT_BLOCK":
-      return clone(action.data);
+      var newBlock = assign({}, action.data);
+      validateBlock(newBlock);
+      if (currentBlock === null || newBlock.hash !== currentBlock.hash) {
+        return newBlock;
+      }
+      return currentBlock;
     case "CLEAR_CURRENT_BLOCK":
       return initialState;
     default:

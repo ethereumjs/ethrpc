@@ -6,7 +6,7 @@ var setGasPrice = require("./wrappers/set-gas-price");
 var setCoinbase = require("./wrappers/set-coinbase");
 var Transporter = require("./transport/transporter");
 var ensureLatestBlock = require("./block-management/ensure-latest-block");
-var startBlockStream = require("./start-block-stream");
+var startBlockStream = require("./block-management/start-block-stream");
 var validateConfiguration = require("./validate/validate-configuration");
 var resetState = require("./reset-state");
 var isFunction = require("./utils/is-function");
@@ -55,14 +55,16 @@ function connect(configuration, initialConnectCallback) {
         if (configuration.networkID && parseInt(networkID, 10) !== parseInt(configuration.networkID, 10)) {
           return initialConnectCallback(networkID);
         }
-
         dispatch({ type: "SET_NETWORK_ID", networkID: networkID });
-        if (storedConfiguration.startBlockStreamOnConnect) dispatch(startBlockStream());
+
         async.parallel([
           function (next) { dispatch(ensureLatestBlock(function (err) { next(err); })); },
           function (next) { dispatch(setCoinbase(function () { next(); })); },
           function (next) { dispatch(setGasPrice(next)); },
-        ], function (err) { initialConnectCallback(err); });
+        ], function (err) {
+          if (storedConfiguration.startBlockStreamOnConnect) dispatch(startBlockStream());
+          initialConnectCallback(err);
+        });
       }));
     });
   };

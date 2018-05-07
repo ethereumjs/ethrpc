@@ -29,9 +29,9 @@ function transactAsync(payload, callReturn, privateKeyOrSigner, accountType, onS
       if (transactionHash == null) return onFailed(new RPCError("NULL_TRANSACTION_HASH"));
       transactionHash = speedomatic.formatInt256(transactionHash);
       onSent({ hash: transactionHash, callReturn: callReturn }); // pass the transaction hash and return value back to the client
-      dispatch(verifyTxSubmitted(payload, transactionHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed));
+      dispatch(verifyTxSubmitted.default(payload, transactionHash, callReturn, privateKeyOrSigner, accountType, onSent, onSuccess, onFailed));
     }));
   };
 }
 
-module.exports = transactAsync;
+module.exports.default = transactAsync;

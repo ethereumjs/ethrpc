@@ -11,50 +11,35 @@ var internalState = require("../internal-state");
  */
 function blockchainMessageHandler(error, jso) {
   return function (dispatch, getState) {
-    var state = getState();
-    var subscriptions = state.subscriptions;
+    var debug = getState().debug;
     var outOfBandErrorHandler = internalState.get("outOfBandErrorHandler");
-    if (state.debug.broadcast) console.log("[ethrpc] RPC response:", JSON.stringify(jso));
+    if (debug.broadcast) console.log("[ethrpc] RPC response:", JSON.stringify(jso));
 
-    if (error !== null) {
-      return outOfBandErrorHandler(error);
-    }
-    if (!isObject(jso)) {
-      return outOfBandErrorHandler(new RPCError("INVALID_TRANSPORT_MESSAGE", jso));
-    }
+    if (error !== null) return outOfBandErrorHandler(error);
+    if (!isObject(jso)) return outOfBandErrorHandler(new RPCError("INVALID_TRANSPORT_MESSAGE", jso));
 
     var subscriptionHandler = function () {
-      if (jso.method !== "eth_subscription") {
-        return outOfBandErrorHandler(new RPCError("UNSUPPORTED_RPC_REQUEST", jso));
-      }
-      if (typeof jso.params.subscription !== "string") {
-        return outOfBandErrorHandler(new RPCError("NO_SUBSCRIPTION_ID", jso));
-      }
-      if (jso.params.result === null || jso.params.result === undefined) {
-        return outOfBandErrorHandler(new RPCError("NO_SUBSCRIPTION_RESULT", jso));
-      }
-      var subscription = subscriptions[jso.params.subscription];
-      if (subscription != null) {
-        dispatch({ type: subscription.reaction, data: jso });
+      if (jso.method !== "eth_subscription") return outOfBandErrorHandler(new RPCError("UNSUPPORTED_RPC_REQUEST", jso));
+      if (typeof jso.params.subscription !== "string") return outOfBandErrorHandler(new RPCError("NO_SUBSCRIPTION_ID", jso));
+      if (jso.params.result == null) return outOfBandErrorHandler(new RPCError("NO_SUBSCRIPTION_RESULT", jso));
+      var storeObserver = getState().storeObservers[jso.params.subscription];
+      if (storeObserver != null) {
+        dispatch({ type: storeObserver.reaction, data: jso.params.result });
       }
     };
 
     var responseHandler = function () {
-      if (typeof jso.id !== "number") {
-        return errorHandler(new RPCError("INVALID_MESSAGE_ID", jso));
-      }
+      if (typeof jso.id !== "number") return errorHandler(new RPCError("INVALID_MESSAGE_ID", jso));
       var outstandingRequest = internalState.get("outstandingRequests." + jso.id);
       internalState.unset("outstandingRequests." + jso.id);
-      if (!isObject(outstandingRequest)) {
-        return outOfBandErrorHandler(new RPCError("JSON_RPC_REQUEST_NOT_FOUND", jso));
-      }
+      if (!isObject(outstandingRequest)) return outOfBandErrorHandler(new RPCError("JSON_RPC_REQUEST_NOT_FOUND", jso));
       parseEthereumResponse(jso, outstandingRequest.callback);
     };
 
     var errorHandler = function () {
       // errors with IDs can go through the normal result process
-      if (jso.id !== null && jso.id !== undefined) {
-        if (state.debug.broadcast) console.log("outstanding request:", internalState.get("outstandingRequests." + jso.id));
+      if (jso.id != null) {
+        if (debug.broadcast) console.log("outstanding request:", internalState.get("outstandingRequests." + jso.id));
         return responseHandler(jso);
       }
       outOfBandErrorHandler(new RPCError(jso.error));

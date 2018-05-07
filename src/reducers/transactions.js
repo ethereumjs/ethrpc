@@ -39,7 +39,7 @@ module.exports = function (transactions, action) {
       if (transactions[action.hash].tx.blockNumber == null) return transactions;
       newTransaction = {};
       newTransaction[action.hash] = assign({}, transactions[action.hash], {
-        confirmations: action.currentBlockNumber - transactions[action.hash].tx.blockNumber,
+        confirmations: action.currentBlockNumber - parseInt(transactions[action.hash].tx.blockNumber, 16),
       });
       return assign({}, transactions, newTransaction);
     case "TRANSACTION_PENDING":
