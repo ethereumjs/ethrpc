@@ -15,7 +15,7 @@
     "postinstall": "postinstall-build --only-as-dependency dist",
     "prepublishOnly": "postinstall-build dist",
     "preversion": "npm test",
-    "version": "npm run genversion && git add src/version.js",
+    "version": "npm run genversion && git add src/version.js"
   },
   "repository": {
     "type": "git",
