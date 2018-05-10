@@ -35,7 +35,7 @@ function transact(payload, privateKeyOrSigner, accountType, onSent, onSuccess, o
       }));
     }
     if (payload.returns === "null") {
-      return dispatch(transactAsync(payload, null, privateKeyOrSigner, accountType, onSent, onSuccess, wrappedOnFailedCallback));
+      return dispatch(transactAsync.default(payload, null, privateKeyOrSigner, accountType, onSent, onSuccess, wrappedOnFailedCallback));
     }
     dispatch(callContractFunction(payload, function (err, returnData) {
       if (debug.tx) console.log("returnData:", returnData);
