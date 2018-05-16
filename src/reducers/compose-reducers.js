@@ -1,6 +1,6 @@
 "use strict";
 
-var { assign } = require("lodash");
+var assign = require("lodash").assign;
 
 /**
  * @param {function} customReducer External (user-specified) reducer.

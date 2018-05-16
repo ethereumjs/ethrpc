@@ -1,6 +1,6 @@
 "use strict";
 
-var { assign } = require("lodash");
+var assign = require("lodash").assign;
 var eth_getTransactionCount = require("../wrappers/eth").getTransactionCount;
 var verifyRawTransactionNonce = require("./verify-raw-transaction-nonce");
 var RPCError = require("../errors/rpc-error");

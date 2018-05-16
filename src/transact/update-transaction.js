@@ -1,6 +1,6 @@
 "use strict";
 
-var { assign } = require("lodash");
+var assign = require("lodash").assign;
 var updateSealedTransaction = require("../transact/update-sealed-transaction");
 var updatePendingTransaction = require("../transact/update-pending-transaction");
 

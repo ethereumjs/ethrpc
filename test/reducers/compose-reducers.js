@@ -3,7 +3,7 @@
 "use strict";
 
 var assert = require("chai").assert;
-var { assign } = require("lodash");
+var assign = require("lodash").assign;
 var defaultReducer = require("../../src/reducers");
 var composeReducers = require("../../src/reducers/compose-reducers");
 var initialState = {

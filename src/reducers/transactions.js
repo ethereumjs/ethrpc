@@ -1,6 +1,6 @@
 "use strict";
 
-var { assign } = require("lodash");
+var assign = require("lodash").assign;
 var immutableDelete = require("immutable-delete");
 var isObject = require("../utils/is-object");
 var initialState = require("./initial-state").transactions;

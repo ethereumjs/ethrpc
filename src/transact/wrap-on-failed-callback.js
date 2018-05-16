@@ -1,6 +1,6 @@
 "use strict";
 
-var { assign } = require("lodash");
+var assign = require("lodash").assign;
 var sha3 = require("../utils/sha3");
 var RPCError = require("../errors/rpc-error");
 
