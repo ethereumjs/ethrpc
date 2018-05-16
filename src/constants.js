@@ -30,7 +30,7 @@ module.exports = {
   // how frequently to poll when waiting for blocks
   BLOCK_POLL_INTERVAL: 30000,
 
-  DEFAULT_GAS: "0x2fd618",
+  DEFAULT_GAS: "0x5d1420",
 
   ETHER: new BigNumber(10, 10).exponentiatedBy(18),
 
