@@ -26,7 +26,9 @@ var RPCError = require("./errors/rpc-error");
  * @property {?number} pollingIntervalMilliseconds
  * @property {?number} blockRetention
  * @property {!function(Error):void} errorHandler - called when an otherwise unhandled asynchronous error occurs during the course of operation.
- *
+ */
+
+/**
  * @param {!configuration} configuration
  * @param {!function(?Error):void} initialConnectCallback - if the error parameter is null then the connection was successful
  * @returns {void}

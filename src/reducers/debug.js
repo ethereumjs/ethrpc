@@ -1,6 +1,6 @@
 "use strict";
 
-var assign = require("lodash.assign");
+var assign = require("lodash").assign;
 var initialState = require("./initial-state").debug;
 
 module.exports = function (debug, action) {

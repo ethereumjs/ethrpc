@@ -1,6 +1,6 @@
 "use strict";
 
-var assign = require("lodash.assign");
+var assign = require("lodash").assign;
 var initialState = require("./initial-state").currentBlock;
 var validateBlock = require("../validate/validate-block");
 
