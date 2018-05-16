@@ -1164,7 +1164,7 @@ describe("tests that only work against stub server", function () {
               && jso.params.length === 2
               && jso.params[0].from === "0x00bae5113ee9f252cceb0001205b88fad175461a"
               && jso.params[0].to === "0x482c57abdce592b39434e3f619ffc3db62ab6d01"
-              && jso.params[0].gas === "0x2fd618"
+              && jso.params[0].gas === "0x5d1420"
               && jso.params[0].gasPrice === undefined
               && jso.params[0].value === undefined
               && jso.params[0].data === "0x" + ethereumjsAbi.methodID("getBranches", []).toString("hex")
@@ -1217,7 +1217,7 @@ describe("tests that only work against stub server", function () {
                   from: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
                   to: "0xdeadbabedeadbabedeadbabedeadbabedeadbabe",
                   data: "0xf85563ad",
-                  gas: "0x2fd618",
+                  gas: "0x5d1420",
                   hash: "0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf0001",
                   blockNumber: "0x1",
                   blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c000d",

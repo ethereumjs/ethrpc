@@ -7,7 +7,7 @@ var proxyquire = require("proxyquire");
 var mockStore = require("../mock-store");
 var ACCOUNT_TYPES = require("../../src/constants").ACCOUNT_TYPES;
 
-var mockSignedTransaction = "0xf8a50a64832fd6189471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a11ca0a2475af89c78610c7ed1e95c8ef30dfaaf8c3f20828986ed18877e1daf9ad8fca07ad512a467e82cd669561754d58b326e0e0b82a756d40556179d93ed3e12ef88";
+var mockSignedTransaction = "0xf8a50a64835d14209471dc0e5f381e3592065ebfef0b7b448c1bdfdd6880b844772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a11ca017db1cbb00279b0b5eb6652b9942994d26ac37f8e57ac927554d0ad7015eb421a00febb0e934f19f5e190d0d04d36ef074d4b671bf81c1f43b7e075f95c51dd944";
 
 describe("raw-transactions/package-and-sign-raw-transaction", function () {
   var test = function (t) {
@@ -74,10 +74,10 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
           from: "0x0000000000000000000000000000000000000b0b",
           to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
           data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-          gas: "0x2fd618",
+          gas: "0x5d1420",
           nonce: 10,
           value: "0x0",
-          gasLimit: "0x2fd618",
+          gasLimit: "0x5d1420",
           gasPrice: "0x64",
         });
         callback(null, mockSignedTransaction);
@@ -140,10 +140,10 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
           from: "0x0000000000000000000000000000000000000b0b",
           to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
           data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-          gas: "0x2fd618",
+          gas: "0x5d1420",
           nonce: 10,
           value: "0x0",
-          gasLimit: "0x2fd618",
+          gasLimit: "0x5d1420",
           gasPrice: "0x64",
         });
         callback(null, mockSignedTransaction);
