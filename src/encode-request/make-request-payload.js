@@ -1,6 +1,6 @@
 "use strict";
 
-var assign = require("lodash.assign");
+var { assign } = require("lodash");
 var abiEncode = require("./abi-encode");
 var encodeArray = abiEncode.encodeArray;
 var encodePrimitive = abiEncode.encodePrimitive;

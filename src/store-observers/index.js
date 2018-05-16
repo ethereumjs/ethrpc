@@ -1,6 +1,6 @@
 "use strict";
 
-var assign = require("lodash.assign");
+var { assign } = require("lodash");
 var immutableDelete = require("immutable-delete");
 var isFunction = require("../utils/is-function");
 

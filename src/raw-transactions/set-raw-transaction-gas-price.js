@@ -1,6 +1,6 @@
 "use strict";
 
-var assign = require("lodash.assign");
+var { assign } = require("lodash");
 var eth_gasPrice = require("../wrappers/eth").gasPrice;
 
 /**
