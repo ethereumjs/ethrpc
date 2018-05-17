@@ -1164,7 +1164,7 @@ describe("tests that only work against stub server", function () {
               && jso.params.length === 2
               && jso.params[0].from === "0x00bae5113ee9f252cceb0001205b88fad175461a"
               && jso.params[0].to === "0x482c57abdce592b39434e3f619ffc3db62ab6d01"
-              && jso.params[0].gas === rpc.getCurrentBlock().gasLimit
+              && jso.params[0].gas === (rpc.getCurrentBlock() || {}).gasLimit || constants.DEFAULT_ETH_CALL_GAS
               && jso.params[0].gasPrice === undefined
               && jso.params[0].value === "0x0"
               && jso.params[0].data === "0x" + ethereumjsAbi.methodID("getBranches", []).toString("hex")
