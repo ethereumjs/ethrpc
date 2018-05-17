@@ -58,7 +58,7 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
     stub: {
       eth: {
         estimateGas: function (p, callback) {
-          callback(null, "0x549def");
+          callback(null, "0x4a7680");
         },
       },
     },
@@ -88,7 +88,7 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
           from: "0x0000000000000000000000000000000000000b0b",
           to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
           data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-          gas: "0x14065e",
+          gas: "0x16c16b",
           nonce: 10,
           value: "0x0",
           gasPrice: "0x64",
@@ -167,7 +167,7 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
           from: "0x0000000000000000000000000000000000000b0b",
           to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
           data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-          gas: "0x14065e",
+          gas: "0x16c16b",
           nonce: 10,
           value: "0x0",
           gasPrice: "0x64",
