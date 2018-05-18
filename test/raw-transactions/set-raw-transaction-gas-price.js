@@ -29,7 +29,7 @@ describe("raw-transactions/set-raw-transaction-gas-price", function () {
       address: "0xb0b",
       callback: function (err, packaged) {
         assert.isNull(err);
-        assert.deepEqual(packaged, {gasPrice: "0x4a817c800"});
+        assert.deepEqual(packaged, { gasPrice: "0x4a817c800" });
       },
     },
     blockchain: {
@@ -39,11 +39,11 @@ describe("raw-transactions/set-raw-transaction-gas-price", function () {
   test({
     description: "gasPrice specified by caller",
     params: {
-      packaged: {gasPrice: "0x1"},
+      packaged: { gasPrice: "0x1" },
       address: "0xb0b",
       callback: function (err, packaged) {
         assert.isNull(err);
-        assert.deepEqual(packaged, {gasPrice: "0x1"});
+        assert.deepEqual(packaged, { gasPrice: "0x1" });
       },
     },
     blockchain: {

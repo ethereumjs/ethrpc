@@ -1,55 +1,57 @@
 "use strict";
 
+var assign = require("lodash").assign;
+var BigNumber = require("bignumber.js");
 var speedomatic = require("speedomatic");
-var clone = require("clone");
-var RPCError = require("../errors/rpc-error");
-var constants = require("../constants");
+var getEstimatedGasWithBuffer = require("./get-estimated-gas-with-buffer");
+var processRequestParameters = require("./process-request-parameters");
+var DEFAULT_ETH_CALL_GAS = require("../constants").DEFAULT_ETH_CALL_GAS;
 
 /**
  * Package a transaction payload so that it can be sent to the network.
- * @param {Object} payload Static API data.
+ * @param {Object} payload Modified ABI with parameters.
+ * @param {function} callback Callback function.
  * @return {Object} Packaged transaction.
  */
-var packageRequest = function (payload) {
-  var tx = clone(payload);
-  if (tx.params == null) {
-    tx.params = [];
-  } else if (!Array.isArray(tx.params)) {
-    tx.params = [tx.params];
-  }
-  var numParams = tx.params.length;
-  if (numParams) {
-    if (tx.signature && tx.signature.length !== numParams) {
-      throw new RPCError("PARAMETER_NUMBER_ERROR");
+function packageRequest(payload, callback) {
+  return function (dispatch, getState) {
+    var packaged = {};
+    if (payload.to != null) packaged.to = speedomatic.formatEthereumAddress(payload.to);
+    if (payload.from != null) packaged.from = speedomatic.formatEthereumAddress(payload.from);
+    if (payload.gasPrice != null) packaged.gasPrice = speedomatic.hex(payload.gasPrice);
+    if (payload.returns != null) packaged.returns = payload.returns;
+    if (payload.nonce != null) packaged.nonce = payload.nonce;
+    packaged.value = payload.value != null ? speedomatic.hex(payload.value) : "0x0";
+    try {
+      packaged.data = payload.data != null ?
+        speedomatic.prefixHex(payload.data) :
+        speedomatic.abiEncodeTransactionPayload(assign({}, payload, packaged, processRequestParameters(payload.params, payload.signature)));
+    } catch (exc) {
+      if (getState().debug.tx) console.error("Could not ABI encode request parameters", payload, exc);
+      return callback(exc);
     }
-    for (var j = 0; j < numParams; ++j) {
-      if (tx.params[j] != null && tx.signature[j]) {
-        if (tx.params[j].constructor === Number) {
-          tx.params[j] = speedomatic.prefixHex(tx.params[j].toString(16));
-        }
-        if (tx.signature[j] === "int256") {
-          tx.params[j] = speedomatic.unfork(tx.params[j], true);
-        } else if (tx.signature[j] === "int256[]" && Array.isArray(tx.params[j]) && tx.params[j].length) {
-          for (var k = 0, arrayLen = tx.params[j].length; k < arrayLen; ++k) {
-            tx.params[j][k] = speedomatic.unfork(tx.params[j][k], true);
-          }
-        }
+    if (payload.gas != null) return callback(null, assign(packaged, { gas: speedomatic.hex(payload.gas) }));
+    if (!payload.send) {
+      return callback(null, assign(packaged, { gas: (getState().currentBlock || {}).gasLimit || DEFAULT_ETH_CALL_GAS }));
+    }
+    dispatch(getEstimatedGasWithBuffer(packaged, function (err, estimatedGasWithBuffer) {
+      if (err) return callback(err);
+      var currentBlock = getState().currentBlock;
+      var gas;
+      if (currentBlock == null || currentBlock.gasLimit == null) {
+        gas = speedomatic.prefixHex(estimatedGasWithBuffer.toString(16));
+      } else {
+        var currentBlockGasLimit = currentBlock.gasLimit;
+        gas = new BigNumber(currentBlockGasLimit, 16).lt(estimatedGasWithBuffer) ?
+          currentBlockGasLimit :
+          speedomatic.prefixHex(estimatedGasWithBuffer.toString(16));
       }
-    }
-  }
-  if (tx.to) tx.to = speedomatic.formatEthereumAddress(tx.to);
-  if (tx.from) tx.from = speedomatic.formatEthereumAddress(tx.from);
-  var packaged = {
-    from: tx.from,
-    to: tx.to,
-    data: (tx.data) ? speedomatic.prefixHex(tx.data) : speedomatic.abiEncodeTransactionPayload(tx),
-    gas: tx.gas ? speedomatic.hex(tx.gas) : constants.DEFAULT_GAS,
+      if (getState().debug.tx) {
+        console.log("Adding", new BigNumber(gas, 16).toFixed(), "of", new BigNumber(currentBlockGasLimit, 16).toFixed(), "gas for", payload.name);
+      }
+      callback(null, assign(packaged, { gas: gas }));
+    }));
   };
-  if (tx.gasPrice) packaged.gasPrice = speedomatic.hex(tx.gasPrice);
-  if (tx.value) packaged.value = speedomatic.hex(tx.value);
-  if (tx.returns) packaged.returns = tx.returns;
-  if (tx.nonce) packaged.nonce = tx.nonce;
-  return packaged;
-};
+}
 
 module.exports = packageRequest;

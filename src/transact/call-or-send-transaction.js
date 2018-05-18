@@ -8,19 +8,17 @@ var RPCError = require("../errors/rpc-error");
 function callOrSendTransaction(payload, callback) {
   return function (dispatch, getState) {
     if (!isObject(payload)) return callback(new RPCError("TRANSACTION_FAILED"));
-    try {
-      var packaged = packageRequest(payload);
-    } catch (err) {
-      return callback(err);
-    }
-    if (getState().debug.broadcast) console.log("packaged:", packaged);
-    if (payload.estimateGas) {
-      dispatch(eth.estimateGas(packaged, callback));
-    } else if (payload.send) {
-      dispatch(eth.sendTransaction(packaged, callback));
-    } else {
-      dispatch(eth.call([packaged, "latest"], callback));
-    }
+    dispatch(packageRequest(payload, function (err, packaged) {
+      if (err) return callback(err);
+      if (getState().debug.broadcast) console.log("packaged:", packaged);
+      if (payload.estimateGas) {
+        dispatch(eth.estimateGas(packaged, callback));
+      } else if (payload.send) {
+        dispatch(eth.sendTransaction(packaged, callback));
+      } else {
+        dispatch(eth.call([packaged, "latest"], callback));
+      }
+    }));
   };
 }
 

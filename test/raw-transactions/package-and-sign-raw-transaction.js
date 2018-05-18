@@ -26,6 +26,13 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
             callback(null, packaged);
           };
         },
+        "./package-raw-transaction": proxyquire("../../src/raw-transactions/package-raw-transaction.js", {
+          "../encode-request/package-request": proxyquire("../../src/encode-request/package-request.js", {
+            "./get-estimated-gas-with-buffer": proxyquire("../../src/encode-request/get-estimated-gas-with-buffer.js", {
+              "../wrappers/eth": t.stub.eth,
+            }),
+          }),
+        }),
       });
       store.dispatch(packageAndSignRawTransaction(t.params.payload, t.params.address, t.params.privateKeyOrSigner, t.params.accountType, function (err, result) {
         t.assertions(err, result);
@@ -41,12 +48,19 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
         returns: "int256",
         send: true,
         signature: ["int256", "int256"],
-        params: ["101010", "0xa1"],
+        params: [101010, "0xa1"],
         to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
       },
       address: "0x0000000000000000000000000000000000000b0b",
       privateKeyOrSigner: Buffer.from("1111111111111111111111111111111111111111111111111111111111111111", "hex"),
       accountType: ACCOUNT_TYPES.PRIVATE_KEY,
+    },
+    stub: {
+      eth: {
+        estimateGas: function (p, callback) {
+          callback(null, "0x4a7680");
+        },
+      },
     },
     blockchain: {
       gasPrice: "0x64",
@@ -74,15 +88,21 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
           from: "0x0000000000000000000000000000000000000b0b",
           to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
           data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-          gas: "0x5d1420",
+          gas: "0x16c16b",
           nonce: 10,
           value: "0x0",
-          gasLimit: "0x5d1420",
           gasPrice: "0x64",
         });
         callback(null, mockSignedTransaction);
       },
       accountType: ACCOUNT_TYPES.LEDGER,
+    },
+    stub: {
+      eth: {
+        estimateGas: function (p, callback) {
+          callback(null, "0x123456");
+        },
+      },
     },
     blockchain: {
       gasPrice: "0x64",
@@ -114,6 +134,13 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
       },
       accountType: ACCOUNT_TYPES.U_PORT,
     },
+    stub: {
+      eth: {
+        estimateGas: function (p, callback) {
+          callback(null, "0x123456");
+        },
+      },
+    },
     blockchain: {
       gasPrice: "0x64",
       transactionCount: "0xa",
@@ -140,15 +167,21 @@ describe("raw-transactions/package-and-sign-raw-transaction", function () {
           from: "0x0000000000000000000000000000000000000b0b",
           to: "0x71dc0e5f381e3592065ebfef0b7b448c1bdfdd68",
           data: "0x772a646f0000000000000000000000000000000000000000000000000000000000018a9200000000000000000000000000000000000000000000000000000000000000a1",
-          gas: "0x5d1420",
+          gas: "0x16c16b",
           nonce: 10,
           value: "0x0",
-          gasLimit: "0x5d1420",
           gasPrice: "0x64",
         });
         callback(null, mockSignedTransaction);
       },
       accountType: ACCOUNT_TYPES.TREZOR,
+    },
+    stub: {
+      eth: {
+        estimateGas: function (p, callback) {
+          callback(null, "0x123456");
+        },
+      },
     },
     blockchain: {
       gasPrice: "0x64",

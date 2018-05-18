@@ -19,16 +19,16 @@ var RPCError = require("../errors/rpc-error");
  */
 function packageAndSignRawTransaction(payload, address, privateKeyOrSigner, accountType, callback) {
   return function (dispatch, getState) {
-    var state = getState();
     if (!isObject(payload)) return callback(new RPCError("TRANSACTION_PAYLOAD_INVALID", { payload: payload }));
     if (address == null || privateKeyOrSigner == null) return callback(new RPCError("NOT_LOGGED_IN"));
-    var packaged = packageRawTransaction(payload, address, state.networkID, state.currentBlock);
-    if (state.debug.broadcast) console.log("[ethrpc] packaged:", JSON.stringify(packaged, null, 2));
-    dispatch(setRawTransactionGasPrice(packaged, function (err, packaged) {
+    dispatch(packageRawTransaction(payload, address, getState().networkID, function (err, packaged) {
       if (err) return callback(err);
-      dispatch(setRawTransactionNonce(packaged, address, function (err, packaged) {
+      dispatch(setRawTransactionGasPrice(packaged, function (err, packaged) {
         if (err) return callback(err);
-        signRawTransaction(immutableDelete(packaged, "returns"), privateKeyOrSigner, accountType, callback);
+        dispatch(setRawTransactionNonce(packaged, address, function (err, packaged) {
+          if (err) return callback(err);
+          signRawTransaction(immutableDelete(packaged, "returns"), privateKeyOrSigner, accountType, callback);
+        }));
       }));
     }));
   };
