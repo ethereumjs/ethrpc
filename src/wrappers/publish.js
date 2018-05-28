@@ -9,7 +9,7 @@ function publish(compiled, callback) {
     dispatch(eth.coinbase(function (err, coinbase) {
       if (err) return callback(err);
       if (coinbase == null) return callback(new RPCError("COINBASE_NOT_SET"));
-      dispatch(eth.sendTransaction({ from: coinbase, data: compiled, gas: "0x5d1420" }, callback));
+      dispatch(eth.sendTransaction({ from: coinbase, data: compiled, gas: "0x6230b8" }, callback));
     }));
   };
 }

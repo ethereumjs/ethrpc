@@ -42,9 +42,13 @@ function packageRequest(payload, callback) {
         gas = speedomatic.prefixHex(estimatedGasWithBuffer.toString(16));
       } else {
         var currentBlockGasLimit = currentBlock.gasLimit;
+        var defaultGas = new BigNumber(DEFAULT_ETH_CALL_GAS, 16);
         gas = new BigNumber(currentBlockGasLimit, 16).lt(estimatedGasWithBuffer) ?
           currentBlockGasLimit :
           speedomatic.prefixHex(estimatedGasWithBuffer.toString(16));
+        gas = new BigNumber(gas, 16).lt(defaultGas) ?
+          gas :
+          DEFAULT_ETH_CALL_GAS;
       }
       if (getState().debug.tx) {
         console.log("Adding", new BigNumber(gas, 16).toFixed(), "of", new BigNumber(currentBlockGasLimit, 16).toFixed(), "gas for", payload.name);
