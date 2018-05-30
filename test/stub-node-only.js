@@ -1217,7 +1217,7 @@ describe("tests that only work against stub server", function () {
                   from: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
                   to: "0xdeadbabedeadbabedeadbabedeadbabedeadbabe",
                   data: "0xf85563ad",
-                  gas: "0x5d1420",
+                  gas: "0x6230b8",
                   hash: "0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf0001",
                   blockNumber: "0x1",
                   blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c000d",

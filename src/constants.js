@@ -32,7 +32,7 @@ module.exports = {
 
   GAS_ESTIMATE_MULTIPLIER: new BigNumber("1.25", 10), // TODO adjust this empirically
 
-  DEFAULT_ETH_CALL_GAS: "0x5d1420",
+  DEFAULT_ETH_CALL_GAS: "0x6230b8",
 
   ETHER: new BigNumber(10, 10).exponentiatedBy(18),
 
