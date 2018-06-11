@@ -22,6 +22,7 @@ function signRawTransaction(packaged, privateKeyOrSigner, accountType, callback)
       }
     case ACCOUNT_TYPES.LEDGER:
     case ACCOUNT_TYPES.TREZOR:
+    case ACCOUNT_TYPES.EDGE:
       return privateKeyOrSigner(packaged, callback);
     case ACCOUNT_TYPES.U_PORT:
       return privateKeyOrSigner(packaged).then(function (transactionHash) {
