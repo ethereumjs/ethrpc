@@ -103,6 +103,9 @@ describe("reducers/configuration", function () {
           pollingIntervalMilliseconds: 30000,
           startBlockStreamOnConnect: true,
           blockRetention: 100,
+          websocketClientConfig: {
+            assembleFragments: true,
+          },
         });
       },
     });

@@ -3,8 +3,9 @@
 var AbstractTransport = require("./abstract-transport");
 var WebSocketClient = require("../platform/web-socket-client");
 
-function WsTransport(address, timeout, messageHandler, initialConnectCallback) {
+function WsTransport(address, timeout, websocketClientConfig, messageHandler, initialConnectCallback) {
   AbstractTransport.call(this, address, timeout, messageHandler);
+  this.websocketClientConfig = websocketClientConfig;
   this.initialConnect(initialConnectCallback);
 }
 
@@ -19,7 +20,7 @@ WsTransport.prototype.connect = function (initialCallback) {
     initialCallbackCalled = true;
     initialCallback(err);
   };
-  this.webSocketClient = new WebSocketClient(this.address, undefined, undefined, undefined, { timeout: this.timeout });
+  this.webSocketClient = new WebSocketClient(this.address, undefined, undefined, undefined, { timeout: this.timeout }, this.websocketClientConfig);
   var messageHandler = function () {};
   this.webSocketClient.onopen = function () {
     console.log("websocket", self.address, "opened");

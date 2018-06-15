@@ -81,7 +81,7 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
       someSeries(configuration.wsAddresses,
         function (wsAddress, nextAddress) {
           try {
-            var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, messageHandler, function (error) {
+            var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, configuration.websocketClientConfig, messageHandler, function (error) {
               if (error !== null) return nextAddress(null);
               return nextAddress(wsTransport);
             });
