@@ -14,6 +14,7 @@ module.exports.configuration = {
   pollingIntervalMilliseconds: 30000,
   blockRetention: 100,
   startBlockStreamOnConnect: true,
+  useWeb3Transport: false,
   websocketClientConfig: {},
 };
 module.exports.currentBlock = null;

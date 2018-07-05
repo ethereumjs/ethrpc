@@ -17,6 +17,7 @@ var someSeries = require("async/someSeries");
  * @property {!string[]} wsAddresses
  * @property {!string[]} ipcAddresses
  * @property {!number} connectionTimeout
+ * @property {!boolean} useWeb3Transport
  *
  * @param {!Configuration} configuration
  * @param {!function(?Error,?object):void} messageHandler - Function to call when a message from the blockchain is received or an unrecoverable error occurs while attempting to talk to the blockchain.  The error will, if possible, contain the original request.
@@ -55,7 +56,7 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
   // initiate connections to all provided addresses, only callback one that connects
   someSeries([
     function (nextTransport) {
-      if (configuration.ipcAddresses.length === 0) return nextTransport(null);
+      if (configuration.ipcAddresses.length === 0 || configuration.useWeb3Transport === true) return nextTransport(null);
       someSeries(configuration.ipcAddresses,
         function (ipcAddress, nextAddress) {
           try {
@@ -71,7 +72,7 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
         nextTransport);
     },
     function (nextTransport) {
-      if (configuration.wsAddresses.length === 0) return nextTransport(null);
+      if (configuration.wsAddresses.length === 0 || configuration.useWeb3Transport === true) return nextTransport(null);
       someSeries(configuration.wsAddresses,
         function (wsAddress, nextAddress) {
           try {
@@ -87,7 +88,7 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
         nextTransport);
     },
     function (nextTransport) {
-      if (configuration.httpAddresses.length === 0) return nextTransport(null);
+      if (configuration.httpAddresses.length === 0 || configuration.useWeb3Transport === true) return nextTransport(null);
       someSeries(configuration.httpAddresses,
         function (httpAddress, nextAddress) {
           try {
@@ -103,6 +104,7 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
         nextTransport);
     },
     function (nextTransport) {
+      if (configuration.useWeb3Transport !== true) return nextTransport();
       var web3Transport = new Web3Transport(messageHandler, function (error) {
         if (error !== null) return nextTransport(null);
         return nextTransport(web3Transport);
