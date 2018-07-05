@@ -55,12 +55,6 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
   // initiate connections to all provided addresses, only callback one that connects
   someSeries([
     function (nextTransport) {
-      var web3Transport = new Web3Transport(messageHandler, function (error) {
-        if (error !== null) return nextTransport(null);
-        return nextTransport(web3Transport);
-      });
-    },
-    function (nextTransport) {
       if (configuration.ipcAddresses.length === 0) return nextTransport(null);
       someSeries(configuration.ipcAddresses,
         function (ipcAddress, nextAddress) {
@@ -107,6 +101,12 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
           }
         },
         nextTransport);
+    },
+    function (nextTransport) {
+      var web3Transport = new Web3Transport(messageHandler, function (error) {
+        if (error !== null) return nextTransport(null);
+        return nextTransport(web3Transport);
+      });
     },
   ],
   function (tryTransportType, nextTransportType) {
