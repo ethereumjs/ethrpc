@@ -102,6 +102,7 @@ describe("reducers/configuration", function () {
           networkID: null,
           pollingIntervalMilliseconds: 30000,
           startBlockStreamOnConnect: true,
+          useWeb3Transport: false,
           blockRetention: 100,
           websocketClientConfig: {
             assembleFragments: true,
