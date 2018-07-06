@@ -104,7 +104,6 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
         nextTransport);
     },
     function (nextTransport) {
-      if (configuration.useWeb3Transport !== true) return nextTransport();
       var web3Transport = new Web3Transport(messageHandler, function (error) {
         if (error !== null) return nextTransport(null);
         return nextTransport(web3Transport);
