@@ -138,4 +138,20 @@ describe("transport/transporter", function () {
       transporter.blockchainRpc({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
     });
   });
+  // There isn't a window object here.
+  it("should not connect when 'useWeb3Transport' set to true", function (done) {
+    var configuration = {
+      httpAddresses: ["http://localhost:1338"],
+      wsAddresses: ["ws://localhost:1337"],
+      ipcAddresses: [],
+      connectionTimeout: 1000,
+      useWeb3Transport: true,
+    };
+    new Transporter(configuration, function() {}, false, function (error, transporter) {
+      assert.isNotNull(error);
+      assert.ok(error instanceof Error);
+      done();
+    });
+
+  });
 });
