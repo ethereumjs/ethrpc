@@ -44,6 +44,12 @@ WsTransport.prototype.connect = function (initialCallback) {
   };
 };
 
+WsTransport.prototype.close = function () {
+  this.webSocketClient.onmessage = function () {};
+  this.webSocketClient.onerror = function () {};
+  this.webSocketClient.onopen = function () {};
+};
+
 WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
     if (this.webSocketClient.readyState === 3) {
