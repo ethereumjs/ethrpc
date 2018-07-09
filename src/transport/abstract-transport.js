@@ -110,6 +110,12 @@ AbstractTransport.prototype.initialConnect = function (callback) {
 };
 
 /**
+ * Used to close and cleanup the connection a transporter instance wraps.. Probably only interested when working with WebSockets.
+ */
+AbstractTransport.prototype.close = function () {};
+
+
+/**
  * Implemented by derived prototypes.  Should submit the given object to Ethereum.
  *
  * @param {!object} rpcJso - RPC Object to be sent to Ethereum.
