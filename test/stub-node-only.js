@@ -1342,14 +1342,14 @@ describe("tests that only work against stub server", function () {
 
         it("can subscribe to new logs", function (done) {
           server.addResponder(function (jso) {
-            if (jso.method === "eth_getLogs") return [{}];
+            if (jso.method === "eth_getLogs") return [{blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c" + ("0000" + jso.params[0].fromBlock.replace("0x", "")).slice(-4) }];
           });
           rpc.getBlockStream().addLogFilter({});
           rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) { done(); });
         });
 
         it("can supply a log filter", function (done) {
-          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
+          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c" + ("0000" + jso.params[0].fromBlock.replace("0x", "")).slice(-4) }] });
           server.addExpectation(function (jso) {
             return jso.method === "eth_getLogs"
               && jso.params.length === 1
@@ -1367,7 +1367,7 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can unsubscribe from log filter", function (done) {
-          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{}]; });
+          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c" + ("0000" + jso.params[0].fromBlock.replace("0x", "")).slice(-4) }] });
           var called = false;
           var token = rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) { called = true; });
           rpc.getBlockStream().unsubscribeFromOnLogAdded(token);
