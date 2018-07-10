@@ -12,22 +12,9 @@ function updatePendingTransaction(transactionHash, callback) {
       if (err) return callback(err);
       dispatch({ type: "UPDATE_ON_CHAIN_TRANSACTION", hash: transactionHash, data: onChainTransaction });
 
-      // if transaction is null, then it was dropped from the txpool
+      // if transaction is null, then it isn't in the txpool
       if (onChainTransaction === null) {
-        dispatch({ type: "INCREMENT_TRANSACTION_PAYLOAD_TRIES", hash: transactionHash });
-
-        // if we have retries left, then resubmit the transaction
-        if (getState().transactions[transactionHash].payload.tries > constants.TX_RETRY_MAX) { // no retries left, transaction failed :(
-          callback(new RPCError("TRANSACTION_RETRY_MAX_EXCEEDED", { data: getState().transactions[transactionHash] }));
-        } else {
-          dispatch({ type: "DECREMENT_HIGHEST_NONCE" });
-          dispatch({ type: "TRANSACTION_RESUBMITTED", hash: transactionHash });
-          if (getState().debug.tx) console.log("resubmitting tx:", transactionHash);
-          var transaction = getState().transactions[transactionHash];
-          var meta = transaction.meta || {};
-          dispatch(transact.default(transaction.payload, meta.signer, meta.accountType, transaction.onSent, transaction.onSuccess, transaction.onFailed));
-        }
-
+        callback(null);
       // non-null transaction: transaction not dropped
       // check if it has been sealed (mined) yet by checking for a greater-than-zero blockhash
       } else if (parseInt(onChainTransaction.blockHash, 16) > 0) { // sealed
