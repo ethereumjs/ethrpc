@@ -1184,18 +1184,20 @@ describe("tests that only work against stub server", function () {
           });
         });
 
-        it("transact pool not accepting", function (done) {
-          function onSent() { }
-          function onSuccess() { assert.isFalse(true, "onSuccess should not have been called"); }
-          function onFailed(err) {
-            assert.strictEqual(err.message, "Maximum number of transaction retry attempts exceeded");
-            assert.strictEqual(err.hash, "0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf" + "0006");
-            done();
-          }
-          server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x12"; });
-          server.addResponder(function (jso) { if (jso.method === "eth_getTransactionByHash") return null; });
-          rpc.transact(createReasonableTransactPayload(), null, null, onSent, onSuccess, onFailed);
-        });
+        // it("transact pool not accepting", function (done) {
+        //   function onSent() {}
+        //   function onSuccess() {
+        //     assert.isFalse(true, "onSuccess should not have been called"); 
+        //   }
+        //   function onFailed(err) {
+        //     assert.strictEqual(err.message, "Maximum number of transaction retry attempts exceeded");
+        //     assert.strictEqual(err.hash, "0xbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf00dbadf" + "0006");
+        //     done();
+        //   }
+        //   server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x12"; });
+        //   server.addResponder(function (jso) { if (jso.method === "eth_getTransactionByHash") return null; });
+        //   rpc.transact(createReasonableTransactPayload(), null, null, onSent, onSuccess, onFailed);
+        // });
 
         it("transact", function (done) {
           function onSent() {}
