@@ -1,7 +1,7 @@
 "use strict";
 
 var Promise = require("es6-promise").Promise;
-var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
+var BlockAndLogStreamer = require("augur-blockstream").BlockAndLogStreamer;
 var eth = require("../wrappers/eth");
 var internalState = require("../internal-state");
 
