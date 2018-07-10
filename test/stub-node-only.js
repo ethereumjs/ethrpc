@@ -1187,7 +1187,7 @@ describe("tests that only work against stub server", function () {
         // it("transact pool not accepting", function (done) {
         //   function onSent() {}
         //   function onSuccess() {
-        //     assert.isFalse(true, "onSuccess should not have been called"); 
+        //     assert.isFalse(true, "onSuccess should not have been called");
         //   }
         //   function onFailed(err) {
         //     assert.strictEqual(err.message, "Maximum number of transaction retry attempts exceeded");
