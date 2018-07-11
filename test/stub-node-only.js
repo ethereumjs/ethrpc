@@ -1373,9 +1373,9 @@ describe("tests that only work against stub server", function () {
           var called = false;
           var token = rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) { called = true; });
           rpc.getBlockStream().unsubscribeFromOnLogAdded(token);
-          token = rpc.getBlockStream().subscribeToOnBlockAdded(function (/*block*/) { 
+          token = rpc.getBlockStream().subscribeToOnBlockAdded(function (/*block*/) {
             rpc.getBlockStream().unsubscribeFromOnBlockAdded(token);
-            done(called ? new Error("log handler was called") : undefined)
+            done(called ? new Error("log handler was called") : undefined);
           });
         });
 

@@ -11,7 +11,7 @@ function onNewBlock(newBlock, cb) {
     if (getState().debug.broadcast) console.log("[ethrpc] New block:", newBlock.hash);
 
     dispatch(reprocessTransactions());
-    setTimeout(function() {
+    setTimeout(function () {
       var streamer = internalState.get("blockAndLogStreamer");
       if (streamer && streamer.reconcileNewBlock) {
         streamer.reconcileNewBlock(newBlock).then(callback).catch(callback);
