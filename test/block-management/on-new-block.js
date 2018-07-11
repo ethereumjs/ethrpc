@@ -5,6 +5,7 @@
 var assert = require("chai").assert;
 var proxyquire = require("proxyquire");
 var mockStore = require("../mock-store");
+var Promise = require("es6-promise").Promise;
 
 describe("block-management/on-new-block", function () {
   var test = function (t) {
@@ -29,10 +30,8 @@ describe("block-management/on-new-block", function () {
       blockAndLogStreamer: {
         reconcileNewBlock: function (newBlock) {
           assert.deepEqual(newBlock, { hash: "0xdeadbeef" });
-          return {
-            then: function (callback) { callback(null); },
-            catch: function (/*callback*/) { assert.fail(); },
-          };
+
+          return Promise.resolve(null);
         },
       },
     },
