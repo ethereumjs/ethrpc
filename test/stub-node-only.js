@@ -1339,7 +1339,10 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can subscribe to new blocks", function (done) {
-          rpc.getBlockStream().subscribeToOnBlockAdded(function (/* block */) { done(); });
+          var token = rpc.getBlockStream().subscribeToOnBlockAdded(function (/* block */) {
+            rpc.getBlockStream().unsubscribeFromOnBlockAdded(token);
+            done();
+          });
         });
 
         it("can subscribe to new logs", function (done) {
