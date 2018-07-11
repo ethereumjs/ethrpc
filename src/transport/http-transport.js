@@ -62,7 +62,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       console.warn("[ethrpc] http-transport 502 response", error, response);
       error.code = response.statusCode;
       error.retryable = true;
-      errorCallback(err);
+      errorCallback(error);
     } else {
       console.error("[ethrpc] http-transport unexpected status code", response);
       error = new Error("Unexpected status code.");
