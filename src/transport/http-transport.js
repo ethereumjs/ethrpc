@@ -58,7 +58,13 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
         jsonrpc: "2.0",
         error: {"code": -32601, "message": "Method not found"},
       });
+    } else if (response.statusCode === 502) { // to handle INFURA's 502 error response
+      console.warn("[ethrpc] http-transport 502 response", error, response);
+      error.code = response.statusCode;
+      error.retryable = true;
+      errorCallback(err);
     } else {
+      console.error("[ethrpc] http-transport unexpected status code", response);
       error = new Error("Unexpected status code.");
       error.code = response.statusCode;
       error.address = this.address;
