@@ -9,8 +9,14 @@ function onNewBlock(newBlock, cb) {
     var callback = cb || logError;
     if (newBlock === null) return callback(null);
     if (getState().debug.broadcast) console.log("[ethrpc] New block:", newBlock.hash);
+
     dispatch(reprocessTransactions());
-    internalState.get("blockAndLogStreamer").reconcileNewBlock(newBlock).then(callback).catch(callback);
+    setTimeout(function () {
+      var streamer = internalState.get("blockAndLogStreamer");
+      if (streamer && streamer.reconcileNewBlock) {
+        streamer.reconcileNewBlock(newBlock).then(callback).catch(callback);
+      }
+    }, getState().configuration.propogationDelayWaitMillis);
   };
 }
 

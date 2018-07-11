@@ -1339,7 +1339,10 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can subscribe to new blocks", function (done) {
-          rpc.getBlockStream().subscribeToOnBlockAdded(function (/* block */) { done(); });
+          var token = rpc.getBlockStream().subscribeToOnBlockAdded(function (/* block */) {
+            rpc.getBlockStream().unsubscribeFromOnBlockAdded(token);
+            done();
+          });
         });
 
         it("can subscribe to new logs", function (done) {
@@ -1373,7 +1376,10 @@ describe("tests that only work against stub server", function () {
           var called = false;
           var token = rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) { called = true; });
           rpc.getBlockStream().unsubscribeFromOnLogAdded(token);
-          rpc.getBlockStream().subscribeToOnBlockAdded(function (/*block*/) { done(called ? new Error("log handler was called") : undefined); });
+          token = rpc.getBlockStream().subscribeToOnBlockAdded(function (/*block*/) {
+            rpc.getBlockStream().unsubscribeFromOnBlockAdded(token);
+            done(called ? new Error("log handler was called") : undefined);
+          });
         });
 
         it("can remove log filter", function (done) {
