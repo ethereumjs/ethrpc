@@ -16,7 +16,7 @@ module.exports.configuration = {
   startBlockStreamOnConnect: true,
   useWeb3Transport: false,
   websocketClientConfig: {},
-  propogationDelayWaitMillis: 6000,
+  propagationDelayWaitMillis: 6000,
 };
 module.exports.currentBlock = null;
 module.exports.highestNonce = -1;
