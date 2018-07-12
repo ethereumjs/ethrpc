@@ -16,7 +16,7 @@ function onNewBlock(newBlock, cb) {
       if (streamer && streamer.reconcileNewBlock) {
         streamer.reconcileNewBlock(newBlock).then(callback).catch(callback);
       }
-    }, getState().configuration.propogationDelayWaitMillis);
+    }, getState().configuration.propagationDelayWaitMillis);
   };
 }
 

@@ -21,7 +21,7 @@ describe("reducers/configuration", function () {
         connectionTimeout: 3000,
         networkID: null,
         pollingIntervalMilliseconds: 30000,
-        propogationDelayWaitMillis: 6000,
+        propagationDelayWaitMillis: 6000,
         blockRetention: 100,
       },
       action: {
@@ -41,7 +41,7 @@ describe("reducers/configuration", function () {
           connectionTimeout: 3000,
           networkID: null,
           pollingIntervalMilliseconds: 30000,
-          propogationDelayWaitMillis: 6000,
+          propagationDelayWaitMillis: 6000,
           blockRetention: 10,
         });
       },
@@ -55,7 +55,7 @@ describe("reducers/configuration", function () {
         connectionTimeout: 3000,
         networkID: null,
         pollingIntervalMilliseconds: 30000,
-        propogationDelayWaitMillis: 6000,
+        propagationDelayWaitMillis: 6000,
         blockRetention: 100,
       },
       action: {
@@ -76,7 +76,7 @@ describe("reducers/configuration", function () {
           connectionTimeout: 3000,
           networkID: null,
           pollingIntervalMilliseconds: 30000,
-          propogationDelayWaitMillis: 6000,
+          propagationDelayWaitMillis: 6000,
           blockRetention: 10,
         });
       },
@@ -92,7 +92,7 @@ describe("reducers/configuration", function () {
         connectionTimeout: 20000,
         networkID: null,
         pollingIntervalMilliseconds: 30000,
-        propogationDelayWaitMillis: 6000,
+        propagationDelayWaitMillis: 6000,
         blockRetention: 10,
       },
       action: {
@@ -106,7 +106,7 @@ describe("reducers/configuration", function () {
           connectionTimeout: 10000,
           networkID: null,
           pollingIntervalMilliseconds: 30000,
-          propogationDelayWaitMillis: 6000,
+          propagationDelayWaitMillis: 6000,
           startBlockStreamOnConnect: true,
           useWeb3Transport: false,
           blockRetention: 100,
