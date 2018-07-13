@@ -60,6 +60,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       });
     } else if (response.statusCode === 502) { // to handle INFURA's 502 error response
       console.warn("[ethrpc] http-transport 502 response", error, response);
+      error = new Error("Gateway timeout, retryable");
       error.code = response.statusCode;
       error.retryable = true;
       errorCallback(error);
