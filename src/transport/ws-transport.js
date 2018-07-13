@@ -2,6 +2,8 @@
 
 var AbstractTransport = require("./abstract-transport");
 var WebSocketClient = require("../platform/web-socket-client");
+var internalState = require("../internal-state");
+var errors = require("../errors/codes");
 
 function WsTransport(address, timeout, websocketClientConfig, messageHandler, initialConnectCallback) {
   AbstractTransport.call(this, address, timeout, messageHandler);
@@ -28,6 +30,20 @@ WsTransport.prototype.connect = function (initialCallback) {
     messageHandler = self.messageHandler;
   };
   this.webSocketClient.onmessage = function (message) {
+    // This is a hack to allow pools of nodes, like infura, to route to out-of-date nodes a couple times.
+    // Remove when we feel like we have a better solution
+    var response = JSON.parse(message.data);
+    var outstandingRequest = internalState.get("outstandingRequests." + response.id);
+    if (outstandingRequest != null && outstandingRequest.jso != null
+      && outstandingRequest.jso.method === "eth_call" && response.result === "0x") {
+      var retries = outstandingRequest.retries || 0;
+      if (retries < 3) {
+        outstandingRequest.retries = retries + 1;
+        self.submitWork(outstandingRequest.jso);
+        return;
+      }
+      return outstandingRequest.callback(new Error(errors.ETH_CALL_FAILED.message));
+    }
     messageHandler(null, JSON.parse(message.data));
   };
   this.webSocketClient.onerror = function () {

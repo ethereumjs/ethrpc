@@ -2,6 +2,8 @@
 
 var AbstractTransport = require("./abstract-transport.js");
 var request = require("../platform/request.js");
+var internalState = require("../internal-state");
+var errors = require("../errors/codes");
 
 function HttpTransport(address, timeout, messageHandler, initialConnectCallback) {
   AbstractTransport.call(this, address, timeout, messageHandler);
@@ -51,6 +53,21 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       if (error.code === "ENOTFOUND") error.retryable = true;
       errorCallback(error);
     } else if (response.statusCode === 200) {
+      if (rpcObject.method === "eth_call" && body.result === "0x") {
+        var outstandingRequest = internalState.get("outstandingRequests." + response.id) || {};
+        var retries = outstandingRequest.retries || 0;
+        error = new Error(errors.ETH_CALL_FAILED.message);
+        if (retries < 3) {
+          internalState.set("outstandingRequests." + response.id, Object.assign({}, outstandingRequest, {retries: retries + 1}));
+          error.retryable = true;
+          return errorCallback(error);
+        }
+        return this.messageHandler(null, {
+          id: response.body.id,
+          jsonrpc: "2.0",
+          error: {"code": -32601, "message": errors.ETH_CALL_FAILED.message},
+        });
+      }
       this.messageHandler(null, body);
     } else if (response.statusCode === 405) { // to handle INFURA's 405 Method Not Allowed response
       this.messageHandler(null, {
@@ -60,6 +77,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       });
     } else if (response.statusCode === 502) { // to handle INFURA's 502 error response
       console.warn("[ethrpc] http-transport 502 response", error, response);
+      error = new Error("Gateway timeout, retryable");
       error.code = response.statusCode;
       error.retryable = true;
       errorCallback(error);
