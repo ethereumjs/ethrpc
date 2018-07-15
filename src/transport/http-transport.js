@@ -51,6 +51,11 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       if (error.code === "ENOTFOUND") error.retryable = true;
       errorCallback(error);
     } else if (response.statusCode === 200) {
+      if (rpcObject.method === "eth_call" && body.result === "0x") {
+        error = new Error("0x returned for eth_call");
+        error.retryable = true;
+        return errorCallback(error);
+      }
       this.messageHandler(null, body);
     } else if (response.statusCode === 405) { // to handle INFURA's 405 Method Not Allowed response
       this.messageHandler(null, {

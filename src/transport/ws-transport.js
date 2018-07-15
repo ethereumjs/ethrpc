@@ -2,6 +2,7 @@
 
 var AbstractTransport = require("./abstract-transport");
 var WebSocketClient = require("../platform/web-socket-client");
+var internalState = require("../internal-state");
 
 function WsTransport(address, timeout, websocketClientConfig, messageHandler, initialConnectCallback) {
   AbstractTransport.call(this, address, timeout, messageHandler);
@@ -28,6 +29,19 @@ WsTransport.prototype.connect = function (initialCallback) {
     messageHandler = self.messageHandler;
   };
   this.webSocketClient.onmessage = function (message) {
+    var response = JSON.parse(message.data);
+    var outstandingRequest = internalState.get("outstandingRequests." + response.id);
+    if (outstandingRequest != null && outstandingRequest.jso != null
+      && outstandingRequest.jso.method === "eth_call" && response.result === "0x") {
+      var retries = outstandingRequest.retries || 0;
+      if (retries < 3) {
+        outstandingRequest.retries = retries + 1;
+        self.submitWork(outstandingRequest.jso);
+        return;
+      } else {
+        return outstandingRequest.callback(new Error("Maximum retries for eth_call returning 0x"));
+      }
+    }
     messageHandler(null, JSON.parse(message.data));
   };
   this.webSocketClient.onerror = function () {
