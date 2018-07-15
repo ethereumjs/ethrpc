@@ -20,7 +20,6 @@ function callContractFunction(payload, callback) {
   return function (dispatch) {
     dispatch(callOrSendTransaction(assign({}, payload), function (err, result) {
       if (err) return callback(err);
-      if (result === "0x") return callback(new Error(`0x returned from eth_call ${payload.name} ${payload.to} ${payload.returns}`));
       callback(null, speedomatic.abiDecodeRpcResponse(payload.returns, result));
     }));
   };
