@@ -17,7 +17,7 @@ describe("transport/http-transport", function () {
   });
 
   it("no node found", function (done) {
-    new HttpTransport("http://nowhere:1337", 100, function () { }, function (error, httpTransport) {
+    new HttpTransport("http://nowhere:1337", 100, 0, function () { }, function (error, httpTransport) {
       assert.strictEqual(Object.getPrototypeOf(error), Error.prototype);
       assert.oneOf(error.code, ["ESOCKETTIMEDOUT", "ETIMEDOUT", "ENOTFOUND", "EAI_AGAIN"], (error ||{}).message);
       done();
@@ -25,7 +25,7 @@ describe("transport/http-transport", function () {
   });
 
   it("node is connectable", function (done) {
-    new HttpTransport("http://localhost:1337", 100, function () { }, function (error, httpTransport) {
+    new HttpTransport("http://localhost:1337", 100, 0, function () { }, function (error, httpTransport) {
       assert.isNull(error);
       done();
     });
@@ -39,7 +39,7 @@ describe("transport/http-transport", function () {
       done();
     };
     server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    httpTransport = new HttpTransport("http://localhost:1337", 100, messageHandler, function (error, _) { });
+    httpTransport = new HttpTransport("http://localhost:1337", 100, 0, messageHandler, function (error, _) { });
     httpTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
   });
 
@@ -50,7 +50,7 @@ describe("transport/http-transport", function () {
       done();
     };
     server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    new HttpTransport("http://localhost:1337", 100, messageHandler, function (error, httpTransport) {
+    new HttpTransport("http://localhost:1337", 100, 0, messageHandler, function (error, httpTransport) {
       server.destroy(function () {
         httpTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
         server = StubServer.createStubServer("HTTP", "http://localhost:1337");
@@ -77,7 +77,7 @@ describe("transport/http-transport", function () {
       done();
     };
     server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    new HttpTransport("http://localhost:1337", 100, messageHandler, function (error, httpTransport) {
+    new HttpTransport("http://localhost:1337", 100, 0, messageHandler, function (error, httpTransport) {
       server.destroy(function () {
         httpTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
         httpTransport.submitWork({ id: 1, jsonrpc: "2.0", method: "net_version", params: [] });

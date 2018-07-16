@@ -9,6 +9,7 @@ var helpers = require("./helpers");
 var rpc = require("../src");
 var RPCError = require("../src/errors/rpc-error");
 var constants = require("../src/constants");
+var errors = require("../src/errors/codes");
 
 function createReasonableTransactPayload() {
   return {
@@ -230,6 +231,50 @@ describe("tests that only work against stub server", function () {
         });
       });
 
+      describe("eth errorHandler", function () {
+        var server;
+        beforeEach(function (done) {
+          server = helpers.createStubRpcServerWithRequiredResponders(transportType, transportAddress);
+          var configuration = helpers.getRpcConfiguration(transportType, transportAddress);
+          configuration.errorHandler =  function (err) {
+            assert.isTrue((err == null) || err.message === errors.ETH_CALL_FAILED.message, "ZOMG");
+          };
+          rpc.connect(configuration, function (error) {
+            assert.isNull(error);
+            done();
+          });
+        });
+        afterEach(function (done) {
+          rpc.resetState();
+          server.destroy(done);
+        });
+
+        if (transportType === "HTTP" || transportType === "WS") {
+          it("call failure with 0x", function (done) {
+            server.addExpectation(function (jso) {
+              return jso.method === "eth_call"
+                && jso.params[0].from === "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
+                && jso.params[0].to === "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"
+                && jso.params[0].value === "0x186a0"
+                && jso.params[1] === "latest";
+            });
+            server.addResponder(function (jso) {
+              if (jso.method === "eth_call") return "0x";
+            });
+            rpc.call({
+              from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1",
+              to: "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+              value: 100000,
+            }, function (err) {
+              assert.isNotNull(err);
+              assert.strictEqual(err.message, errors.ETH_CALL_FAILED.message);
+              server.assertExpectations();
+              done();
+            });
+          });
+        }
+      });
+
       describe("eth", function () {
         var server;
         beforeEach(function (done) {
@@ -271,10 +316,10 @@ describe("tests that only work against stub server", function () {
               && jso.params[0].value === "0x186a0"
               && jso.params[1] === "latest";
           });
-          server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x0000000000000000000000000000000000000000000000000000000000000000"; });
           rpc.call({ from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1", to: "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b", value: 100000 }, function (err, result) {
             assert.isNull(err);
-            assert.strictEqual(result, "0x");
+            assert.strictEqual(result, "0x0000000000000000000000000000000000000000000000000000000000000000");
             server.assertExpectations();
             done();
           });

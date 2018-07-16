@@ -76,7 +76,7 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
       someSeries(configuration.wsAddresses,
         function (wsAddress, nextAddress) {
           try {
-            var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, configuration.websocketClientConfig, messageHandler, function (error) {
+            var wsTransport = new WsTransport(wsAddress, configuration.connectionTimeout, configuration.maxRetries, configuration.websocketClientConfig, messageHandler, function (error) {
               if (error !== null) return nextAddress(null);
               return nextAddress(wsTransport);
             });
@@ -92,7 +92,7 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
       someSeries(configuration.httpAddresses,
         function (httpAddress, nextAddress) {
           try {
-            var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, messageHandler, function (error) {
+            var httpTransport = new HttpTransport(httpAddress, configuration.connectionTimeout, configuration.maxRetries, messageHandler, function (error) {
               if (error !== null) return nextAddress(null);
               return nextAddress(httpTransport);
             });

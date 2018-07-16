@@ -6,7 +6,7 @@ var oboe = require("oboe");
 var AbstractTransport = require("./abstract-transport.js");
 
 function IpcTransport(address, timeout, messageHandler, initialConnectCallback) {
-  AbstractTransport.call(this, address, timeout, messageHandler);
+  AbstractTransport.call(this, address, timeout, 0, messageHandler);
   this.initialConnect(initialConnectCallback);
 }
 

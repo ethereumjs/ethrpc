@@ -17,6 +17,7 @@ module.exports.configuration = {
   useWeb3Transport: false,
   websocketClientConfig: {},
   propagationDelayWaitMillis: 6000,
+  maxRetries: 0,
 };
 module.exports.currentBlock = null;
 module.exports.highestNonce = -1;
