@@ -20,7 +20,7 @@ function AbstractTransport(address, timeout, maxRetries, messageHandler) {
 
   this.address = address;
   this.timeout = timeout;
-  this.maxRetries = maxRetries || 3;
+  this.maxRetries = maxRetries || 0;
   this.messageHandler = messageHandler;
   this.workQueue = [];
 
