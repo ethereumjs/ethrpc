@@ -2,6 +2,7 @@
 
 var AbstractTransport = require("./abstract-transport.js");
 var request = require("../platform/request.js");
+var internalState = require("../internal-state");
 
 function HttpTransport(address, timeout, messageHandler, initialConnectCallback) {
   AbstractTransport.call(this, address, timeout, messageHandler);
@@ -52,8 +53,15 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       errorCallback(error);
     } else if (response.statusCode === 200) {
       if (rpcObject.method === "eth_call" && body.result === "0x") {
+        var outstandingRequest = internalState.get("outstandingRequests." + response.id) || {};
+        var retries = outstandingRequest.retries || 0;
         error = new Error("0x returned for eth_call");
-        error.retryable = true;
+        if (retries < 3) {
+          internalState.set("outstandingRequests." + response.id, {retries: retries + 1});
+          error.retryable = true;
+        } else {
+          internalState.unset("outstandingRequests." + response.id);
+        }
         return errorCallback(error);
       }
       this.messageHandler(null, body);
