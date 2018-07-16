@@ -7,7 +7,7 @@
  * @param {!number} timeout
  * @param {function(?Error, !object):void} messageHandler
  */
-function AbstractTransport(address, timeout, messageHandler) {
+function AbstractTransport(address, timeout, maxRetries, messageHandler) {
   if (typeof address !== "string") {
     throw new Error("address must be a string");
   }
@@ -20,6 +20,7 @@ function AbstractTransport(address, timeout, messageHandler) {
 
   this.address = address;
   this.timeout = timeout;
+  this.maxRetries = maxRetries || 3;
   this.messageHandler = messageHandler;
   this.workQueue = [];
 

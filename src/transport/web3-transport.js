@@ -4,7 +4,7 @@ var AbstractTransport = require("./abstract-transport.js");
 var isGlobalWeb3 = require("../utils/is-global-web3");
 
 function Web3Transport(messageHandler, initialConnectCallback) {
-  AbstractTransport.call(this, "web3", -1, messageHandler);
+  AbstractTransport.call(this, "web3", -1, 0, messageHandler);
   this.initialConnect(initialConnectCallback);
 }
 

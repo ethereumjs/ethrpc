@@ -5,8 +5,8 @@ var WebSocketClient = require("../platform/web-socket-client");
 var internalState = require("../internal-state");
 var errors = require("../errors/codes");
 
-function WsTransport(address, timeout, websocketClientConfig, messageHandler, initialConnectCallback) {
-  AbstractTransport.call(this, address, timeout, messageHandler);
+function WsTransport(address, timeout, maxRetries, websocketClientConfig, messageHandler, initialConnectCallback) {
+  AbstractTransport.call(this, address, timeout, maxRetries, messageHandler);
   this.websocketClientConfig = websocketClientConfig;
   this.initialConnect(initialConnectCallback);
 }
@@ -37,7 +37,7 @@ WsTransport.prototype.connect = function (initialCallback) {
     if (outstandingRequest != null && outstandingRequest.jso != null
       && outstandingRequest.jso.method === "eth_call" && response.result === "0x") {
       var retries = outstandingRequest.retries || 0;
-      if (retries < 3) {
+      if (retries < this.maxRetries) {
         outstandingRequest.retries = retries + 1;
         self.submitWork(outstandingRequest.jso);
         return;
@@ -45,7 +45,7 @@ WsTransport.prototype.connect = function (initialCallback) {
       return outstandingRequest.callback(new Error(errors.ETH_CALL_FAILED.message));
     }
     messageHandler(null, JSON.parse(message.data));
-  };
+  }.bind(this);
   this.webSocketClient.onerror = function () {
     // unfortunately, we get no error details:
     // https://www.w3.org/TR/websockets/#concept-websocket-close-fail

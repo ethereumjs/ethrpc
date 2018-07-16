@@ -5,8 +5,8 @@ var request = require("../platform/request.js");
 var internalState = require("../internal-state");
 var errors = require("../errors/codes");
 
-function HttpTransport(address, timeout, messageHandler, initialConnectCallback) {
-  AbstractTransport.call(this, address, timeout, messageHandler);
+function HttpTransport(address, timeout, maxRetries, messageHandler, initialConnectCallback) {
+  AbstractTransport.call(this, address, timeout, maxRetries, messageHandler);
 
   this.initialConnect(initialConnectCallback);
 }
@@ -57,7 +57,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
         var outstandingRequest = internalState.get("outstandingRequests." + response.id) || {};
         var retries = outstandingRequest.retries || 0;
         error = new Error(errors.ETH_CALL_FAILED.message);
-        if (retries < 3) {
+        if (retries < this.maxRetries) {
           internalState.set("outstandingRequests." + response.id, Object.assign({}, outstandingRequest, {retries: retries + 1}));
           error.retryable = true;
           return errorCallback(error);
