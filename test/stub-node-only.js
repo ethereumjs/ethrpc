@@ -271,10 +271,10 @@ describe("tests that only work against stub server", function () {
               && jso.params[0].value === "0x186a0"
               && jso.params[1] === "latest";
           });
-          server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x"; });
+          server.addResponder(function (jso) { if (jso.method === "eth_call") return "0x0000000000000000000000000000000000000000000000000000000000000000"; });
           rpc.call({ from: "0x407d73d8a49eeb85d32cf465507dd71d507100c1", to: "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b", value: 100000 }, function (err, result) {
             assert.isNull(err);
-            assert.strictEqual(result, "0x");
+            assert.strictEqual(result, "0x0000000000000000000000000000000000000000000000000000000000000000");
             server.assertExpectations();
             done();
           });
