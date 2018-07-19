@@ -1,6 +1,7 @@
 "use strict";
 
 var AbstractTransport = require("./abstract-transport");
+var isNode = require("../platform/is-node-js.js");
 var WebSocketClient = require("../platform/web-socket-client");
 var internalState = require("../internal-state");
 var errors = require("../errors/codes");
@@ -22,7 +23,8 @@ WsTransport.prototype.connect = function (initialCallback) {
     initialCallbackCalled = true;
     initialCallback(err);
   };
-  this.webSocketClient = new WebSocketClient(this.address, [], undefined, undefined, { timeout: this.timeout }, this.websocketClientConfig);
+  var origin = isNode ? "localhost" : undefined;
+  this.webSocketClient = new WebSocketClient(this.address, [], origin, undefined, { timeout: this.timeout }, this.websocketClientConfig);
   var messageHandler = function () {};
   this.webSocketClient.onopen = function () {
     console.log("websocket", self.address, "opened");
