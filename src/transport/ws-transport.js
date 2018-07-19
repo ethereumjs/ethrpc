@@ -23,7 +23,7 @@ WsTransport.prototype.connect = function (initialCallback) {
     initialCallbackCalled = true;
     initialCallback(err);
   };
-  var origin = isNode ? "localhost" : undefined;
+  var origin = isNode ? "localhost" : undefined; // Workaround for a bug in geth: https://github.com/ethereum/go-ethereum/issues/16608
   this.webSocketClient = new WebSocketClient(this.address, [], origin, undefined, { timeout: this.timeout }, this.websocketClientConfig);
   var messageHandler = function () {};
   this.webSocketClient.onopen = function () {
