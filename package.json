@@ -71,7 +71,7 @@
   },
   "optionalDependencies": {
     "request": "2.85.0",
-    "websocket": "1.0.23"
+    "websocket": "1.0.26"
   },
   "browser": {
     "request": false,
