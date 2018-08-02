@@ -49,6 +49,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       if (error.code === "ECONNRESET") error.retryable = true;
       if (error.code === "ECONNREFUSED") error.retryable = true;
       if (error.code === "ETIMEDOUT") error.retryable = true;
+      if (error.code === "ESOCKETTIMEDOUT") error.retryable = true;
       if (error.code === "EAI_AGAIN") error.retryable = true;
       if (error.code === "ENOTFOUND") error.retryable = true;
       errorCallback(error);
