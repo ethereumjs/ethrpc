@@ -135,6 +135,10 @@ AbstractTransport.prototype.connect = function (callback) {
   callback(new Error("Must be implemented by derived prototype."));
 };
 
+AbstractTransport.prototype.getTransportName = function () {
+  return "AbstractTransport";
+};
+
 AbstractTransport.prototype.resetState = function () {
   this.workQueue = [];
   this.awaitingPump = false;

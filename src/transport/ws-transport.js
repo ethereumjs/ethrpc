@@ -62,6 +62,10 @@ WsTransport.prototype.connect = function (initialCallback) {
   };
 };
 
+WsTransport.prototype.getTransportName = function () {
+  return "WsTransport";
+};
+
 WsTransport.prototype.close = function () {
   this.webSocketClient.onmessage = function () {};
   this.webSocketClient.onerror = function () {};

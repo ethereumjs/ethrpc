@@ -48,6 +48,10 @@ IpcTransport.prototype.connect = function (initialCallback) {
   });
 };
 
+IpcTransport.prototype.getTransportName = function () {
+  return "IpcTransport";
+};
+
 IpcTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
     this.ipcClient.write(JSON.stringify(rpcJso), null, function (error) {
