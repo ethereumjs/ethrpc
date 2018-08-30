@@ -20,6 +20,10 @@ Web3Transport.prototype.connect = function (callback) {
   }
 };
 
+Web3Transport.prototype.getTransportName = function () {
+  return "Web3Transport";
+};
+
 Web3Transport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
   var web3Provider;
   if (typeof window === "undefined") return errorCallback("attempted to access 'window' outside of a browser, this shouldn't happen");

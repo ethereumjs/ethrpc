@@ -38,6 +38,10 @@ HttpTransport.prototype.connect = function (callback) {
   });
 };
 
+HttpTransport.prototype.getTransportName = function () {
+  return "HttpTransport";
+};
+
 HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
   request({
     url: this.address,
