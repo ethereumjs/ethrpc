@@ -156,5 +156,8 @@ Transporter.prototype.addDisconnectListener = function (callback) {
 Transporter.prototype.removeDisconnectListener = function (token) {
   delete this.internalState.disconnectListeners[token];
 };
+Transporter.prototype.getTransportName = function () {
+  return this.internalState.transport && this.internalState.transport.getTransportName();
+}
 
 module.exports = Transporter;
