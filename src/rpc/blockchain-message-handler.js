@@ -28,21 +28,22 @@ function blockchainMessageHandler(error, jso) {
       }
     };
 
+    var errorHandler = function () {
+      // errors with IDs can go through the normal result process
+      if (jso.id != null) {
+        if (debug.broadcast) console.log("outstanding request:", internalState.get("outstandingRequests." + jso.id));
+        // eslint-disable-next-line no-use-before-define
+        return responseHandler(jso);
+      }
+      outOfBandErrorHandler(new RPCError(jso.error));
+    };
+
     var responseHandler = function () {
       if (typeof jso.id !== "number") return errorHandler(new RPCError("INVALID_MESSAGE_ID", jso));
       var outstandingRequest = internalState.get("outstandingRequests." + jso.id);
       internalState.unset("outstandingRequests." + jso.id);
       if (!isObject(outstandingRequest)) return outOfBandErrorHandler(new RPCError("JSON_RPC_REQUEST_NOT_FOUND", jso));
       parseEthereumResponse(jso, outstandingRequest.callback);
-    };
-
-    var errorHandler = function () {
-      // errors with IDs can go through the normal result process
-      if (jso.id != null) {
-        if (debug.broadcast) console.log("outstanding request:", internalState.get("outstandingRequests." + jso.id));
-        return responseHandler(jso);
-      }
-      outOfBandErrorHandler(new RPCError(jso.error));
     };
 
     // depending on the type of message it is (request, response, error, invalid) we will handle it differently

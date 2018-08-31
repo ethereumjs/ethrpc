@@ -3,7 +3,6 @@
 var async = require("async");
 var net_version = require("./wrappers/net").version;
 var setGasPrice = require("./wrappers/set-gas-price");
-var setCoinbase = require("./wrappers/set-coinbase");
 var Transporter = require("./transport/transporter");
 var ensureLatestBlock = require("./block-management/ensure-latest-block");
 var startBlockStream = require("./block-management/start-block-stream");

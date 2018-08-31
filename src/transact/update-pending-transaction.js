@@ -2,9 +2,6 @@
 
 var eth_getTransactionByHash = require("../wrappers/eth").getTransactionByHash;
 var updateSealedTransaction = require("../transact/update-sealed-transaction");
-var transact = require("../transact/transact");
-var RPCError = require("../errors/rpc-error");
-var constants = require("../constants");
 
 function updatePendingTransaction(transactionHash, callback) {
   return function (dispatch, getState) {

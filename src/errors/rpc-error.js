@@ -35,7 +35,7 @@ RPCError.prototype = Object.create(Error.prototype, {
 if (Object.setPrototypeOf) {
   Object.setPrototypeOf(RPCError, Error);
 } else {
-  RPCError.__proto__ = Error;
+  RPCError.prototype = Error;
 }
 
 module.exports = RPCError;

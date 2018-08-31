@@ -17,7 +17,7 @@ describe("transport/ws-transport", function () {
   });
 
   it("no node found", function (done) {
-    new WsTransport("ws://nowhere:1337", 100, 0, {}, function () { }, function (error, wsTransport) {
+    new WsTransport("ws://nowhere:1337", 100, 0, {}, function () { }, function (error) {
       assert.strictEqual(Object.getPrototypeOf(error), Error.prototype);
       assert.strictEqual(error.message, "Web socket closed without opening, usually means failed connection.");
       done();
@@ -25,7 +25,7 @@ describe("transport/ws-transport", function () {
   });
 
   it("node is connectable", function (done) {
-    new WsTransport("ws://localhost:1337", 100, 0, {}, function () { }, function (error, wsTransport) {
+    new WsTransport("ws://localhost:1337", 100, 0, {}, function () { }, function (error) {
       assert.isNull(error);
       done();
     });
@@ -39,7 +39,7 @@ describe("transport/ws-transport", function () {
       done();
     };
     server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    wsTransport = new WsTransport("ws://localhost:1337", 100, 0, {}, messageHandler, function (error, _) { });
+    wsTransport = new WsTransport("ws://localhost:1337", 100, 0, {}, messageHandler, function () { });
     wsTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
   });
 

@@ -158,6 +158,6 @@ Transporter.prototype.removeDisconnectListener = function (token) {
 };
 Transporter.prototype.getTransportName = function () {
   return this.internalState.transport && this.internalState.transport.getTransportName();
-}
+};
 
 module.exports = Transporter;
