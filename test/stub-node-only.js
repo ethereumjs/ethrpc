@@ -1271,6 +1271,7 @@ describe("tests that only work against stub server", function () {
                   transactionIndex: "0x1",
                   gasPrice: "0x12a05f200",
                 };
+              default:
             }
           });
           rpc.transact(createReasonableTransactPayload(), null, null, onSent, onSuccess, onFailed);

@@ -44,7 +44,7 @@ describe("transport/transporter", function () {
       ipcAddresses: [],
       connectionTimeout: 1000,
     };
-    var messageHandler = function (error, message) { assert.fail("expected no messages"); };
+    var messageHandler = function () { assert.fail("expected no messages"); };
     new Transporter(configuration, messageHandler, false, function (error) {
       assert.typeOf(error, "Error");
       assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC).");
@@ -59,7 +59,7 @@ describe("transport/transporter", function () {
       ipcAddresses: ["nowhere"],
       connectionTimeout: 1000,
     };
-    var messageHandler = function (error, message) { assert.fail("expected no messages"); };
+    var messageHandler = function () { assert.fail("expected no messages"); };
     new Transporter(configuration, messageHandler, false, function (error) {
       assert.typeOf(error, "Error");
       assert.strictEqual(error.message, "Unable to connect to an Ethereum node via any transport. (Web3, HTTP, WS, IPC).");
@@ -148,7 +148,7 @@ describe("transport/transporter", function () {
       connectionTimeout: 1000,
       useWeb3Transport: true,
     };
-    new Transporter(configuration, function () {}, false, function (error, transporter) {
+    new Transporter(configuration, function () {}, false, function (error) {
       assert.isNotNull(error);
       assert.ok(error instanceof Error);
       done();

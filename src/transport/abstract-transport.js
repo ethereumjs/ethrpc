@@ -33,27 +33,22 @@ function AbstractTransport(address, timeout, maxRetries, messageHandler) {
 }
 
 /**
- * Submits work to be processed by this transport.
- *
- * @param {!object} rpcObject - The JSON-RPC payload you want to send, in object form
+ * Pumps the current work queue.
  */
-AbstractTransport.prototype.submitWork = function (rpcObject) {
-  if (typeof rpcObject !== "object") {
-    throw new Error("rpcObject must be an object");
+function pumpQueue(abstractTransport) {
+  var rpcObject;
+  abstractTransport.awaitingPump = false;
+  while ((rpcObject = abstractTransport.workQueue.shift())) {
+    // it is possible to lose a connection while iterating over the queue,
+    // if that happens unroll the latest iteration and stop pumping
+    // (reconnect will start pumping again)
+    if (!abstractTransport.connected) {
+      abstractTransport.workQueue.unshift(rpcObject);
+      return;
+    }
+    processWork(abstractTransport, rpcObject);
   }
-
-  this.workQueue.push(rpcObject);
-
-  // if we aren't connected, the queue will be auto-pumped once we are
-  if (!this.connected) return;
-
-  // if we already have a pump queued up, then we can just get in with that batch
-  if (this.awaitingPump) return;
-
-  // force into an async context so behavior doesn't differ depending on whether or not this is first-in-queue
-  this.awaitingPump = true;
-  setTimeout(pumpQueue.bind(null, this));
-};
+}
 
 /**
  * Register to be notified when a disconnect occurs for this transport.
@@ -150,22 +145,71 @@ AbstractTransport.prototype.resetState = function () {
 };
 
 /**
- * Pumps the current work queue.
+ * Notify all reconnect listeners of a reconnect
+ *
  */
-function pumpQueue(abstractTransport) {
-  var rpcObject;
-  abstractTransport.awaitingPump = false;
-  while ((rpcObject = abstractTransport.workQueue.shift())) {
-    // it is possible to lose a connection while iterating over the queue,
-    // if that happens unroll the latest iteration and stop pumping
-    // (reconnect will start pumping again)
-    if (!abstractTransport.connected) {
-      abstractTransport.workQueue.unshift(rpcObject);
-      return;
+function notifyReconnectListeners(abstractTransport) {
+  Object.keys(abstractTransport.reconnectListeners).forEach(function (key) {
+    if (typeof abstractTransport.reconnectListeners[key] !== "function") {
+      delete abstractTransport.reconnectListeners[key];
+    } else {
+      abstractTransport.reconnectListeners[key]();
     }
-    processWork(abstractTransport, rpcObject);
-  }
+  });
 }
+
+/**
+ * Attempts to reconnect with exponential backoff.
+ */
+function reconnect(abstractTransport) {
+  abstractTransport.connect(function (error) {
+    if (error !== null) {
+      setTimeout(reconnect.bind(this, abstractTransport), abstractTransport.backoffMilliseconds *= 2);
+    } else {
+      notifyReconnectListeners(abstractTransport);
+      abstractTransport.connected = true;
+      abstractTransport.backoffMilliseconds = 1;
+      pumpQueue(abstractTransport);
+    }
+  });
+}
+
+/**
+ * Notify all disconnect listeners of a disconnect
+ *
+ */
+function notifyDisconnectListeners(abstractTransport, error) {
+  Object.keys(abstractTransport.disconnectListeners).forEach(function (key) {
+    if (typeof abstractTransport.disconnectListeners[key] !== "function") {
+      delete abstractTransport.disconnectListeners[key];
+    } else {
+      abstractTransport.disconnectListeners[key](error);
+    }
+  });
+}
+
+/**
+ * Submits work to be processed by this transport.
+ *
+ * @param {!object} rpcObject - The JSON-RPC payload you want to send, in object form
+ */
+AbstractTransport.prototype.submitWork = function (rpcObject) {
+  if (typeof rpcObject !== "object") {
+    throw new Error("rpcObject must be an object");
+  }
+
+  this.workQueue.push(rpcObject);
+
+  // if we aren't connected, the queue will be auto-pumped once we are
+  if (!this.connected) return;
+
+  // if we already have a pump queued up, then we can just get in with that batch
+  if (this.awaitingPump) return;
+
+  // force into an async context so behavior doesn't differ depending on whether or not this is first-in-queue
+  this.awaitingPump = true;
+  setTimeout(pumpQueue.bind(null, this));
+};
 
 /**
  * Processes one request off the head of the queue.
@@ -189,50 +233,6 @@ function processWork(abstractTransport, rpcObject) {
       error.data = rpcObject;
       notifyDisconnectListeners(abstractTransport, error);
       abstractTransport.messageHandler(error);
-    }
-  });
-}
-
-/**
- * Attempts to reconnect with exponential backoff.
- */
-function reconnect(abstractTransport) {
-  abstractTransport.connect(function (error) {
-    if (error !== null) {
-      setTimeout(reconnect.bind(this, abstractTransport), abstractTransport.backoffMilliseconds *= 2);
-    } else {
-      notifyReconnectListeners(abstractTransport);
-      abstractTransport.connected = true;
-      abstractTransport.backoffMilliseconds = 1;
-      pumpQueue(abstractTransport);
-    }
-  });
-}
-
-/**
- * Notify all reconnect listeners of a reconnect
- *
- */
-function notifyReconnectListeners(abstractTransport) {
-  Object.keys(abstractTransport.reconnectListeners).forEach(function (key) {
-    if (typeof abstractTransport.reconnectListeners[key] !== "function") {
-      delete abstractTransport.reconnectListeners[key];
-    } else {
-      abstractTransport.reconnectListeners[key]();
-    }
-  });
-}
-
-/**
- * Notify all disconnect listeners of a disconnect
- *
- */
-function notifyDisconnectListeners(abstractTransport, error) {
-  Object.keys(abstractTransport.disconnectListeners).forEach(function (key) {
-    if (typeof abstractTransport.disconnectListeners[key] !== "function") {
-      delete abstractTransport.disconnectListeners[key];
-    } else {
-      abstractTransport.disconnectListeners[key](error);
     }
   });
 }

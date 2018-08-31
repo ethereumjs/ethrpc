@@ -31,7 +31,7 @@ module.exports = {
   // how frequently to poll when waiting for blocks
   BLOCK_POLL_INTERVAL: 30000,
 
-  GAS_ESTIMATE_MULTIPLIER: new BigNumber("1.25", 10), // TODO adjust this empirically
+  GAS_ESTIMATE_MULTIPLIER: new BigNumber("1.25", 10), // @TODO adjust this empirically
 
   DEFAULT_ETH_CALL_GAS: "0x6230b8",
 

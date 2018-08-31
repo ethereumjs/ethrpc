@@ -20,7 +20,7 @@ describe("transport/ipc-transport", function () {
   });
 
   it("no node found", function (done) {
-    new IpcTransport("/not/a/real/path.ipc", 100, function () { }, function (error, ipcTransport) {
+    new IpcTransport("/not/a/real/path.ipc", 100, function () { }, function (error) {
       assert.strictEqual(Object.getPrototypeOf(error), Error.prototype);
       assert.isTrue(error.code === "ENOENT", (error || {}).message);
       done();
@@ -28,7 +28,7 @@ describe("transport/ipc-transport", function () {
   });
 
   it("node is connectable", function (done) {
-    new IpcTransport(ipcAddress, 100, function () { }, function (error, ipcTransport) {
+    new IpcTransport(ipcAddress, 100, function () { }, function (error) {
       assert.isNull(error);
       done();
     });
@@ -42,7 +42,7 @@ describe("transport/ipc-transport", function () {
       done();
     };
     server.addResponder(function (request) { if (request.method === "net_version") return "apple"; });
-    ipcTransport = new IpcTransport(ipcAddress, 100, messageHandler, function (error, _) { });
+    ipcTransport = new IpcTransport(ipcAddress, 100, messageHandler, function () { });
     ipcTransport.submitWork({ id: 0, jsonrpc: "2.0", method: "net_version", params: [] });
   });
 

@@ -15,6 +15,6 @@ websocket.onmessage = function (msg) {
 };
 websocket.onopen = function () {
   console.log("websocket open:", websocket.readyState);
-  websocket.send(JSON.stringify({"id":1,"jsonrpc":"2.0","method":"eth_gasPrice","params":[]}));
-  websocket.send(JSON.stringify({"id":2,"jsonrpc":"2.0","method":"eth_coinbase","params":[]}));
+  websocket.send(JSON.stringify({"id": 1, "jsonrpc": "2.0", "method": "eth_gasPrice", "params": []}));
+  websocket.send(JSON.stringify({"id": 2, "jsonrpc": "2.0", "method": "eth_coinbase", "params": []}));
 };

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-global.ethrpc = require("./src");
-global.logError = require("./src/utils/log-error");
+var ethrpc = global.ethrpc = require("./src");
+var logError = global.logError = require("./src/utils/log-error");
 
-global.connectOptions = {
+var connectOptions = global.connectOptions = {
   httpAddresses: ["http://127.0.0.1:8545"],
   wsAddresses: ["ws://127.0.0.1:8546"],
   ipcAddresses: [],
