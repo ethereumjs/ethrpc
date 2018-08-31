@@ -119,7 +119,6 @@
     "no-unused-expressions": 2,
     "no-useless-call": 2,
     "no-void": 1,
-    "no-warning-comments": 1,
     "radix": 2,
     "no-catch-shadow": 2,
     "no-delete-var": 2,
