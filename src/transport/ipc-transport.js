@@ -52,6 +52,13 @@ IpcTransport.prototype.getTransportName = function () {
   return "IpcTransport";
 };
 
+IpcTransport.prototype.close = function () {
+  this.ipcClient.on("connect", function () {});
+  this.ipcClient.on("data", function () {});
+  this.ipcClient.on("error", function () {});
+  this.ipcClient.on("end", function () {});
+};
+
 IpcTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
     this.ipcClient.write(JSON.stringify(rpcJso), null, function (error) {

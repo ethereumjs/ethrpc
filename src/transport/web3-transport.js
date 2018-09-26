@@ -4,7 +4,7 @@ var AbstractTransport = require("./abstract-transport.js");
 var isGlobalWeb3 = require("../utils/is-global-web3");
 
 function Web3Transport(messageHandler, initialConnectCallback) {
-  AbstractTransport.call(this, "web3", -1, 0, messageHandler);
+  this.abstractTransport = AbstractTransport.call(this, "web3", -1, 0, messageHandler);
   this.initialConnect(initialConnectCallback);
 }
 
@@ -22,6 +22,10 @@ Web3Transport.prototype.connect = function (callback) {
 
 Web3Transport.prototype.getTransportName = function () {
   return "Web3Transport";
+};
+
+Web3Transport.prototype.close = function () {
+  this.abstractTransport.connected = false;
 };
 
 Web3Transport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {

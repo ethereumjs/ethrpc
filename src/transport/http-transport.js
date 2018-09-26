@@ -6,7 +6,7 @@ var internalState = require("../internal-state");
 var errors = require("../errors/codes");
 
 function HttpTransport(address, timeout, maxRetries, messageHandler, initialConnectCallback) {
-  AbstractTransport.call(this, address, timeout, maxRetries, messageHandler);
+  this.abstractTransport = AbstractTransport.call(this, address, timeout, maxRetries, messageHandler);
 
   this.initialConnect(initialConnectCallback);
 }
@@ -40,6 +40,10 @@ HttpTransport.prototype.connect = function (callback) {
 
 HttpTransport.prototype.getTransportName = function () {
   return "HttpTransport";
+};
+
+HttpTransport.prototype.close = function () {
+  this.abstractTransport.connected = false;
 };
 
 HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
