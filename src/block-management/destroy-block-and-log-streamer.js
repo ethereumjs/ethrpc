@@ -3,7 +3,7 @@
 var internalState = require("../internal-state");
 
 function destroyBlockAndLogStreamer() {
-  return function (dispatch, getState) {
+  return function () {
     internalState.set("blockAndLogStreamer", null);
   };
 }
