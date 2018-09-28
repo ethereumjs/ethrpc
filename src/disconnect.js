@@ -4,7 +4,7 @@ var destroyBlockandLogStreamer = require("./block-management/destroy-block-and-l
 var internalState = require("./internal-state");
 
 function disconnect() {
-  return function (dispatch, getState) {
+  return function (dispatch) {
     dispatch(destroyBlockandLogStreamer());
 
     internalState.get("transporter").close();
