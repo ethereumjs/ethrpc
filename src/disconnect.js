@@ -7,7 +7,7 @@ function disconnect() {
   return function (dispatch) {
     dispatch(destroyBlockandLogStreamer());
 
-    internalState.get("transporter").close();
+    if (internalState.get("transporter") !== null) internalState.get("transporter").close();
   };
 }
 
