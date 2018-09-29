@@ -30,6 +30,8 @@ function AbstractTransport(address, timeout, maxRetries, messageHandler) {
   this.nextListenerToken = 1;
   this.reconnectListeners = {};
   this.disconnectListeners = {};
+
+  return this;
 }
 
 /**
