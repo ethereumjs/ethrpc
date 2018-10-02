@@ -121,6 +121,10 @@ function Transporter(configuration, messageHandler, debugLogging, callback) {
   }.bind(this));
 }
 
+Transporter.prototype.close = function () {
+  if (this.internalState.transport) this.internalState.transport.close();
+};
+
 Transporter.prototype.resetState = function () {
   if (this.internalState.transport) this.internalState.transport.resetState();
 };
