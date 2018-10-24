@@ -65,7 +65,7 @@
     "proxyquire": "1.7.11",
     "redux-thunk": "2.2.0",
     "uglify-js": "2.6.1",
-    "ws": "6.1.0"
+    "ws": "2.0.3"
   },
   "optionalDependencies": {
     "request": "2.85.0",
