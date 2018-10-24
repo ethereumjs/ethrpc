@@ -14,11 +14,11 @@ module.exports.getIpcAddress = function () {
 };
 
 module.exports.getWsAddress = function () {
-  return process.env.ETHRPC_TEST_WS_ADDRESS || "ws://localhost:1637";
+  return process.env.ETHRPC_TEST_WS_ADDRESS || "ws://localhost:1337";
 };
 
 module.exports.getHttpAddress = function () {
-  return process.env.ETHRPC_TEST_HTTP_ADDRESS || "http://localhost:1637";
+  return process.env.ETHRPC_TEST_HTTP_ADDRESS || "http://localhost:1337";
 };
 
 module.exports.rpcConnect = function (transportType, transportAddress, callback) {
