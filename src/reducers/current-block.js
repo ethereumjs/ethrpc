@@ -12,7 +12,8 @@ module.exports = function (currentBlock, action) {
     case "SET_CURRENT_BLOCK":
       var newBlock = assign({}, action.data);
       if (!validateBlock(newBlock)) return currentBlock;
-      return newBlock;
+      if (currentBlock === null || newBlock.hash !== currentBlock.hash) return newBlock;
+      return currentBlock;
     case "CLEAR_CURRENT_BLOCK":
       return initialState;
     default:
