@@ -21,7 +21,7 @@
     "message": "Received an invalid JSON-RPC message"
   },
   "INVALID_BLOCK": {
-    "message": "Expected a block, found not a block"
+    "message": "Block data expected, but received null or malformed block. Is the ethereum node available and responding?"
   },
   "UNKNOWN_ACCOUNT_TYPE": {
     "message": "Unknown account type"
@@ -36,7 +36,7 @@
     "message": "Transaction not found"
   },
   "BLOCK_NOT_FOUND": {
-    "message": "Block not found"
+    "message": "Block not found when attempting to retrieve block data from Ethereum Node. This node may be unavailable our out of sync."
   },
   "NULL_CALL_RETURN": {
     "message": "Expected contract call to return value, received null"
