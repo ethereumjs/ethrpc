@@ -25,7 +25,6 @@ WsTransport.prototype = Object.create(AbstractTransport.prototype);
 WsTransport.prototype.constructor = WsTransport;
 
 WsTransport.prototype.connect = function (initialCallback) {
-  console,log("Connect!");
   var self = this;
   var initialCallbackCalled = false;
   var callback = function (err) {
@@ -68,11 +67,6 @@ WsTransport.prototype.connect = function (initialCallback) {
       Object.keys(self.disconnectListeners).forEach(function (key) { self.disconnectListeners[key](event); });
       if (!initialCallbackCalled) callback(new Error("Web socket closed without opening, usually means failed connection."));
     }
-
-    self.webSocketClient.onmessage = noop;
-    self.webSocketClient.onerror = noop;
-    self.webSocketClient.onopen = noop;
-    self.connected = false;
   };
 };
 
@@ -83,12 +77,15 @@ WsTransport.prototype.getTransportName = function () {
 WsTransport.prototype.close = function () {
   if (this.webSocketClient.readyState === WebSocketStates.OPEN) {
     this.websocketClient.close();
+    self.webSocketClient.onmessage = noop;
+    self.webSocketClient.onerror = noop;
+    self.webSocketClient.onopen = noop;
   }
 };
 
 WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
-    if (this.websocketClient == null || this.webSocketClient.readyState !== WebSocketStates.OPEN) {
+    if (this.webSocketClient.readyState !== WebSocketStates.OPEN) {
       var err = new Error("Websocket Not Connected");
       err.retryable = true;
       return errorCallback(err);
