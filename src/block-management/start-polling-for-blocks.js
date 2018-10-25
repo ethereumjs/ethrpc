@@ -2,7 +2,9 @@
 
 var eth_getBlockByNumber = require("../wrappers/eth").getBlockByNumber;
 var onNewBlock = require("./on-new-block");
+var validateBlock = require("../validate/validate-block");
 var observeCurrentBlockStateChanges = require("../store-observers/current-block");
+var RPCError = require("../errors/rpc-error");
 
 function startPollingForBlocks() {
   return function (dispatch, getState) {
@@ -13,6 +15,8 @@ function startPollingForBlocks() {
       if (getState().debug.broadcast) console.log("Polling for latest block...");
       dispatch(eth_getBlockByNumber(["latest", false], function (err, block) {
         if (err) return console.error(err);
+        if (block === null) return console.error(new RPCError("BLOCK_NOT_FOUND"));
+        if (!validateBlock(block)) return console.error(new RPCError("INVALID_BLOCK", { block: block }));
         dispatch({ type: "SET_CURRENT_BLOCK", data: block });
       }));
     }, getState().configuration.pollingIntervalMilliseconds);

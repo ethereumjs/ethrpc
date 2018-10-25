@@ -2,9 +2,17 @@
 
 var AbstractTransport = require("./abstract-transport");
 var isNode = require("../platform/is-node-js.js");
-var WebSocketClient = require("../platform/web-socket-client");
+var WebSocketClient = require("websocket").w3cwebsocket;
 var internalState = require("../internal-state");
 var errors = require("../errors/codes");
+var noop = require("../utils/noop");
+
+var WebSocketStates = {
+  CONNECTING: 0,
+  OPEN: 1,
+  CLOSING: 2,
+  CLOSED: 3,
+};
 
 function WsTransport(address, timeout, maxRetries, websocketClientConfig, messageHandler, initialConnectCallback) {
   AbstractTransport.call(this, address, timeout, maxRetries, messageHandler);
@@ -67,15 +75,18 @@ WsTransport.prototype.getTransportName = function () {
 };
 
 WsTransport.prototype.close = function () {
-  this.webSocketClient.onmessage = function () {};
-  this.webSocketClient.onerror = function () {};
-  this.webSocketClient.onopen = function () {};
+  if (this.webSocketClient.readyState === WebSocketStates.OPEN) {
+    this.websocketClient.close();
+    self.webSocketClient.onmessage = noop;
+    self.webSocketClient.onerror = noop;
+    self.webSocketClient.onopen = noop;
+  }
 };
 
 WsTransport.prototype.submitRpcRequest = function (rpcJso, errorCallback) {
   try {
-    if (this.webSocketClient.readyState === 3) {
-      var err = new Error("Websocket Disconnected");
+    if (this.webSocketClient.readyState !== WebSocketStates.OPEN) {
+      var err = new Error("Websocket Not Connected");
       err.retryable = true;
       return errorCallback(err);
     }
