@@ -2,7 +2,7 @@
 
 var AbstractTransport = require("./abstract-transport");
 var isNode = require("../platform/is-node-js.js");
-var WebSocketClient = require("websocket").w3cwebsocket;
+var WebSocketClient = require("../platform/web-socket-client");
 var internalState = require("../internal-state");
 var errors = require("../errors/codes");
 var noop = require("../utils/noop");
