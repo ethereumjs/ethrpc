@@ -31,8 +31,9 @@ Web3Transport.prototype.close = function () {
 Web3Transport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
   var web3Provider;
   if (typeof window === "undefined") return errorCallback("attempted to access 'window' outside of a browser, this shouldn't happen");
-  web3Provider = ((window || {}).web3 || {}).currentProvider;
-  if (!web3Provider) return errorCallback("window.web3.currentProvider no longer available.");
+  web3Provider = (window || {}).ethereum;
+  if (!web3Provider) web3Provider = ((window || {}).web3 || {}).currentProvider;
+  if (!web3Provider) return errorCallback("window.ethereum and window.web3.currentProvider are not available.");
   web3Provider.sendAsync(rpcObject, this.messageHandler.bind(this));
 };
 
