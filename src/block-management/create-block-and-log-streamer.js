@@ -1,7 +1,7 @@
 "use strict";
 
 var Promise = require("es6-promise").Promise;
-var BlockAndLogStreamer = require("augur-blockstream").BlockAndLogStreamer;
+var BlockAndLogStreamer = require("ethereumjs-blockstream").BlockAndLogStreamer;
 var eth = require("../wrappers/eth");
 var internalState = require("../internal-state");
 
@@ -22,7 +22,10 @@ function createBlockAndLogStreamer() {
           resolve(logs);
         }));
       });
-    }, { blockRetention: getState().configuration.blockRetention }));
+    }, function (err) {
+      console.warn(err);
+    },
+    { blockRetention: getState().configuration.blockRetention }));
   };
 }
 

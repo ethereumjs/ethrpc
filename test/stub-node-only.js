@@ -1385,7 +1385,7 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can subscribe to new blocks", function (done) {
-          var token = rpc.getBlockStream().subscribeToOnBlockAdded(function (/* block */) {
+          var token = rpc.getBlockStream().subscribeToOnBlockAdded(function (/*blockHash, logs*/) {
             rpc.getBlockStream().unsubscribeFromOnBlockAdded(token);
             done();
           });
@@ -1393,14 +1393,17 @@ describe("tests that only work against stub server", function () {
 
         it("can subscribe to new logs", function (done) {
           server.addResponder(function (jso) {
-            if (jso.method === "eth_getLogs") return [{blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c" + ("0000" + jso.params[0].fromBlock.replace("0x", "")).slice(-4) }];
+            if (jso.method === "eth_getLogs") return [{blockNumber: "0xa", blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c" + ("0000" + jso.params[0].blockHash.replace("0x", "")).slice(-4) }];
           });
           rpc.getBlockStream().addLogFilter({});
-          rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) { done(); });
+          var token = rpc.getBlockStream().subscribeToOnLogsAdded(function (/*blockHash, logs*/) {
+            rpc.getBlockStream().subscribeToOnLogsAdded(token);
+            done();
+          });
         });
 
         it("can supply a log filter", function (done) {
-          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c" + ("0000" + jso.params[0].fromBlock.replace("0x", "")).slice(-4) }]; });
+          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{blockNumber: "0xa", blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c" + ("0000" + jso.params[0].blockHash.replace("0x", "")).slice(-4) }]; });
           server.addExpectation(function (jso) {
             return jso.method === "eth_getLogs"
               && jso.params.length === 1
@@ -1411,17 +1414,17 @@ describe("tests that only work against stub server", function () {
               && jso.params[0].topics[0] === "0xdeadbeef";
           });
           rpc.getBlockStream().addLogFilter({ address: "0xbadf00d", topics: ["0xdeadbeef"] });
-          rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) {
+          rpc.getBlockStream().subscribeToOnLogsAdded(function (/*blockHash, logs*/) {
             server.assertExpectations();
             done();
           });
         });
 
         it("can unsubscribe from log filter", function (done) {
-          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c" + ("0000" + jso.params[0].fromBlock.replace("0x", "")).slice(-4) }]; });
+          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{blockNumber: "0xa", blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c" + ("0000" + jso.params[0].fromBlock.replace("0x", "")).slice(-4) }]; });
           var called = false;
-          var token = rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) { called = true; });
-          rpc.getBlockStream().unsubscribeFromOnLogAdded(token);
+          var token = rpc.getBlockStream().subscribeToOnLogsAdded(function (/*blockHash, logs*/) { called = true; });
+          rpc.getBlockStream().unsubscribeFromOnLogsAdded(token);
           token = rpc.getBlockStream().subscribeToOnBlockAdded(function (/*block*/) {
             rpc.getBlockStream().unsubscribeFromOnBlockAdded(token);
             done(called ? new Error("log handler was called") : undefined);
@@ -1439,8 +1442,9 @@ describe("tests that only work against stub server", function () {
             topics: ["0xdeadbeef"],
           });
           rpc.getBlockStream().removeLogFilter(token);
-          rpc.getBlockStream().subscribeToOnLogAdded(function (/*logs*/) {
-            done(new Error("should not be called"));
+          var subscribeToken = rpc.getBlockStream().subscribeToOnLogsAdded(function (blockHash, logs) {
+            rpc.getBlockStream().unsubscribeFromOnLogsAdded(subscribeToken);
+            done(logs.length > 0 ? new Error("should not be called") : null);
           });
           setTimeout(done, 10);
         });
