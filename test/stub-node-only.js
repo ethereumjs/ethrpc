@@ -1446,7 +1446,6 @@ describe("tests that only work against stub server", function () {
             rpc.getBlockStream().unsubscribeFromOnLogsAdded(subscribeToken);
             done(logs.length > 0 ? new Error("should not be called") : null);
           });
-          setTimeout(done, 10);
         });
       });
     });
