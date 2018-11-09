@@ -1421,13 +1421,17 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can unsubscribe from log filter", function (done) {
-          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{blockNumber: "0xa", blockHash: "0xb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c" + ("0000" + jso.params[0].fromBlock.replace("0x", "")).slice(-4) }]; });
-          var called = false;
-          var token = rpc.getBlockStream().subscribeToOnLogsAdded(function (/*blockHash, logs*/) { called = true; });
+          server.addResponder(function (jso) { if (jso.method === "eth_getLogs") return [{blockNumber: "0x4", blockHash: "0xLb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10cb10c" + ("0000" + jso.params[0].fromBlock.replace("0x", "")).slice(-4) }]; });
+          var calledLog = false;
+          var calledBlock = false;
+          var token = rpc.getBlockStream().subscribeToOnLogsAdded(function (/*blockHash, logs*/) { calledLog = true; });
           rpc.getBlockStream().unsubscribeFromOnLogsAdded(token);
           token = rpc.getBlockStream().subscribeToOnBlockAdded(function (/*block*/) {
             rpc.getBlockStream().unsubscribeFromOnBlockAdded(token);
-            done(called ? new Error("log handler was called") : undefined);
+            if (!calledBlock) {
+              calledBlock = true;
+              done(calledLog ? new Error("log handler was called") : undefined);
+            }
           });
         });
 
