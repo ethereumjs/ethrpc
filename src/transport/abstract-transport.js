@@ -218,13 +218,19 @@ AbstractTransport.prototype.submitWork = function (rpcObject) {
  */
 function processWork(abstractTransport, rpcObject) {
   abstractTransport.submitRpcRequest(rpcObject, function (error) {
+    // NB this error callback not always executed on error if transport
+    // is WsTransport, because WsTransport.submitRpcRequest() only
+    // calls this callback for errors that can be detected prior to
+    // sending messsage, not for errors receive from ethrpc server.
+
     if (error === null) return;
     if (error.retryable) {
       // if the error is retryable, put it back on the queue (at the head) and
       // initiate reconnection in the background
       abstractTransport.workQueue.unshift(rpcObject);
       // if this is the first retriable failure then initiate a reconnect
-      if (abstractTransport.connected) {
+      if (abstractTransport.connected
+        && !error.skipReconnect) { // skipReconnect indicates that this retryable error doesn't want the transport to be disconnected/reconnected, eg. because downstream consumers might interpret the disconnect as being related to a non-retryable issue.
         abstractTransport.connected = false;
         notifyDisconnectListeners(abstractTransport, error);
         reconnect(abstractTransport);

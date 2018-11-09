@@ -69,6 +69,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
         if (retries < this.maxRetries) {
           internalState.set("outstandingRequests." + response.id, Object.assign({}, outstandingRequest, {retries: retries + 1}));
           error.retryable = true;
+          error.skipReconnect = true; // in processWork(), in the error callback passed to submitRpcRequest(), we can see that a transport disconnect/reconnect is performed after scheduling this request for a retry. This disconnect/reconnect can break downstream consumers who might interpret the disconnect as being related to a non-retryable issue. So, we'll use skipReconnect to indicate that, for this "0x" result error (which represents transient data unavailability), the reconnect shouldn't be performed by processWork().
           return errorCallback(error);
         }
         return this.messageHandler(null, {
