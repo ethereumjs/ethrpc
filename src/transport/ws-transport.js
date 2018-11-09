@@ -76,10 +76,10 @@ WsTransport.prototype.getTransportName = function () {
 
 WsTransport.prototype.close = function () {
   if (this.webSocketClient.readyState === WebSocketStates.OPEN) {
-    this.websocketClient.close();
-    self.webSocketClient.onmessage = noop;
-    self.webSocketClient.onerror = noop;
-    self.webSocketClient.onopen = noop;
+    this.webSocketClient.close();
+    this.webSocketClient.onmessage = noop;
+    this.webSocketClient.onerror = noop;
+    this.webSocketClient.onopen = noop;
   }
 };
 
