@@ -16,10 +16,11 @@ var RPCError = require("../errors/rpc-error");
 function setRawTransactionNonce(packaged, address, callback) {
   return function (dispatch, getState) {
     dispatch(eth_getTransactionCount([address, "pending"], function (err, transactionCount) {
-      if (getState().debug.tx) console.log("transaction count:", address, transactionCount, parseInt(transactionCount, 16));
+      if (getState().debug.tx) console.log("transaction count:", address, transactionCount);
       if (err) return callback(err);
       if (transactionCount == null) return callback(new RPCError("NO_RESPONSE"));
-      callback(null, assign({}, packaged, { nonce: dispatch(verifyRawTransactionNonce(parseInt(transactionCount, 16))) }));
+      var txCount = typeof transactionCount === "number" ? transactionCount : parseInt(transactionCount, 16);
+      callback(null, assign({}, packaged, { nonce: dispatch(verifyRawTransactionNonce(txCount)) }));
     }));
   };
 }
