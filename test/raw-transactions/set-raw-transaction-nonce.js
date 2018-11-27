@@ -46,6 +46,26 @@ describe("raw-transactions/set-raw-transaction-nonce", function () {
     },
   });
   test({
+    description: "21 transactions returned as decimal",
+    params: {
+      packaged: { nonce: 0 },
+      address: "0xb0b",
+    },
+    stub: {
+      eth: {
+        getTransactionCount: function (params, callback) {
+          return function () {
+            callback(null, 12);
+          };
+        },
+      },
+    },
+    assertions: function (err, packaged) {
+      assert.isNull(err);
+      assert.deepEqual(packaged, { nonce: 12 });
+    },
+  });
+  test({
     description: "Error from eth_getTransactionCount",
     params: {
       packaged: { nonce: 0 },
