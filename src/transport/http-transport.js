@@ -5,6 +5,9 @@ var request = require("../platform/request.js");
 var internalState = require("../internal-state");
 var errors = require("../errors/codes");
 
+var RETRYABLE_HTTP_RESPONSE_CODES = [500, 502, 503];
+var MAX_RETRY_DELAY = 3000;
+
 function HttpTransport(address, timeout, maxRetries, messageHandler, initialConnectCallback) {
   this.abstractTransport = AbstractTransport.call(this, address, timeout, maxRetries, messageHandler);
 
@@ -85,12 +88,19 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
         jsonrpc: "2.0",
         error: {"code": -32601, "message": "Method not found"},
       });
-    } else if (response.statusCode === 502) { // to handle INFURA's 502 error response
-      console.warn("[ethrpc] http-transport 502 response", error, response);
-      error = new Error("Gateway timeout, retryable");
+    } else if (RETRYABLE_HTTP_RESPONSE_CODES.includes(response.statusCode)) {
+      console.warn("[ethrpc] http-transport response: " + response.statusCode, error, response);
+      error = new Error("Retryable HTTP: " + response.statusCode);
       error.code = response.statusCode;
       error.retryable = true;
       errorCallback(error);
+    } else if (response.statusCode === 429) { // to handle Alchemy (or other) back-off
+      console.warn("[ethrpc] http-transport 429 response", error, response);
+      error = new Error("Too many requests, retryable");
+      error.code = response.statusCode;
+      error.retryable = true;
+      var retryDelay = Math.random() * MAX_RETRY_DELAY;
+      setTimeout(function () { errorCallback(error); }, retryDelay);
     } else {
       console.error("[ethrpc] http-transport unexpected status code", response);
       error = new Error("Unexpected status code.");
