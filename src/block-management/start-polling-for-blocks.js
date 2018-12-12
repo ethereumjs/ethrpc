@@ -15,7 +15,7 @@ function startPollingForBlocks() {
       if (getState().debug.broadcast) console.log("Polling for latest block...");
       dispatch(eth_getBlockByNumber(["latest", false], function (err, block) {
         if (err) return console.error(err);
-        if (block === null) return console.error(new RPCError("BLOCK_NOT_FOUND"));
+        if (block === null) return console.warning(new RPCError("BLOCK_NOT_FOUND"));
         if (!validateBlock(block)) return console.error(new RPCError("INVALID_BLOCK", { block: block }));
         dispatch({ type: "SET_CURRENT_BLOCK", data: block });
       }));
