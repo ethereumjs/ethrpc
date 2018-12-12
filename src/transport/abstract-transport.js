@@ -222,7 +222,6 @@ function processWork(abstractTransport, rpcObject) {
     // is WsTransport, because WsTransport.submitRpcRequest() only
     // calls this callback for errors that can be detected prior to
     // sending messsage, not for errors receive from ethrpc server.
-
     if (error === null) return;
     if (error.retryable) {
       // if the error is retryable, put it back on the queue (at the head) and
@@ -234,6 +233,10 @@ function processWork(abstractTransport, rpcObject) {
         abstractTransport.connected = false;
         notifyDisconnectListeners(abstractTransport, error);
         reconnect(abstractTransport);
+      } else {
+        if (abstractTransport.awaitingPump) return;
+        abstractTransport.awaitingPump = true;
+        setTimeout(pumpQueue.bind(null, abstractTransport));
       }
     } else {
       // if we aren't going to retry the request, let the user know that
