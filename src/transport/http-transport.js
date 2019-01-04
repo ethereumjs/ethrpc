@@ -103,7 +103,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       error.retryable = true;
       error.skipReconnect = true;
       var retry429Attempts = internalState.get("retry429Attempts." + response.id) || 0;
-      var retryDelay = BASE_RETRY_DELAY * 2 ** retry429Attempts;
+      var retryDelay = BASE_RETRY_DELAY * Math.pow(2, retry429Attempts);
       if (retry429Attempts < MAX_RETRY_DELAY_INCREASES) internalState.set("retry429Attempts." + response.id, retry429Attempts + 1);
       setTimeout(function () { errorCallback(error); }, retryDelay);
     } else {
