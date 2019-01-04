@@ -11,7 +11,7 @@ var MAX_RETRY_DELAY_INCREASES = 4;
 
 function HttpTransport(address, timeout, maxRetries, messageHandler, initialConnectCallback) {
   this.abstractTransport = AbstractTransport.call(this, address, timeout, maxRetries, messageHandler);
-    
+
   this.initialConnect(initialConnectCallback);
 }
 
