@@ -6,11 +6,12 @@ var internalState = require("../internal-state");
 var errors = require("../errors/codes");
 
 var RETRYABLE_HTTP_RESPONSE_CODES = [500, 502, 503];
-var MAX_RETRY_DELAY = 3000;
+var BASE_RETRY_DELAY = 1000;
+var MAX_RETRY_DELAY_INCREASES = 4;
 
 function HttpTransport(address, timeout, maxRetries, messageHandler, initialConnectCallback) {
   this.abstractTransport = AbstractTransport.call(this, address, timeout, maxRetries, messageHandler);
-
+    
   this.initialConnect(initialConnectCallback);
 }
 
@@ -56,6 +57,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
     json: rpcObject, // lies! this actually wants a JSO, not a JSON string
     timeout: this.timeout,
   }, function (error, response, body) {
+    if (response.statusCode !== 429) internalState.set("retry429Attempts." + response.id, 0);
     if (error) {
       if (error.code === "ECONNRESET") error.retryable = true;
       if (error.code === "ECONNREFUSED") error.retryable = true;
@@ -99,7 +101,10 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       error = new Error("Too many requests, retryable");
       error.code = response.statusCode;
       error.retryable = true;
-      var retryDelay = Math.random() * MAX_RETRY_DELAY;
+      error.skipReconnect = true;
+      var retry429Attempts = internalState.get("retry429Attempts." + response.id) || 0;
+      var retryDelay = BASE_RETRY_DELAY * 2 ** retry429Attempts;
+      if (retry429Attempts < MAX_RETRY_DELAY_INCREASES) internalState.set("retry429Attempts." + response.id, retry429Attempts + 1);
       setTimeout(function () { errorCallback(error); }, retryDelay);
     } else {
       console.error("[ethrpc] http-transport unexpected status code", response);
