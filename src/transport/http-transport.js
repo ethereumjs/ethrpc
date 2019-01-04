@@ -57,7 +57,6 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
     json: rpcObject, // lies! this actually wants a JSO, not a JSON string
     timeout: this.timeout,
   }, function (error, response, body) {
-    if (response.statusCode !== 429) internalState.set("retry429Attempts." + response.id, 0);
     if (error) {
       if (error.code === "ECONNRESET") error.retryable = true;
       if (error.code === "ECONNREFUSED") error.retryable = true;
@@ -67,6 +66,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
       if (error.code === "ENOTFOUND") error.retryable = true;
       errorCallback(error);
     } else if (response.statusCode === 200) {
+      internalState.set("retry429Attempts." + response.id, 0);
       if (rpcObject.method === "eth_call" && body.result === "0x") {
         var outstandingRequest = internalState.get("outstandingRequests." + response.id) || {};
         var retries = outstandingRequest.retries || 0;
