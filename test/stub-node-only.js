@@ -1385,13 +1385,9 @@ describe("tests that only work against stub server", function () {
         });
 
         it("can subscribe to new blocks", function (done) {
-          var calledBlock = false;
           var token = rpc.getBlockStream().subscribeToOnBlockAdded(function (/*blockHash, logs*/) {
-            if (!calledBlock) {
-              calledBlock = true;
-              rpc.getBlockStream().unsubscribeFromOnBlockAdded(token);
-              done();
-            }
+            rpc.getBlockStream().unsubscribeFromOnBlockAdded(token);
+            done();
           });
         });
 
