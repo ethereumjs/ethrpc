@@ -213,6 +213,7 @@ var createEthrpc = function (reducer) {
     uninstallFilter: function (filter, callback) { return dispatch(eth.uninstallFilter([filter], callback)); },
     unsubscribe: function (label, callback) { return dispatch(eth.unsubscribe([label], callback)); },
 
+    HttpTransport: require("./transport/http-transport"),
     WsTransport: require("./transport/ws-transport"),
 
     /************************
