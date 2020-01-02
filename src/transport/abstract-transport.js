@@ -25,6 +25,7 @@ function AbstractTransport(address, timeout, maxRetries, messageHandler) {
   this.workQueue = [];
 
   this.awaitingPump = false;
+  this.didInitialConnect = false;
   this.connected = false;
   this.backoffMilliseconds = 1;
   this.nextListenerToken = 1;
@@ -101,6 +102,7 @@ AbstractTransport.prototype.initialConnect = function (callback) {
   this.connect(function (error) {
     if (error !== null) return callback(error);
 
+    this.didInitialConnect = true;
     this.connected = true;
     pumpQueue(this);
     callback(null, this);
@@ -139,6 +141,7 @@ AbstractTransport.prototype.getTransportName = function () {
 AbstractTransport.prototype.resetState = function () {
   this.workQueue = [];
   this.awaitingPump = false;
+  this.didInitialConnect = false;
   this.connected = false;
   this.backoffMilliseconds = 1;
   this.nextListenerToken = 1;

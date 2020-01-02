@@ -4,6 +4,7 @@ var AbstractTransport = require("./abstract-transport.js");
 var request = require("../platform/request.js");
 var internalState = require("../internal-state");
 var errors = require("../errors/codes");
+var version = require("../version");
 
 var RETRYABLE_HTTP_RESPONSE_CODES = [500, 502, 503];
 var MAX_RETRY_DELAY = 3000;
@@ -20,6 +21,8 @@ HttpTransport.prototype.constructor = HttpTransport;
 
 HttpTransport.prototype.connect = function (callback) {
   // send an invalid request to determine if the desired node is available (just need to see if we get a 200 response)
+  if (this.abstractTransport.didInitialConnect === true) return callback(null);
+
   request({
     url: this.address,
     method: "POST",
@@ -28,15 +31,13 @@ HttpTransport.prototype.connect = function (callback) {
   }, function (error, response, jso) {
     if (error || response.statusCode !== 200) {
       callback(error);
-    } else {
-      if (jso.error) {
+    } else if (jso.error) {
         error = new Error(jso.error.message || "Unknown error.");
         error.code = jso.error.code;
         error.data = jso.error.data;
         callback(error);
-      } else {
-        callback(null);
-      }
+    } else {
+      callback(null);
     }
   });
 };
@@ -50,11 +51,24 @@ HttpTransport.prototype.close = function () {
 };
 
 HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
+  // Short circuit eth_subscribe over HTTP since it can't work
+  if (rpcObject.method === "eth_subscribe") {
+    console.log("Skipped subscription for HTTP")
+    return this.messageHandler(null, {
+      id: rpcObject.id,
+      jsonrpc: "2.0",
+      error: {"code": -32090, "message": "Subscriptions are not available on this transport."},
+    });
+  }
+
   request({
     url: this.address,
     method: "POST",
     json: rpcObject, // lies! this actually wants a JSO, not a JSON string
     timeout: this.timeout,
+    headers: {
+      'User-Agent': 'ethrpc/'+version,
+    }
   }, function (error, response, body) {
     if (error) {
       if (error.code === "ECONNRESET") error.retryable = true;
