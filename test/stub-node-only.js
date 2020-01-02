@@ -1063,9 +1063,14 @@ describe("tests that only work against stub server", function () {
           });
           server.addResponder(function (jso) { if (jso.method === "eth_subscribe") return expectedResult; });
           rpc.subscribe("newHeads", null, function (err, result) {
-            assert.isNull(err);
-            assert.deepEqual(result, expectedResult);
-            server.assertExpectations();
+            if (transportType === "HTTP") {
+              assert.isNotNull(err);
+              assert.equal("Subscriptions are not available on this transport.", err.message);
+            } else {
+              assert.isNull(err);
+              assert.deepEqual(result, expectedResult);
+              server.assertExpectations();
+            }
             done();
           });
         });
