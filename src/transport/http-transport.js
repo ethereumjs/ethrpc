@@ -68,7 +68,7 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
     json: rpcObject, // lies! this actually wants a JSO, not a JSON string
     timeout: this.timeout,
     headers: {
-      'X-EthRPC-Version': 'ethrpc/'+version,
+      'x-requested-with': 'ethrpc/'+version,
     }
   }, function (error, response, body) {
     if (error) {
