@@ -27,7 +27,7 @@ HttpTransport.prototype.connect = function (callback) {
   request({
     url: this.address,
     method: "POST",
-    json: { jsonrpc: "2.0", id: 0, method: "net_version" },
+    json: { jsonrpc: "2.0", id: 0, method: "net_version", params: [] },
     timeout: this.timeout,
   }, function (error, response, jso) {
     if (error || response.statusCode !== 200) {
