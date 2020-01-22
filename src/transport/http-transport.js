@@ -67,9 +67,6 @@ HttpTransport.prototype.submitRpcRequest = function (rpcObject, errorCallback) {
     method: "POST",
     json: rpcObject, // lies! this actually wants a JSO, not a JSON string
     timeout: this.timeout,
-    headers: {
-      'x-requested-with': 'ethrpc/'+version,
-    }
   }, function (error, response, body) {
     if (error) {
       if (error.code === "ECONNRESET") error.retryable = true;
