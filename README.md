@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.org/ethereumjs/ethrpc.svg)](https://travis-ci.org/ethereumjs/ethrpc) [![Coverage Status](https://coveralls.io/repos/ethereumjs/ethrpc/badge.svg?branch=master&service=github)](https://coveralls.io/github/ethereumjs/ethrpc?branch=master) [![npm version](https://badge.fury.io/js/ethrpc.svg)](http://badge.fury.io/js/ethrpc)
 
+> [!NOTE]  
+> This package is not maintained by the EthereumJS ([EF JavaScript](https://github.com/ethereumjs/ethereumjs-monorepo)) core team (see "Contributors").
+---
+
 JavaScript RPC communication with the Ethereum network.
 
 ## Usage
